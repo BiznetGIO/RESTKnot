@@ -1,46 +1,6 @@
-from libs import utils
+from libs.utility import utils
 from libs.command import action
 import json
-
-
-# Json_req Hapus Setelah jadi
-json_req = {
-  "configbegin": {
-    "sendblock": {
-      "cmd": "conf-begin"
-    },
-    "receive": {
-      "type": "block"
-    }
-  },
-  "configset": {
-    "sendblock": {
-      "cmd": "conf-set",
-      "section": "zone",
-      "item": "domain",
-      "data": "tes123"
-    },
-    "receive": {
-      "type": "block"
-    }
-  },
-  "configcommit": {
-    "sendblock": {
-      "cmd": "conf-commit"
-    },
-    "receive": {
-      "type": "block"
-    }
-  },
-  "statsserver": {
-    "sendblock": {
-      "cmd": "stats"
-    },
-    "receive": {
-      "type": "stats"
-    }
-  }
-}
 
 
 def check_command(command):
@@ -61,20 +21,20 @@ def check_parameters(command,parameters):
     else:
         return True
 
-def parser(yaml):
+def parser(obj_data):
     projec_obj = list()
-    for project in yaml: # ambil index project
+    for project in obj_data: # ambil index project
         action_obj = list()
-        for action in yaml[project]: # ambil index aksi
+        for action in obj_data[project]: # ambil index aksi
             if not check_command(action):
                 return None
             else:
                 data_obj = dict()
-                for params in yaml[project][action]: # ambil index parameter
+                for params in obj_data[project][action]: # ambil index parameter
                     if not check_parameters(action,params):
                         return None
                     else:
-                        data_obj[params]=yaml[project][action][params]
+                        data_obj[params]=obj_data[project][action][params]
                 action_obj.append({
                     action: data_obj
                 })
@@ -84,18 +44,13 @@ def parser(yaml):
     return projec_obj
 
 
-def initialiaze(data=None):
+def initialiaze(data):
+    print(data)
     try:
         parser_data = parser(data)
     except Exception:
         print("Error: Parameter data Needed")
     else:
         return parser_data
-
-yaml = utils.yaml_parser('knot.yml')
-data_yaml = initialiaze(data=yaml)
-print(data_yaml)
-# data_json = initialiaze(data=json_req)
-# print(data_json)
 
 
