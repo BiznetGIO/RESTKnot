@@ -45,7 +45,6 @@ def parser(obj_data):
 
 
 def initialiaze(data):
-    print(data)
     try:
         parser_data = parser(data)
     except Exception:
@@ -54,3 +53,16 @@ def initialiaze(data):
         return parser_data
 
 
+def execute_command(initialiaze):
+    for data in initialiaze:
+        for project in data:
+            parameters=dict()
+            for data_parsing in data[project]:
+                for command in data_parsing:
+                    # print(data_parsing)
+                    if command=='sendblock':
+                        for value in data_parsing[command]:
+                            parameters[value]=data_parsing[command][value]
+            print("______________________________________")
+            action.block_command(**parameters)
+            print("______________________________________")
