@@ -3,7 +3,8 @@ from libs.utility import utils
 
 yaml = utils.yaml_parser('knot.yml')
 data_yaml = parser.initialiaze(data=yaml)
-print(data_yaml)
+parser.execute_command(data_yaml)
+
 
 # HTTP REQUEST
 # json_req={
