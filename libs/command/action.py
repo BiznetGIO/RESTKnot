@@ -1,5 +1,5 @@
 import json
-from libknot.control import *
+from libs.command.libknot.control import *
 
 
 load_lib("libknot.so.7")
@@ -11,19 +11,23 @@ def block_command(cmd=None, flags=None,section=None,
                     item=None, identifier=None, zone=None,
                     owner=None, ttl=None, rtype=None, data=None,
                     filter=None):
-    try:
-        ctl.send_block(cmd="conf-begin")
-        resp = ctl.receive_block()
-        ctl.send_block(cmd="conf-set", section="zone", item="domain", data="test123")
-        resp = ctl.receive_block()
-        ctl.send_block(cmd="conf-commit")
-        resp = ctl.receive_block()
-        ctl.send_block(cmd="conf-read", section="zone", item="domain")
-        resp = ctl.receive_block()
-        print(json.dumps(resp, indent=4))
-    finally:
-        ctl.send(KnotCtlType.END)
-        ctl.close()
+    print(cmd)
+    print(section)
+    print(item)
+    print(data)
+    # try:
+    #     ctl.send_block(cmd="conf-begin")
+    #     resp = ctl.receive_block()
+    #     # ctl.send_block(cmd="conf-set", section="zone", item="domain", data="test12")
+    #     # resp = ctl.receive_block()
+    #     # ctl.send_block(cmd="conf-commit")
+    #     # resp = ctl.receive_block()
+    #     # ctl.send_block(cmd="conf-read", section="zone", item="domain")
+    #     # resp = ctl.receive_block()
+    #     print(json.dumps(resp, indent=4))
+    # finally:
+    #     ctl.send(KnotCtlType.END)
+    #     ctl.close()
 
 
 def stats_command(cmd, flags=None, section=None,
