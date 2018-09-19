@@ -18,9 +18,3 @@ configcommit:
     cmd: conf-commit
   receive:
     type: block
-
-statsserver:
-  sendblock:
-    cmd: stats
-  receive:
-    type: stats
