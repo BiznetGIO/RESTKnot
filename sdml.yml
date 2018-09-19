@@ -1,0 +1,95 @@
+command:
+  block_command:
+    parameters:
+      cmd:
+        name: Command
+        type: string
+        description: Command Description
+      data:
+        name: Data
+        type: Json
+        description: Data Description
+      flags:
+        name: Flags
+        type: string
+        description: Flags Description
+      section:
+        name: Section
+        type: string
+        description: Section Description
+      item:
+        name: Item
+        type: string
+        description: Item Description
+      identifier:
+        name: Identifier
+        type: string
+        description: Indentifier Description
+      zone:
+        name: Zone
+        type: string
+        description: Zone Description
+      owner:
+        name: Zone
+        type: string
+        description: Zone Description
+      ttl:
+        name: Ttl
+        type: string
+        description: Ttl Description
+      rtype:
+        name: Rtype
+        type: string
+        description: Rtype Description
+      filter:
+        name: Filter
+        type: string
+        description: Filter Description
+
+  stats_command:
+    parameters:
+      command:
+        name: Command
+        type: string
+        description: Command Description
+      data:
+        name: Data
+        type: Json
+        description: Data Description
+        dependence: "func:parseJson"
+      flags:
+        name: Flags
+        type: string
+        description: Flags Description
+      section:
+        name: Section
+        type: string
+        description: Section Description
+      item:
+        name: Item
+        type: string
+        description: Item Description
+      identifier:
+        name: Identifier
+        type: string
+        description: Indentifier Description
+      zone:
+        name: Zone
+        type: string
+        description: Zone Description
+      owner:
+        name: Zone
+        type: string
+        description: Zone Description
+      ttl:
+        name: Ttl
+        type: string
+        description: Ttl Description
+      rtype:
+        name: Rtype
+        type: string
+        description: Rtype Description
+      filter:
+        name: Filter
+        type: string
+        description: Filter Description
