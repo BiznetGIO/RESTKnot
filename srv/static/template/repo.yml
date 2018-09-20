@@ -1,0 +1,8 @@
+version: adista 0.0.1
+
+endpoint:
+  create:
+    config_begin:
+      parameters:
+        
+
