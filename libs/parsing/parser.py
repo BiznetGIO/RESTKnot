@@ -1,0 +1,101 @@
+from libs.utility import utils
+from libs.control import action
+from libs.control.libknot.control import *
+import json
+
+
+load_lib("libknot.so.7")
+ctl = KnotCtl()
+ctl.connect("/var/run/knot/knot.sock")
+
+
+def check_command(command):
+    sdl_data = utils.repodata()
+    try:
+        sdl_data[command]
+    except Exception as e:
+        print("illigal command : ", e)
+    else:
+        return True
+
+def check_parameters(command,parameters):
+    sdl_data = utils.repodata()
+    try:
+        sdl_data[command]['parameters'][parameters]
+    except Exception as e:
+        print("illegal parameter : ",e)
+    else:
+        return True
+
+def parser(obj_data):
+    projec_obj = list()
+    for project in obj_data:
+        action_obj = list()
+        for action in obj_data[project]:
+            if not check_command(action):
+                return None
+            else:
+                data_obj = dict()
+                for params in obj_data[project][action]:
+                    if not check_parameters(action,params):
+                        return None
+                    else:
+                        data_obj[params]=obj_data[project][action][params]
+                action_obj.append({
+                    action: data_obj
+                })
+        projec_obj.append({
+            project: action_obj
+        })
+    return projec_obj
+
+
+def initialiaze(data):
+    try:
+        parser_data = parser(data)
+    except Exception:
+        print("Error: Parameter data Needed")
+    else:
+        return parser_data
+
+
+def get_params_block(data_params):
+    parameters=dict()
+    for data_parsing in data_params:
+        for command in data_parsing:
+            if command=='sendblock':
+                for value in data_parsing[command]:
+                    parameters[value]=data_parsing[command][value]
+    return parameters
+
+
+def get_params_recieve(data_params):
+    parameters=dict()
+    for data_parsing in data_params:
+        for command in data_parsing:
+            if command=='receive':
+                for value in data_parsing[command]:
+                    parameters[value]=data_parsing[command][value]
+    return parameters
+
+
+def execute_command(initialiaze):
+    try:
+        resp = None
+        for data in initialiaze:
+            for project in data:
+                parameter_block = get_params_block(data[project])
+                parameter_stats = get_params_recieve(data[project])
+                if parameter_stats['type'] == 'block':
+                    ctl.send_block(**parameter_block)
+                    resp = ctl.receive_block()
+                elif parameter_stats['type'] == 'stats':
+                    ctl.send_block(**parameter_block)
+                    resp = ctl.receive_stats()
+    except Exception as e:
+        print(e)
+    else:
+        return json.dumps(resp, indent=4)
+    finally:
+        ctl.send(KnotCtlType.END)
+        ctl.close()
