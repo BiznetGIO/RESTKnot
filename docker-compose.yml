@@ -1,0 +1,28 @@
+version: '0.8.0'
+services:
+    web:
+        build: .
+        ports:
+          - "5000:5000"
+        volumes:
+          - .:/app
+        command: ["bash","run.sh" ,"server", "development", 'docker']
+        links:
+          - "session"
+
+    session:
+        image: redis
+        command: ["redis-server", "--requirepass", "pass"]
+        ports:
+          - "6379:6379"
+
+    celery:
+        image: neo-openstack-v2_web
+        environment:
+          - C_FORCE_ROOT=true
+        user: nobody
+        command: celery worker -A celery_worker.celery --loglevel=info
+        volumes:
+          - .:/app
+        links:
+          - "session"
