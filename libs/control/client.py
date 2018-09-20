@@ -1,77 +1,70 @@
 import json, os
-from libs.control.libknot import control
 
-knotctl_end = control.KnotCtlType.END
+def sendblock(ctl,params):
 
-def check_libs(libs):
     try:
-        libs_value = os.system("ls /lib64/ | grep "+libs+"")
+        cmd= params['cmd']
     except Exception as e:
-        print(e)
-    else:
-        return libs_value
+        print("CMD Parameters needed")
 
-def load_libknot(libknot=None):
-    libs = None
     try:
-        libs = libknot
-    except Exception as e:
-        print(e)
-        check_libs('libknot')
-    else:
-        control.load_lib(libs)
+        pass
+    except Exception:
+        pass
 
-def load_control():
-    ctl = control.KnotCtl()
-    return ctl
-
-def load_sock(knot_sock):
-    ctl = load_control()
     try:
-        ctl.connect(knot_sock)
-    except Exception as e:
-        print(e)
+        section = params['section']
+    except Exception:
+        section=None
 
-def sendblock(params):
-    print(params)
-    ctl = load_control()
     try:
-        ctl.send_block(**params)
-    except Exception as e:
-        print(e)
+        item = params['item']
+    except Exception:
+        item=None
 
-def receive(params):
-    ctl = load_control()
     try:
-        resp = ctl.receive(**params)
-    except Exception as e:
-        print(e)
-    else:
-        return resp
+        identifier = params['identifier']
+    except Exception:
+        identifier=None
 
-def receive_block():
-    ctl = load_control()
     try:
-        resp = ctl.receive_block()
-    except Exception as e:
-        print(e)
-    else:
-        return resp
+        zone = params['zone']
+    except Exception:
+        zone=None
 
-def receive_stats():
-    ctl = load_control()
     try:
-        resp = ctl.receive_stats()
-    except Exception as e:
-        print(e)
-    else:
-        return resp
+        owner = params['owner']
+    except Exception:
+        owner=None
 
-def send():
-    ctl = load_control()
     try:
-        ctl.send(control.KnotCtlType.END)
-    except Exception as e:
-        print(e)
-    finally:
-        ctl.close()
+        ttl = params['ttl']
+    except Exception:
+        ttl=None
+
+    try:
+        rtype = params['rtype']
+    except Exception:
+        rtype=None
+
+    try:
+        data = params['data'][0]
+        data = str(data)
+    except Exception:
+        data=None
+
+    try:
+        flags = params['flags']
+    except Exception:
+        flags=None
+
+    try:
+        filters = params['filter']
+    except Exception:
+        filters=None
+
+    ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
+                   owner=owner, ttl=ttl, rtype=rtype, data=data, flags=flags,
+                   filter=filters)
+
+
