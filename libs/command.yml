@@ -1,19 +1,21 @@
-configbegin:
+command1:
   sendblock:
     cmd: conf-begin
   receive:
     type: block
 
-configset:
+command2:
   sendblock:
     cmd: conf-set
     section: zone
     item: domain
-    data: tes123
+    data:
+      - domain: example.com
+      - ip: 69.69.69.69
   receive:
     type: block
 
-configcommit:
+command3:
   sendblock:
     cmd: conf-commit
   receive:
