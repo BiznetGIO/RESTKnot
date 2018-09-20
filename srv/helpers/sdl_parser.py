@@ -24,13 +24,16 @@ def yaml_parser(file):
 
 
 def parser(request):
-    sdl_repo = yaml_parser("endpoint.yml")
+    sdl_knot = yaml_parser("knot.yml")
+    sdl_enpoint = yaml_parser("endpoint.yml")
+    
     for i in request:
         print(i)
 
 parser(json_req)
 
 # def parser():
-#     # sdl_repo = utils.repodata()
+#     # sdl_knot = utils.repoknot()
+#     # sdl_endpoint = utils.repodata()
 #     for project in sdl_repo:
 #         print(project)

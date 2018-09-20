@@ -26,7 +26,12 @@ def list_dir(dirname):
             listdir.append(os.path.join(root, file))
     return listdir
 
+def repoknot():
+    abs_path = root_dir
+    repo_file = "{}static/templates/knot.yml".format(abs_path)
+    return yaml_parser(repo_file)
+
 def repodata():
     abs_path = root_dir
-    repo_file = "{}static/templates/repo.yml".format(abs_path)
+    repo_file = "{}static/templates/endpoint.yml".format(abs_path)
     return yaml_parser(repo_file)

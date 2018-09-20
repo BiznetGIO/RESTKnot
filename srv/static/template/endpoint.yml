@@ -1,65 +1,62 @@
 version : adista 0.0.1
 
-create:
-  command:
-    begin:
-      sendblock:
-        arguments:
-          cmd:
-            name : command name
-            type : string
-            description: Command Name For Begin Execute
-            default: conf-begin
-      receive:
-        arguments:
-          type:
-            name: receive type
-            description: receive from after sendblock execute
-
-    configset:
-      sendblock:
-        arguments:
-          cmd:
-            name: Command name
-            type: string
-            description: Command Name For Configset Execute
-          section:
-            name: section name
-            type: string
-            description: Section Name For Configset Identifier
-          item:
-            name: Item name
-            type: string
-            description: Item Domain Name For Conf-set Identifier
-          data:
-            name: Resource Form Request
-            type: json
-            description: Resource Form Request For Conf-set Identifier
-            parameters:
-              domain:
-                name: Domain Name
-                type: string
-                description: Domain Name Value For Data Parameter Sendblock
-              ip:
-                name: Ip Number
-                type: string
-                description: IP Number Value For Data Parameter Sendblock
-      receive:
-        arguments:
-          type:
-            name: receive type
-            description: receive from after sendblock execute
-
-    configcommit:
+endpoint:
+  create:
+    knot: knotcreate
+    command:
+      config_begin:
         sendblock:
-          arguments:
-            cmd:
-              name : command name
-              type : string
-              description: Command Name For configcommit Execute
-              default: conf-commit
+          cmd: conf-begin
         receive:
-          arguments:
-            type:
-              name: receive type
-              description: receive from after sendblock execute
+          type: block
+
+      config_set:
+        sendblock:
+          cmd: conf-set
+          section: zone
+          item: domain
+          data:
+            - domain: example.com
+            - ip: 69.69.69.69
+        receive:
+          type: block
+
+      config_commit:
+        sendblock:
+          cmd: conf-commit
+        receive:
+          type: block
+
+      config_read:
+        sendblock:
+          cmd: conf-read
+          section: zone
+          item: domain
+
+        receive:
+          type: block
+  delete:
+    knot: knotdelete
+    command:
+      delete_dns:
+        sendblock:
+          cmd: conf-delete
+          data:
+            - domain: example.com
+        receive:
+          type: block
+
+  viewstats:
+    knot: knotviewstats
+    command:
+      view_stats:
+        sendblock:
+          cmd: stats
+        receive:
+          type: stats
+
+      zone_stats:
+        sendblock:
+          cmd: zone-stats
+        receive:
+          type: stats
