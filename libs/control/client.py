@@ -1,6 +1,7 @@
 import json, os
 from libs.control.libknot import control
 
+knotctl_end = control.KnotCtlType.END
 
 def check_libs(libs):
     try:
@@ -31,7 +32,8 @@ def load_sock(knot_sock):
     except Exception as e:
         print(e)
 
-def send_block(params):
+def sendblock(params):
+    print(params)
     ctl = load_control()
     try:
         ctl.send_block(**params)
