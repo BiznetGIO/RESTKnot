@@ -9,13 +9,33 @@ command2:
     cmd: conf-set
     section: zone
     item: domain
+    data: testing1234
+  receive:
+    type: block
+
+command3:
+  sendblock:
+    cmd: conf-set
+    section: zone
+    item: domain
+    data:
+      domain: example.com
+      ip: 69.69.69.69
+  receive:
+    type: block
+
+command4:
+  sendblock:
+    cmd: conf-set
+    section: zone
+    item: domain
     data:
       - domain: example.com
       - ip: 69.69.69.69
   receive:
     type: block
 
-command3:
+command5:
   sendblock:
     cmd: conf-commit
   receive:

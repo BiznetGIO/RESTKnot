@@ -1,11 +1,18 @@
 import json, os
 
 def sendblock(ctl,params):
+    try:
+        data = params['data']
+    except Exception:
+        data=None
+
+    if not isinstance(data, str) :
+        data = str(data)
 
     try:
         cmd= params['cmd']
     except Exception as e:
-        print("CMD Parameters needed")
+        print("CMD Parameters needed "+e)
 
     try:
         pass
@@ -48,12 +55,6 @@ def sendblock(ctl,params):
         rtype=None
 
     try:
-        data = params['data'][0]
-        data = str(data)
-    except Exception:
-        data=None
-
-    try:
         flags = params['flags']
     except Exception:
         flags=None
@@ -62,6 +63,7 @@ def sendblock(ctl,params):
         filters = params['filter']
     except Exception:
         filters=None
+
 
     ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
                    owner=owner, ttl=ttl, rtype=rtype, data=data, flags=flags,
