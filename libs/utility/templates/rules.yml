@@ -6,7 +6,7 @@ sendblock:
       description: Command Description
     data:
       name: Data
-      type: Json
+      type: list
       description: Data Description
     flags:
       name: Flags
