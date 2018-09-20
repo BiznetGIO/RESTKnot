@@ -108,5 +108,8 @@ ENV/
 .vscode
 
 
-srv/helpers/endpoint_experiment.yml
+srv/helpers/command_experiment.yml
 srv/helpers/knot.yml
+
+example.py
+command.yml
