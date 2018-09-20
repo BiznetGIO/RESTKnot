@@ -1,5 +1,6 @@
 from libs.utility import utils
 from libs.control.libknot import control
+from libs.control import client
 import json
 
 
@@ -86,10 +87,12 @@ def execute_command(initialiaze):
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
                 if parameter_stats['type'] == 'block':
-                    ctl.send_block(**parameter_block)
+                    client.sendblock(ctl, parameter_block)
+                    # ctl.send_block(**parameter_block)
                     resp = ctl.receive_block()
                 elif parameter_stats['type'] == 'stats':
-                    ctl.send_block(**parameter_block)
+                    # print(parameter_stats)
+                    client.sendblock(**parameter_block)
                     resp = ctl.receive_stats()
     except Exception as e:
         print(e)
