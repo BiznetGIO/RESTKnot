@@ -108,5 +108,5 @@ ENV/
 .vscode
 
 
-srv/helpers/endpoint.yml
+srv/helpers/endpoint_experiment.yml
 srv/helpers/knot.yml
