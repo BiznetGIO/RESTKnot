@@ -1,0 +1,55 @@
+version : adista 0.0.1
+
+endpoint:
+  create:
+    knotcreate:
+      config_begin:
+        sendblock:
+          cmd: conf-begin
+        receive:
+          type: block
+
+      config_set:
+        sendblock:
+          cmd: conf-set
+          section: zone
+          item: domain
+          data: testing
+        receive:
+          type: block
+
+      config_commit:
+        sendblock:
+          cmd: conf-commit
+        receive:
+          type: block
+
+      config_read:
+        sendblock:
+          cmd: conf-read
+          section: zone
+          item: domain
+        receive:
+          type: block
+  delete:
+    knotdelete:
+      delete_dns:
+        sendblock:
+          cmd: conf-delete
+          data: example.com
+        receive:
+          type: block
+
+  viewstats:
+    knotviewstats:
+      view_stats:
+        sendblock:
+          cmd: stats
+        receive:
+          type: stats
+
+      zone_stats:
+        sendblock:
+          cmd: zone-stats
+        receive:
+          type: stats
