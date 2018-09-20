@@ -29,20 +29,11 @@ knotcreate:
           item:
             name: Item name
             type: string
-            description: Item Domain Name For Conf-set Identifier
+            description: Item Domain Name For Configset Identifier
           data:
             name: Resource Form Request
-            type: json
-            description: Resource Form Request For Conf-set Identifier
-            parameters:
-              domain:
-                name: Domain Name
-                type: string
-                description: Domain Name Value For Data Parameter Sendblock
-              ip:
-                name: Ip Number
-                type: string
-                description: IP Number Value For Data Parameter Sendblock
+            type: string
+            description: Resource For Configset Identifier
       receive:
         arguments:
           type:

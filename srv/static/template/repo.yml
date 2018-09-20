@@ -2,7 +2,9 @@ version: adista 0.0.1
 
 endpoint:
   create:
-    config_begin:
-      parameters:
-        
-
+    command:
+      - config_begin
+      - config_set:
+          data: test123
+      - config_commit
+      - config_read
