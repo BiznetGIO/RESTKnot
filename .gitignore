@@ -106,3 +106,7 @@ ENV/
 .mypy_cache/
 
 .vscode
+
+
+srv/helpers/endpoint.yml
+srv/helpers/knot.yml
