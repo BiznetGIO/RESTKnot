@@ -26,5 +26,5 @@ def list_dir(dirname):
 
 def repodata():
     abs_path = os.path.dirname(os.path.realpath(__file__))
-    repo_file = "{}/templates/sdml.yml".format(abs_path)
+    repo_file = "{}/templates/rules.yml".format(abs_path)
     return yaml_parser(repo_file)
