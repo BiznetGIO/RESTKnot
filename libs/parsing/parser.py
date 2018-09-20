@@ -1,11 +1,10 @@
 from libs.utility import utils
-from libs.control import action
-from libs.control.libknot.control import *
+from libs.control.libknot import control
 import json
 
 
-load_lib("libknot.so.7")
-ctl = KnotCtl()
+control.load_lib("libknot.so.7")
+ctl = control.KnotCtl()
 ctl.connect("/var/run/knot/knot.sock")
 
 
@@ -97,5 +96,5 @@ def execute_command(initialiaze):
     else:
         return json.dumps(resp, indent=4)
     finally:
-        ctl.send(KnotCtlType.END)
+        ctl.send(control.KnotCtlType.END)
         ctl.close()
