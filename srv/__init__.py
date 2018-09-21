@@ -1,5 +1,5 @@
-from celery import Celery
 from flask import Flask
+from celery import Celery
 from flask_redis import FlaskRedis
 from flask_cors import CORS
 from . import configs
@@ -16,6 +16,7 @@ def create_app():
     celery.conf.update(app.config)
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     from .controllers import api_blueprint
+
     app.register_blueprint(api_blueprint)
 
     return app
