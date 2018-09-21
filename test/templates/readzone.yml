@@ -1,0 +1,6 @@
+readzone:
+  sendblock:
+    cmd: zone-read
+    data: SOA
+  receive:
+    type: block

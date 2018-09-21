@@ -1,0 +1,29 @@
+configbegin:
+  sendblock:
+    cmd: conf-read
+    data: server
+  receive:
+    type: block
+
+configset:
+  sendblock:
+    cmd: conf-set
+    section: zone
+    item: domain
+    data: testing1234
+  receive:
+    type: block
+
+configcommit:
+  sendblock:
+    cmd: conf-commit
+  receive:
+    type: block
+
+configread:
+  sendblock:
+    cmd: conf-read
+    section: zone
+    item: domain
+  receive:
+    type: block

@@ -1,0 +1,6 @@
+readserver:
+  sendblock:
+    cmd: conf-read
+    data: server
+  receive:
+    type: block
