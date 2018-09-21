@@ -111,5 +111,7 @@ ENV/
 srv/helpers/command_experiment.yml
 srv/helpers/knot.yml
 
-example.py
-command.yml
+test/templates
+
+run_command.py
+
