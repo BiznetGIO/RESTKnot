@@ -1,5 +1,5 @@
-readserver:
+knotreload:
   sendblock:
-    cmd: conf-read
+    cmd: reload
   receive:
     type: block
