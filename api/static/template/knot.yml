@@ -4,7 +4,7 @@ knotcreate:
   function:
     config_begin:
       argument:
-        sendblock:
+        sendblock: 
           parameters:
             cmd:
               name: Command Name

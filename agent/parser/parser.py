@@ -1,6 +1,6 @@
-from libs.utility import utils
-from libs.control.libknot import control
-from libs.control import client
+from agent.utility import utils
+from agent.control.libknot import control
+from agent.control import client
 import json
 
 
@@ -14,7 +14,7 @@ def check_command(command):
     try:
         sdl_data[command]
     except Exception as e:
-        print("illigal command : ", e)
+        print("illegal command : ", e)
     else:
         return True
 
@@ -96,6 +96,5 @@ def execute_command(initialiaze):
         print(e)
     else:
         return json.dumps(resp, indent=4)
-    finally:
-        ctl.send(control.KnotCtlType.END)
-        ctl.close()
+    ctl.send(control.KnotCtlType.END)
+    ctl.close()
