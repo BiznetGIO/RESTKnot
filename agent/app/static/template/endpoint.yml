@@ -3,13 +3,13 @@ version : adista 0.0.1
 endpoint:
   create:
     knotcreate:
-      config_begin:
+      configbegin:
         sendblock:
           cmd: conf-begin
         receive:
           type: block
 
-      config_set:
+      configset:
         sendblock:
           cmd: conf-set
           section: zone
@@ -18,13 +18,13 @@ endpoint:
         receive:
           type: block
 
-      config_commit:
+      configcommit:
         sendblock:
           cmd: conf-commit
         receive:
           type: block
 
-      config_read:
+      configread:
         sendblock:
           cmd: conf-read
           section: zone
@@ -33,7 +33,7 @@ endpoint:
           type: block
   delete:
     knotdelete:
-      delete_dns:
+      deletedns:
         sendblock:
           cmd: conf-delete
           data: example.com
@@ -42,7 +42,7 @@ endpoint:
 
   viewstats:
     knotviewstats:
-      view_stats:
+      viewstats:
         sendblock:
           cmd: stats
         receive:

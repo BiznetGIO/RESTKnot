@@ -1,5 +1,5 @@
-from agent.parser import parser
-from agent.utility import utils
+from .parser import parser
+from .utility import utils
 
 def read_rest(data):
     initialiaze_command = parser.initialiaze(data)

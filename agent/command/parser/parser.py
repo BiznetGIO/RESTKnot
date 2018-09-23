@@ -95,6 +95,6 @@ def execute_command(initialiaze):
     except Exception as e:
         print(e)
     else:
+        ctl.send(control.KnotCtlType.END)
+        ctl.close()
         return json.dumps(resp, indent=4)
-    ctl.send(control.KnotCtlType.END)
-    ctl.close()

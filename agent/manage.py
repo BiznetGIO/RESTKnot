@@ -1,7 +1,7 @@
 import os
 from flask_script import Manager, Server
 from cli import CreateEnvironment, GunicornServer
-from srv import create_app
+from app import create_app
 
 app = create_app()
 

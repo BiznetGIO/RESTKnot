@@ -1,5 +1,5 @@
-from libs.parsing import parser
-from libs.utility import utils
+from command.parser import parser
+from command.utility import utils
 
 while True:
     print("-----------------------------------------")

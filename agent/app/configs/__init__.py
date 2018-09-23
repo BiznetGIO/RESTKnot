@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from srv.libs import MetaFlaskEnv
+from app.libs import MetaFlaskEnv
 
 APP_ROOT = os.path.join(os.path.dirname(__file__), '../..')
 dotenv_path = os.path.join(APP_ROOT, '.env')

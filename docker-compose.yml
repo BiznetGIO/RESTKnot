@@ -1,7 +1,7 @@
 version: '0.8.0'
 services:
-    web:
-        build: .
+    agent:
+        build: agent/
         ports:
           - "5000:5000"
         volumes:
@@ -21,7 +21,7 @@ services:
         environment:
           - C_FORCE_ROOT=true
         user: nobody
-        command: celery worker -A celery_worker.celery --loglevel=info
+        command: celery worker -A celery_server.celery --loglevel=info
         volumes:
           - .:/app
         links:

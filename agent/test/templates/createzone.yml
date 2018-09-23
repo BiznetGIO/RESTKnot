@@ -1,6 +1,6 @@
 configbegin:
   sendblock:
-    cmd: conf-read
+    cmd: conf-begin
     data: server
   receive:
     type: block
@@ -10,7 +10,7 @@ configset:
     cmd: conf-set
     section: zone
     item: domain
-    data: testing1234
+    data: test123
   receive:
     type: block
 
