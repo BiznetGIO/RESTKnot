@@ -1,22 +1,16 @@
 from flask import Flask
-from celery import Celery
-from flask_redis import FlaskRedis
-from flask_cors import CORS
 from . import configs
 import os
+from flask_socketio import SocketIO
 
-redis_store = FlaskRedis()
-celery = Celery(__name__, broker=os.getenv('CELERY_BROKER_URL'))
 root_dir = os.path.dirname(os.path.abspath(__file__))
+socketio = SocketIO()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(configs.Config)
-    redis_store.init_app(app)
-    celery.conf.update(app.config)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    socketio.init_app(app)
     from .controllers import api_blueprint
-
     app.register_blueprint(api_blueprint)
 
-    return app
+    return socketio, app

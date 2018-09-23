@@ -23,6 +23,7 @@ def yaml_parser(file):
             return data
 
 
+# parser json request from api to trigger command knot
 def parser(request):
     sdl_knot = yaml_parser("knot.yml")
     sdl_enpoint = yaml_parser("endpoint.yml")
