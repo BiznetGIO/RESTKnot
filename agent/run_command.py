@@ -1,4 +1,4 @@
-from command.parser import parser
+from command.parse import  parser
 from command.utility import utils
 
 while True:

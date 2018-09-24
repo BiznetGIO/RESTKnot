@@ -1,6 +1,6 @@
 #!/bin/bash
 
-worker=$4
+worker=$1
 
 if [ ! $worker ]
     then

@@ -1,10 +1,10 @@
-from .parser import parser
+from .parse import parser
 from .utility import utils
 
 def read_rest(data):
     initialiaze_command = parser.initialiaze(data)
     try:
-        parser.execute_command(initialiaze_command)
+        data = parser.execute_command(initialiaze_command)
     except Exception as e:
         response={
             "result": False,
@@ -16,6 +16,7 @@ def read_rest(data):
         response={
             "result": True,
             "Description": initialiaze_command,
-            "status": "Command Execute"
+            "status": "Command Execute",
+            "data": data
         }
         return response

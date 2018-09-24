@@ -1,6 +1,6 @@
-from agent.utility import utils
-from agent.control.libknot import control
-from agent.control import client
+from command.utility import utils
+from command.control.libknot import control
+from command.control import client
 import json
 
 
@@ -27,7 +27,7 @@ def check_parameters(command,parameters):
     else:
         return True
 
-def parser(obj_data):
+def parser_json(obj_data):
     projec_obj = list()
     for project in obj_data:
         action_obj = list()
@@ -52,7 +52,7 @@ def parser(obj_data):
 
 def initialiaze(data):
     try:
-        parser_data = parser(data)
+        parser_data = parser_json(data)
     except Exception:
         print("Error: Parameter data Needed")
     else:
@@ -95,6 +95,6 @@ def execute_command(initialiaze):
     except Exception as e:
         print(e)
     else:
+        return json.dumps(resp, indent=4)
         ctl.send(control.KnotCtlType.END)
         ctl.close()
-        return json.dumps(resp, indent=4)
