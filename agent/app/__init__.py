@@ -1,20 +1,16 @@
 from flask import Flask
 from . import configs
-import os
 from flask_socketio import SocketIO
-from threading import Lock
+import os
 
+from app.namespace.test import *
+
+app = Flask(__name__)
+app.config.from_object(configs.Config)
 root_dir = os.path.dirname(os.path.abspath(__file__))
-socketio = SocketIO()
-thread = None
-thread_lock  = Lock()
+socketio = SocketIO(app, async_mode='gevent')
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(configs.Config)
-    socketio.init_app(app)
+# adding namespace endpoint
+socketio.on_namespace(TestNamespace('/test'))
 
-    # from .controllers import api_blueprint
-    # app.register_blueprint(api_blueprint)
 
-    return socketio, app

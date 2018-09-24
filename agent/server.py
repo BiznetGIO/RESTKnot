@@ -1,7 +1,6 @@
-from app import create_app
+from app import socketio, app
 import os
-
-socketio, app = create_app()
+socketio
 
 if __name__ == '__main__':
     socketio.run(app, host=os.getenv('APP_HOST', 'localhost'),

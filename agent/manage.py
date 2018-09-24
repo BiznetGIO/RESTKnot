@@ -1,8 +1,6 @@
 import os
 from flask_script import Manager, Server
-from app import create_app
-
-socketio, app = create_app()
+from app import socketio, app
 
 manager = Manager(app)
 
