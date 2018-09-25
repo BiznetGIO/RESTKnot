@@ -1,0 +1,5 @@
+readserver:
+  sendblock:
+    cmd: conf-read
+  receive:
+    type: block

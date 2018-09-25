@@ -1,0 +1,6 @@
+zoneflush:
+  sendblock:
+    cmd: zone-flush
+    data: testing123
+  receive:
+    type: block

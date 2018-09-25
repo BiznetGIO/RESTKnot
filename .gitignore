@@ -106,3 +106,10 @@ ENV/
 .mypy_cache/
 
 .vscode
+
+
+srv/helpers/command_experiment.yml
+srv/helpers/knot.yml
+
+test/templates/example.py
+
