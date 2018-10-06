@@ -18,7 +18,7 @@ while True:
         data = {
             "name": templates_name,
             "file": vldir,
-            "choose": no
+            "choose": str(no)
         }
         data_choose.append(data)
         no = no+1
@@ -27,7 +27,7 @@ while True:
     print("-----------------------------------------")
 
     choose = input("Select Your Command : ")
-    if choose == 0:
+    if choose == "0":
         print("Thank You")
         exit()
     else:
@@ -35,6 +35,7 @@ while True:
         for command in data_choose:
             if command['choose'] == choose:
                 yaml_file = command['file']
+                break
         yaml_data = utils.yaml_parser(yaml_file)
         data_yaml = parser.initialiaze(data=yaml_data)
         a = parser.execute_command(data_yaml)

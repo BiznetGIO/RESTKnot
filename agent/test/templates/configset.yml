@@ -1,6 +1,8 @@
-zone-flush:
+configset:
   sendblock:
-    cmd: zone-flush
+    cmd: conf-set
+    section: zone
+    item: domain
     data: dariparser.com
   receive:
     type: block

@@ -1,29 +1,20 @@
-configbegin:
+conf-begin:
   sendblock:
     cmd: conf-begin
-    data: server
   receive:
     type: block
 
-configset:
+conf-set:
   sendblock:
     cmd: conf-set
     section: zone
     item: domain
-    data: test123
+    data: dariparserlagi1.com
   receive:
     type: block
 
-configcommit:
+conf-commit:
   sendblock:
     cmd: conf-commit
-  receive:
-    type: block
-
-configread:
-  sendblock:
-    cmd: conf-read
-    section: zone
-    item: domain
   receive:
     type: block

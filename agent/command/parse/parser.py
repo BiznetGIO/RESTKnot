@@ -1,13 +1,42 @@
 from command.utility import utils
 from command.control.libknot import control
 from command.control import client
-import json
+import json, os
 
 
-control.load_lib("libknot.so.7")
-ctl = control.KnotCtl()
-ctl.connect("/var/run/knot/knot.sock")
+def tes_conn():
+    control.load_lib("libknot.so.7")
+    ctl = control.KnotCtl()
+    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
+    ctl.connect("/var/run/knot/knot.sock")
+    try:
+        # ctl.send_block(cmd="conf-begin")
+        # resp = ctl.receive_block()
 
+        # ctl.send_block(cmd="conf-set", section="zone", item="domain", data="ianktesting.com")
+        # resp = ctl.receive_block()
+
+        # ctl.send_block(cmd="conf-commit")
+        # resp = ctl.receive_block()
+
+        # ctl.send_block(cmd="conf-read", section="zone", item="domain")
+        # resp = ctl.receive_block()
+
+        ctl.send_block(cmd="zone-begin", data="ianktesting.com")
+        resp = ctl.receive_block()
+
+        ctl.send_block(cmd="zone-set", data="ianktesting.com. ianktesting.com. 800 A 10.10.10.10")
+        resp = ctl.receive_block()
+
+        ctl.send_block(cmd="zone-commit", data="ianktesting.com")
+        resp = ctl.receive_block()
+
+        print(json.dumps(resp, indent=4))
+    except Exception as e:
+        print(e)
+    finally:
+        ctl.send(control.KnotCtlType.END)
+        ctl.close()
 
 def check_command(command):
     sdl_data = utils.repodata()
@@ -26,29 +55,6 @@ def check_parameters(command,parameters):
         print("illegal parameter : ",e)
     else:
         return True
-
-def parser_json(obj_data):
-    projec_obj = list()
-    for project in obj_data:
-        action_obj = list()
-        for action in obj_data[project]:
-            if not check_command(action):
-                return None
-            else:
-                data_obj = dict()
-                for params in obj_data[project][action]:
-                    if not check_parameters(action,params):
-                        return None
-                    else:
-                        data_obj[params]=obj_data[project][action][params]
-                action_obj.append({
-                    action: data_obj
-                })
-        projec_obj.append({
-            project: action_obj
-        })
-    return projec_obj
-
 
 def initialiaze(data):
     try:
@@ -78,23 +84,45 @@ def get_params_recieve(data_params):
                     parameters[value]=data_parsing[command][value]
     return parameters
 
+def parser_json(obj_data):
+    projec_obj = list()
+    for project in obj_data:
+        action_obj = list()
+        for action in obj_data[project]:
+            if not check_command(action):
+                return None
+            else:
+                data_obj = dict()
+                for params in obj_data[project][action]:
+                    if not check_parameters(action,params):
+                        return None
+                    else:
+                        data_obj[params]=obj_data[project][action][params]
+                action_obj.append({
+                    action: data_obj
+                })
+        projec_obj.append({
+            project: action_obj
+        })
+    return projec_obj
 
 def execute_command(initialiaze):
+    control.load_lib("libknot.so.7")
+    ctl = control.KnotCtl()
+    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
+    ctl.connect("/var/run/knot/knot.sock")
     try:
         resp = None
         for data in initialiaze:
+            parameter_block = None
+            parameter_stats = None
             for project in data:
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
-                if parameter_stats['type'] == 'block':
-                    client.sendblock(ctl, parameter_block)
-                    resp = ctl.receive_block()
-                elif parameter_stats['type'] == 'stats':
-                    client.sendblock(**parameter_block)
-                    resp = ctl.receive_stats()
+                resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
     except Exception as e:
-        print(e)
-    else:
-        return json.dumps(resp, indent=4)
-        ctl.send(control.KnotCtlType.END)
-        ctl.close()
+        print("Error: ",e)
+
+    ctl.send(control.KnotCtlType.END)
+    ctl.close()
+    return json.dumps(resp, indent=4)

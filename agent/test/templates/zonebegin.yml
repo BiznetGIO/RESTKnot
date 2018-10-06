@@ -1,0 +1,5 @@
+zone-begin:
+  sendblock:
+    cmd: zone-begin
+  receive:
+    type: block

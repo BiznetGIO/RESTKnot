@@ -7,12 +7,14 @@ from command import read_rest
 
 class CommandNamespace(Namespace):
     def on_command(self, data):
+        print(type(data))
         exec_com = read_rest(data)
         response={
             'data' : exec_com,
             "code": 200
         }
-        emit('command', response)
+        emit('response', response)
+        # disconnect()
 
     def on_get_person(self, message):
         emit('client',message, broadcast=True)
@@ -35,7 +37,7 @@ class CommandNamespace(Namespace):
         disconnect()
 
     def on_ping(self):
-        emit('pong')
+        emit('pong', 'pong')
 
     def on_connect(self):
         emit('response', {'data': 'Connected', 'client': request.sid})
