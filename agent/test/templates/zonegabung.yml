@@ -1,0 +1,24 @@
+zone-begin:
+  sendblock:
+    cmd: zone-begin
+    zone: ianktest.com
+  receive:
+    type: block
+
+zone-set:
+  sendblock:
+    cmd: zone-set
+    zone: ianktest.com
+    owner: lagi
+    rtype: A
+    ttl: "300"
+    data: "8.8.8.8"
+  receive:
+    type: block
+
+zone-commit:
+  sendblock:
+    cmd: zone-commit
+    zone: ianktest.com
+  receive:
+    type: block

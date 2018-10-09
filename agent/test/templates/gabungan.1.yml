@@ -9,7 +9,7 @@ conf-set:
     cmd: conf-set
     section: zone
     item: domain
-    data: dariparserlagi1.com
+    data: ianktest.com
   receive:
     type: block
 

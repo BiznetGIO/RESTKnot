@@ -1,5 +1,6 @@
 zone-begin:
   sendblock:
     cmd: zone-begin
+    zone: ianktest.com
   receive:
     type: block

@@ -1,0 +1,6 @@
+zone-abort:
+  sendblock:
+    cmd: zone-abort
+    zone: dariparserlagi.com
+  receive:
+    type: block
