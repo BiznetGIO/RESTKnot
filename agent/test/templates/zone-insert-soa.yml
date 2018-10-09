@@ -1,9 +1,9 @@
 zone-begin:
-  endblock:
+  sendblock:
     cmd: zone-begin
     zone: rosa.com
   receive:
-    type: blocks
+    type: block
 
 soa-set:
   sendblock:
