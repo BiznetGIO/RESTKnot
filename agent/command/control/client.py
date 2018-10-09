@@ -63,9 +63,10 @@ def sendblock(ctl,params, treturn):
         filters=None
 
     resp = None
+
     try:
         ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
-                        owner=owner, ttl=ttl, rtype=rtype, data=data1, flags=flags,
+                        owner=owner, ttl=ttl, rtype=rtype, data=str(data1), flags=flags,
                         filter=filters)
     except Exception as e:
         print("CLIENT ERROR: ", e)

@@ -101,10 +101,33 @@ def parser_json(obj_data):
                 action_obj.append({
                     action: data_obj
                 })
-        projec_obj.append({
-            project: action_obj
-        })
+
+        if obj_data[project]['receive']['type'] == 'command':
+            cli_shell = parse_command_zone(action_obj[0]['sendblock'])
+            print("Exec Command Type")
+            print(utils.exec_shell(cli_shell))
+        else:
+            projec_obj.append({
+                project: action_obj
+            })
     return projec_obj
+
+def parse_command_zone(json_data):
+
+    cmd = json_data['cmd']
+    zone = json_data['zone']
+    own = json_data['owner']
+    data = json_data['data']
+    rtype = json_data['rtype']
+    ttl = json_data['ttl']
+    owner=''
+    if own == zone:
+        owner = zone
+    else:
+        owner = json_data['owner']+"."+zone
+
+    cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+    return cli_shell
 
 def execute_command(initialiaze):
     control.load_lib("libknot.so.7")
