@@ -1,8 +1,0 @@
-configset:
-  sendblock:
-    cmd: conf-set
-    section: zone
-    item: domain
-    data: dariparser.com
-  receive:
-    type: block

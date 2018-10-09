@@ -1,8 +1,0 @@
-configbegin:
-  sendblock:
-    cmd: conf-begin
-  receive:
-    type: block
-
-
-

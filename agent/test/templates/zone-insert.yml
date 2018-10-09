@@ -1,17 +1,17 @@
 zone-begin:
   sendblock:
     cmd: zone-begin
-    zone: ianktest.com
+    zone: rosa1.com
   receive:
     type: block
 
 zone-set:
   sendblock:
     cmd: zone-set
-    zone: ianktest.com
+    zone: rosa1.com
     owner: lagi
     rtype: A
-    ttl: "300"
+    ttl: "86400"
     data: "8.8.8.8"
   receive:
     type: block
@@ -19,6 +19,6 @@ zone-set:
 zone-commit:
   sendblock:
     cmd: zone-commit
-    zone: ianktest.com
+    zone: rosa1.com
   receive:
     type: block

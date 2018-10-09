@@ -1,0 +1,24 @@
+zone-begin:
+  endblock:
+    cmd: zone-begin
+    zone: rosa.com
+  receive:
+    type: blocks
+
+soa-set:
+  sendblock:
+    cmd: zone-set
+    zone: rosa.com
+    owner: rosa.com
+    rtype: SOA
+    ttl: "86400"
+    data: "ns1.biz.net.id. hostmaster.biz.net.id. 2018070410 10800 3600 604800 38400"
+  receive:
+    type: command
+
+zone-commit:
+  sendblock:
+    cmd: zone-commit
+    zone: rosa.com
+  receive:
+    type: block

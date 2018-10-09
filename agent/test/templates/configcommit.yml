@@ -1,5 +1,0 @@
-configcommit:
-  sendblock:
-    cmd: conf-commit
-  receive:
-    type: block

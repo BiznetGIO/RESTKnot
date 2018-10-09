@@ -9,7 +9,7 @@ conf-set:
     cmd: conf-set
     section: zone
     item: domain
-    data: ianktest.com
+    data: rosa.com
   receive:
     type: block
 

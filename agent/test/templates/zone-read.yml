@@ -1,8 +1,8 @@
 zone-read:
   sendblock:
     cmd: zone-read
-    zone: ianktest.com
-    # owner: test
+    # zone: rosa.com
+    # owner: lagi
     # rtype: SOA
     # ttl: "300"
     # data: "1.2.3.4"
