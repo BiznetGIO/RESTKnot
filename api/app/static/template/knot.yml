@@ -2,7 +2,7 @@ version : adista 0.0.1
 
 knotcreate:
   function:
-    config_begin:
+    configbegin:
       argument:
         sendblock: 
           parameters:
@@ -16,7 +16,7 @@ knotcreate:
               name: receive type
               description: receive from after sendblock execute
 
-    config_set:
+    configset:
       argument:
         sendblock:
           parameters:
@@ -42,7 +42,7 @@ knotcreate:
               name: receive type
               description: receive from after sendblock execute
 
-    config_commit:
+    configcommit:
       argument:
         sendblock:
           parameters:
@@ -57,7 +57,7 @@ knotcreate:
               name: receive type
               description: receive from after sendblock execute
 
-    config_read:
+    configread:
       argument:
         sendblock:
           parameters:
@@ -81,7 +81,7 @@ knotcreate:
 
 knotdelete:
   function:
-    delete_dns:
+    deletedns:
       argument:
         sendblock:
           parameters:
@@ -101,7 +101,7 @@ knotdelete:
 
 knotviewstats:
   function:
-    view_stats:
+    viewstats:
       argument:
         sendblock:
           parameters:
@@ -115,7 +115,7 @@ knotviewstats:
               name: receive type
               description: receive from after sendblock execute
 
-    zone_stats:
+    zonestats:
       argument:
         sendblock:
           parameters:
