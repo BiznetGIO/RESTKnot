@@ -7,7 +7,6 @@ from command import read_rest
 
 class CommandNamespace(Namespace):
     def on_command(self, data):
-        print(type(data))
         exec_com = read_rest(data)
         response={
             'data' : exec_com,
