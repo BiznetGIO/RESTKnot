@@ -1,6 +1,6 @@
 from app import influx
 from . import app_models as db
-import os, hashlib, time
+import os, hashlib
 
 
 dbname = os.getenv("INFLUXDB_DATABASE")
