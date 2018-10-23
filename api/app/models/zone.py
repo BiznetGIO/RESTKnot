@@ -4,7 +4,7 @@ import os, hashlib
 
 
 dbname = os.getenv("INFLUXDB_DATABASE")
-measure_name = "ttl_name"
+measure_name = "zone_domain"
 tag_key = hashlib.md5(str(db.timeset()).encode('utf-8')).hexdigest()
 
 
@@ -12,7 +12,7 @@ def insert(data=None):
     data_prepare = [{
         "measurement": measure_name,
         "tags": {
-            "ttl_id": measure_name+"_"+tag_key
+            "zone_id": measure_name+"_"+tag_key
         },
         "time": db.timeset(),
         "fields": data
@@ -35,7 +35,7 @@ def insert(data=None):
 
 def delete(tag_id):
     data_prepare={
-        "ttl_id": tag_id
+        "zone_id": tag_id
     }
     try:
         status = db.delete(dbname=dbname,

@@ -55,7 +55,7 @@ def delete(tag_id):
         }
         return respon
 
-def all():
+def result():
     try:
         dm = db.query(dbname,"SELECT * FROM "+measure_name)
         data_points = list(dm.get_points(measurement=measure_name))
@@ -71,7 +71,7 @@ def all():
         }
         return respon
 
-def where_data(tags):
+def row(tags):
     try:
         dm = db.query(dbname,"SELECT * FROM "+measure_name)
         data_points = list(dm.get_points(measurement=measure_name, tags=tags))
