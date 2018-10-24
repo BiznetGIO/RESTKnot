@@ -1,4 +1,3 @@
-from app import influx
 from . import app_models as db
 import os, hashlib
 
@@ -8,7 +7,7 @@ measure_name = "record_name"
 tag_key = hashlib.md5(str(db.timeset()).encode('utf-8')).hexdigest()
 
 
-def insert(data=None):
+def insert(data=None): 
     data_prepare = [{
         "measurement": measure_name,
         "tags": {

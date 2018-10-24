@@ -1,4 +1,3 @@
-from app import influx
 from . import app_models as db
 import os, hashlib
 
