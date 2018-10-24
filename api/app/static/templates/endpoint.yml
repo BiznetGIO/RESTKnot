@@ -1,0 +1,30 @@
+version : adista 0.0.1 
+
+endpoint:
+  domain:
+    where:
+      parameter:
+        domain_name:
+          var: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      method:
+        type: get
+
+    insert:
+      parameter:
+        domain_name:
+          var: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      method:
+        type: post
+
+    edit:
+      parameter:
+        domain_name:
+          var: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      method:
+        type: put
