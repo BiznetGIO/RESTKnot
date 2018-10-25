@@ -1,23 +1,12 @@
 from . import app_models as db
-import os, hashlib
+import os
 
 
 dbname = os.getenv("INFLUXDB_DATABASE")
-measure_name = "record_name"
-tag_key = hashlib.md5(str(db.timeset()).encode('utf-8')).hexdigest()
 
-
-def insert(data=None): 
-    data_prepare = [{
-        "measurement": measure_name,
-        "tags": {
-            "record_id": measure_name+"_"+tag_key
-        },
-        "time": db.timeset(),
-        "fields": data
-    }]
+def insert(data=None):
     try:
-        status = db.insert(dbname, data_prepare)
+        status = db.insert(dbname, data)
     except Exception as e:
         respon = {
             "status": False,
@@ -27,19 +16,15 @@ def insert(data=None):
     else:
         respon = {
             "status": status,
-            "measurement": measure_name,
             "data": data
         }
         return respon
 
-def delete(tag_id):
-    data_prepare={
-        "record_id": tag_id
-    }
+def delete(measurement, tags):
     try:
         status = db.delete(dbname=dbname,
-            measurement=measure_name,
-            tags=data_prepare)
+            measurement=measurement,
+            tags=tags)
     except Exception as e:
         respon = {
             "status": False,
@@ -49,12 +34,13 @@ def delete(tag_id):
     else:
         respon = {
             "status": status,
-            "measurement": measure_name,
-            "data": data_prepare
+            "measurement": measurement,
+            "data": tags,
+            "messages": "Deleted"
         }
         return respon
 
-def result():
+def result(measure_name):
     try:
         dm = db.query(dbname,"SELECT * FROM "+measure_name)
         data_points = list(dm.get_points(measurement=measure_name))
@@ -70,10 +56,10 @@ def result():
         }
         return respon
 
-def row(tags):
+def row(measurement, tags):
     try:
-        dm = db.query(dbname,"SELECT * FROM "+measure_name)
-        data_points = list(dm.get_points(measurement=measure_name, tags=tags))
+        dm = db.query(dbname,"SELECT * FROM "+measurement)
+        data_points = list(dm.get_points(measurement=measurement, tags=tags))
     except Exception as e:
         respon = {
             "messages": str(e)
@@ -81,7 +67,7 @@ def row(tags):
         return respon
     else:
         respon = {
-            "measurement": measure_name,
+            "measurement": measurement,
             "data": data_points
         }
         return respon
