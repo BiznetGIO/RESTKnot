@@ -46,3 +46,53 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
+  recordname:
+    where:
+      tags:
+        record_name_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        record_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        record_name_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        record_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        record_name_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        record_name_id:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
