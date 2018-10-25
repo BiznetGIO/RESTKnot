@@ -96,3 +96,54 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
+  
+  ttl:
+    where:
+      tags:
+        ttl_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        ttl_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        ttl_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        ttl_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        ttl_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        ttl_id:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
