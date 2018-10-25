@@ -272,3 +272,71 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
+  
+  datattl:
+    where:
+      tags:
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        ttl_data_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        ttl_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        record_data_id:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        ttl_data_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        ttl_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        record_data_id:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
