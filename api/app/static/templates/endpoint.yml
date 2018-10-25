@@ -3,28 +3,46 @@ version : adista 0.0.1
 endpoint:
   domain:
     where:
-      parameter:
-        domain_name:
-          var: name search for domain
+      tags:
+        domain_id:
+          name: name search for domain
           desc: Domain Variabel To Search
-          type: tags
-      method:
-        type: get
-
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
     insert:
-      parameter:
+      fields:
         domain_name:
-          var: name search for domain
+          name: name search for domain
           desc: Domain Variabel To Search
-          type: tags
-      method:
-        type: post
-
+          type: fields
+      tags:
+        domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
     edit:
-      parameter:
+      fields:
         domain_name:
-          var: name search for domain
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        domain_id:
+          name: ID search
           desc: Domain Variabel To Search
           type: tags
-      method:
-        type: put
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
