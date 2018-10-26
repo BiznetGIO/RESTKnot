@@ -468,3 +468,45 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
+
+  sendcommand:
+    conf-insert:
+      tags:
+        domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    zone-read:
+      tags:
+        domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-soa-insert:
+      tags:
+        zone_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+        record_name_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default: SOA
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
