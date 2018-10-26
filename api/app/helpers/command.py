@@ -64,13 +64,30 @@ def zone_read(tags):
     return json_command
 
 def zone_soa_insert_default(tags):
-    print(tags)
-    tags_record = {
-        "zone_id": tags['zone_id'],
-        "record_name_id": tags['record_name_id']
+    # Get Zone
+    tags_zone = {
+        "zone_id": tags['zone_id']
     }
+    zone = db.row("zone", tags_zone)
+    # Get Domain
+    tags_domain={
+        "domain_id": zone['data'][0]['domain_id']
+    }
+    domain = db.row("domain", tags_domain)
+
+    # Get Record Data
+    tags_record_data = {
+        "zone_id": tags['zone_id']
+    }
+    record_data = db.row("datarecord", tags_record_data)
     
-    record = db.row("datarecord", tags_record)
+    # Get Record Name
+    tags_record_name = {
+        "record_name_id": record_data['data'][0]['record_name_id']
+    }
+    record = db.row("namerecord", tags_record_name)
+
+    # Get ttl data
     tags_ttldata = {
         "ttl_data_id": tags['ttl_data_id']
     }
@@ -80,6 +97,8 @@ def zone_soa_insert_default(tags):
         "ttl_id": ttldata['data'][0]['ttl_id']
     }
     ttl = db.row("ttl",tags_ttlid)
+
+    # Get Content
     tags_content={
         "ttl_data_id": tags['ttl_data_id']
     }
@@ -89,48 +108,49 @@ def zone_soa_insert_default(tags):
         "content_id": content['data'][0]['content_id']
     }
     content_data = db.row("datacontent", tags_content_data)
-    return {
-        "record": record,
-        "ttl_data": ttldata,
-        "ttl_id": ttl,
-        "content": content,
-        "content_data": content_data
+    data = ""
+    for ns in content['data']:
+        data = data+" "+ns['content_name']
+    
+    data = content_data['data'][0]['content_data_date']
+    
+    for serial in content_data['data']:
+        data = data+" "+serial['content_data_name']
+    
+    data_command_soa = data
+
+    json_command={
+        "zone-begin": {
+            "sendblock": {
+                "cmd": "zone-begin",
+                "zone": domain['data'][0]['domain_name']
+            },
+            "receive": {
+                "type": "block"
+            }
+        },
+        "soa-set": {
+            "sendblock": {
+                "cmd": "zone-set",
+                "zone": domain['data'][0]['domain_name'],
+                "owner": domain['data'][0]['domain_name'],
+                "rtype": record['data'][0]['record_name'],
+                "ttl": ttl['data'][0]['ttl_name'],
+                "data": data_command_soa
+            },
+            "receive": {
+                "type": "command"
+            }
+        },
+        "zone-commit": {
+            "sendblock": {
+                "cmd": "zone-commit",
+                "zone": domain['data'][0]['domain_name']
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
     }
 
-    
-    # return {
-    #     "record" : record
-    # }
-    # json_command={
-    #     "zone-begin": {
-    #         "sendblock": {
-    #             "cmd": "zone-begin",
-    #             "zone": "rosa.com"
-    #         },
-    #         "receive": {
-    #             "type": "block"
-    #         }
-    #     },
-    #     "soa-set": {
-    #         "sendblock": {
-    #             "cmd": "zone-set",
-    #             "zone": "rosa.com",
-    #             "owner": "rosa.com",
-    #             "rtype": "SOA",
-    #             "ttl": "86400",
-    #             "data": "ns1.biz.net.id. hostmaster.biz.net.id. 2018070410 10800 3600 604800 38400"
-    #         },
-    #         "receive": {
-    #             "type": "command"
-    #         }
-    #     },
-    #     "zone-commit": {
-    #         "sendblock": {
-    #             "cmd": "zone-commit",
-    #             "zone": "rosa.com"
-    #         },
-    #         "receive": {
-    #             "type": "block"
-    #         }
-    #     }
-    # }
+    return json_command

@@ -501,11 +501,6 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
-        record_name_id:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default: SOA
       others:
         method:
           name: name search for domain
