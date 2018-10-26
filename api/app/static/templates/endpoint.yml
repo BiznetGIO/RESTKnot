@@ -340,3 +340,131 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
+
+  content:
+    where:
+      tags:
+        content_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        content_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        ttl_data_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        content_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        content_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        ttl_data_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        content_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        content_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  datacontent:
+    where:
+      tags:
+        content_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        content_data_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        content_data_date:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        content_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        content_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        content_data_name:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        content_data_date:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        content_id:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        content_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        content_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
