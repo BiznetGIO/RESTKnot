@@ -1,5 +1,9 @@
-import yaml, os
-from srv import root_dir
+import yaml, os,hashlib
+from app import root_dir
+from datetime import datetime
+
+def timeset():
+    return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def yaml_parser(file):
@@ -28,10 +32,18 @@ def list_dir(dirname):
 
 def repoknot():
     abs_path = root_dir
-    repo_file = "{}static/templates/knot.yml".format(abs_path)
+    repo_file = "{}/static/templates/knot.yml".format(abs_path)
     return yaml_parser(repo_file)
 
 def repodata():
     abs_path = root_dir
-    repo_file = "{}static/templates/endpoint.yml".format(abs_path)
+    repo_file = "{}/static/templates/endpoint.yml".format(abs_path)
     return yaml_parser(repo_file)
+
+def get_command(req):
+        command = req.split("/")
+        command = command[2]
+        return command
+
+def get_tag():
+        return hashlib.md5(str(timeset()).encode('utf-8')).hexdigest()

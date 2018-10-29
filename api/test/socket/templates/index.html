@@ -9,7 +9,7 @@
             namespace = '/test';
             // console.log(location.protocol + '//' + document.domain + ':' + location.port + namespace);
             
-            var socket = io.connect("http://127.0.0.1:6967/test");
+            var socket = io.connect("http://127.0.0.1:6967/command");
             socket.on('connect', function() {
                 socket.emit('my_event', {data: 'I\'m connected!'});
             });

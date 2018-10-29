@@ -1,13 +1,11 @@
 import json, os
 
-def sendblock(ctl,params):
+def sendblock(ctl,params, treturn):
+    data1=None
     try:
-        data = params['data']
+        data1 = params['data']
     except Exception:
-        data=None
-
-    if not isinstance(data, str) :
-        data = str(data)
+        data1 = None
 
     try:
         cmd= params['cmd']
@@ -64,9 +62,18 @@ def sendblock(ctl,params):
     except Exception:
         filters=None
 
+    resp = None
 
-    ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
-                   owner=owner, ttl=ttl, rtype=rtype, data=data, flags=flags,
-                   filter=filters)
+    try:
+        ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
+                        owner=owner, ttl=ttl, rtype=rtype, data=data1, flags=flags,
+                        filter=filters)
+    except Exception as e:
+        print("CLIENT ERROR: ", e)
+    if treturn == 'block':
+        resp = ctl.receive_block()
+    elif treturn == 'stats':
+        resp = ctl.receive_stats()
+    return resp
 
 

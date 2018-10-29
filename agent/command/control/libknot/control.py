@@ -257,7 +257,6 @@ class KnotCtl(object):
         query[KnotCtlDataIdx.DATA] = data
         query[KnotCtlDataIdx.FLAGS] = flags
         query[KnotCtlDataIdx.FILTER] = filter
-
         self.send(KnotCtlType.DATA, query)
         self.send(KnotCtlType.BLOCK)
 

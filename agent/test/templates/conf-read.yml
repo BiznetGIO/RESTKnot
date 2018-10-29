@@ -1,4 +1,4 @@
-readserver:
+confread:
   sendblock:
     cmd: conf-read
   receive:

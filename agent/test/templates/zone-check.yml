@@ -1,0 +1,6 @@
+zone-check:
+  sendblock:
+    cmd: zone-check
+    data: namadomain.com
+  receive:
+    type: block
