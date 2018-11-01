@@ -108,16 +108,18 @@ def zone_soa_insert_default(tags):
         "content_id": content['data'][0]['content_id']
     }
     content_data = db.row("datacontent", tags_content_data)
+    serial_data = ""
     data = ""
     for ns in content['data']:
         data = data+" "+ns['content_name']
-    
-    data = content_data['data'][0]['content_data_date']
+
+    data_date = content_data['data'][0]['content_data_date']
     
     for serial in content_data['data']:
-        data = data+" "+serial['content_data_name']
+        serial_data = serial_data+" "+serial['content_data_name']
     
-    data_command_soa = data
+    data_ns_soa = data
+    data_ns_serial = serial_data
 
     json_command={
         "zone-begin": {
@@ -136,7 +138,7 @@ def zone_soa_insert_default(tags):
                 "owner": domain['data'][0]['domain_name'],
                 "rtype": record['data'][0]['record_name'],
                 "ttl": ttl['data'][0]['ttl_name'],
-                "data": data_command_soa
+                "data": data_ns_soa+" "+data_date+" "+data_ns_serial
             },
             "receive": {
                 "type": "command"
