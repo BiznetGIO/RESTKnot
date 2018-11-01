@@ -45,8 +45,10 @@ PyYAML==3.13
 redis==2.10.6
 requests==2.19.1
 six==1.11.0
+socketIO-client==0.7.2
 tornado==5.1.1
 urllib3==1.23
 vine==1.1.4
+websocket-client==0.54.0
 Werkzeug==0.14.1
 wrapt==1.10.11
