@@ -1,6 +1,5 @@
 from flask import Flask, session, request
-from flask_socketio import Namespace, emit, join_room, leave_room, \
-    close_room, rooms, disconnect
+from flask_socketio import Namespace, emit, disconnect
 
 from command import read_rest
 
@@ -31,15 +30,15 @@ class CommandNamespace(Namespace):
 
     def on_disconnect_request(self):
         session['receive_count'] = session.get('receive_count', 0) + 1
-        emit('response',
+        emit('client',
              {'data': 'Disconnected!', 'count': session['receive_count']})
         disconnect()
 
-    def on_ping(self):
-        emit('pong', 'pong')
+    # def on_ping(self):
+    #     emit('pong', 'pong')
 
     def on_connect(self):
-        emit('response', {'data': 'Connected', 'client': request.sid})
+        emit('client', {'data': 'Connected', 'client': request.sid})
 
     def on_disconnect(self):
         print('Client disconnected', request.sid)
