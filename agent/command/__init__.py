@@ -3,6 +3,7 @@ from .utility import utils
 
 def read_rest(data):
     initialiaze_command = parser.initialiaze(data)
+    print(initialiaze_command)
     try:
         data = parser.execute_command(initialiaze_command)
     except Exception as e:

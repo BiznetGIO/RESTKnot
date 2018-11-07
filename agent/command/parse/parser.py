@@ -104,6 +104,7 @@ def parser_json(obj_data):
 
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
+            print(cli_shell)
             print("Exec Command Type")
             print(utils.exec_shell(cli_shell))
         else:
@@ -136,7 +137,13 @@ def execute_command(initialiaze):
     ctl.connect("/var/run/knot/knot.sock")
     try:
         resp = None
+        no = 0
         for data in initialiaze:
+            no = no + 1
+            
+            print("DIEKSEKUSI DULU NO : ", data)
+            print(no)
+
             parameter_block = None
             parameter_stats = None
             for project in data:
