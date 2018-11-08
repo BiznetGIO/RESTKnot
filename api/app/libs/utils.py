@@ -1,6 +1,7 @@
 import yaml, os,hashlib
 from app import root_dir
 from datetime import datetime
+from app.models import api_models as db
 
 def timeset():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -41,9 +42,23 @@ def repodata():
     return yaml_parser(repo_file)
 
 def get_command(req):
-        command = req.split("/")
-        command = command[2]
-        return command
+    command = req.split("/")
+    command = command[2]
+    return command
 
 def get_tag():
-        return hashlib.md5(str(timeset()).encode('utf-8')).hexdigest()
+    return hashlib.md5(str(timeset()).encode('utf-8')).hexdigest()
+
+def tag_measurement(data):
+    for i in data:
+        measurement = i['measurement']
+        tags = i['tags']
+    return measurement, tags
+
+def check_row(data):
+    m,d = tag_measurement(data)
+    a = db.row(m,d)
+    if len(a['data']):
+        return False
+    else:
+        return True

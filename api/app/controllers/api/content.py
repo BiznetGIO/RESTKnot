@@ -22,7 +22,12 @@ class ContentName(Resource):
         init_data = cmd.parser(json_req, command)
         respons = dict()
         if init_data['action'] == 'insert':
-            respons = db.insert(init_data['data'])
+            row = utils.check_row(init_data['data'])
+            if row:
+                respons = db.insert(init_data['data'])
+                return response(200, data=respons)
+            else:
+                return response(200, message="Duplicate "+command)
         elif init_data['action'] == 'where':
             measurement = ""
             tags = dict()
