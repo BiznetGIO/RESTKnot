@@ -9,7 +9,7 @@ from .ttl_data import *
 from .content import *
 from .content_data import *
 from .command import *
-
+from .user import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -23,3 +23,5 @@ api.add_resource(TtlData, '/datattl')
 api.add_resource(ContentName, '/content')
 api.add_resource(ContentData, '/datacontent')
 api.add_resource(SendCommand, '/sendcommand')
+
+api.add_resource(UserCommand, '/userdata')
