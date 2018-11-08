@@ -29,7 +29,6 @@ class DomainCommand(Resource):
                 return response(200, data=respons)
             else:
                 return response(200, message="Duplicate "+command)
-            # respons = db.insert(init_data['data'])
         elif init_data['action'] == 'where':
             measurement = ""
             tags = dict()
