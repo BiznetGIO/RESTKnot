@@ -505,3 +505,73 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+
+    zone-begin:
+      tags:
+        domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    
+    zone-commit:
+      tags:
+        domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+
+  userdata:
+    insert:
+      tags:
+        username:
+          name: username tags
+          desc: Username 
+          type: tags
+      fields:
+        password:
+          name: pass tags
+          desc: Password For Login
+        full_name:
+          name: full name
+          desc: User field
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      tags:
+        username:
+          name: username tags
+          desc: Username Login
+          type: tags
+      fields:
+        password:
+          name: username tags
+          desc: Password For Login
+        full_name:
+          name: full name
+          desc: User field
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        username:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
