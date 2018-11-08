@@ -43,12 +43,18 @@ def config_insert(tags):
     return json_command
 
 def zone_read(tags):
+    domain_name = None
     domain_data = db.row("domain", tags)
-    domain_name = ""
-
+    # try:
+    #     
+    # except Exception as e:
+    #     print(e)
+    print(domain_data)
+    if domain_data['data'] == []:
+        print("OK")
+    
     for i in domain_data['data']:
         domain_name = i['domain_name']
-
     json_command={
         "zone-read": {
             "sendblock": {
@@ -122,15 +128,6 @@ def zone_soa_insert_default(tags):
     data_ns_serial = serial_data
 
     json_command={
-        "zone-begin": {
-            "sendblock": {
-                "cmd": "zone-begin",
-                "zone": domain['data'][0]['domain_name']
-            },
-            "receive": {
-                "type": "block"
-            }
-        },
         "soa-set": {
             "sendblock": {
                 "cmd": "zone-set",
@@ -143,11 +140,44 @@ def zone_soa_insert_default(tags):
             "receive": {
                 "type": "command"
             }
-        },
-        "zone-commit": {
+        }
+    }
+
+    return json_command
+
+def zone_begin(tags):
+    domain_data = db.row("domain", tags)
+    domain_name = ""
+
+    for i in domain_data['data']:
+        domain_name = i['domain_name']
+
+    json_command={
+        "zone-begin": {
+            "sendblock": {
+                "cmd": "zone-begin",
+                "zone": domain_name
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+
+    return json_command
+
+def zone_commit(tags):
+    domain_data = db.row("domain", tags)
+    domain_name = ""
+
+    for i in domain_data['data']:
+        domain_name = i['domain_name']
+
+    json_command={
+        "zone-read": {
             "sendblock": {
                 "cmd": "zone-commit",
-                "zone": domain['data'][0]['domain_name']
+                "zone": domain_name
             },
             "receive": {
                 "type": "block"
