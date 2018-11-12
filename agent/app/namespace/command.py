@@ -4,7 +4,6 @@ from command import read_rest
 from app.middlewares.auth import login_required
 
 class CommandNamespace(Namespace):
-    @login_required
     def on_command(self, data):
         exec_com = read_rest(data)
         response={

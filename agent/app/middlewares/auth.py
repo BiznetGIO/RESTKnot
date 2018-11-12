@@ -1,6 +1,7 @@
 from app import jwt, redis
 from flask import Flask, session
 from flask_socketio import emit
+from functools import wraps
 
 
 def login_required(f):
