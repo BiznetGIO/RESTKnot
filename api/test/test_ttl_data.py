@@ -47,3 +47,34 @@ class TestTTLData:
                         }
             res = client.post('api/datattl', data=json.dumps(input_rem), content_type='application/json')
             assert res.status_code == 200
+
+    def test_ttl_data_post_double(self,client):
+            input_rem = {
+                        "remove": {
+                            "tags": {
+                                "ttl_data_id": "001"
+                            }
+                                
+                        }
+                        }
+            input_add = {
+                    "insert": {
+                        "fields": {
+                            "ttl_data_name": "iank ttl soa record",
+                            "record_data_id": "001",
+                            "ttl_id": "001"
+                        },
+                        "tags": {
+                            "ttl_data_id": "001"
+                        }
+                            
+                    }
+                    }
+            res_double = client.post('api/datattl', data=json.dumps(input_add), content_type='application/json')
+
+            res_rem = client.post('api/datattl', data=json.dumps(input_rem), content_type='application/json')
+            
+            
+            res = client.post('api/datattl', data=json.dumps(input_add), content_type='application/json')
+            
+            assert res.status_code == 200

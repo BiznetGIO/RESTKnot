@@ -48,3 +48,28 @@ class TestContentData:
         res = client.post('api/datacontent',data=json.dumps(input_rem), content_type = 'application/json')
         assert res.status_code == 200
     
+    def test_content_data_post_double_post(self, client):
+        input_add={
+                "insert": {
+                    "fields": {
+                        "content_data_name": "4500",
+                        "content_data_date": "2018070410",
+                        "content_id": "002"
+                    },
+                    "tags": {
+                        "content_data_id" : "011"
+                    }
+                        
+                }
+                }
+        input_rem={
+                "remove": {
+                    "tags": {
+                        "content_data_id" : "011"
+                    }
+                        
+                }
+                }
+        res_rem = client.post('api/datacontent',data=json.dumps(input_rem), content_type = 'application/json')
+        res = client.post('api/datacontent',data=json.dumps(input_add), content_type = 'application/json')
+        assert res.status_code == 200

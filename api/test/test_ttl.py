@@ -19,7 +19,9 @@ class TestTTL:
                                 
                         }
                     }
+        
         res = client.post('api/ttl', data=json.dumps(json_add),  content_type='application/json')
+        res_d = client.post('api/ttl', data=json.dumps(json_add),  content_type='application/json')
         assert res.status_code == 200
 
 
@@ -45,4 +47,30 @@ class TestTTL:
                 }
                 }
         res = client.post('api/ttl', data=json.dumps(json_rem),  content_type='application/json')
+        assert res.status_code == 200
+
+    def test_ttl_post_add_double(self,client):
+        json_rem = {
+                "remove": {
+                    "tags": {
+                        "ttl_id": "001"
+                    }
+                        
+                }
+                }
+        
+        json_add = {
+                        "insert": {
+                                "fields": {
+                                    "ttl_name": "86400"
+                                },
+                                "tags": {
+                                    "ttl_id": "001"
+                                }
+                                
+                        }
+                    }
+        res_rem = client.post('api/ttl', data=json.dumps(json_rem),  content_type='application/json')
+        res = client.post('api/ttl', data=json.dumps(json_add),  content_type='application/json')
+
         assert res.status_code == 200

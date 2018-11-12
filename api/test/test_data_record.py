@@ -50,3 +50,31 @@ class TestDataRecord:
                 }
         res = client.post('api/datarecord',data=json.dumps(input_rem), content_type='application/json')
         assert res.status_code == 200
+
+    def test_data_record_post_add_2(self,client):
+        
+        input_rem={
+                "remove": {
+                        "tags": {
+                            "record_data_id": "002"
+                        }
+                            
+                    }
+                }
+
+        input_add={
+                "insert": {
+                        "fields": {
+                            "record_data_name": "iank soa record",
+                            "record_name_id": "001",
+                            "zone_id": "iank.com"
+                        },
+                        "tags": {
+                            "record_data_id": "002"
+                        }
+                            
+                    }
+                }
+        res_rem = client.post('api/datarecord',data=json.dumps(input_rem), content_type='application/json')
+        res = client.post('api/datarecord',data=json.dumps(input_add), content_type='application/json')
+        assert res_rem.status_code == 200

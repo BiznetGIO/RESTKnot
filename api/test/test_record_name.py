@@ -46,6 +46,32 @@ class TestRecordName:
                         }
                     }
         res = client.post('api/namerecord',  data=json.dumps(json_in_rem),  content_type='application/json')
+        
         assert res.status_code == 200
 
 
+    def test_record_name_post_not_double(self,client):
+        
+        json_in_rem = {
+                        "remove": {
+                            "tags": {
+                                "record_name_id": "001"
+                            }
+                                
+                        }
+                    }
+        res_rem = client.post('api/namerecord',  data=json.dumps(json_in_rem),  content_type='application/json')
+        
+        json_in_add = {
+                        "insert": {
+                                "fields": {
+                                    "record_name": "SOA"
+                                },
+                                "tags": {
+                                    "record_name_id": "001"
+                                }
+                                
+                        }
+                    }
+        res = client.post('api/namerecord',  data=json.dumps(json_in_add),  content_type='application/json')
+        assert res.status_code == 200
