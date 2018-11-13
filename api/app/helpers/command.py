@@ -199,3 +199,79 @@ def zone_commit(tags):
     }
 
     return json_command
+
+def zone_insert(tags):
+    print(tags)
+    tags_zone = {
+        "zone_id": tags['zone_id']
+    }
+    zone = db.row("zone", tags_zone)
+    # Get Domain
+    tags_domain={
+        "domain_id": zone['data'][0]['domain_id']
+    }
+    domain = db.row("domain", tags_domain)
+
+    # Get Record Data
+    tags_record_data = {
+        "zone_id": tags['zone_id']
+    }
+    record_data = db.row("datarecord", tags_record_data)
+    
+    # Get Record Name
+    tags_record_name = {
+        "record_name_id": record_data['data'][0]['record_name_id']
+    }
+    record = db.row("namerecord", tags_record_name)
+
+    # Get ttl data
+    tags_ttldata = {
+        "ttl_data_id": tags['ttl_data_id']
+    }
+    ttldata = db.row("datattl",tags_ttldata)
+    print(tags_ttldata)
+    tags_ttlid = {
+        "ttl_id": ttldata['data'][0]['ttl_id']
+    }
+    ttl = db.row("ttl",tags_ttlid)
+
+    # Get Content
+    tags_content={
+        "ttl_data_id": tags['ttl_data_id']
+    }
+    content = db.row("content", tags_content)
+    
+    json_command={
+        "zone-begin": {
+                "sendblock": {
+                "cmd": "zone-begin",
+                "zone": zone['data'][0]['domain_id']
+            },
+            "receive": {
+                "type": "block"
+            }
+        },
+        "zone-set": {
+            "sendblock": {
+                "cmd": "zone-set",
+                "zone": zone['data'][0]['domain_id'],
+                "owner": zone['data'][0]['zone_id'],
+                "rtype": record['data'][0]['record_name'],
+                "ttl": ttl['data'][0]['ttl_name'],
+                "data": content['data'][0]['content_name']
+            },
+            "receive": {
+                "type": "block"
+            }
+        },
+        "zone-commit": {
+            "sendblock": {
+                "cmd": "zone-commit",
+                "zone": zone['data'][0]['domain_id']
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command

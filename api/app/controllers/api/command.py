@@ -64,12 +64,12 @@ class SendCommand(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.config_insert(tags)
+            print(respons)
 
         if init_data['action'] == 'zone-read':
             tags = dict()
             for i in init_data['data']:
                 tags = i['tags']
-            
             respons = cmd.zone_read(tags)
 
 
@@ -88,7 +88,10 @@ class SendCommand(Resource):
                 tags = i['tags']
             respons = cmd.zone_commit(tags)
 
-        
+        if init_data['action'] == 'zone-insert':
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.zone_insert(tags)
 
         try:
             command = sockets.define(CmdNamespace, '/command')

@@ -517,6 +517,22 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
+
+    zone-insert:
+      tags:
+        zone_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+        ttl_data_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
     zone-begin:
       tags:
         domain_id:
