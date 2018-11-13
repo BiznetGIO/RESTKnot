@@ -1,14 +1,7 @@
 import pytest
-from app import create_app
-from flask import Flask
-from flask_influxdb import InfluxDB
-
+from srv import create_app
 
 @pytest.fixture
 def app():
     app = create_app()
     return app
-
-
-
-
