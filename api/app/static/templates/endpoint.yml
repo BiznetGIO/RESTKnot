@@ -480,6 +480,17 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+    conf-read:
+      tags:
+      #   domain_id:
+      #     name: name search for domain
+      #     desc: Domain Variabel To Search
+      #     type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
     zone-read:
       tags:
         domain_id:

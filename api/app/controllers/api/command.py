@@ -56,6 +56,8 @@ class SendCommand(Resource):
         
         # cmd_socket = sockets.define(namespace.CommandNameSpace, '/command')
         
+        if init_data['action'] == 'conf-read':
+            respons = cmd.conf_read()
 
         if init_data['action'] == 'conf-insert':
             tags = dict()
@@ -69,6 +71,7 @@ class SendCommand(Resource):
                 tags = i['tags']
             
             respons = cmd.zone_read(tags)
+
 
         if init_data['action'] == 'zone-soa-insert':
             for i in init_data['data']:
@@ -84,6 +87,8 @@ class SendCommand(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.zone_commit(tags)
+
+        
 
         try:
             command = sockets.define(CmdNamespace, '/command')

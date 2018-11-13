@@ -69,6 +69,19 @@ def zone_read(tags):
 
     return json_command
 
+def conf_read():
+    json_command={
+        "zone-read": {
+            "sendblock": {
+                "cmd": "conf-read"
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
 def zone_soa_insert_default(tags):
     # Get Zone
     tags_zone = {
