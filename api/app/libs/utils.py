@@ -2,6 +2,47 @@ import yaml, os,hashlib
 from app import root_dir
 from datetime import datetime
 from app.models import api_models as db
+from app import sockets, BaseNamespace
+import json
+
+class CmdNamespace(BaseNamespace):
+    def initialize(self):
+        self.response = None
+
+    def on_response(self, *args):
+        list_data = list(args)
+        respons_sockets = list()
+        for i in list_data:
+            if i['data']['data'] == 'null':
+                if i['data']['Description'] == '[]':
+                    data = {
+                        "command": i['data']['Description'],
+                        "error": True,
+                        "messages": "Block Type Command Not Parsing"
+                    }
+                else:
+                    data = {
+                        "status": True,
+                        "messages": "Block Type Command Execute"
+                    }
+            else:
+                data = {
+                    "status": i['data']['result'],
+                    "command": i['data']['Description'],
+                    "receive": json.loads(i['data']['data'])
+                }
+            respons_sockets.append(data)
+        self.response = respons_sockets
+
+def sendSocket(respons):
+    try:
+        command = sockets.define(CmdNamespace, '/command')
+        command.emit('command',respons)
+        sockets.wait(seconds=1)
+        socket_respons = command.response
+    except Exception as e:
+        print(e)
+    return socket_respons
 
 def timeset():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')

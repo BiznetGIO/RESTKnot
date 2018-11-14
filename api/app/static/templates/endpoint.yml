@@ -47,10 +47,10 @@ endpoint:
           name: methode name
           desc: Domain Variabel To Search
 
-  namerecord:
+  typename:
     where:
       tags:
-        record_name_id:
+        type_name_id:
           name: name search for domain
           desc: Domain Variabel To Search
       others:
@@ -59,12 +59,12 @@ endpoint:
           desc: Domain Variabel To Search
     insert:
       fields:
-        record_name:
+        type_name:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        record_name_id:
+        type_name_id:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
@@ -74,22 +74,26 @@ endpoint:
           desc: Domain Variabel To Search
     edit:
       fields:
-        record_name:
+        type_name:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        record_name_id:
+        type_name_id:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
       others:
         method:
           name: name search
           desc: Domain Variabel To Search
     remove:
       tags:
-        record_name_id:
+        type_name_id:
           name: ID search
           desc: Domain Variabel To Search
           type: tags
@@ -226,7 +230,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        record_name_id:
+        type_name_id:
           name: Tags Record ID
           desc: Get One Data From Record Name
           type: fields
@@ -286,10 +290,10 @@ endpoint:
           desc: Domain Variabel To Search
     insert:
       fields:
-        ttl_data_name:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
+        # ttl_data_name:
+        #   name: name search for domain
+        #   desc: Domain Variabel To Search
+        #   type: fields
         ttl_id:
           name: Tags TTL ID
           desc: Get One Data From Record Name
@@ -309,10 +313,10 @@ endpoint:
           desc: Domain Variabel To Search
     edit:
       fields:
-        ttl_data_name:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
+        # ttl_data_name:
+        #   name: name search for domain
+        #   desc: Domain Variabel To Search
+        #   type: fields
         ttl_id:
           name: Tags TTL ID
           desc: Get One Data From Record Name
@@ -544,10 +548,24 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-    
     zone-commit:
       tags:
         domain_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-srv-insert:
+      tags:
+        zone_id:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+        ttl_data_id:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags

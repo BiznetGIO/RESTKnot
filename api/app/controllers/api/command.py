@@ -58,46 +58,83 @@ class SendCommand(Resource):
         
         if init_data['action'] == 'conf-read':
             respons = cmd.conf_read()
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
+            
 
         if init_data['action'] == 'conf-insert':
             tags = dict()
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.config_insert(tags)
-            print(respons)
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
 
         if init_data['action'] == 'zone-read':
             tags = dict()
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.zone_read(tags)
-
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
 
         if init_data['action'] == 'zone-soa-insert':
+            result= list()
             for i in init_data['data']:
                 tags = i['tags']
+
+            begin_json = cmd.zone_begin(tags)
+            begin_respon = utils.sendSocket(begin_json)
+            result.append(begin_respon)
+
             respons = cmd.zone_soa_insert_default(tags)
+            socket_respons = utils.sendSocket(respons)
+            result.append(socket_respons)
+
+            commit_json = cmd.zone_commit(tags)
+            commit_response = utils.sendSocket(commit_json)
+            result.append(commit_response)
+
+            return response(200, data=result)
 
         if init_data['action'] == 'zone-begin':
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.zone_begin(tags)
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
 
         if init_data['action'] == 'zone-commit':
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.zone_commit(tags)
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
 
         if init_data['action'] == 'zone-insert':
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.zone_insert(tags)
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
 
-        try:
-            command = sockets.define(CmdNamespace, '/command')
-            command.emit('command',respons)
-            sockets.wait(seconds=1)
-            socket_respons = command.response
-        except Exception as e:
-            print(e)
-        return response(200, data=socket_respons)
+        if init_data['action'] == 'zone-srv-insert':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+
+            begin_json = cmd.zone_begin(tags)
+            begin_respon = utils.sendSocket(begin_json)
+            result.append(begin_respon)
+
+            respons = cmd.zone_insert_srv(tags)
+            socket_respons = utils.sendSocket(respons)
+            result.append(socket_respons)
+
+            commit_json = cmd.zone_commit(tags)
+            commit_response = utils.sendSocket(commit_json)
+            result.append(commit_response)
+
+            # return response(200, data=result)
+
+        

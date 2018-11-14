@@ -5,7 +5,7 @@ from app.helpers import cmd_parser as cmd
 from app.libs import utils
 
 
-class RecordName(Resource):
+class TypeName(Resource):
     def get(self):
         command = utils.get_command(request.path)
         try:
