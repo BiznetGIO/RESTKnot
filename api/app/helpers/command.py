@@ -199,9 +199,18 @@ def zone_commit(tags):
     return json_command
 
 def zone_insert(tags):
-    tags_zone = {
-        "zone_id": tags['zone_id']
+
+    
+
+    # Get Record Data
+    tags_record_data = {
+        "record_data_id": tags['record_data_id']
     }
+    record_data = db.row("datarecord", tags_record_data)
+    tags_zone = {
+        "zone_id": record_data['data'][0]['zone_id']
+    }
+
     zone = db.row("zone", tags_zone)
     # Get Domain
     tags_domain={
@@ -209,12 +218,6 @@ def zone_insert(tags):
     }
     domain = db.row("domain", tags_domain)
 
-    # Get Record Data
-    tags_record_data = {
-        "zone_id": tags['zone_id']
-    }
-    record_data = db.row("datarecord", tags_record_data)
-    
     # Get Record Name
     tags_type_name = {
         "type_name_id": record_data['data'][0]['type_name_id']
@@ -226,7 +229,6 @@ def zone_insert(tags):
         "ttl_data_id": tags['ttl_data_id']
     }
     ttldata = db.row("datattl",tags_ttldata)
-    print(tags_ttldata)
     tags_ttlid = {
         "ttl_id": ttldata['data'][0]['ttl_id']
     }
@@ -242,7 +244,7 @@ def zone_insert(tags):
         "zone-begin": {
                 "sendblock": {
                 "cmd": "zone-begin",
-                "zone": zone['data'][0]['domain_id']
+                "zone": zone['data'][0]['zone_name']
             },
             "receive": {
                 "type": "block"
@@ -251,8 +253,8 @@ def zone_insert(tags):
         "zone-set": {
             "sendblock": {
                 "cmd": "zone-set",
-                "zone": zone['data'][0]['domain_id'],
-                "owner": zone['data'][0]['zone_id'],
+                "zone": zone['data'][0]['zone_name'],
+                "owner": record_data['data'][0]['record_data_name'],
                 "rtype": record['data'][0]['type_name'],
                 "ttl": ttl['data'][0]['ttl_name'],
                 "data": content['data'][0]['content_name']
@@ -264,13 +266,14 @@ def zone_insert(tags):
         "zone-commit": {
             "sendblock": {
                 "cmd": "zone-commit",
-                "zone": zone['data'][0]['domain_id']
+                "zone": zone['data'][0]['zone_name']
             },
             "receive": {
                 "type": "block"
             }
         }
     }
+    print(json_command)
     return json_command
 
 
