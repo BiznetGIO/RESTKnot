@@ -34,6 +34,7 @@ class RecordData(Resource):
             for i in init_data['data']:
                 measurement = i['measurement']
                 tags = i['tags']
+            print(tags)
             respons = db.row(measurement,tags)
         elif init_data['action'] == 'remove':
             measurement = ""

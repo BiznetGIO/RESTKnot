@@ -57,6 +57,9 @@ def result(measure_name):
         return respon
 
 def row(measurement, tags):
+    for i in list(tags):
+        if tags[i] is None:
+            tags.pop(i,None)
     try:
         dm = db.query(dbname,"SELECT * FROM "+measurement)
         data_points = list(dm.get_points(measurement=measurement, tags=tags))

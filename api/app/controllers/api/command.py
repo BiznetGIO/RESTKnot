@@ -118,6 +118,13 @@ class SendCommand(Resource):
             socket_respons = utils.sendSocket(respons)
             return response(200, data=socket_respons)
 
+        if init_data['action'] == 'zone-ns-insert':
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.zone_ns_insert(tags)
+            socket_respons = utils.sendSocket(respons)
+            return response(200, data=socket_respons)
+
         if init_data['action'] == 'zone-srv-insert':
             result = list()
             for i in init_data['data']:
