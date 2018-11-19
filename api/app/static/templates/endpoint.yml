@@ -517,6 +517,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
+          default: ooo
       others:
         method:
           name: name search for domain

@@ -376,7 +376,7 @@ function addSOADefault(domain_id, domain_name){
                                                     contentType:"application/json",
                                                     dataType:"json",
                                                     success: function(respon){
-                                                        console.log("SOA SYNCS")
+                                                        location.reload()
                                                     }
                                                 });
                                             }
@@ -584,6 +584,107 @@ function addNSDefault(domain_id, domain_name, ns_name){
         });
         return a;
 }
+
+function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
+    var d = new Date();
+    var record_data_id = calcMD5(zone_id+d)
+    var json_record_name = {
+        "insert": {
+           "fields": {
+                "record_data_name": record_name,
+                "type_name_id": type_name_id,
+                "zone_id": zone_id
+           },
+           "tags": {
+               "record_data_id": record_data_id
+           }
+        }
+     }
+    var recor_req =  $.ajax({
+        url:"http://127.0.0.1:6968/api/datarecord",
+        type:"POST",
+        data: JSON.stringify(json_record_name),
+        contentType:"application/json",
+        dataType:"json",
+        success: function(respon){
+            var ttl_data_id = calcMD5(record_data_id)
+            var json_ttl_data = {
+                "insert": {
+                   "fields": {
+                     "record_data_id": record_data_id,
+                     "ttl_id": ttl_id
+                   },
+                   "tags": {
+                       "ttl_data_id": ttl_data_id
+                   }
+                       
+                }
+            }
+
+            var ttl_req =  $.ajax({
+                url:"http://127.0.0.1:6968/api/datattl",
+                type:"POST",
+                data: JSON.stringify(json_ttl_data),
+                contentType:"application/json",
+                dataType:"json",
+                success: function(respon){
+                    var content_id = calcMD5(ttl_data_id+d)
+                    var json_content_data = {}
+                    var serial = ""
+                    for(i=0; i< json_content.length;i++){
+                        json_content_data = {
+                            "insert": {
+                               "fields": {
+                                   "content_name": json_content[i]['content_value'],
+                                    "ttl_data_id": ttl_data_id
+                               },
+                               "tags": {
+                                   "content_id": content_id
+                               }
+                                    
+                            }
+                        }
+                        if(json_content[i].serial_data == ""){
+                            var reqs = ajaxDor("http://127.0.0.1:6968/api/content",json_content_data)
+                            reqs.done(function(msg){
+                                var json_insert_record={
+                                    "zone-insert": {
+                                        "tags": {
+                                            "record_data_id" : record_data_id,
+                                            "ttl_data_id": ttl_data_id
+                                        }
+                                    }
+                                }
+                                var req_done = ajaxDor("http://127.0.0.1:6968/api/sendcommand", json_insert_record);
+                                req_done.done(function(msg){
+                                    console.log(msg)
+                                });
+                            })
+                        }
+                        else{
+                            console.log("NO OK")
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function ajaxDor(link,json_data){
+    var req =  $.ajax({
+        url:link,
+        type:"POST",
+        data: JSON.stringify(json_data),
+        contentType:"application/json",
+        dataType:"json",
+        success: function(){
+            console.log("OK DOOR")
+        }
+    });
+    return req
+}
+
 $(document).ready(function(){
     rule_content = [
         {
@@ -618,8 +719,8 @@ $(document).ready(function(){
                     $("#serial_content_section").append(data);
                     if(rule_content[a].serial > 0){
                         for(c=1; c <= rule_content[a].serial; c++){
-                           var data_serial = '<div class="form-group"><label>Serial Data</label><input type="text" class="form-control" id="content_data_serial'+c+'" /></div>'
-                           $("#serial_data_content_section").append(data);
+                           var data_serial = '<div class="form-group"><label>Serial Data</label><input type="text" class="form-control" id="content_data_serial_'+c+'" /></div>'
+                           $("#serial_data_content_section").append(data_serial);
                         }
                     }
                 }
@@ -628,8 +729,46 @@ $(document).ready(function(){
     });
 
     $('#btnAddRecord').click(function(){
-        var a = $('#jns_record').val()
-        console.log(a)
+        var record_spec = $('#jns_record').val()
+        var json_content = []
+        var record_name = $("#r_name").val()
+        var ttl_id_name = $("#ttl_id_name").val()
+        var zone_f_id = $("#zone_f_id").val()
+        var type_name_id = $("#typename_id").val()
+        for (a=0; a < rule_content.length; a++){
+            if (record_spec == rule_content[a].name){
+                var serial_data = []
+                if(rule_content[a].serial > 0){
+                    for(d=1; d <= rule_content[a].serial; d++){
+                        var content_value_serial = $("#content_data_serial_"+d).val()
+                        var json_content_data_serial = {
+                            "content_value_serial": content_value_serial
+                        }
+                        serial_data.push(json_content_data_serial)
+                    }
+                }
+
+                for(c=1; c <= rule_content[a].content; c++){
+                    var content_value = $("#content_name_"+c).val()
+                    console.log(rule_content[a].serial)
+                    if(rule_content[a].serial > 0){
+                        var json_content_data = {
+                            "content_value": content_value,
+                            "serial_data": serial_data
+                        }
+                        json_content.push(json_content_data)
+                    }
+                    else{
+                        var json_content_data = {
+                            "content_value": content_value,
+                            "serial_data": ""
+                        }
+                        json_content.push(json_content_data)
+                    }
+                }
+            }
+        }
+        addRecordNew(zone_f_id, record_name, type_name_id, ttl_id_name, json_content)
     });
 
 
