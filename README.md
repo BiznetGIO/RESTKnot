@@ -43,6 +43,8 @@ JWT_SECRET_KEY = secret
 ```
 
 ## Installing
+Install Agent at the same time as your KNOT server
+
 At the time neo-api only support Python3 or newer.
 
 ``` bash
@@ -160,5 +162,7 @@ Runing Server
 ``` bash
 sudo python manage.py server
 ```
+
+Installing InfluxDB Reference [action](https://docs.influxdata.com/influxdb/v1.7/introduction/installation/)
 
 ## Dockerize Development
