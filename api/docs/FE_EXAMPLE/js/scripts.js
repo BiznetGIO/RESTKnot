@@ -216,6 +216,7 @@ function addSOADefault(domain_id, domain_name){
                             success: function(respon){
                                 var content_id = record_data_id+"_ctn_ns1"
                                 content_id = calcMD5(content_id)
+                                var content_id_soa_default = content_id
                                 json_content={
                                     "insert": {
                                        "fields": {
@@ -335,7 +336,7 @@ function addSOADefault(domain_id, domain_name){
 
                                         var content_id_data = record_data_id+"_ctn_data_38400"
                                         content_id_data=calcMD5(content_id_data)
-                                         json_content_data38400={
+                                        json_content_data38400={
                                              "insert": {
                                                  "fields": {
                                                      "content_data_name": "38400",
@@ -346,7 +347,7 @@ function addSOADefault(domain_id, domain_name){
                                                      "content_data_id" : content_id_data
                                                  }
                                              }
-                                         }
+                                        }
                                         
 
                                         var request7 = $.ajax({
@@ -356,7 +357,28 @@ function addSOADefault(domain_id, domain_name){
                                             contentType:"application/json",
                                             dataType:"json",
                                             success: function(respon){
-                                                console.log("OK")
+                                                console.log("OK TERAKHIR")
+                                                var soa_sync = {
+                                                    "zone-soa-insert": {
+                                                       "tags": {
+                                                           "zone_id" : zone_id,
+                                                           "ttl_data_id": ttl_data_id,
+                                                           "content_id": content_id_soa_default
+                                                       }
+                                                    }
+                                                }
+                                                console.log(soa_sync)
+                                                
+                                                var sycn_soa = $.ajax({
+                                                    url:"http://127.0.0.1:6968/api/sendcommand",
+                                                    type:"POST",
+                                                    data: JSON.stringify(soa_sync),
+                                                    contentType:"application/json",
+                                                    dataType:"json",
+                                                    success: function(respon){
+                                                        console.log("SOA SYNCS")
+                                                    }
+                                                });
                                             }
                                         });
                                         request7.done(function(msg){
@@ -514,7 +536,24 @@ function addNSDefault(domain_id, domain_name, ns_name){
                                     dataType:"json",
                                     success: function(respon){
                                         console.log("NS INSERTED")
-                                        //refresh server disini
+                                        var json_ns_sycn={
+                                            "zone-ns-insert": {
+                                               "tags": {
+                                                    "record_data_id" : record_data_id,
+                                                    "ttl_data_id": ttl_data_id
+                                               }
+                                            }
+                                        }
+                                        var rea_sycn_ns = $.ajax({
+                                            url:"http://127.0.0.1:6968/api/sendcommand",
+                                            type:"POST",
+                                            data: JSON.stringify(json_ns_sycn),
+                                            contentType:"application/json",
+                                            dataType:"json",
+                                            success: function(respon){
+                                                console.log("NS SYNC")
+                                            }
+                                        });
                                     }
                                 });
 
@@ -620,21 +659,42 @@ $(document).ready(function(){
                 return 1
             }
         });
+
+        var json_domain_insert_agent = {
+            "conf-insert": {
+               "tags": {
+                   "domain_id" : domain_id
+               }
+            }
+        }
+
+        var conf_insert = $.ajax({
+            url:"http://127.0.0.1:6968/api/sendcommand",
+            type:"POST",
+            data: JSON.stringify(json_domain_insert_agent),
+            contentType:"application/json",
+            dataType:"json",
+            success: function(respon){
+                return 1
+            }
+        });
+
+        synctoagent = conf_insert.done(function(msg){
+            console.log(domain_name+" Inserted To Agen : "+msg)
+        })
+
         soa = addSOADefault(domain_id, domain_name)
         c = soa.done(function(msg){
-            return 1
+            console.log("soa save: "+msg)
         })
         ns1 = addNSDefault(domain_id, domain_name, "ns1.biz.net.id.")
         a = ns1.done(function(msg){
-            return 1
+            console.log("ns1 save: "+msg)
         })
         ns2 = addNSDefault(domain_id, domain_name, "hostmaster.biz.net.id.")
         b = ns2.done(function(msg){
-            return 1
+            console.log("ns2 save: "+msg)
         })
-        console.log(a)
-        console.log(b)
-        console.log(c)
 
 
     });

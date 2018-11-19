@@ -125,21 +125,22 @@ def zone_soa_insert_default(tags):
         "ttl_data_id": tags['ttl_data_id']
     }
     content = db.row("content", tags_content)
+
     tags_content_data ={
         "content_id": tags['content_id']
     }
-
     content_data = db.row("datacontent", tags_content_data)
-    # print(content_data)
+    print(tags_content_data)
+    print(content_data)
     serial_data = ""
     data = ""
-
+    date_t = ""
     for ns in content['data']:
         data = data+" "+ns['content_name']
-    # print(data)
-    data_date = content_data['data'][0]['content_data_date']
     for serial in content_data['data']:
         serial_data = serial_data+" "+serial['content_data_name']
+        date_t = serial['content_data_date']
+    data_date = date_t
     data_ns_soa = data
     data_ns_serial = serial_data
     json_command={
