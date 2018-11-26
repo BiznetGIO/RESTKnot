@@ -22,7 +22,7 @@ class CommandNamespace(Namespace):
         # After Processing Data Send Response To Client
         response = {
             "code": 200,
-            "messages": "client-sync",
+            "messsages": "client-sync",
             "status": True
         }
         emit('client', response)

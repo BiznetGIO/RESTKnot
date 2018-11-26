@@ -30,10 +30,8 @@ def tes_conn():
 
         ctl.send_block(cmd="zone-commit", data="ianktesting.com")
         resp = ctl.receive_block()
-
-        print(json.dumps(resp, indent=4))
     except Exception as e:
-        print(e)
+        raise e
     finally:
         ctl.send(control.KnotCtlType.END)
         ctl.close()
@@ -43,7 +41,7 @@ def check_command(command):
     try:
         sdl_data[command]
     except Exception as e:
-        print("illegal command : ", e)
+        raise e
     else:
         return True
 
@@ -52,15 +50,15 @@ def check_parameters(command,parameters):
     try:
         sdl_data[command]['parameters'][parameters]
     except Exception as e:
-        print("illegal parameter : ",e)
+        raise e
     else:
         return True
 
 def initialiaze(data):
     try:
         parser_data = parser_json(data)
-    except Exception:
-        print("Error: Parameter data Needed")
+    except Exception as e:
+        raise e
     else:
         return parser_data
 
@@ -104,14 +102,16 @@ def parser_json(obj_data):
 
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
-            print(cli_shell)
-            print("Exec Command Type")
-            print(utils.exec_shell(cli_shell))
+            exec_cliss = utils.exec_shell(cli_shell)
+            projec_obj.append({
+                project: exec_cliss
+            })
+            return projec_obj
         else:
             projec_obj.append({
                 project: action_obj
             })
-    return projec_obj
+            return projec_obj
 
 def parse_command_zone(json_data):
 
@@ -140,10 +140,6 @@ def execute_command(initialiaze):
         no = 0
         for data in initialiaze:
             no = no + 1
-            
-            print("DIEKSEKUSI DULU NO : ", data)
-            print(no)
-
             parameter_block = None
             parameter_stats = None
             for project in data:
@@ -151,8 +147,8 @@ def execute_command(initialiaze):
                 parameter_stats = get_params_recieve(data[project])
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
     except Exception as e:
-        print("Error: ",e)
-
+        resp = {}
+        return json.dumps(resp, indent=4)
     ctl.send(control.KnotCtlType.END)
     ctl.close()
     return json.dumps(resp, indent=4)

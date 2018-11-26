@@ -2,9 +2,8 @@ from .parse import parser
 from .utility import utils
 
 def read_rest(data):
-    initialiaze_command = parser.initialiaze(data)
-    print(initialiaze_command)
     try:
+        initialiaze_command = parser.initialiaze(data)
         data = parser.execute_command(initialiaze_command)
     except Exception as e:
         response={
@@ -21,3 +20,4 @@ def read_rest(data):
             "data": data
         }
         return response
+    
