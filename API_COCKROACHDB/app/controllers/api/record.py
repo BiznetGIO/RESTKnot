@@ -94,7 +94,9 @@ class Record(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:

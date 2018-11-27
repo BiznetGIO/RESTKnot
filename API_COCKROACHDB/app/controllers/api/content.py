@@ -89,7 +89,9 @@ class Content(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:
@@ -113,7 +115,9 @@ class Content(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             column = model.get_columns("v_contentdata")
             try:
                 result = list()
@@ -125,6 +129,7 @@ class Content(Resource):
                         result.append(dict(zip(column, row)))
                 else:
                     query = """ select * from v_contentdata where """+fields+"""='"""+tags[fields]+"""'"""
+                    print(query)
                     db.execute(query)
                     rows = db.fetchall()
                     for row in rows:
@@ -142,6 +147,8 @@ class Content(Resource):
                         "nm_record": str(i['nm_record']),
                         "nm_type" : i['nm_type'],
                         "nm_ttl" : i['nm_ttl'],
+                        "id_ttldata" : str(i['id_ttldata']),
+                        "id_record" : str(i['id_record']),
                         "nm_content": str(i['nm_content']),
                     }
                     obj_userdata.append(data)

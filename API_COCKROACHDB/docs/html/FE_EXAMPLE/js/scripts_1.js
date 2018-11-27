@@ -1,3 +1,21 @@
+function content_get(id){
+   json_data = {
+        "view": {
+        "tags": {
+            "id_record" : id
+            }
+        }
+    }
+
+    console.log(JSON.stringify(json_data))
+    var content_data = ajaxDor("http://127.0.0.1:6968/api/content", json_data)
+    content_data.done(function(respon){
+        console.log(respon)
+        // alert(respon.data)
+    });
+
+}
+
 function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
     var json_record_name = {
         "insert": {
@@ -11,7 +29,8 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
     }
     var save_onerecord= ajaxDor("http://127.0.0.1:6968/api/record",json_record_name)
     save_onerecord.done(function(respon){
-        console.log(respon)
+        var id_record = respon.message['id']
+        console.log("RECORD : ", respon)
         var json_ttl_data = {
                 "insert": {
                     "fields": {
@@ -23,6 +42,10 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
 
         var send_ttl = ajaxDor("http://127.0.0.1:6968/api/ttldata", json_ttl_data)
         send_ttl.done(function(respons){
+            console.log("TTL DATA : ", respon)
+            console.log("JSON _CONTENT",json_content)
+
+            var p_array = json_content[0].serial_data.length - 1
             for(i=0; i< json_content.length;i++){
                 var json_content_to = {
                     "insert": {
@@ -33,13 +56,39 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
                     }
                 }
                 if(json_content[i].serial_data == ""){
+                    console.log("serial_data = ndak ada")
                     var reqs = ajaxDor("http://127.0.0.1:6968/api/content",json_content_to)
                     reqs.done(function(respon){
+                        console.log("CONTENT : ", respon)
                         document.location.reload();
                     });
                 }
                 else{
-                    alert("LU BELUM BUAT KALO ADA SERIAL NYA YUNO")
+                    var t_a = ""
+                    var reqs = ajaxDor("http://127.0.0.1:6968/api/content",json_content_to)
+                    reqs.done(function(respon){
+                        console.log("CONTENT : ", respon)
+                    });
+
+                    for (a=0; a < json_content[i].serial_data.length;a++){
+                        t_a += a
+                        json_serial_data={
+                            "insert": {
+                               "fields": {
+                                   "nm_content_serial": json_content[i].serial_data[a]['content_value_serial'],
+                                   "id_record": id_record
+                               }
+                            }
+                        }
+                        var reqs = ajaxDor("http://127.0.0.1:6968/api/content_serial",json_serial_data)
+                        reqs.done(function(respon){
+                            console.log("SERIAL CONTENT : ", respon)
+                        });
+                    }
+                    console.log("JUMLAY ARRAY",p_array)
+                    if (t_a == p_array.toString()){
+                        document.location.reload();
+                    }
                 }
             }
         });
@@ -52,10 +101,7 @@ function ajaxDor(link,json_data){
         type:"POST",
         data: JSON.stringify(json_data),
         contentType:"application/json",
-        dataType:"json",
-        success: function(){
-            console.log("OK DOOR")
-        }
+        dataType:"json"
     });
     return req
 }
@@ -159,7 +205,6 @@ $(document).ready(function(){
             event.preventDefault();
         });
     });
-    
 
     $('#record_section').hide();
 
@@ -188,7 +233,6 @@ $(document).ready(function(){
                     }
                  }
                  $("#zone_f_id").val(data.id_zone)
-                 
                  $.ajax({
                     url:"http://127.0.0.1:6968/api/record",
                     type:"POST",
@@ -204,7 +248,8 @@ $(document).ready(function(){
                                 $('<td>').text("Record ID"),
                                 $('<td>').text("Record Name"),
                                 $('<td>').text("Zone ID"),
-                                $('<td>').text("Type Name ID")
+                                $('<td>').text("Type Name ID"),
+                                $('<td>').text("Content")
                             )
                         );
                         $('#record_table').append($thead)
@@ -214,7 +259,8 @@ $(document).ready(function(){
                                 $('<td>').text(item.id_record),
                                 $('<td>').text(item.nm_record),
                                 $('<td>').text(item.id_zone),
-                                $('<td>').text(item.id_type)
+                                $('<td>').text(item.id_type),
+                                $('<td>').html("<a href='#' onclick='content_get("+item.id_record+")' class='btn btn-xs content_btn'>Content</a>")
                             );
                             tbody.append(tr)
                         });
