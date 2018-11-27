@@ -1,0 +1,2043 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.1",
+    "title": "REST_KNOT",
+    "description": "MANAGE YOUR DNS",
+    "contact": {}
+  },
+  "host": "127.0.0.1:6968",
+  "basePath": "/api",
+  "securityDefinitions": {
+    "auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "http://127.0.0.1:6968/api",
+      "scopes": {}
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/type": {
+      "get": {
+        "description": "",
+        "summary": "TYPE_ALL",
+        "operationId": "TypeGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "TYPE_ADD",
+        "operationId": "TypePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TYPE_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/ttl": {
+      "get": {
+        "description": "",
+        "summary": "TTL_ALL",
+        "operationId": "TtlGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "TTL_ADD",
+        "operationId": "TtlPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TTL_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/zone": {
+      "get": {
+        "description": "",
+        "summary": "ZONE_ALL",
+        "operationId": "ZoneGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "ZONE_ADD",
+        "operationId": "ZonePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ZONE_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/record": {
+      "get": {
+        "description": "",
+        "summary": "DATA_RECORD_ALL",
+        "operationId": "RecordGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "DATA_RECORD_ADD",
+        "operationId": "RecordPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DATA_RECORD_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/ttldata": {
+      "get": {
+        "description": "",
+        "summary": "TTL_DATA_ALL",
+        "operationId": "TtldataGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "TTL_DATA_ADD",
+        "operationId": "TtldataPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/TTL_DATA_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/content": {
+      "get": {
+        "description": "",
+        "summary": "CONTENT_ALL",
+        "operationId": "ContentGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "CONTENT_ADD",
+        "operationId": "ContentPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CONTENT_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/content_serial": {
+      "get": {
+        "description": "",
+        "summary": "CONTENT_SERIAL_ALL",
+        "operationId": "ContentSerialGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "CONTENT_SERIAL_ADD",
+        "operationId": "ContentSerialPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CONTENT_SERIAL_ADDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/sendcommand": {
+      "post": {
+        "description": "",
+        "summary": "CONF_INSERT_COMMAND",
+        "operationId": "SendcommandPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CONF_INSERT_COMMANDRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user/dnscreate": {
+      "post": {
+        "description": "",
+        "summary": "USER_ROLE_ADD_DNS",
+        "operationId": "UserDnscreatePost",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "domain",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user": {
+      "get": {
+        "description": "",
+        "summary": "ALL_USER",
+        "operationId": "UserGet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "description": "",
+        "summary": "CREATE_USERDATA",
+        "operationId": "UserPost",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "city",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "province",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "location",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user/add": {
+      "post": {
+        "description": "",
+        "summary": "CREATE_USERLOGIN",
+        "operationId": "UserAddPost",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "userdata_id",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user/397504393110355969": {
+      "delete": {
+        "description": "",
+        "summary": "DELETE_USERDATA",
+        "operationId": "User397504393110355969Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user/397466492273065985": {
+      "get": {
+        "description": "",
+        "summary": "GET_BY_ID_USERDATA",
+        "operationId": "User397466492273065985Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/user/397479998132813825": {
+      "put": {
+        "description": "",
+        "summary": "UPDATE_USERDATA",
+        "operationId": "User397479998132813825Put",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "first_name",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "last_name",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "city",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "province",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "location",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/sign": {
+      "post": {
+        "description": "",
+        "summary": "USER_SIGNING",
+        "operationId": "SignPost",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "TYPE_ADDRequest": {
+      "title": "TYPE_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "nm_type": "A"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert": {
+      "title": "Insert",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields": {
+      "title": "Fields",
+      "type": "object",
+      "properties": {
+        "nm_type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nm_type"
+      ]
+    },
+    "TYPE_WHERERequest": {
+      "title": "TYPE_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_type": 402329670102745100
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where": {
+      "title": "Where",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags": {
+      "title": "Tags",
+      "type": "object",
+      "properties": {
+        "id_type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_type"
+      ]
+    },
+    "TYPE_REMOVERequest": {
+      "title": "TYPE_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "id_type": 402329670102745100
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove": {
+      "title": "Remove",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "TTL_ADDRequest": {
+      "title": "TTL_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "nm_ttl": 43200
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert1"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert1": {
+      "title": "Insert1",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields1"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields1": {
+      "title": "Fields1",
+      "type": "object",
+      "properties": {
+        "nm_ttl": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nm_ttl"
+      ]
+    },
+    "TTL_WHERERequest": {
+      "title": "TTL_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_ttl": 402332261606883300
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where1"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where1": {
+      "title": "Where1",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags2"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags2": {
+      "title": "Tags2",
+      "type": "object",
+      "properties": {
+        "id_ttl": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_ttl"
+      ]
+    },
+    "TTL_REMOVERequest": {
+      "title": "TTL_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "id_ttl": 402332261606883300
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove1"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove1": {
+      "title": "Remove1",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags2"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_ADDRequest": {
+      "title": "ZONE_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "nm_zone": "ocha.com"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert2"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert2": {
+      "title": "Insert2",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields2"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields2": {
+      "title": "Fields2",
+      "type": "object",
+      "properties": {
+        "nm_zone": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nm_zone"
+      ]
+    },
+    "ZONE_REMOVERequest": {
+      "title": "ZONE_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "id_zone": 402212410013057000
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove2"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove2": {
+      "title": "Remove2",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags4": {
+      "title": "Tags4",
+      "type": "object",
+      "properties": {
+        "id_zone": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_zone"
+      ]
+    },
+    "ZONE_WHERERequest": {
+      "title": "ZONE_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_zone": 402193318505840640
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where2"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where2": {
+      "title": "Where2",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "DATA_RECORD_ADDRequest": {
+      "title": "DATA_RECORD_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "nm_record": "tekukur",
+            "date_record": 2018070410,
+            "id_zone": 402468020781678600,
+            "id_type": 402427545745850400
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert3"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert3": {
+      "title": "Insert3",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields3"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields3": {
+      "title": "Fields3",
+      "type": "object",
+      "properties": {
+        "nm_record": {
+          "type": "string"
+        },
+        "date_record": {
+          "type": "string"
+        },
+        "id_zone": {
+          "type": "string"
+        },
+        "id_type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nm_record",
+        "date_record",
+        "id_zone",
+        "id_type"
+      ]
+    },
+    "DATA_RECORD_WHERERequest": {
+      "title": "DATA_RECORD_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_record": 402145661681991700
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where3"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where3": {
+      "title": "Where3",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags6"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags6": {
+      "title": "Tags6",
+      "type": "object",
+      "properties": {
+        "id_record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_record"
+      ]
+    },
+    "DATA_RECORD_REMOVERequest": {
+      "title": "DATA_RECORD_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "record_data_id": "448f77074b4c5ed5b08c56384b276900"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove3"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove3": {
+      "title": "Remove3",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags7"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags7": {
+      "title": "Tags7",
+      "type": "object",
+      "properties": {
+        "record_data_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_data_id"
+      ]
+    },
+    "DATA_RECORD_VIEWRequest": {
+      "title": "DATA_RECORD_VIEWRequest",
+      "example": {
+        "view": {
+          "tags": {
+            "id_record": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "view": {
+          "$ref": "#/definitions/View"
+        }
+      },
+      "required": [
+        "view"
+      ]
+    },
+    "View": {
+      "title": "View",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags6"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "TTL_DATA_ADDRequest": {
+      "title": "TTL_DATA_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "id_record": 402475422581915650,
+            "id_ttl": 402427994557939700
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert4"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert4": {
+      "title": "Insert4",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields4"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields4": {
+      "title": "Fields4",
+      "type": "object",
+      "properties": {
+        "id_record": {
+          "type": "string"
+        },
+        "id_ttl": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_record",
+        "id_ttl"
+      ]
+    },
+    "TTL_DATA_WHERERequest": {
+      "title": "TTL_DATA_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_ttldata": 402145755976826900
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where4"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where4": {
+      "title": "Where4",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags9"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags9": {
+      "title": "Tags9",
+      "type": "object",
+      "properties": {
+        "id_ttldata": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_ttldata"
+      ]
+    },
+    "TTL_DATA_REMOVERequest": {
+      "title": "TTL_DATA_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "id_ttldata": 402145755976826900
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove4"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove4": {
+      "title": "Remove4",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags9"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "TTL_DATA_VIEWRequest": {
+      "title": "TTL_DATA_VIEWRequest",
+      "example": {
+        "view": {
+          "tags": {
+            "id_ttldata": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "view": {
+          "$ref": "#/definitions/View1"
+        }
+      },
+      "required": [
+        "view"
+      ]
+    },
+    "View1": {
+      "title": "View1",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags9"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "CONTENT_ADDRequest": {
+      "title": "CONTENT_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "id_ttldata": 402476086369878000,
+            "nm_content": "1.1.1.1"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert5"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert5": {
+      "title": "Insert5",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields5"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields5": {
+      "title": "Fields5",
+      "type": "object",
+      "properties": {
+        "id_ttldata": {
+          "type": "string"
+        },
+        "nm_content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_ttldata",
+        "nm_content"
+      ]
+    },
+    "CONTENT_REMOVERequest": {
+      "title": "CONTENT_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "content_id": "ibnu.com_soa_ctn"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove5"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove5": {
+      "title": "Remove5",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags12"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags12": {
+      "title": "Tags12",
+      "type": "object",
+      "properties": {
+        "content_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "content_id"
+      ]
+    },
+    "CONTENT_WHERERequest": {
+      "title": "CONTENT_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "content_id": "ns1.biz.net.id."
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where5"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where5": {
+      "title": "Where5",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags12"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "CONTENT_DATA_VIEWRequest": {
+      "title": "CONTENT_DATA_VIEWRequest",
+      "example": {
+        "view": {
+          "tags": {
+            "id_content": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "view": {
+          "$ref": "#/definitions/View2"
+        }
+      },
+      "required": [
+        "view"
+      ]
+    },
+    "View2": {
+      "title": "View2",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags14"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags14": {
+      "title": "Tags14",
+      "type": "object",
+      "properties": {
+        "id_content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_content"
+      ]
+    },
+    "CONTENT_SERIAL_ADDRequest": {
+      "title": "CONTENT_SERIAL_ADDRequest",
+      "example": {
+        "insert": {
+          "fields": {
+            "nm_content_serial": 38400,
+            "id_record": 402339943405944800
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "insert": {
+          "$ref": "#/definitions/Insert6"
+        }
+      },
+      "required": [
+        "insert"
+      ]
+    },
+    "Insert6": {
+      "title": "Insert6",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "$ref": "#/definitions/Fields6"
+        }
+      },
+      "required": [
+        "fields"
+      ]
+    },
+    "Fields6": {
+      "title": "Fields6",
+      "type": "object",
+      "properties": {
+        "nm_content_serial": {
+          "type": "string"
+        },
+        "id_record": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nm_content_serial",
+        "id_record"
+      ]
+    },
+    "CONTENT_SERIAL_WHERERequest": {
+      "title": "CONTENT_SERIAL_WHERERequest",
+      "example": {
+        "where": {
+          "tags": {
+            "id_content_serial": 402146220480921600
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "where": {
+          "$ref": "#/definitions/Where6"
+        }
+      },
+      "required": [
+        "where"
+      ]
+    },
+    "Where6": {
+      "title": "Where6",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags15"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags15": {
+      "title": "Tags15",
+      "type": "object",
+      "properties": {
+        "id_content_serial": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id_content_serial"
+      ]
+    },
+    "CONTENT_SERIAL_VIEWRequest": {
+      "title": "CONTENT_SERIAL_VIEWRequest",
+      "example": {
+        "view": {
+          "tags": {
+            "id_content_serial": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "view": {
+          "$ref": "#/definitions/View3"
+        }
+      },
+      "required": [
+        "view"
+      ]
+    },
+    "View3": {
+      "title": "View3",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags15"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "CONTENT_SERIAL_REMOVERequest": {
+      "title": "CONTENT_SERIAL_REMOVERequest",
+      "example": {
+        "remove": {
+          "tags": {
+            "id_content_serial": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "remove": {
+          "$ref": "#/definitions/Remove6"
+        }
+      },
+      "required": [
+        "remove"
+      ]
+    },
+    "Remove6": {
+      "title": "Remove6",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags15"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "CONF_INSERT_COMMANDRequest": {
+      "title": "CONF_INSERT_COMMANDRequest",
+      "example": {
+        "conf-insert": {
+          "tags": {
+            "id_zone": 402468020781678600
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "conf-insert": {
+          "$ref": "#/definitions/ConfInsert"
+        }
+      },
+      "required": [
+        "conf-insert"
+      ]
+    },
+    "ConfInsert": {
+      "title": "ConfInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "CONF_READ_COMMANDRequest": {
+      "title": "CONF_READ_COMMANDRequest",
+      "example": {
+        "conf-read": {
+          "tags": {}
+        }
+      },
+      "type": "object",
+      "properties": {
+        "conf-read": {
+          "$ref": "#/definitions/ConfRead"
+        }
+      },
+      "required": [
+        "conf-read"
+      ]
+    },
+    "ConfRead": {
+      "title": "ConfRead",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_READ_COMMANDRequest": {
+      "title": "ZONE_READ_COMMANDRequest",
+      "example": {
+        "zone-read": {
+          "tags": {
+            "id_zone": 402468020781678600
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-read": {
+          "$ref": "#/definitions/ZoneRead"
+        }
+      },
+      "required": [
+        "zone-read"
+      ]
+    },
+    "ZoneRead": {
+      "title": "ZoneRead",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_BEGIN_COMMANDRequest": {
+      "title": "ZONE_BEGIN_COMMANDRequest",
+      "example": {
+        "zone-begin": {
+          "tags": {
+            "id_zone": ""
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-begin": {
+          "$ref": "#/definitions/ZoneBegin"
+        }
+      },
+      "required": [
+        "zone-begin"
+      ]
+    },
+    "ZoneBegin": {
+      "title": "ZoneBegin",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_SOA_INSERT_COMMANDRequest": {
+      "title": "ZONE_SOA_INSERT_COMMANDRequest",
+      "example": {
+        "zone-soa-insert": {
+          "tags": {
+            "id_zone": 402468020781678600
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-soa-insert": {
+          "$ref": "#/definitions/ZoneSoaInsert"
+        }
+      },
+      "required": [
+        "zone-soa-insert"
+      ]
+    },
+    "ZoneSoaInsert": {
+      "title": "ZoneSoaInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_COMMIT_COMMANDRequest": {
+      "title": "ZONE_COMMIT_COMMANDRequest",
+      "example": {
+        "zone-commit": {
+          "tags": {
+            "domain_id": 402140181756379140
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-commit": {
+          "$ref": "#/definitions/ZoneCommit"
+        }
+      },
+      "required": [
+        "zone-commit"
+      ]
+    },
+    "ZoneCommit": {
+      "title": "ZoneCommit",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags22"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "Tags22": {
+      "title": "Tags22",
+      "type": "object",
+      "properties": {
+        "domain_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id"
+      ]
+    },
+    "ZONE_INSERT_COMMANDRequest": {
+      "title": "ZONE_INSERT_COMMANDRequest",
+      "example": {
+        "zone-insert": {
+          "tags": {
+            "id_record": 402475422581915650
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-insert": {
+          "$ref": "#/definitions/ZoneInsert"
+        }
+      },
+      "required": [
+        "zone-insert"
+      ]
+    },
+    "ZoneInsert": {
+      "title": "ZoneInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags6"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_SRV_INSERT_COMMANDRequest": {
+      "title": "ZONE_SRV_INSERT_COMMANDRequest",
+      "example": {
+        "zone-srv-insert": {
+          "tags": {
+            "id_zone": 402140181756379140
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-srv-insert": {
+          "$ref": "#/definitions/ZoneSrvInsert"
+        }
+      },
+      "required": [
+        "zone-srv-insert"
+      ]
+    },
+    "ZoneSrvInsert": {
+      "title": "ZoneSrvInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_NS_INSERT_COMMANDRequest": {
+      "title": "ZONE_NS_INSERT_COMMANDRequest",
+      "example": {
+        "zone-ns-insert": {
+          "tags": {
+            "id_zone": 402468020781678600
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-ns-insert": {
+          "$ref": "#/definitions/ZoneNsInsert"
+        }
+      },
+      "required": [
+        "zone-ns-insert"
+      ]
+    },
+    "ZoneNsInsert": {
+      "title": "ZoneNsInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    },
+    "ZONE_MX_INSERT_COMMANDRequest": {
+      "title": "ZONE_MX_INSERT_COMMANDRequest",
+      "example": {
+        "zone-mx-insert": {
+          "tags": {
+            "id_zone": 402140181756379140
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "zone-mx-insert": {
+          "$ref": "#/definitions/ZoneMxInsert"
+        }
+      },
+      "required": [
+        "zone-mx-insert"
+      ]
+    },
+    "ZoneMxInsert": {
+      "title": "ZoneMxInsert",
+      "type": "object",
+      "properties": {
+        "tags": {
+          "$ref": "#/definitions/Tags4"
+        }
+      },
+      "required": [
+        "tags"
+      ]
+    }
+  },
+  "tags": []
+}

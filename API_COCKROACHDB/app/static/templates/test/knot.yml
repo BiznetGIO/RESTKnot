@@ -1,0 +1,130 @@
+version : adista 0.0.1
+
+knotcreate:
+  function:
+    configbegin:
+      argument:
+        sendblock: 
+          parameters:
+            cmd:
+              name: Command Name
+              type : string
+              description: Command Name For Begin Execute
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+    configset:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command name
+              type: string
+              description: Command Name For Configset Execute
+            section:
+              name: section name
+              type: string
+              description: Section Name For Configset Identifier
+            item:
+              name: Item name
+              type: string
+              description: Item Domain Name For Configset Identifier
+            data:
+              name: Resource Form Request
+              type: string
+              description: Resource For Configset Identifier
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+    configcommit:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command Name
+              type : string
+              description: Command Name For configcommit Execute
+              default: conf-commit
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+    configread:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command name
+              type: string
+              description: Command Name For Configset Execute
+            section:
+              name: section name
+              type: string
+              description: Section Name For Configset Identifier
+            item:
+              name: Item name
+              type: string
+              description: Item Domain Name For Conf-set Identifier
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+knotdelete:
+  function:
+    deletedns:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command Name
+              type : string
+              description: Command Name For Begin Execute
+            data:
+              name: Resource Form Request
+              type: yaml list or string
+              description: Resource Form Request For Conf-set Identifier
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+knotviewstats:
+  function:
+    viewstats:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command Name
+              type : string
+              description: Command Name For Begin Execute
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
+
+    zonestats:
+      argument:
+        sendblock:
+          parameters:
+            cmd:
+              name: Command Name
+              type : string
+              description: Command Name For Begin Execute
+        receive:
+          parameters:
+            type:
+              name: receive type
+              description: receive from after sendblock execute
