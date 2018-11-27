@@ -36,7 +36,7 @@ class TtlName(Resource):
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
             try:
-                db.insert(table, fields)
+                result = db.insert(table, fields)
             except Exception as e:
                 respons = {
                     "status": False,
@@ -45,7 +45,8 @@ class TtlName(Resource):
             else:
                 respons = {
                     "status": True,
-                    "messages": "Fine!"
+                    "messages": "Fine!",
+                    "id": result
                 }
             finally:
                 return response(200, data=fields , message=respons)
@@ -57,7 +58,9 @@ class TtlName(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             try:
                 result = db.get_by_id(table,fields,tags[fields])
             except Exception as e:

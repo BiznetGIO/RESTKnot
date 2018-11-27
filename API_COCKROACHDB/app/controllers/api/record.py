@@ -38,7 +38,7 @@ class Record(Resource):
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
             try:
-                model.insert(table, fields)
+                result = model.insert(table, fields)
             except Exception as e:
                 respons = {
                     "status": False,
@@ -47,10 +47,12 @@ class Record(Resource):
             else:
                 respons = {
                     "status": True,
-                    "messages": "Fine!"
+                    "messages": "Fine!",
+                    "id": result
                 }
             finally:
                 return response(200, data=fields , message=respons)
+
         if init_data['action'] == 'where':
             obj_userdata = list()
             table = ""
@@ -59,7 +61,9 @@ class Record(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             try:
                 result = model.get_by_id(table,fields,tags[fields])
             except Exception as e:
@@ -137,7 +141,6 @@ class Record(Resource):
                     "messages": str(e)
                 }
             else:
-                print(result)
                 for i in result :
                     data = {
                         "id_record": str(i['id_record']),

@@ -35,7 +35,7 @@ class Type(Resource):
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
             try:
-                db.insert(table, fields)
+                result = db.insert(table, fields)
             except Exception as e:
                 respons = {
                     "status": False,
@@ -44,7 +44,8 @@ class Type(Resource):
             else:
                 respons = {
                     "status": True,
-                    "messages": "Fine!"
+                    "messages": "Fine!",
+                    "id": result
                 }
             finally:
                 return response(200, data=fields , message=respons)

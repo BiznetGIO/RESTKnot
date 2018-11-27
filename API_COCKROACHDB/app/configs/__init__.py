@@ -8,5 +8,5 @@ dotenv_path = os.path.join(APP_ROOT, '.env')
 load_dotenv(dotenv_path)
 
 
-class Config(metaclass=MetaFlaskEnv):
+class Config(metaclass = MetaFlaskEnv):
     ENV_PREFIX = "FLASK_"

@@ -49,11 +49,12 @@ def insert(table, data = None):
     column = "("+column[:-1]+")"
     value = "("+value[:-1]+")"
     try:
-        db.execute("INSERT INTO "+table+" "+column+" VALUES "+value)
+        db.execute("INSERT INTO "+table+" "+column+" VALUES "+value+" RETURNING *")
     except (Exception, psycopg2.DatabaseError) as e:
         raise e
     else:
-        return True
+        id_of_new_row = db.fetchone()[0]
+        return str(id_of_new_row)
 
 
 

@@ -12,6 +12,7 @@ redis_store = FlaskRedis()
 root_dir = os.path.dirname(os.path.abspath(__file__))
 cache = MemcachedCache(['{}:{}'.format(os.getenv('MEMCACHE_HOST'), os.getenv('MEMCACHE_PORT'))])
 jwt = JWTManager()
+
 conn = psycopg2.connect(
     database=os.getenv('DB_NAME'),
     user=os.getenv('DB_USER'),
