@@ -27,18 +27,18 @@
 			<h3>
 				Create Domain
 			</h3>
-			<div role="form">
+			<form role="form" id="form_domain">
 				<div class="form-group">
 						
 					<label for="domain">
 						Domain Name
 					</label>
-					<input type="email" class="form-control" id="domain_value" />
+					<input type="" class="form-control" name="domain" id="domain_value" />
 				</div>
-				<button id="btnCreateDomain" class="btn btn-primary">
+				<button class="btn btn-primary" id="btnCreateDomain">
 					Create Domain
 				</button>
-			</div>
+			</form>
 
 		</dir>
 		<div class="col-md-2"></div>
@@ -54,16 +54,10 @@
 				<thead>
 					<tr>
 						<th>
-							Domain ID
-						</th>
-						<th>
 							Zone ID
 						</th>
 						<th>
 							Zone Name
-						</th>
-						<th>
-							Time
 						</th>
 					</tr>
 				</thead>
