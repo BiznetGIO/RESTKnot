@@ -1,14 +1,14 @@
 zone-begin:
   sendblock:
     cmd: zone-begin
-    zone: iank.com
+    zone: crot.com
   receive:
     type: block
 
 zone-set:
   sendblock:
     cmd: zone-set
-    zone: iank.com
+    zone: crot.com
     owner: namasubdomain
     rtype: A
     ttl: "300"
@@ -19,6 +19,6 @@ zone-set:
 zone-commit:
   sendblock:
     cmd: zone-commit
-    zone: test.com
+    zone: crot.com
   receive:
     type: block

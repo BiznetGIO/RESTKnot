@@ -1,7 +1,7 @@
 zone-read:
   sendblock:
     cmd: zone-read
-    zone: crot.com
+    zone: iank.com
     # owner: lagi
     # rtype: SOA
     # ttl: "300"

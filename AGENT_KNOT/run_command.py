@@ -1,6 +1,29 @@
 from command.parse import  parser
 from command.utility import utils
 
+# import json
+# from command.control.libknot.control import *
+
+# ctl = KnotCtl()
+# ctl.connect("/var/run/knot/knot.sock")
+
+# try:
+#     ctl.send_block(cmd="zone-begin", zone="iank.com")
+#     resp = ctl.receive_block()
+
+#     ctl.send_block(cmd="zone-set", zone="iank", owner="aaa", item="domain", data="test")
+#     resp = ctl.receive_block()
+
+#     ctl.send_block(cmd="zone-commit")
+#     resp = ctl.receive_block()
+
+#     ctl.send_block(cmd="zone-read",zone="iank")
+#     resp = ctl.receive_block()
+#     print(json.dumps(resp, indent=4))
+# finally:
+#     ctl.send(KnotCtlType.END)
+#     ctl.close()
+
 while True:
     print("-----------------------------------------")
     print("TEMPLATES COMMAND : ")
