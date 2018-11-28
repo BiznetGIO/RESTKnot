@@ -34,7 +34,7 @@ api.add_resource(TtlData, '/ttldata')
 api.add_resource(Content, '/content')
 api.add_resource(ContentSerial, '/content_serial')
 
-# api.add_resource(SendCommand, '/sendcommand')
+api.add_resource(SendCommand, '/sendsocket')
 api.add_resource(SendCommandRest, '/sendcommand')
 api.add_resource(CreateDNS, '/user/dnscreate')
 

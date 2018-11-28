@@ -5,7 +5,7 @@ from app.helpers import cmd_parser as parse
 from app.helpers import command as cmd
 from app.libs import utils
 # from app import sockets, BaseNamespace
-import json
+import json, os
 
 
 # class CmdNamespace(BaseNamespace):
@@ -49,7 +49,10 @@ class SendCommandRest(Resource):
         #     return response(200, data=respons)
 
     def post(self):
-        url = "http://127.0.0.1:6967/api/command_rest"
+        url_env = os.getenv("SOCKET_AGENT_HOST")
+        port = os.getenv("SOCKET_AGENT_PORT")
+        url_fix= url_env+":"+port
+        url = url_fix+"/api/command_rest"
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)
         init_data = parse.parser(json_req, command)
@@ -153,12 +156,15 @@ class SendCommandRest(Resource):
             result.append(begin_respon)
 
             respons = cmd.zone_insert_srv(tags)
+            print(respons)
             http_response = utils.send_http(url,respons)
+           
             result.append(http_response)
 
             commit_json = cmd.zone_commit(tags)
             commit_response = utils.send_http(url,commit_json)
             result.append(commit_response)
+            return response(200, data=result)
 
         if init_data['action'] == 'zone-mx-insert':
             result = list()
