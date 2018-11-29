@@ -108,7 +108,7 @@ class ContentSerial(Resource):
         if init_data['action'] == 'view':
             obj_userdata = list()
             table = ""
-            fields = ""
+            fields = None
             tags = dict()
             for i in init_data['data']:
                 table = i['table']
@@ -119,7 +119,7 @@ class ContentSerial(Resource):
             column = model.get_columns("v_content_serial")
             try:
                 result = list()
-                if tags[fields] is None:
+                if fields is None:
                     query = """select * from v_content_serial"""
                     db.execute(query)
                     rows = db.fetchall()

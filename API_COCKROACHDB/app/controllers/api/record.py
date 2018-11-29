@@ -115,7 +115,7 @@ class Record(Resource):
         if init_data['action'] == 'view':
             obj_userdata = list()
             table = ""
-            fields = ""
+            fields = None
             tags = dict()
             for i in init_data['data']:
                 table = i['table']
@@ -125,7 +125,7 @@ class Record(Resource):
             print(column)
             try:
                 result = list()
-                if tags[fields] is None:
+                if fields is None:
                     query = """select * from v_record"""
                     db.execute(query)
                     rows = db.fetchall()

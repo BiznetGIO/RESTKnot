@@ -108,18 +108,20 @@ class TtlData(Resource):
         if init_data['action'] == 'view':
             obj_userdata = list()
             table = ""
-            fields = ""
+            fields = None
             tags = dict()
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
+                print(tags)
                 for a in tags:
                     if tags[a] is not None:
                         fields = a
             column = model.get_columns("v_ttldata")
             try:
                 result = list()
-                if tags[fields] is None:
+                if fields is None:
+                    print("EXECUTE")
                     query = """select * from v_ttldata"""
                     db.execute(query)
                     rows = db.fetchall()
