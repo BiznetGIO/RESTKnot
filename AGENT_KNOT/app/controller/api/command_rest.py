@@ -11,7 +11,6 @@ class CommandRest(Resource):
         try:
             exec_com = read_rest(json_req)
         except Exception as e:
-            print("DARI COMMAND REST", e)
             return str(e)
         else:
             return exec_com

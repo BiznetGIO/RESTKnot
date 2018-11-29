@@ -1,28 +1,6 @@
 from command.parse import  parser
 from command.utility import utils
 
-# import json
-# from command.control.libknot.control import *
-
-# ctl = KnotCtl()
-# ctl.connect("/var/run/knot/knot.sock")
-
-# try:
-#     ctl.send_block(cmd="zone-begin", zone="iank.com")
-#     resp = ctl.receive_block()
-
-#     ctl.send_block(cmd="zone-set", zone="iank", owner="aaa", item="domain", data="test")
-#     resp = ctl.receive_block()
-
-#     ctl.send_block(cmd="zone-commit")
-#     resp = ctl.receive_block()
-
-#     ctl.send_block(cmd="zone-read",zone="iank")
-#     resp = ctl.receive_block()
-#     print(json.dumps(resp, indent=4))
-# finally:
-#     ctl.send(KnotCtlType.END)
-#     ctl.close()
 
 while True:
     print("-----------------------------------------")
@@ -63,37 +41,3 @@ while True:
         data_yaml = parser.initialiaze(data=yaml_data)
         a = parser.execute_command(data_yaml)
         print(a)
-
-
-# HTTP REQUEST
-# json_req={
-#   "configbegin": {
-#     "sendblock": {
-#       "cmd": "conf-begin"
-#     },
-#     "receive": {
-#       "type": "block"
-#     }
-#   },
-#   "configset": {
-#     "sendblock": {
-#       "cmd": "conf-set",
-#       "section": "zone",
-#       "item": "domain",
-#       "data": "tes123"
-#     },
-#     "receive": {
-#       "type": "block"
-#     }
-#   },
-#   "configcommit": {
-#     "sendblock": {
-#       "cmd": "conf-commit"
-#     },
-#     "receive": {
-#       "type": "block"
-#     }
-#   }
-# }
-# data_json = parser.initialiaze(data=json_req)
-# print(data_json)
