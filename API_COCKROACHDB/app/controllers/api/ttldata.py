@@ -113,6 +113,7 @@ class TtlData(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
+                print(tags)
                 for a in tags:
                     if tags[a] is not None:
                         fields = a
@@ -120,6 +121,7 @@ class TtlData(Resource):
             try:
                 result = list()
                 if fields is None:
+                    print("EXECUTE")
                     query = """select * from v_ttldata"""
                     db.execute(query)
                     rows = db.fetchall()
@@ -128,9 +130,7 @@ class TtlData(Resource):
                 else:
                     query = """ select * from v_ttldata where """+fields+"""='"""+tags[fields]+"""'"""
                     db.execute(query)
-                    print("QUERY = ",query)
                     rows = db.fetchall()
-                    print("ROW = ",rows)
                     for row in rows:
                         result.append(dict(zip(column, row)))
             except Exception as e:
