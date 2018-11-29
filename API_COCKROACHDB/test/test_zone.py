@@ -49,31 +49,3 @@ class TestZone:
         res = client.post('api/zone', data=json.dumps(json_where), content_type='application/json')
         assert res.status_code == 200
 
-    # def test_zone_post_double (self,client):
-    #     json_rem = {
-    #                     "remove": {
-    #                         "tags": {
-    #                             "zone_id": "iank.com"
-    #                         }
-                                
-    #                     }
-    #                 }
-
-    #     json_add = {
-    #                 "insert": {
-    #                         "fields": {
-    #                             "zone_name": "iank.com",
-    #                             "domain_id": "iank.com"
-    #                         },
-    #                         "tags": {
-    #                             "zone_id": "iank.com"
-    #                         }
-                                
-    #                     }
-    #                 }
-
-    #     res_rem = client.post('api/zone', data=json.dumps(json_rem), content_type='application/json')
-    #     res = client.post('api/zone', data=json.dumps(json_add), content_type='application/json')
-    #     assert res.status_code == 200
-
-
