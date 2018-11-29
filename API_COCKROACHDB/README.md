@@ -7,7 +7,7 @@ RESTKnot consists of 2 different applications, namely: API and AGENT
 # AGENT
 Is a link between KNOT and API so that the API can be accessed by users
 ## Environment File
-Create New Environment File save to .env or move .env.example 
+Create New Environment File save to .env or move .env.local
 ```
 mv .env.example .env
 ```

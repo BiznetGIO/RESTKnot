@@ -1,6 +1,6 @@
 version: '0.8.0'
 services:
-    tarsius:
+    restknot:
         build: .
         ports:
           - "5000:5000"
@@ -12,15 +12,6 @@ services:
 
     session:
         image: redis
-        command: ["redis-server", "--requirepass", "tarsius"]
+        command: ["redis-server", "--requirepass", "pass"]
         ports:
           - "6379:6379"
-
-    # database:
-    #     image: bitnami/mongodb
-    #     environment:
-    #       - MONGODB_DATABASE=tarsius_backend
-    #       - MONGODB_PASS=tarsius123
-    #       - MONGODB_USER=tarsius
-    #     ports:
-    #       - "27017:27017"

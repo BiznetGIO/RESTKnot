@@ -1,8 +1,8 @@
 function content_get(id){
    json_data = {
         "view": {
-        "tags": {
-            "id_record" : id
+            "tags": {
+                "id_record" : id.toString()
             }
         }
     }

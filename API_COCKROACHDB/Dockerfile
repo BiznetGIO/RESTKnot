@@ -8,4 +8,4 @@ COPY requirements.txt /
 RUN pip3 install -r /requirements.txt
 WORKDIR /app
 EXPOSE 6969
-# RUN apk del build-base
+RUN apk del build-base
