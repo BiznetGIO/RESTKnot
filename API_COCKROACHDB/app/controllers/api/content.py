@@ -129,7 +129,6 @@ class Content(Resource):
                         result.append(dict(zip(column, row)))
                 else:
                     query = """ select * from v_contentdata where """+fields+"""='"""+tags[fields]+"""'"""
-                    print(query)
                     db.execute(query)
                     rows = db.fetchall()
                     for row in rows:
@@ -145,9 +144,8 @@ class Content(Resource):
                         "id_content": str(i['id_content']),
                         "nm_zone": str(i['nm_zone']),
                         "nm_record": str(i['nm_record']),
-                        "nm_type" : i['nm_type'],
+                        "nm_type" : str(i['nm_type']),
                         "nm_ttl" : i['nm_ttl'],
-                        "id_ttldata" : str(i['id_ttldata']),
                         "id_record" : str(i['id_record']),
                         "nm_content": str(i['nm_content']),
                     }
