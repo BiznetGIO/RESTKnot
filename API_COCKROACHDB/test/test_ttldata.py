@@ -35,6 +35,8 @@ class TestTTLData:
         assert res.status_code == 200
         assert ressuc.status_code == 200
 
+
+
     def test_ttl_data_post_where(self,client):
             input_where = {
                             "where": {
@@ -60,6 +62,8 @@ class TestTTLData:
             db.execute("SELECT id_ttldata FROM zn_ttldata WHERE id_record = 403076483056435201 AND id_ttl = 402427936007192577")
             rows = db.fetchone()
             print(rows[0])
+            for i in rows:
+                print("DELETE => ",i)
             input_rem = {
                             "remove": {
                                 "tags": {
@@ -68,16 +72,17 @@ class TestTTLData:
                                     
                             }
                         }
-
+            
             input_rem_exist = {
                             "remove":{
                                 "tags":{
-                                    "id_ttldata" : rows[0]
+                                    "id_ttldata" : str(rows[0])
                                 }
                             }
             }
             res = client.post('api/ttldata', data=json.dumps(input_rem), content_type='application/json')
-            ress = client.post('api/ttldata', data=json.dumps(input_rem), content_type='application/json')
+            ress = client.post('api/ttldata', data=json.dumps(input_rem_exist), content_type='application/json')
+            print(ress.data)
             assert res.status_code == 200
             assert ress.status_code == 200
 
@@ -93,18 +98,29 @@ class TestTTLData:
         view_data = {
                     "view": {
                         "tags": {
-                            "id_ttldata": "403463031350493185"
+                            "id_ttldata": "403087860012744705"
                         }
                             
                     }
                 }
+
+        view_data_error = {
+                    "view": {
+                        "tags": {
+                            "id_ttldata": 403087860012744705
+                        }
+                            
+                    }
+                }
+
         ress = client.post('api/ttldata',data=json.dumps(view_data), content_type='application/json')
         res = client.post('api/ttldata', data=json.dumps(input_rem), content_type='application/json')
+        resser = client.post('api/ttldata',data=json.dumps(view_data_error), content_type='application/json')
         assert res.status_code == 200
         assert ress.status_code == 200
+        result = json.loads(resser.data)
+        assert result['data'] == None
+        print("LIAT => ",result['data'])
 
-    def test_view(self,client):
-        ququ = "SELECT * FROM v_ttldata WHERE id_ttldata = 403463031350493185"
-        db.execute(ququ);
-        rows=db.fetchall()
-        print("RRR = ", rows)
+
+
