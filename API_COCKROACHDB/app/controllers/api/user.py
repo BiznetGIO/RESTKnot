@@ -10,20 +10,25 @@ class UserdataResource(Resource):
     @jwt_required
     def get(self):
         obj_userdata = list()
-        results = db.get_all("userdata")
-        for i in results :
-            data = {
-                "userdata_id": str(i['userdata_id']),
-                "email" : i['email'],
-                "first_name" : i['first_name'],
-                "last_name" : i['last_name'],
-                "location" : i['location'],
-                "city" : i['city'],
-                "province" : i['province'],
-                "created_at": str(i['created_at'])
-            }
-            obj_userdata.append(data)
-        return response(200, data=obj_userdata)
+        
+        try:
+            results = db.get_all("userdata")
+        except Exception:
+            return response(200, message="Users Data Not Found")
+        else:
+            for i in results :
+                data = {
+                    "userdata_id": str(i['userdata_id']),
+                    "email" : i['email'],
+                    "first_name" : i['first_name'],
+                    "last_name" : i['last_name'],
+                    "location" : i['location'],
+                    "city" : i['city'],
+                    "province" : i['province'],
+                    "created_at": str(i['created_at'])
+                }
+                obj_userdata.append(data)
+            return response(200, data=obj_userdata)
 
 
 class UserdataResourceById(Resource):
@@ -72,7 +77,7 @@ class UserdataInsert(Resource):
             "province" : args['province']
         }
         try:
-            db.insert(table="userdata", data=data_insert)
+            result = db.insert(table="userdata", data=data_insert)
         except Exception as e:
             message = {
                 "status": False,
@@ -81,10 +86,11 @@ class UserdataInsert(Resource):
         else:
             message = {
                 "status": True,
-                "data": data_insert 
+                "data": data_insert,
+                "id": result
             }
         finally:
-            return response(200, message=message)
+            return response(200, message=message,)
 
 
 class UserdataRemove(Resource):

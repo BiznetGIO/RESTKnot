@@ -73,7 +73,7 @@ class Usersignin(Resource):
 
         expires = datetime.timedelta(hours=1)
         if username != user[0]['username'] and pbkdf2_sha256.verify(password, user[0]['password']):
-            return response(401, data="Kampret")
+            return response(401, message="Kampret")
         else:
             access_token = create_access_token(
                                                 identity=user[0],
@@ -82,7 +82,7 @@ class Usersignin(Resource):
 
             data = {
                 'username': user[0]['username'],
-                'token': "Bearer "+access_token,
+                'apikey': "Bearer "+access_token,
                 'expires': str(expires)
             }
             return response(200, data=data)

@@ -6,6 +6,7 @@ from app.helpers import command as cmd
 from app.libs import utils
 # from app import sockets, BaseNamespace
 import json, os
+from app.middlewares.auth import jwt_required
 
 
 # class CmdNamespace(BaseNamespace):
@@ -47,7 +48,7 @@ class SendCommandRest(Resource):
         #     respons = None
         # else:
         #     return response(200, data=respons)
-
+    @jwt_required
     def post(self):
         url_env = os.getenv("SOCKET_AGENT_HOST")
         port = os.getenv("SOCKET_AGENT_PORT")
