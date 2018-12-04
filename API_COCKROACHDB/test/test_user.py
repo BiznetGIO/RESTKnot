@@ -1,26 +1,51 @@
-# import pytest
-# import json
+import pytest
+import json
+from flask import url_for, request
+import hmac
+import hashlib
+
+class TestAuth:
+    # def test_login(self, client):
+    #     res = client.post(
+    #         'api/sign', data={'username': 'ikan', 'password': 'fish'})
+    #     assert res.status_code == 200
+    #     assert res.data
 
 
-# class TestUser:
-#     def test_get_user(self,client):
-#         res = client.get('api/user')
-#         data = json.loads(res.data.decode('utf8'))
-#         assert res.status_code == 200
+    # def test_account_terminated(self, client):
+    #     res = client.post(
+    #         'api/login', data={'email': 'rezza_ramadhan@biznetgio.com', 'password': 'BiznetGio2017'})
+    #     data = json.loads(res.data.decode('utf8'))
+    #     assert res.status_code == 401
+    #     assert data['message'] == "Your account has been terminated"
 
-#     # def test_user_post_add(self,client):
-#     #     send_data = {
-#     #                 "insert": {
-#     #                     "fields": {
-#     #                         "email": "test",
-#     #                         "first_name": "test",
-#     #                         "last_name": "test",
-#     #                         "city": "test",
-#     #                         "province": "test",
-#     #                         "location": "test",
-#     #                         "created_at" : "now"
-#     #                         }
-#     #                     }
-#     #                 }
-#     #     res = client.post('api/user', data=json.dumps(send_data), content_type='application/json')
-#     #     assert res.status_code == 200
+    # def test_invalid_credential(self, client):
+    #     res = client.post(
+    #         'api/login', data={'email': 'galih@biznetgio.com', 'password': '1234'})
+    #     data = json.loads(res.data.decode('utf8'))
+    #     assert res.status_code == 401
+    #     assert data['message'] == "Invalid Credential"
+    @pytest.mark.xfail
+    def test_no_account(self, client):
+        res = client.post(
+            'api/sign', data={'username': 'ikan', 'password': '1234'})
+        assert data['code'] == 401
+
+        #assert data['message'] == "There is no account associated with the email"
+
+    # def test_logout(self, client):
+    #     algo = hashlib.sha256
+    #     # data = bytes(request.base_url, 'UTF-8')
+    #     # secret = bytes(request.host_url, 'UTF-8')
+    #     data = bytes('http://localhost/api/logout', 'UTF-8')
+    #     secret = bytes('http://localhost/', 'UTF-8')
+    #     signature = hmac.new(secret, data, algo).hexdigest()
+    #     # print((data, secret, signature))
+    #     res = client.post('api/login', data={'email': 'galih@biznetgio.com', 'password':'February2018'})
+    #     data = json.loads(res.data.decode('utf8'))
+    #     access_token = data['data']['token']
+
+
+    #     res = client.post('api/logout', headers={'Application-Name': 'boilerplate', 'Signature':signature, 'Access-Token':access_token})
+    #     assert res.status_code == 200
+    #     assert res.data

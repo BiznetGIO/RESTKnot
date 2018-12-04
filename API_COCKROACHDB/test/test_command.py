@@ -156,5 +156,15 @@ class TestCommand:
         res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
         assert res.status_code == 200
 
-
+    @pytest.mark.xfail
+    def test_command_zone_mx_insert_fail(self,client):
+        json_insert={
+                        "zone-mx-insert": {
+                            "tags": {
+                                "id_zone" : "403087427360391169"
+                            }
+                        }
+                        }
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
+        assert res.status_code == 200
 

@@ -25,7 +25,7 @@ class Record(Resource):
         except Exception:
             results = None
         else:
-            return response(200, data=obj_userdata)
+            return response(404, data=obj_userdata)
 
 
     def post(self):

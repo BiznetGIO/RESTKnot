@@ -3,13 +3,15 @@ import json
 from app import db
 
 class TestDataRecord:
+    
     def test_data_record_get(self,client):
         res = client.get('api/record')
         data = json.loads(res.data.decode('utf8'))
+        ress = client.get('api/records')
+        assert ress.status_code == 404
         assert res.status_code == 200
 
-    def test_data_record_post_add(self,client):
-        
+    def test_data_record_post_add(self,client):        
         input_add={
                     "insert": {
                         "fields": {
@@ -38,7 +40,6 @@ class TestDataRecord:
         resSuc = client.post('api/record',data=json.dumps(input_add_success), content_type='application/json')
         assert res.status_code == 200
         assert resSuc.status_code == 200
-        #print(res.data)
 
     def test_data_record_post_where(self,client):
         
@@ -100,24 +101,36 @@ class TestDataRecord:
         view_data = {
                     "view": {
                         "tags": {
-                            "id_record": ""
+                            "id_record": "403531114140762113"
                         }
                     }
                     }
-        res = client.post('api/record',data=json.dumps(view_data), content_type='application/json')
-        assert res.status_code == 200
-
-
-    def test_daata_record_viewagain(self,client):
-        view_data = {
+        
+        view_datas = {
                         "view": {
                             "tags": {
-                                "id_record": "403531114140762113"
+                                "id_record": view_data
                             }
                                 
                         }
                     }
+        
+        view_data_none = {
+                        "view": {
+                            "tags": {
+                                "id_record": ""
+                            }
+                                
+                        }
+                    }
+
+        resNone = client.post('api/record',data=json.dumps(view_data_none), content_type='application/json')
+        resErr = client.post('api/record',data=json.dumps(view_datas), content_type='application/json')
         res = client.post('api/record',data=json.dumps(view_data), content_type='application/json')
-        assert res.status_code == 200   
+        assert res.status_code == 200
+        assert resErr.status_code == 200
+        assert resNone.status_code == 200
+
+ 
 
     
