@@ -4,9 +4,11 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2
 from app.libs import utils
 from app.models import model as db
+from app.middlewares.auth import jwt_required
 
 
 class Type(Resource):
+    @jwt_required
     def get(self):
         command = utils.get_command(request.path)
         command = "zn_"+command
@@ -24,7 +26,7 @@ class Type(Resource):
         else:
             return response(200, data=obj_userdata)
 
-
+    @jwt_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)

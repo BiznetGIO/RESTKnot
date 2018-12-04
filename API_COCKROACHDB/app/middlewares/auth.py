@@ -35,10 +35,7 @@ def user_loader(fn):
                 )
         
         if not user:
-            data = {
-                        "msg": "user not found"
-                    }
-            return response(404, data=data)
+            return response(404, message="User Not Found!")
         g.user = user[0]
         return fn(*args, **kwargs)
     return wrapper

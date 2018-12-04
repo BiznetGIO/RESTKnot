@@ -82,7 +82,7 @@ class Usersignin(Resource):
 
             data = {
                 'username': user[0]['username'],
-                'token': "Bearer "+access_token,
+                'apikey': "Bearer "+access_token,
                 'expires': str(expires)
             }
             return response(200, data=data)
