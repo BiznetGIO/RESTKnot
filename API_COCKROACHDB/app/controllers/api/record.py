@@ -121,9 +121,10 @@ class Record(Resource):
             for i in init_data['data']:
                 table = i['table']
                 tags = i['tags']
-            fields = str(list(tags.keys())[0])
+                for a in tags:
+                    if tags[a] is not None:
+                        fields = a
             column = model.get_columns("v_record")
-            print(column)
             try:
                 result = list()
                 if fields is None:

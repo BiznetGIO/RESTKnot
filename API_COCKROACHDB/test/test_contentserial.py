@@ -24,13 +24,23 @@ class TestContent:
         input_where={
                         "where": {
                             "tags": {
-                                "id_content_serial" : "402146220480921601"
+                                "id_content_serial" : "403085996399591425"
                             }
                                 
                         }
                     }
+        nowhere = {
+            "where": {
+                "tags": {
+                    "id_content_serial" : input_where
+                }
+            }
+        }
+        errorRes = client.post('api/content_serial', data=json.dumps(nowhere),content_type='application/json')
         res = client.post('api/content_serial', data=json.dumps(input_where), content_type='application/json')
+        result = json.loads(errorRes.data)
         assert res.status_code == 200
+        assert result['message']['status'] == False
 
     def test_content_remove(self,client):
         input_rem={
@@ -57,7 +67,7 @@ class TestContent:
         input_rem={
                     "view": {
                         "tags": {
-                            "id_content" : "403085996433965057"
+                            "id_content_serial" : "403085996433965057"
                         }
                             
                     }
