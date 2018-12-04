@@ -40,25 +40,36 @@ def parser(json, command=None):
                 tags_check = None
 
             if fields_check is None and tags_check is not None:
+                print("FIELDS NONE")
                 parameter = {
                     'table': command,
                     'tags' : tagfields['tags']
                 }
             elif fields_check is not None and tags_check is None:
+                print("TAGS NONE")
                 parameter = {
                     'table': command,
                     'fields' : tagfields['fields']
                 }
-            else:
+            elif fields_check is not None and tags_check is not None:
+                print("TAGS AND FIELD NOT NONE")
                 parameter = {
                     'table': command,
                     'fields' : tagfields['fields'],
                     'tags' : tagfields['tags']
                 }
+            else:
+                print("QUERY EXEC")
+                parameter = {
+                    'table': command,
+                    'fields' : tagfields[key],
+                }
+
         parameter_fix.append(parameter)
         return_paramfix = {
             'action': i,
             'data': parameter_fix,
         }
+    print(return_paramfix)
     return return_paramfix
 

@@ -41,6 +41,7 @@ def sendSocket(respons):
         socket_respons = command.response
     except Exception as e:
         print("EROR DATA",e)
+        raise
     else:
         return socket_respons
 
