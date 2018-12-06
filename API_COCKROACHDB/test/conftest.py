@@ -4,6 +4,7 @@ import requests
 import json
 
 headers = dict()
+expirehead = dict()
 
 @pytest.fixture
 def app():
@@ -21,6 +22,22 @@ def tokenTest():
         }
     print("ONLY ONCE")
     return headers
+
+@pytest.fixture(scope = 'module', autouse=True)
+def expiredToken():
+    response=requests.request("POST",url='http://127.0.0.1:6968/api/sign', data={'username': 'testtoken', 'password': '1234'})
+    result = response.json()
+    extokensession=result['data']['apikey']
+    global expirehead
+    expirehead = {
+            'Authorization' : str(extokensession)
+        }
+    print("ONLY ONCE")
+    return expirehead
+
+@pytest.fixture
+def extokentest():
+    return expirehead
 
 @pytest.fixture(autouse=True)
 def tokentest():

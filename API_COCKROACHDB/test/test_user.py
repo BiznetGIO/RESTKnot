@@ -3,10 +3,27 @@ import json
 from flask import url_for, request
 import hmac
 import hashlib
+import time
+from app.middlewares.auth import * 
 
+
+def getUserId(self,client,email,tokentest):
+    res = client.get('api/user', headers=tokentest)
+    data = json.loads(res.data.decode('utf8'))
+    data = data['data']
+    for row in data:
+        if row['email'] == email:
+            id_result = row['userdata_id']
+    return id_result
 
 class TestAuth:
-    def test_login(self, client,tokentest):
+    def test_login_expire(self, client):
+        res = client.post(
+            'api/sign', data={'username': 'testtoken', 'password': '1234'})
+        result = json.loads(res.data.decode('utf8'))
+        assert res.status_code == 200
+    
+    def test_login(self,client):
         res = client.post(
             'api/sign', data={'username': 'ikan', 'password': 'fish'})
         result = json.loads(res.data.decode('utf8'))
@@ -23,10 +40,23 @@ class TestAuth:
             'api/user/add',data=newuser
         )
         result = json.loads(res.data.decode('utf8'))
-
+    
     def test_get_user(self, client, tokentest):
-        print(tokentest)
         res = client.get('api/user', headers= tokentest)
+        data = json.loads(res.data.decode('utf8'))
+        print(data)
+        assert data['code'] == 200
+
+    def test_get_user_expired(self,client,extokentest):
+        res= client.get('api/user', headers=extokentest)
+        data = json.loads(res.data.decode('utf8'))
+        print(data)
+
+    def test_get_userbyid(self, client, tokentest):
+        urlid = 'api/user/'
+        id = str(402435301189451777)
+        urlid = urlid+id
+        res = client.get(urlid, headers= tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert data['code'] == 200
 
@@ -40,12 +70,27 @@ class TestAuth:
             'province' : 'dki jakarta'
         }
 
+        data_2 = {
+            'email' : 'kudaishorse@gmail.com',
+            'first_name' : 'kuda',
+            'last_name' : 'padahalhorse',
+            'location' : 'Cisadane',
+            'city' : 'Jakarta',
+            'province' : 'DKI Jakarta'
+        }
+
         res = client.post(
             'api/user',
             data=data
         )
+        r = client.post(
+            'api/user',
+            data = data_2
+        )
+        result = json.loads(r.data.decode('utf8'))
         response = json.loads(res.data.decode('utf8'))
         assert response['code'] == 200
+        assert result['code'] == 200
 
     def test_user_data_update(self, client, tokentest):
         data = {
@@ -63,6 +108,14 @@ class TestAuth:
         )
         response = json.loads(res.data.decode('utf8'))
         assert response['code'] == 200
+
+    def test_user_data_remove(self,client,tokentest):
+        data_id = getUserId(self,client,'kudaishorse@gmail.com',tokentest)
+        url = 'api/user/' + str(data_id)
+        res = client.delete(url, headers=tokentest)
+        result = json.loads(res.data.decode('utf8'))
+        assert result['code'] == 200
+
     # def test_account_terminated(self, client):
     #     res = client.post(
     #         'api/login', data={'email': 'rezza_ramadhan@biznetgio.com', 'password': 'BiznetGio2017'})
@@ -78,12 +131,10 @@ class TestAuth:
     #     assert data['message'] == "Invalid Credential"
     #@pytest.mark.xfail
     def test_no_account(self, client):
-        print("STAT")
         res = client.post(
             'api/sign', data={'username': 'ikan', 'password': '1234'})
         result = json.loads(res.data.decode('utf8'))
         assert result['code'] == 401
-        print(result['message'])
 
     # def test_logout(self, client):
     #     algo = hashlib.sha256
