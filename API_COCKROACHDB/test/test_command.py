@@ -4,7 +4,7 @@ from app.helpers import cmd_parser as parse
 
 
 class TestCommand:
-    def test_command_conf_ins(self,client):
+    def test_command_conf_ins(self,client,tokentest):
         json_1={
                 "conf-insert": {
                     "tags": {
@@ -12,10 +12,10 @@ class TestCommand:
                     }
                 }
                 }
-        res = client.post('api/sendcommand', data=json.dumps(json_1), content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_1), content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_conf_read(self,client):
+    def test_command_conf_read(self,client,tokentest):
         dataSend = {
                     "conf-read": {
                         "tags": {
@@ -23,11 +23,11 @@ class TestCommand:
                             }
                         }
                     }
-        res = client.post('api/sendcommand', data=json.dumps(dataSend), content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(dataSend), content_type='application/json', headers = tokentest)
         assert res.status_code == 200
     
     
-    def test_command_zone_read(self,client):
+    def test_command_zone_read(self,client,tokentest):
         json_comm_read={
                         "zone-read": {
                             "tags": {
@@ -35,10 +35,10 @@ class TestCommand:
                                 }
                             }
                         }
-        res = client.post('api/sendcommand', data=json.dumps(json_comm_read), content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_comm_read), content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_begin(self,client):
+    def test_command_zone_begin(self,client,tokentest):
         json_zone_begin={
                         "zone-begin": {
                             "tags": {
@@ -46,7 +46,7 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json')
+        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
 #     def test_command_zone_insert(self,client):
@@ -63,7 +63,7 @@ class TestCommand:
 #         assert res.status_code == 200
 
 
-    def test_command_zone_commit(self,client):
+    def test_command_zone_commit(self,client,tokentest):
         json_zone_begin={
                         "zone-commit": {
                             "tags": {
@@ -71,7 +71,7 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json')
+        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
 #     # def test_command_zone_ns_insert(self,client):
@@ -87,7 +87,7 @@ class TestCommand:
 #     #     assert res.status_code == 200
 
 
-    def test_command_conf_read(self,client):
+    def test_command_conf_read(self,client,tokentest):
         json_soa_insert={
                             "conf-read": {
                                 "tags": {
@@ -96,10 +96,10 @@ class TestCommand:
                             }
                         }
 
-        res = client.post('api/sendcommand',data=json.dumps(json_soa_insert),content_type='application/json')
+        res = client.post('api/sendcommand',data=json.dumps(json_soa_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_soa_insert(self,client):
+    def test_command_zone_soa_insert(self,client,tokentest):
         json_zone_begin={
                         "zone-soa-insert": {
                             "tags": {
@@ -107,10 +107,10 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json')
+        res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_insert(self,client):
+    def test_command_zone_insert(self,client,tokentest):
         json_insert={
                         "zone-insert": {
                             "tags": {
@@ -119,10 +119,10 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_ns_insert(self,client):
+    def test_command_zone_ns_insert(self,client,tokentest):
         json_insert={
                         "zone-ns-insert": {
                             "tags": {
@@ -130,11 +130,11 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
 
-    def test_command_zone_srv_insert(self,client):
+    def test_command_zone_srv_insert(self,client,tokentest):
         json_insert={
                         "zone-srv-insert": {
                             "tags": {
@@ -142,10 +142,10 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_mx_insert(self,client):
+    def test_command_zone_mx_insert(self,client,tokentest):
         json_insert={
                         "zone-mx-insert": {
                             "tags": {
@@ -153,8 +153,18 @@ class TestCommand:
                             }
                         }
                         }
-        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json')
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-
+    @pytest.mark.xfail
+    def test_command_zone_mx_insert_fail(self,client,tokentest):
+        json_insert={
+                        "zone-mx-insert": {
+                            "tags": {
+                                "id_zone" : "403087427360391169"
+                            }
+                        }
+                        }
+        res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
+        assert res.status_code == 200
 

@@ -2,13 +2,37 @@ import pytest
 import json
 from app import  db, psycopg2
 
+
+def getId(self,client,namethis,tokentest):
+    res = client.get('api/zone',headers = tokentest)
+    data = json.loads(res.data.decode('utf8'))
+    for result in data['data']:
+        if(result['nm_zone'] == namethis):
+            id_result = result['id_zone']
+    return id_result
+
+def getName(sef,client,tokentest):
+    res = client.get('api/zone',headers = tokentest)
+    data =json.loads(res.data.decode('utf8'))
+    
+    return data['data'][0]['nm_zone']
+
 class TestZone:
-    def test_zone_get(self,client):
-        res = client.get('api/zone')
+    def test_zone_get(self,client,tokentest):
+        res = client.get('api/zone',headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_zone_post_add(self,client):
+
+    def test_zone_post_add(self,client,tokentest):
+        nameZone = getName(self,client,tokentest)
+        json_fail = {
+            "insert": {
+                "fields": {
+                    "nm_zone" : nameZone
+                }
+            }
+        }
         json_add = {
                     "insert": {
                         "fields": {
@@ -17,35 +41,75 @@ class TestZone:
                             
                         }
                     }
-        res = client.post('api/zone', data=json.dumps(json_add), content_type = 'application/json')
+        res = client.post('api/zone', 
+                        data=json.dumps(json_add), 
+                        content_type = 'application/json',
+                        headers = tokentest
+                        )
+        failRes = client.post('api/zone', 
+                            data=json.dumps(json_fail), 
+                            content_type = 'application/json',
+                            headers = tokentest
+                            )
         assert res.status_code == 200
+        assert failRes.status_code == 200
+        print(failRes.data)
 
-    def test_zone_post_remove(self,client):
-        db.execute("SELECT id_zone FROM zn_zone WHERE nm_zone='ikan.com'")
-        rows = db.fetchone()
-        
+    def test_zone_post_remove(self,client,tokentest):
+        delete_id = getId(self,client,'ikan.com',tokentest)
         json_rem = {
                         "remove": {
                             "tags": {
-                                "id_zone": rows[0]
+                                "id_zone": delete_id
                             }
                                 
                         }
                     }
-        res = client.post('api/zone', data=json.dumps(json_rem), content_type = 'application/json')
+        json_nowhere = {
+                        "remove": {
+                            "tags": {
+                                "id_zone": json_rem
+                            }
+                                
+                        }
+                    }
+        res = client.post('api/zone', 
+                            data=json.dumps(json_rem), 
+                            content_type = 'application/json',
+                            headers = tokentest
+                            )
+        resNowhere = client.post('api/zone', 
+                                data=json.dumps(json_nowhere), 
+                                content_type = 'application/json',
+                                headers = tokentest)
         assert res.status_code == 200
+        assert resNowhere.status_code == 200
 
-    def test_zone_post_where(self,client):
-        
-        #print("ROW=> ",rows[0])
+    def test_zone_post_where(self,client,tokentest):       
         json_where = {
                         "where": {
                             "tags": {
-                                "id_zone": 403088762180304897
+                                "id_zone": '403088762180304897'
                             }
                                 
                         }
                         }
-        res = client.post('api/zone', data=json.dumps(json_where), content_type='application/json')
+        json_fail = {
+            "where": {
+                "tags": {
+                    "id_zone": json_where
+                }
+            }
+        }
+        res = client.post('api/zone', 
+                            data=json.dumps(json_where), 
+                            content_type='application/json',
+                            headers = tokentest
+                            )
+        failRes = client.post('api/zone', 
+                            data=json.dumps(json_fail), 
+                            content_type = 'application/json',
+                            headers = tokentest)
         assert res.status_code == 200
+        assert failRes.status_code == 200
 

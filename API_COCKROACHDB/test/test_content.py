@@ -2,12 +2,12 @@ import pytest
 import json
 
 class TestContent:
-    def test_content_get(self,client):
-        res = client.get('api/content')
+    def test_content_get(self,client,tokentest):
+        res = client.get('api/content', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_content_post_add(self,client):
+    def test_content_post_add(self,client,tokentest):
         input_add={
                     "insert": {
                         "fields": {
@@ -18,10 +18,13 @@ class TestContent:
                     }
                 }
 
-        res = client.post('api/content', data=json.dumps(input_add), content_type='application/json')
+        res = client.post('api/content', 
+                            data=json.dumps(input_add), 
+                            content_type='application/json', 
+                            headers = tokentest)
         assert res.status_code == 200
 
-    def test_content_post_where(self,client):
+    def test_content_post_where(self,client,tokentest):
         input_where={
                     "where": {
                         "tags": {
@@ -37,13 +40,19 @@ class TestContent:
                 }
             }
         }
-        getError = client.post('api/content', data=json.dumps(nowhere), content_type='application/json')
-        res = client.post('api/content', data=json.dumps(input_where), content_type='application/json')
+        getError = client.post('api/content', 
+                                data=json.dumps(nowhere), 
+                                content_type='application/json', 
+                                headers = tokentest)
+        res = client.post('api/content', 
+                            data=json.dumps(input_where), 
+                            content_type='application/json', 
+                            headers = tokentest)
         assert res.status_code == 200
         print(res.data)
         
 
-    def test_content_remove(self,client):
+    def test_content_remove(self,client,tokentest):
         input_rem={
                     "remove": {
                         "tags": {
@@ -53,10 +62,13 @@ class TestContent:
                         }
                     }
         print("DS")
-        res = client.post('api/content', data=json.dumps(input_rem), content_type='application/json')
+        res = client.post('api/content', 
+                            data=json.dumps(input_rem), 
+                            content_type='application/json', 
+                            headers = tokentest)
         assert res.status_code == 200
 
-    def test_content_dataview(self, client):
+    def test_content_dataview(self, client,tokentest):
         input_add={
                     "view": {
                         "tags": {
@@ -74,8 +86,14 @@ class TestContent:
                             
                     }
                     }
-        res_rem = client.post('api/content', data=json.dumps(input_rem), content_type='application/json')
-        res = client.post('api/content', data=json.dumps(input_add), content_type='application/json')
+        res_rem = client.post('api/content', 
+                                data=json.dumps(input_rem), 
+                                content_type='application/json', 
+                                headers = tokentest)
+        res = client.post('api/content', 
+                            data=json.dumps(input_add), 
+                            content_type='application/json', 
+                            headers = tokentest)
         assert res.status_code == 200
         result = json.loads(res.data)
         print(res.data)

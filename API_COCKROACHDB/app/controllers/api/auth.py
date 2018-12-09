@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse, fields
-from app.helpers.rest import *
+from app.helpers.rest import response
 from app.middlewares.auth import jwt_required
 from flask_jwt_extended import (
                                 JWTManager,
@@ -72,8 +72,8 @@ class Usersignin(Resource):
                 )
 
         expires = datetime.timedelta(hours=1)
-        if username != user[0]['username'] and pbkdf2_sha256.verify(password, user[0]['password']):
-            return response(401, message="Kampret")
+        if not user or not pbkdf2_sha256.verify(password, user[0]['password']):
+            return response(status_code=401, data="Kampret")
         else:
             access_token = create_access_token(
                                                 identity=user[0],

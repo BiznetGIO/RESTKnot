@@ -2,14 +2,15 @@ import pytest
 import json
 from app import db
 
+
 class TestDataRecord:
-    def test_data_record_get(self,client):
-        res = client.get('api/record')
+    def test_data_record_get(self,client,tokentest):
+        res = client.get('api/record', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
+        print(data)
         assert res.status_code == 200
 
-    def test_data_record_post_add(self,client):
-        
+    def test_data_record_post_add(self,client,tokentest):        
         input_add={
                     "insert": {
                         "fields": {
@@ -34,13 +35,12 @@ class TestDataRecord:
                     }            
                 }
 
-        res = client.post('api/record',data=json.dumps(input_add), content_type='application/json')
-        resSuc = client.post('api/record',data=json.dumps(input_add_success), content_type='application/json')
+        res = client.post('api/record',data=json.dumps(input_add), content_type='application/json', headers=tokentest)
+        resSuc = client.post('api/record',data=json.dumps(input_add_success), content_type='application/json', headers=tokentest)
         assert res.status_code == 200
         assert resSuc.status_code == 200
-        #print(res.data)
 
-    def test_data_record_post_where(self,client):
+    def test_data_record_post_where(self,client,tokentest):
         
         input_where={
                         "where": {
@@ -60,14 +60,14 @@ class TestDataRecord:
                                 
                         }
                         }
-        resError = client.post('api/record',data=json.dumps(nowhere), content_type='application/json')
-        res = client.post('api/record',data=json.dumps(input_where), content_type='application/json')
+        resError = client.post('api/record',data=json.dumps(nowhere), content_type='application/json', headers=tokentest)
+        res = client.post('api/record',data=json.dumps(input_where), content_type='application/json', headers=tokentest)
         result = json.loads(resError.data)
         print(resError.data)
         print("STAT = ",result['message']['status'])
         assert res.status_code == 200
 
-    def test_data_record_post_remove(self,client):
+    def test_data_record_post_remove(self,client,tokentest):
         query = """SELECT id_record FROM zn_record WHERE nm_record='tekukur' AND id_zone='403087859506577409'
         AND id_type='402386688803307521' AND date_record='2018070410'
         """
@@ -91,33 +91,45 @@ class TestDataRecord:
                             
                     }
                     }
-        resclean = client.post('api/record',data=json.dumps(cleanup),content_type='application/json')
-        res = client.post('api/record',data=json.dumps(input_rem), content_type='application/json')
+        resclean = client.post('api/record',data=json.dumps(cleanup),content_type='application/json', headers=tokentest)
+        res = client.post('api/record',data=json.dumps(input_rem), content_type='application/json', headers=tokentest)
         assert resclean.status_code == 200
         assert res.status_code == 200
 
-    def test_daata_record_view(self,client):
+    def test_daata_record_view(self,client,tokentest):
         view_data = {
                     "view": {
                         "tags": {
-                            "id_record": ""
+                            "id_record": "403531114140762113"
                         }
                     }
                     }
-        res = client.post('api/record',data=json.dumps(view_data), content_type='application/json')
-        assert res.status_code == 200
-
-
-    def test_daata_record_viewagain(self,client):
-        view_data = {
+        
+        view_datas = {
                         "view": {
                             "tags": {
-                                "id_record": "403531114140762113"
+                                "id_record": view_data
                             }
                                 
                         }
                     }
-        res = client.post('api/record',data=json.dumps(view_data), content_type='application/json')
-        assert res.status_code == 200   
+        
+        view_data_none = {
+                        "view": {
+                            "tags": {
+                                "id_record": ""
+                            }
+                                
+                        }
+                    }
+
+        resNone = client.post('api/record',data=json.dumps(view_data_none), content_type='application/json', headers=tokentest)
+        resErr = client.post('api/record',data=json.dumps(view_datas), content_type='application/json', headers=tokentest)
+        res = client.post('api/record',data=json.dumps(view_data), content_type='application/json', headers=tokentest)
+        assert res.status_code == 200
+        assert resErr.status_code == 200
+        assert resNone.status_code == 200
+
+ 
 
     

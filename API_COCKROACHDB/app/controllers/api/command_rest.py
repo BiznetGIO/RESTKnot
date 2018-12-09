@@ -119,7 +119,6 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-
             res_begin = cmd.z_begin(tags)
             respons.append(res_begin)
            
@@ -151,13 +150,11 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-
             begin_json = cmd.zone_begin(tags)
             begin_respon = utils.send_http(url,begin_json)
             result.append(begin_respon)
 
             respons = cmd.zone_insert_srv(tags)
-            print(respons)
             http_response = utils.send_http(url,respons)
            
             result.append(http_response)

@@ -3,12 +3,12 @@ import json
 from app import db
 
 class TestTTLData:
-    def test_ttl_data_get(self,client):
-        res = client.get('api/ttldata')
+    def test_ttl_data_get(self,client,tokentest):
+        res = client.get('api/ttldata', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_ttl_data_post_add(self,client):
+    def test_ttl_data_post_add(self,client,tokentest):
         input_add = {
                         "insert": {
                             "fields": {
@@ -29,15 +29,20 @@ class TestTTLData:
                         }
                     }
 
-        ressuc = client.post('api/ttldata', data=json.dumps(input_add_succ), content_type='application/json')
-        res = client.post('api/ttldata', data=json.dumps(input_add), content_type='application/json')
-        
+        ressuc = client.post('api/ttldata',
+                            data=json.dumps(input_add_succ),
+                            content_type='application/json',
+                            headers = tokentest)
+        res = client.post('api/ttldata',
+                            data=json.dumps(input_add),
+                            content_type='application/json',
+                            headers = tokentest)
         assert res.status_code == 200
         assert ressuc.status_code == 200
 
 
 
-    def test_ttl_data_post_where(self,client):
+    def test_ttl_data_post_where(self,client,tokentest):
             input_where = {
                             "where": {
                                 "tags": {
@@ -53,12 +58,20 @@ class TestTTLData:
                     }
                 }
             }
-            resWhere = client.post('api/ttldata', data=json.dumps(input_where_exist), content_type = 'application/json')
-            res = client.post('api/ttldata', data=json.dumps(input_where), content_type='application/json')
+            resWhere = client.post('api/ttldata',
+                                    data=json.dumps(input_where_exist),
+                                    content_type = 'application/json',
+                                    headers = tokentest
+                                    )
+            res = client.post('api/ttldata', 
+                                data=json.dumps(input_where), 
+                                content_type='application/json',
+                                headers = tokentest
+                                )
             assert res.status_code == 200
             assert resWhere.status_code == 200
 
-    def test_ttl_data_post_rem(self,client):
+    def test_ttl_data_post_rem(self,client,tokentest):
             db.execute("SELECT id_ttldata FROM zn_ttldata WHERE id_record = 403076483056435201 AND id_ttl = 402427936007192577")
             rows = db.fetchone()
             print(rows[0])
@@ -80,13 +93,21 @@ class TestTTLData:
                                 }
                             }
             }
-            res = client.post('api/ttldata', data=json.dumps(input_rem), content_type='application/json')
-            ress = client.post('api/ttldata', data=json.dumps(input_rem_exist), content_type='application/json')
+            res = client.post('api/ttldata', 
+                                data=json.dumps(input_rem), 
+                                content_type='application/json',
+                                headers = tokentest
+                                )
+            ress = client.post('api/ttldata', 
+                                data=json.dumps(input_rem_exist), 
+                                content_type='application/json',
+                                headers = tokentest
+                                )
             print(ress.data)
             assert res.status_code == 200
             assert ress.status_code == 200
 
-    def test_ttl_data_view(self,client):
+    def test_ttl_data_view(self,client,tokentest):
         input_rem = {
                     "view": {
                         "tags": {
@@ -113,14 +134,25 @@ class TestTTLData:
                     }
                 }
 
-        ress = client.post('api/ttldata',data=json.dumps(view_data), content_type='application/json')
-        res = client.post('api/ttldata', data=json.dumps(input_rem), content_type='application/json')
-        resser = client.post('api/ttldata',data=json.dumps(view_data_error), content_type='application/json')
+        ress = client.post('api/ttldata',
+                            data=json.dumps(view_data), 
+                            content_type='application/json',
+                            headers = tokentest
+                            )
+        res = client.post('api/ttldata', 
+                            data=json.dumps(input_rem), 
+                            content_type='application/json',
+                            headers = tokentest
+                            )
+        resser = client.post('api/ttldata',
+                            data=json.dumps(view_data_error), 
+                            content_type='application/json',
+                            headers = tokentest
+                            )
         assert res.status_code == 200
         assert ress.status_code == 200
         result = json.loads(resser.data)
         assert result['data'] == None
-        print("LIAT => ",result['data'])
 
 
 
