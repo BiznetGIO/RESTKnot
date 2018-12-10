@@ -185,4 +185,18 @@ class SendCommandRest(Resource):
             result.append(commit_response)
             return response(200, data=result)
 
-        
+        if init_data['action'] == 'zone-unset':
+            respons = list()
+            for i in init_data['data']:
+                tags = i['tags']
+
+            res_begin = cmd.z_begin(tags)
+            respons.append(res_begin)
+           
+            json_command = cmd.zone_unset(tags)
+            http_response = utils.send_http(url,json_command)
+            respons.append(http_response)
+
+            res_commit = cmd.z_commit(tags)
+            respons.append(res_commit)
+            return response(200, data=respons)
