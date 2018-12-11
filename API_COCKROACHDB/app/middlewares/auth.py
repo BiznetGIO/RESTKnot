@@ -1,3 +1,4 @@
+from flask import Flask, jsonify, request
 from app.models import model as db
 from app.helpers.rest import response
 from app import jwt
@@ -12,11 +13,11 @@ from flask_jwt_extended import (
 
 @jwt.expired_token_loader
 def my_expired_token_callback():
-    data = {
-        'msg': "The token has expired",
-        'sub_status': 42
-    }
-    return response(401, data=data)
+    return jsonify({
+        'status': 401,
+        'sub_status': 42,
+        'msg': 'The token has expired'
+    }), 401
 
 
 @jwt.user_identity_loader

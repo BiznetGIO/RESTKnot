@@ -61,7 +61,18 @@ class TestContent:
                                 
                         }
                     }
-        print("DS")
+        inputerror = {
+                    "remove": {
+                        "tags": {
+                            "id_content" : input_rem
+                            }
+                                
+                        }
+                    }
+        reserror = client.post('api/content', 
+                            data=json.dumps(inputerror), 
+                            content_type='application/json', 
+                            headers = tokentest)
         res = client.post('api/content', 
                             data=json.dumps(input_rem), 
                             content_type='application/json', 
@@ -86,6 +97,18 @@ class TestContent:
                             
                     }
                     }
+        view_error = {
+                    "view": {
+                        "tags": {
+                            "id_content" : input_rem
+                        }
+                            
+                    }
+                    }
+        err = client.post('api/content', 
+                            data=json.dumps(view_error), 
+                            content_type='application/json', 
+                            headers = tokentest)
         res_rem = client.post('api/content', 
                                 data=json.dumps(input_rem), 
                                 content_type='application/json', 

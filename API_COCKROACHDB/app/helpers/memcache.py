@@ -9,6 +9,7 @@ def get_cache(name):
     Returns:
         dict -- cache data
     """
+    print(cache.get(name))
     return cache.get(name)
 
 

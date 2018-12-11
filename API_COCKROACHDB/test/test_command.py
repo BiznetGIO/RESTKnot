@@ -8,7 +8,7 @@ class TestCommand:
         json_1={
                 "conf-insert": {
                     "tags": {
-                        "id_zone" : "402468020781678593"
+                        "id_zone" : "406644798852005889"
                     }
                 }
                 }
@@ -31,7 +31,7 @@ class TestCommand:
         json_comm_read={
                         "zone-read": {
                             "tags": {
-                                "id_zone" : "402468020781678593"
+                                "id_zone" : "406644798852005889"
                                 }
                             }
                         }
@@ -42,7 +42,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-begin": {
                             "tags": {
-                                "id_zone" : "403088762180304897"
+                                "id_zone" : "406644798852005889"
                             }
                         }
                         }
@@ -67,7 +67,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-commit": {
                             "tags": {
-                                "id_zone" : "403076482884698113"
+                                "id_zone" : "406644798852005889"
                             }
                         }
                         }
@@ -103,7 +103,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-soa-insert": {
                             "tags": {
-                                "id_zone" : "403076482884698113"
+                                "id_zone" : "406644798852005889"
                             }
                         }
                         }
@@ -115,7 +115,7 @@ class TestCommand:
                         "zone-insert": {
                             "tags": {
                                 "id_record" : "403076483056435201",
-                                "id_zone" : "403076482884698113"
+                                "id_zone" : "406644798852005889"
                             }
                         }
                         }
@@ -126,7 +126,7 @@ class TestCommand:
         json_insert={
                         "zone-ns-insert": {
                             "tags": {
-                                "id_zone" : "403076482884698113"
+                                "id_zone" : "406644798852005889"
                             }
                         }
                         }
@@ -167,4 +167,3 @@ class TestCommand:
                         }
         res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
-

@@ -10,7 +10,6 @@ class UserdataResource(Resource):
     @jwt_required
     def get(self):
         obj_userdata = list()
-        
         try:
             results = db.get_all("userdata")
         except Exception:

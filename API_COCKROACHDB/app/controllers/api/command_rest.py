@@ -182,4 +182,23 @@ class SendCommandRest(Resource):
             result.append(commit_response)
             return response(200, data=result)
 
+#delete zone
+        # if init_data['action'] == 'zone-unset':
+        #     result = list()
+        #     for i in init_data['data']:
+        #         tags = i['tags']
+
+        #     begin_json = cmd.zone_begin(tags)
+        #     begin_respon = utils.send_http(url,begin_json)
+        #     result.append(begin_respon)
+
+        #     respons = cmd.zone_insert_mx(tags)
+        #     http_response = utils.send_http(url,respons)
+        #     result.append(http_response)
+
+        #     commit_json = cmd.zone_commit(tags)
+        #     commit_response = utils.send_http(url,commit_json)
+        #     result.append(commit_response)
+        #     return response(200, data=result)
+
         
