@@ -237,44 +237,44 @@ def zone_begin(tags):
     }
     return json_command
 
-def zone_begin_http(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
-    json_command={
-        "zone-begin": {
-            "sendblock": {
-                "cmd": "zone-begin",
-                "zone": domain_name
-            },
-            "receive": {
-                "type": "block"
-            }
-        }
-    }
-    return json_command
+# def zone_begin_http(tags):
+#     domain_name = None
+#     fields = str(list(tags.keys())[0])
+#     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
+#     for i in domain_data:
+#         domain_name = i['nm_zone']
+#     json_command={
+#         "zone-begin": {
+#             "sendblock": {
+#                 "cmd": "zone-begin",
+#                 "zone": domain_name
+#             },
+#             "receive": {
+#                 "type": "block"
+#             }
+#         }
+#     }
+#     return json_command
 
-def zone_commit_http(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
+# def zone_commit_http(tags):
+#     domain_name = None
+#     fields = str(list(tags.keys())[0])
+#     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
+#     for i in domain_data:
+#         domain_name = i['nm_zone']
 
-    json_command={
-        "zone-commit": {
-            "sendblock": {
-                "cmd": "zone-commit",
-                "zone": domain_name
-            },
-            "receive": {
-                "type": "block"
-            }
-        }
-    }
-    return json_command
+#     json_command={
+#         "zone-commit": {
+#             "sendblock": {
+#                 "cmd": "zone-commit",
+#                 "zone": domain_name
+#             },
+#             "receive": {
+#                 "type": "block"
+#             }
+#         }
+#     }
+#     return json_command
 
 def zone_commit(tags):
     domain_name = None
@@ -549,8 +549,6 @@ def zone_insert_mx(tags):
                 }
     return json_command
 
-<<<<<<< HEAD
-=======
 
 def zone_unset(tags):
     id_record = tags['id_record']
@@ -576,4 +574,3 @@ def zone_unset(tags):
     # print(json_command)
     return json_command
 
->>>>>>> fe7a4fe86add5b4c3a81c4064dec33cca1ffb3a7
