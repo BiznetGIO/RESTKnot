@@ -5,7 +5,8 @@ from flask_jwt_extended import (
                                 JWTManager,
                                 create_access_token,
                                 get_jwt_identity,
-                                jwt_refresh_token_required
+                                jwt_refresh_token_required,
+                                create_refresh_token
                                )
 import datetime
 from app.models import model as db
@@ -90,14 +91,17 @@ class Usersignin(Resource):
             }
             return response(200, data=data)
         else:
+            refresh_token = create_refresh_token(
+                identity = user[0]
+            )
             access_token = create_access_token(
                                                 identity=user[0],
                                                 expires_delta=expires
                                               )
-
             data = {
                 'username': user[0]['username'],
                 'apikey': "Bearer "+access_token,
-                'expires': str(expires)
+                'expires': str(expires),
+                'refresh': "Bearer "+refresh_token
             }
             return response(200, data=data)
