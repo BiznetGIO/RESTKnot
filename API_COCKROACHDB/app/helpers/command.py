@@ -549,3 +549,31 @@ def zone_insert_mx(tags):
                 }
     return json_command
 
+<<<<<<< HEAD
+=======
+
+def zone_unset(tags):
+    id_record = tags['id_record']
+    record = list()
+    column_record = model.get_columns("v_record")
+    query = "select * from v_record where id_record='"+id_record+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record, row)))
+    json_command={
+        "zone-unset": {
+            "sendblock": {
+                "cmd": "zone-unsset",
+                "zone": record[0]['nm_zone'],
+                "owner": record[0]['nm_record']
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    # print(json_command)
+    return json_command
+
+>>>>>>> fe7a4fe86add5b4c3a81c4064dec33cca1ffb3a7

@@ -59,11 +59,6 @@ endpoint:
           desc: Domain Variabel To Search
 
   zn_ttl:
-    query:
-      exec:
-        fields:
-          name: Query Field
-          desc: Exec Your Query
     where:
       tags:
         id_ttl:
@@ -159,14 +154,31 @@ endpoint:
           name: methode name
           desc: Domain Variabel To Search
     query:
-      exec:
+      select:
         fields:
           name: Query Field
           desc: Exec Your Query
-      # where:
-      #   fields:
-      #     name: Query Field
-      #     desc: Exec Your Query
+        where:
+          name: Action Query
+          desc: Exec Your Query
+          default:
+        join:
+          name: Action Query
+          desc: Exec Your Query
+          default:
+
+      insert:
+        column:
+          name: Query Field
+          desc: Exec Your Query
+          default:
+        values:
+          name: Action Query
+          desc: Exec Your Query
+        return:
+          name: Action Query
+          desc: Exec Your Query
+          default:
 
   zn_record:
     where:
