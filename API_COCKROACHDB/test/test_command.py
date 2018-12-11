@@ -103,7 +103,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-soa-insert": {
                             "tags": {
-                                "id_zone" : "406644798852005889"
+                                "id_zone" : "407780821838364673"
                             }
                         }
                         }
@@ -114,8 +114,8 @@ class TestCommand:
         json_insert={
                         "zone-insert": {
                             "tags": {
-                                "id_record" : "403076483056435201",
-                                "id_zone" : "406644798852005889"
+                                "id_record" : "407780821893644289",
+                                "id_zone" : "407780821838364673"
                             }
                         }
                         }
@@ -126,7 +126,7 @@ class TestCommand:
         json_insert={
                         "zone-ns-insert": {
                             "tags": {
-                                "id_zone" : "406644798852005889"
+                                "id_zone" : "407780821838364673"
                             }
                         }
                         }
@@ -138,7 +138,7 @@ class TestCommand:
         json_insert={
                         "zone-srv-insert": {
                             "tags": {
-                                "id_zone" : "403076482884698113"
+                                "id_zone" : "407780821838364673"
                             }
                         }
                         }
@@ -149,7 +149,7 @@ class TestCommand:
         json_insert={
                         "zone-mx-insert": {
                             "tags": {
-                                "id_zone" : "403085995932844033"
+                                "id_zone" : "407780821838364673"
                             }
                         }
                         }

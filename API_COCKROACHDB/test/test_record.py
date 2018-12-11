@@ -26,9 +26,9 @@ class TestDataRecord:
         input_add_success={
                     "insert": {
                         "fields": {
-                            "nm_record":"tekukur",
+                            "nm_record":"kuda",
                             "date_record":"2018070410",
-                            "id_zone":"403087859506577409",
+                            "id_zone":"407780821838364673",
                             "id_type":"402386688803307521"
                         }
                             
@@ -45,7 +45,7 @@ class TestDataRecord:
         input_where={
                         "where": {
                             "tags": {
-                                "id_record": "403086715296612353"
+                                "id_record": "407780821893644289"
                                 
                             }
                                 
@@ -68,7 +68,7 @@ class TestDataRecord:
         assert res.status_code == 200
 
     def test_data_record_post_remove(self,client,tokentest):
-        query = """SELECT id_record FROM zn_record WHERE nm_record='tekukur' AND id_zone='403087859506577409'
+        query = """SELECT id_record FROM zn_record WHERE nm_record='kuda' AND id_zone='407780821838364673'
         AND id_type='402386688803307521' AND date_record='2018070410'
         """
         db.execute(query)

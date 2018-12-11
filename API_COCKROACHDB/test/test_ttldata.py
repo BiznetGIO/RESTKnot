@@ -22,7 +22,7 @@ class TestTTLData:
         input_add_succ = {
                         "insert": {
                             "fields": {
-                                "id_record": "403076483056435201",
+                                "id_record": "407788571899494401",
                                 "id_ttl": "402427936007192577"
                             }
                                 
@@ -72,7 +72,7 @@ class TestTTLData:
             assert resWhere.status_code == 200
 
     def test_ttl_data_post_rem(self,client,tokentest):
-            db.execute("SELECT id_ttldata FROM zn_ttldata WHERE id_record = 403076483056435201 AND id_ttl = 402427936007192577")
+            db.execute("SELECT id_ttldata FROM zn_ttldata WHERE id_record = 407788571899494401 AND id_ttl = 402427936007192577")
             rows = db.fetchone()
             print(rows[0])
             for i in rows:

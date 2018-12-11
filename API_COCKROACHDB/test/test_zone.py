@@ -112,4 +112,93 @@ class TestZone:
                             headers = tokentest)
         assert res.status_code == 200
         assert failRes.status_code == 200
+    
+    def test_query(self,client,tokentest):
+        jsonq = {
+                    "query": {
+                        "select": {
+                            "fields": "nm_zone",
+                            "where": {
+                                "column" : "nm_zone",
+                                "value" : "ikan.com"
+                                },
+                            "join": ""
+                            }
+                        }
+                    }
+                
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
 
+    def test_query_empty(self,client,tokentest):
+        jsonq = {
+                    "query": {
+                        "select": {
+                            "fields": "nm_zone",
+                            "where": "",
+                            "join": ""
+                            }
+                        }
+                    }
+                
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
+
+    def test_query_insert(self,client,tokentest):
+        jsonq = {
+            "query":{
+                "insert": {
+                    "column": {
+                        "name": "nm_zone",
+                    },
+                    "values": {
+                        "name": "monkey.com",
+                    },
+                    "return":  "id_zone"
+                        
+                    }
+                }
+            }
+                
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
+
+    def test_query_insert_empty(self,client,tokentest):
+        jsonq = {
+            "query":{
+                "insert": {
+                    "column": {
+                        "name": "",
+                    },
+                    "values": {
+                        "name": "",
+                    },
+                    "return":  ""
+                        
+                    }
+                }
+            }
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
+
+    

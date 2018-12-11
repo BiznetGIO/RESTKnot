@@ -16,11 +16,18 @@ def tokenTest():
     response=requests.request("POST",url='http://127.0.0.1:6968/api/sign', data={'username': 'ikan', 'password': 'fish'})
     result = response.json()
     tokensession=result['data']['apikey']
+    refreshtoken=result['data']['refresh']
     global headers
-    headers = {
+    headers = { 
+        'access_token':
+                {
             'Authorization' : str(tokensession)
+            },
+        'refresh_token':
+        {
+            'Authorization' : str(refreshtoken)
         }
-    print("ONLY ONCE")
+        }
     return headers
 
 @pytest.fixture(scope = 'module', autouse=True)
@@ -41,4 +48,8 @@ def extokentest():
 
 @pytest.fixture(autouse=True)
 def tokentest():
-    return headers
+    return headers['access_token']
+
+@pytest.fixture(autouse=True)
+def refreshtokentest():
+    return headers['refresh_token']
