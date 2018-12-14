@@ -1,17 +1,19 @@
 import pytest
 import json
 
+content_id = ''
+
 class TestContent:
     def test_content_get(self,client,tokentest):
         res = client.get('api/content', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_content_post_add(self,client,tokentest):
+    def test_content_post_add(self,client,tokentest,z_datatest):
         input_add={
                     "insert": {
                         "fields": {
-                            "id_ttldata": "403085996278251521",
+                            "id_ttldata": "000000000000000",
                             "nm_content": "1.1.1.1"
                         }
                             
@@ -22,13 +24,33 @@ class TestContent:
                             data=json.dumps(input_add), 
                             content_type='application/json', 
                             headers = tokentest)
+
+        input_add={
+                    "insert": {
+                        "fields": {
+                            "id_ttldata": z_datatest['ttldata'][0]['id_ttldata'],
+                            "nm_content": "this is test content"
+                        }
+                            
+                    }
+                }
+
+        res = client.post('api/content', 
+                            data=json.dumps(input_add), 
+                            content_type='application/json', 
+                            headers = tokentest)
+
+        data = json.loads(res.data)
+        global content_id
+        content_id = data['message']['id']
+
         assert res.status_code == 200
 
-    def test_content_post_where(self,client,tokentest):
+    def test_content_post_where(self,client,tokentest,z_datatest):
         input_where={
                     "where": {
                         "tags": {
-                            "id_content": "403086715543289857"
+                            "id_content": z_datatest['content'][-1]['id_content']
                         }
                             
                     }
@@ -56,7 +78,7 @@ class TestContent:
         input_rem={
                     "remove": {
                         "tags": {
-                            "id_content" : "403076483136723169"
+                            "id_content" : content_id
                             }
                                 
                         }
@@ -79,11 +101,11 @@ class TestContent:
                             headers = tokentest)
         assert res.status_code == 200
 
-    def test_content_dataview(self, client,tokentest):
+    def test_content_dataview(self, client,tokentest,z_datatest):
         input_add={
                     "view": {
                         "tags": {
-                            "id_content" : "403531114509959169"
+                            "id_content" : z_datatest['content'][0]['id_content']
                         }
                             
                     }

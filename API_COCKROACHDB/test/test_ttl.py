@@ -9,11 +9,11 @@ def getId(self,client,namethis,tokentest):
             id_result = result['id_ttl']
     return id_result
 
-def getName(sef,client,tokentest):
+def getfirstid(sef,client,tokentest):
     res = client.get('api/ttl',headers = tokentest)
     data =json.loads(res.data.decode('utf8'))
     
-    return data['data'][0]['nm_ttl']
+    return data['data'][0]['id_ttl']
 
 class TestTtlName:
     def test_ttl_get(self, client,tokentest):
@@ -45,6 +45,7 @@ class TestTtlName:
 
 
     def test_ttl_post_where(self,client,tokentest):
+        where_id = getfirstid(self,client,tokentest)
         json_where = {
                             "where": {
                                 "tags": {
@@ -62,7 +63,7 @@ class TestTtlName:
         json_rem = {
                     "remove": {
                         "tags": {
-                            "id_ttl": "150"
+                            "id_ttl": "ay"
                             }
                             
                         }

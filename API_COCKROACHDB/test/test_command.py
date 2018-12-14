@@ -1,14 +1,17 @@
 import pytest
 import json
 from app.helpers import cmd_parser as parse
+test_id = ''
 
 
 class TestCommand:
-    def test_command_conf_ins(self,client,tokentest):
+    def test_command_conf_ins(self,client,tokentest,z_idtest):
+        global test_id
+        test_id = z_idtest
         json_1={
                 "conf-insert": {
                     "tags": {
-                        "id_zone" : "406644798852005889"
+                        "id_zone" : test_id
                     }
                 }
                 }
@@ -31,7 +34,7 @@ class TestCommand:
         json_comm_read={
                         "zone-read": {
                             "tags": {
-                                "id_zone" : "406644798852005889"
+                                "id_zone" : test_id
                                 }
                             }
                         }
@@ -42,7 +45,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-begin": {
                             "tags": {
-                                "id_zone" : "406644798852005889"
+                                "id_zone" : test_id
                             }
                         }
                         }
@@ -67,7 +70,7 @@ class TestCommand:
         json_zone_begin={
                         "zone-commit": {
                             "tags": {
-                                "id_zone" : "406644798852005889"
+                                "id_zone" : test_id
                             }
                         }
                         }
@@ -103,19 +106,21 @@ class TestCommand:
         json_zone_begin={
                         "zone-soa-insert": {
                             "tags": {
-                                "id_zone" : "407780821838364673"
+                                "id_zone" : test_id
                             }
                         }
                         }
         res = client.post('api/sendcommand',data=json.dumps(json_zone_begin),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_insert(self,client,tokentest):
+    def test_command_zone_insert(self,client,tokentest,z_datatest):
+        id_zone = z_datatest['record'][0]['id_zone']
+        id_record = z_datatest['record'][0]['id_record']
         json_insert={
                         "zone-insert": {
                             "tags": {
-                                "id_record" : "407780821893644289",
-                                "id_zone" : "407780821838364673"
+                                "id_record" : id_record,
+                                "id_zone" : id_zone
                             }
                         }
                         }
@@ -126,30 +131,32 @@ class TestCommand:
         json_insert={
                         "zone-ns-insert": {
                             "tags": {
-                                "id_zone" : "407780821838364673"
+                                "id_zone" : test_id
                             }
                         }
                         }
         res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
-
-
-    def test_command_zone_srv_insert(self,client,tokentest):
+    
+    def test_command_zone_srv_insert(self,client,tokentest,z_prep_var_command_srv):
+        id_zone = z_prep_var_command_srv
+        print(id_zone)
         json_insert={
                         "zone-srv-insert": {
                             "tags": {
-                                "id_zone" : "407780821838364673"
+                                "id_zone" : id_zone
                             }
                         }
                         }
         res = client.post('api/sendcommand', data=json.dumps(json_insert),content_type='application/json', headers = tokentest)
         assert res.status_code == 200
 
-    def test_command_zone_mx_insert(self,client,tokentest):
+    def test_command_zone_mx_insert(self,client,tokentest,z_prep_var_command_mx):
+        id_zone = z_prep_var_command_mx
         json_insert={
                         "zone-mx-insert": {
                             "tags": {
-                                "id_zone" : "407780821838364673"
+                                "id_zone" : id_zone
                             }
                         }
                         }

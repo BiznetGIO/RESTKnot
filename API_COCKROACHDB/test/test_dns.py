@@ -3,12 +3,14 @@ import json
 from app import db
 from app.models import model
 
-# def getIdByName(domainname):
-#     query = "SELECT id_zone FROM zn_zone WHERE nm_zone = \'"+domainname+"\'"
-#     db.execute(query)
-#     rows = db.fetchone()
-
-#     return str(rows[0])
+def getId(self,client,namethis,tokentest):
+    res = client.get('api/zone',headers = tokentest)
+    data = json.loads(res.data.decode('utf8'))
+    print(data)
+    for result in data['data']:
+        if(result['nm_zone'] == namethis):
+            id_result = result['id_zone']
+    return id_result
 
 
 
@@ -46,7 +48,7 @@ def get_cleanup_id(domainname):
 class TestDNS:
     def test_dns_post_duplicate(self,client):
         data = {
-            'domain' : 'ikan.com'
+            'domain' : 'catiskucing.com'
         }
         res = client.post('api/user/dnscreate', data = data )
         result = json.loads(res.data.decode('utf8'))
@@ -61,48 +63,64 @@ class TestDNS:
         result = json.loads(res.data.decode('utf8'))
         assert result['code'] == 200
 
-    def test_cleanup(self,client,tokentest):
-        ids = get_cleanup_id('kucing.com')
-        id_content = list()
-        id_content_serial = list()
-        id_ttldata = list()
-        id_record = list()
-        for id in ids:
-            if id['id_content'] not in id_content:
-                id_content.append(id['id_content'])
-            if id['id_content_serial'] not in id_content_serial and id['id_content_serial'] != 'None':
-                id_content_serial.append(id['id_content_serial'])
-            if id['id_ttldata'] not in id_ttldata:
-                id_ttldata.append(id['id_ttldata'])
-            if id['id_record'] not in id_record:
-                id_record.append(id['id_record'])
+    #def test_cleanup(self,client,tokentest):
+        # ids = get_cleanup_id('kucing.com')
+        # id_content = list()
+        # id_content_serial = list()
+        # id_ttldata = list()
+        # id_record = list()
+        # for id in ids:
+        #     if id['id_content'] not in id_content:
+        #         id_content.append(id['id_content'])
+        #     if id['id_content_serial'] not in id_content_serial and id['id_content_serial'] != 'None':
+        #         id_content_serial.append(id['id_content_serial'])
+        #     if id['id_ttldata'] not in id_ttldata:
+        #         id_ttldata.append(id['id_ttldata'])
+        #     if id['id_record'] not in id_record:
+        #         id_record.append(id['id_record'])
 
-        id_zone = ids[0]['id_zone']
+        # print ("HOOO ",ids)
+        # id_zone = ids[0]['id_zone']
 
-        for content in id_content:
-            res = client.post(
-                'api/content',data=json.dumps({"remove":{"tags":{"id_content" : content}}}),
-                headers = tokentest
-            )
-        for ttldata in id_ttldata:
-            res = client.post(
-                'api/ttldata',data=json.dumps({"remove":{"tags":{"id_ttldata" : ttldata}}}),
-                headers = tokentest
-            )
-        for content_serial in id_content_serial:
-            res = client.post(
-                'api/content_serial',data=json.dumps({"remove":{"tags":{"id_content_serial" : content_serial}}}),
-                headers = tokentest
-            )
-        for record in id_record:
-            res = client.post(
-                'api/record',data=json.dumps({"remove":{"tags":{"id_record" : record}}}),
-                headers = tokentest
-            )
-        res = client.post(
-                'api/zone',data=json.dumps({"remove":{"tags":{"id_zone" : id_zone}}}),
-                headers = tokentest
-            )
+        # for content in id_content:
+        #     res = client.post(
+        #         'api/content',data=json.dumps({"remove":{"tags":{"id_content" : content}}}),
+        #         headers = tokentest
+        #     )
+        # for ttldata in id_ttldata:
+        #     res = client.post(
+        #         'api/ttldata',data=json.dumps({"remove":{"tags":{"id_ttldata" : ttldata}}}),
+        #         headers = tokentest
+        #     )
+        # for content_serial in id_content_serial:
+        #     res = client.post(
+        #         'api/content_serial',data=json.dumps({"remove":{"tags":{"id_content_serial" : content_serial}}}),
+        #         headers = tokentest
+        #     )
+        # for record in id_record:
+        #     res = client.post(
+        #         'api/record',data=json.dumps({"remove":{"tags":{"id_record" : record}}}),
+        #         headers = tokentest
+        #     )
+        # res = client.post(
+        #         'api/zone',data=json.dumps({"remove":{"tags":{"id_zone" : id_zone}}}),
+        #         headers = tokentest
+        #     )
+    def test_zone_post_remove(self,client,tokentest):
+        delete_id = getId(self,client,'kucing.com',tokentest)
+        json_rem = {
+                        "remove": {
+                            "tags": {
+                                "id_zone": delete_id
+                            }
+                                
+                        }
+                    }
+        res = client.post('api/zone', 
+                            data=json.dumps(json_rem), 
+                            content_type = 'application/json',
+                            headers = tokentest
+                            )
 
-        
+        assert res.status_code == 200
         

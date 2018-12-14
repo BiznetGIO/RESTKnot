@@ -1,18 +1,21 @@
 import pytest
 import json
 
+content_serial_id = ''
+
 class TestContent:
     def test_content_get(self,client,tokentest):
         res = client.get('api/content_serial', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_content_post_add(self,client,tokentest):
+    def test_content_post_add(self,client,tokentest,z_datatest):
+        
         input_add={
                     "insert": {
                         "fields": {
                             "nm_content_serial": "38400",
-                            "id_record": "402339943405944833"
+                            "id_record": z_datatest['content_serial'][0]['id_record']
                         }
                             
                     }
@@ -21,13 +24,31 @@ class TestContent:
                             data=json.dumps(input_add), 
                             content_type='application/json',
                             headers = tokentest)
+
+        data = json.loads(res.data)
+        global content_serial_id
+        content_serial_id = data['message']['id']
+        
+        input_fail = {
+                    "insert": {
+                        "fields": {
+                            "nm_content_serial": "38400",
+                            "id_record": input_add
+                        }
+                            
+                    }
+                    }
+        res_fail = client.post('api/content_serial', 
+                            data=json.dumps(input_fail), 
+                            content_type='application/json',
+                            headers = tokentest)
         assert res.status_code == 200
 
-    def test_content_post_where(self,client,tokentest):
+    def test_content_post_where(self,client,tokentest,z_datatest):
         input_where={
                         "where": {
                             "tags": {
-                                "id_content_serial" : "403085996399591425"
+                                "id_content_serial" : z_datatest['content_serial'][0]['id_content_serial']
                             }
                                 
                         }
@@ -56,7 +77,7 @@ class TestContent:
         input_rem={
                         "remove": {
                             "tags": {
-                                "id_content_serial": "ibnu.com_soa_ctn"
+                                "id_content_serial": content_serial_id
                             }
                                 
                         }
@@ -67,7 +88,21 @@ class TestContent:
                             headers = tokentest)
         assert res.status_code == 200
 
-    def test_content_dataview(self, client,tokentest):
+        input_rem_fail={
+                        "remove": {
+                            "tags": {
+                                "id_content_serial": input_rem
+                            }
+                                
+                        }
+                    }
+        res = client.post('api/content_serial', 
+                            data=json.dumps(input_rem_fail), 
+                            content_type='application/json', 
+                            headers = tokentest)
+        assert res.status_code == 200
+
+    def test_content_dataview(self, client,tokentest,z_datatest):
         input_add={
                     "view": {
                         "tags": {
@@ -80,7 +115,7 @@ class TestContent:
         input_rem={
                     "view": {
                         "tags": {
-                            "id_content_serial" : "403085996433965057"
+                            "id_content_serial" : z_datatest['content_serial'][0]['id_content_serial']
                         }
                             
                     }

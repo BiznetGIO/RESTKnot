@@ -1,16 +1,16 @@
 import pytest
 import json
-from app import db
 
+record_id = ''
 
 class TestDataRecord:
     def test_data_record_get(self,client,tokentest):
         res = client.get('api/record', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
-        print(data)
         assert res.status_code == 200
 
-    def test_data_record_post_add(self,client,tokentest):        
+    def test_data_record_post_add(self,client,tokentest,z_datatest):        
+        data_id = z_datatest
         input_add={
                     "insert": {
                         "fields": {
@@ -26,10 +26,10 @@ class TestDataRecord:
         input_add_success={
                     "insert": {
                         "fields": {
-                            "nm_record":"kuda",
-                            "date_record":"2018070410",
-                            "id_zone":"407780821838364673",
-                            "id_type":"402386688803307521"
+                            "nm_record":"tekukur",
+                            "date_record": z_datatest['record'][0]['date_record'],
+                            "id_zone": z_datatest['record'][0]['id_zone'],
+                            "id_type": z_datatest['record'][0]['id_type']
                         }
                             
                     }            
@@ -37,15 +37,19 @@ class TestDataRecord:
 
         res = client.post('api/record',data=json.dumps(input_add), content_type='application/json', headers=tokentest)
         resSuc = client.post('api/record',data=json.dumps(input_add_success), content_type='application/json', headers=tokentest)
+        data = json.loads(resSuc.data)
+        global record_id
+        record_id = data['message']['id']
+        print("LOCAL ", record_id)
         assert res.status_code == 200
         assert resSuc.status_code == 200
 
-    def test_data_record_post_where(self,client,tokentest):
+    def test_data_record_post_where(self,client,tokentest,z_datatest):
         
         input_where={
                         "where": {
                             "tags": {
-                                "id_record": "407780821893644289"
+                                "id_record": z_datatest['record'][0]['id_record']
                                 
                             }
                                 
@@ -63,22 +67,14 @@ class TestDataRecord:
         resError = client.post('api/record',data=json.dumps(nowhere), content_type='application/json', headers=tokentest)
         res = client.post('api/record',data=json.dumps(input_where), content_type='application/json', headers=tokentest)
         result = json.loads(resError.data)
-        print(resError.data)
-        print("STAT = ",result['message']['status'])
         assert res.status_code == 200
 
     def test_data_record_post_remove(self,client,tokentest):
-        query = """SELECT id_record FROM zn_record WHERE nm_record='kuda' AND id_zone='407780821838364673'
-        AND id_type='402386688803307521' AND date_record='2018070410'
-        """
-        db.execute(query)
-        rows=db.fetchone()
-        print(rows)
 
         cleanup = {
                     "remove":{
                         "tags":{
-                            "id_record": str(rows[0])
+                            "id_record": record_id
                         }
                     }
         }
@@ -96,11 +92,11 @@ class TestDataRecord:
         assert resclean.status_code == 200
         assert res.status_code == 200
 
-    def test_daata_record_view(self,client,tokentest):
+    def test_daata_record_view(self,client,tokentest,z_datatest):
         view_data = {
                     "view": {
                         "tags": {
-                            "id_record": "403531114140762113"
+                            "id_record": z_datatest['record'][0]['id_record']
                         }
                     }
                     }
