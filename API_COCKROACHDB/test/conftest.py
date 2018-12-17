@@ -87,7 +87,43 @@ def a_zone_check():
     return zone_id
 
 
+@pytest.fixture(autouse=True,scope='session')
+def b_checkfundamentals():
+    token = headers['access_token']
+    temp = list()
+    ttl_list = ['86400','43200','28800','14400','7200','3600','1800','900','300']
+    type_list = ['SOA','SRV','A','NS','CNAME','MS','AAAA','TXT']
+    url = 'http://127.0.0.1:6968/api/'
+    fieldname = ''
+    val = ''
+    data_send = {"insert": {"fields": { fieldname : val }}}
+    res = requests.request("GET", url=url+'ttl',headers = token)
+    data = res.json()
+    for i in data['data']:
+        temp.append(i['nm_ttl'])
+    for i in ttl_list :
+        if not i in temp:
+            fieldname = 'nm_ttl'
+            val = i
+            res = requests.post(url=url+'ttl',
+                                data = json.dumps(data_send),
+                                headers = token)
+        else :
+            print(i," ada \n")
 
+    res = requests.request("GET", url=url+'type',headers = token)
+    data = res.json()
+    for i in data['data']:
+        temp.append(i['nm_type'])
+    for i in type_list :
+        if not i in temp:
+            fieldname = 'nm_type'
+            val = i
+            res = requests.post(url=url+'type',
+                                data = json.dumps(data_send),
+                                headers = token)
+        else :
+            print(i," ada \n")
 
 @pytest.fixture(autouse=True,scope='session')   
 def grabIds():

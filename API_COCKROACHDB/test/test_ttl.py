@@ -1,5 +1,6 @@
 import pytest
 import json
+from app.libs.utils import timeset
 
 def getId(self,client,namethis,tokentest):
     res = client.get('api/ttl',headers = tokentest)
@@ -16,6 +17,9 @@ def getfirstid(sef,client,tokentest):
     return data['data'][0]['id_ttl']
 
 class TestTtlName:
+    def test_printtime(self):
+        print(timeset())
+
     def test_ttl_get(self, client,tokentest):
         res = client.get('api/ttl', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))

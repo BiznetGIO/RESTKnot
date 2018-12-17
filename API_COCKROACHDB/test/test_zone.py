@@ -137,6 +137,28 @@ class TestZone:
                 headers = tokentest)
         assert queer.status_code == 200
 
+    def test_query_list(self,client,tokentest):
+        jsonq = {
+                    "query": {
+                        "select": {
+                            "fields": ["nm_zone",'nm_type'],
+                            "where": {
+                                "column" : "nm_zone",
+                                "value" : "ikan.com"
+                                },
+                            "join": ""
+                            }
+                        }
+                    }
+                
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
+
     def test_query_empty(self,client,tokentest):
         jsonq = {
                     "query": {
@@ -203,4 +225,28 @@ class TestZone:
                 headers = tokentest)
         assert queer.status_code == 200
 
-    
+    def test_query_insert_list(self,client,tokentest):
+        jsonq = {
+            "query":{
+                "insert": {
+                    "column": {
+                        "name": ["nm_zone","nm_type"],
+                    },
+                    "values": {
+                        "nm_zone": "monkey.com",
+                        "nm_type":"SRV"
+                    },
+                    "return":  ["id_zone","id_type"]
+                        
+                    }
+                }
+            }
+                
+                
+                
+        queer = client.post('api/zone',
+                data = json.dumps(jsonq),
+                content_type = 'application/json',
+                headers = tokentest)
+        assert queer.status_code == 200
+
