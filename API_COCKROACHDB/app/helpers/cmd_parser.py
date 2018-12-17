@@ -123,9 +123,12 @@ def select_query(table,data):
 def insert_query(table,data):
     query = "insert into "+table+""
     column= None
-    if type(data['column']) is list:
+    print('DATS => ',data['column'])
+    if type(data['column']['name']) is list:
+        print('ENTER')
         query = query +"("
-        for i in data['column']:
+        for i in data['column']['name']:
+            print('--> ',i)
             if column is None:
                 column = i
             else:
@@ -156,5 +159,6 @@ def insert_query(table,data):
             query = query+ " returning " + str(data['return'])+";"
     else:
         query = query+";"
+    print('Q=> ',query)
     return query
 
