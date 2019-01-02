@@ -91,15 +91,24 @@ class SendCommandRest(Resource):
             begin_respon = utils.send_http(url,begin_json)
             result.append(begin_respon)
 
-            respons = cmd.zone_soa_insert_default(tags)
-            http_respons = utils.send_http(url,respons)
-            result.append(http_respons)
-
-            commit_json = cmd.zone_commit(tags)
-            commit_response = utils.send_http(url,commit_json)
-            result.append(commit_response)
+            try : 
+                respons = cmd.zone_soa_insert_default(tags)
             
-            return response(200, data=result)
+            except Exception as e :
+                respons = {
+                    "Status" : False,
+                    "Error" : str(e)
+                }
+                return response(400, message = respons)
+            else: 
+                http_respons = utils.send_http(url,respons)
+                result.append(http_respons)
+
+                commit_json = cmd.zone_commit(tags)
+                commit_response = utils.send_http(url,commit_json)
+                result.append(commit_response)
+                
+                return response(200, data=result)
 
         if init_data['action'] == 'zone-begin':
             for i in init_data['data']:
@@ -136,15 +145,22 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             res_begin = cmd.z_begin(tags)
             respons.append(res_begin)
-            resu = cmd.zone_ns_insert(tags)
+            try :           
+                resu = cmd.zone_ns_insert(tags)
+            except Exception as e:
+                respons = {
+                    "Status" : False,
+                    "Error" : str(e)
+                }
+                return response(400, data=result, message=respons )
+            else:
+                for i in resu:
+                    http_response = utils.send_http(url,i)
+                    respons.append(http_response)
 
-            for i in resu:
-                http_response = utils.send_http(url,i)
-                respons.append(http_response)
-
-            res_commit = cmd.z_commit(tags)
-            respons.append(res_commit)
-            return response(200, data=respons)
+                res_commit = cmd.z_commit(tags)
+                respons.append(res_commit)
+                return response(200, data=respons)
 
         if init_data['action'] == 'zone-srv-insert':
             result = list()
@@ -154,15 +170,23 @@ class SendCommandRest(Resource):
             begin_respon = utils.send_http(url,begin_json)
             result.append(begin_respon)
 
-            respons = cmd.zone_insert_srv(tags)
-            http_response = utils.send_http(url,respons)
-           
-            result.append(http_response)
+            try:
+                respons = cmd.zone_insert_srv(tags)
+            except Exception as e:
+                respons = {
+                    "status" : False,
+                    "error": str(e)
+                }
+                return response(400, data=result, message=respons)
+            else:
+                http_response = utils.send_http(url,respons)
+            
+                result.append(http_response)
 
-            commit_json = cmd.zone_commit(tags)
-            commit_response = utils.send_http(url,commit_json)
-            result.append(commit_response)
-            return response(200, data=result)
+                commit_json = cmd.zone_commit(tags)
+                commit_response = utils.send_http(url,commit_json)
+                result.append(commit_response)
+                return response(200, data=result)
 
         if init_data['action'] == 'zone-mx-insert':
             result = list()
@@ -173,27 +197,29 @@ class SendCommandRest(Resource):
             begin_respon = utils.send_http(url,begin_json)
             result.append(begin_respon)
 
-            respons = cmd.zone_insert_mx(tags)
-            http_response = utils.send_http(url,respons)
-            result.append(http_response)
+            try :
+                respons = cmd.zone_insert_mx(tags)
 
-            commit_json = cmd.zone_commit(tags)
-            commit_response = utils.send_http(url,commit_json)
-            result.append(commit_response)
-            return response(200, data=result)
+            except Exception as e:
+                respons = {
+                    "status" : False,
+                    "error": str(e)
+                }
+                return response(400, data=result, message=repons)
+            else :
+                http_response = utils.send_http(url,respons)
+                result.append(http_response)
 
-        if init_data['action'] == 'zone-unset':
-            respons = list()
-            for i in init_data['data']:
-                tags = i['tags']
+                commit_json = cmd.zone_commit(tags)
+                commit_response = utils.send_http(url,commit_json)
+                result.append(commit_response)
+                return response(200, data=result)
 
-            res_begin = cmd.z_begin(tags)
-            respons.append(res_begin)
-           
-            json_command = cmd.zone_unset(tags)
-            http_response = utils.send_http(url,json_command)
-            respons.append(http_response)
+#delete zone
+        # if init_data['action'] == 'zone-unset':
+        #     result = list()
+        #     for i in init_data['data']:
+        #         tags = i['tags']
 
-            res_commit = cmd.z_commit(tags)
-            respons.append(res_commit)
-            return response(200, data=respons)
+
+        

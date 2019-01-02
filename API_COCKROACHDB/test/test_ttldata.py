@@ -2,18 +2,20 @@ import pytest
 import json
 from app import db
 
+ttldata_id = ''
+
 class TestTTLData:
     def test_ttl_data_get(self,client,tokentest):
         res = client.get('api/ttldata', headers = tokentest)
         data = json.loads(res.data.decode('utf8'))
         assert res.status_code == 200
 
-    def test_ttl_data_post_add(self,client,tokentest):
+    def test_ttl_data_post_add(self,client,tokentest,z_datatest):
         input_add = {
                         "insert": {
                             "fields": {
-                                "id_record": "402475422581915649",
-                                "id_ttl": "402427994557939713"
+                                "id_record": "0000000000000000",
+                                "id_ttl": "000000000000000"
                             }
                                 
                         }
@@ -22,10 +24,9 @@ class TestTTLData:
         input_add_succ = {
                         "insert": {
                             "fields": {
-                                "id_record": "403076483056435201",
-                                "id_ttl": "402427936007192577"
-                            }
-                                
+                                "id_record": z_datatest['ttldata'][0]['id_record'],
+                                "id_ttl": z_datatest['ttldata'][0]['id_ttl']
+                            }                             
                         }
                     }
 
@@ -37,12 +38,15 @@ class TestTTLData:
                             data=json.dumps(input_add),
                             content_type='application/json',
                             headers = tokentest)
+        data = json.loads(ressuc.data)
+        global ttldata_id
+        ttldata_id = data['message']['id']
         assert res.status_code == 200
         assert ressuc.status_code == 200
 
 
 
-    def test_ttl_data_post_where(self,client,tokentest):
+    def test_ttl_data_post_where(self,client,tokentest,z_datatest):
             input_where = {
                             "where": {
                                 "tags": {
@@ -54,7 +58,7 @@ class TestTTLData:
             input_where_exist = {
                 "where": {
                     "tags":{
-                        "id_ttldata":"403076483503357953"
+                        "id_ttldata":z_datatest['ttldata'][0]['id_ttldata']
                     }
                 }
             }
@@ -72,15 +76,10 @@ class TestTTLData:
             assert resWhere.status_code == 200
 
     def test_ttl_data_post_rem(self,client,tokentest):
-            db.execute("SELECT id_ttldata FROM zn_ttldata WHERE id_record = 403076483056435201 AND id_ttl = 402427936007192577")
-            rows = db.fetchone()
-            print(rows[0])
-            for i in rows:
-                print("DELETE => ",i)
             input_rem = {
                             "remove": {
                                 "tags": {
-                                    "id_ttldata": "402145755976826881"
+                                    "id_ttldata": "000000000000000"
                                 }
                                     
                             }
@@ -89,7 +88,7 @@ class TestTTLData:
             input_rem_exist = {
                             "remove":{
                                 "tags":{
-                                    "id_ttldata" : str(rows[0])
+                                    "id_ttldata" : ttldata_id
                                 }
                             }
             }
@@ -128,7 +127,7 @@ class TestTTLData:
         view_data_error = {
                     "view": {
                         "tags": {
-                            "id_ttldata": 403087860012744705
+                            "id_ttldata": view_data
                         }
                             
                     }

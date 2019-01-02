@@ -135,6 +135,15 @@ class TestAuth:
             'api/sign', data={'username': 'ikan', 'password': '1234'})
         result = json.loads(res.data.decode('utf8'))
         assert result['code'] == 401
+    
+    def test_refresh_token(self,client,refreshtokentest):
+        pass
+        #print(refreshtokentest)
+        res = client.get(
+            'api/sign/token',headers=refreshtokentest
+        )
+        result = json.loads(res.data.decode('utf8'))
+        print(result)
 
     # def test_logout(self, client):
     #     algo = hashlib.sha256

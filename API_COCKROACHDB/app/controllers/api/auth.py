@@ -5,7 +5,8 @@ from flask_jwt_extended import (
                                 JWTManager,
                                 create_access_token,
                                 get_jwt_identity,
-                                jwt_refresh_token_required
+                                jwt_refresh_token_required,
+                                create_refresh_token
                                )
 import datetime
 from app.models import model as db
@@ -74,7 +75,10 @@ class Usersignin(Resource):
         expires = datetime.timedelta(hours=1)
         if not user or not pbkdf2_sha256.verify(password, user[0]['password']):
             return response(status_code=401, data="Kampret")
-        else:
+
+        #delete after testing (used to generate expired token)
+        elif user[0]['username']=='testtoken' :
+            expires = datetime.timedelta(hours=0,seconds=-1)
             access_token = create_access_token(
                                                 identity=user[0],
                                                 expires_delta=expires
@@ -84,5 +88,20 @@ class Usersignin(Resource):
                 'username': user[0]['username'],
                 'apikey': "Bearer "+access_token,
                 'expires': str(expires)
+            }
+            return response(200, data=data)
+        else:
+            refresh_token = create_refresh_token(
+                identity = user[0]
+            )
+            access_token = create_access_token(
+                                                identity=user[0],
+                                                expires_delta=expires
+                                              )
+            data = {
+                'username': user[0]['username'],
+                'apikey': "Bearer "+access_token,
+                'expires': str(expires),
+                'refresh': "Bearer "+refresh_token
             }
             return response(200, data=data)

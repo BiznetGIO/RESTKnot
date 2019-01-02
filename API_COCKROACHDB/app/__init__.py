@@ -30,6 +30,7 @@ def create_app():
     app.config.from_object(configs.Config)
 
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+    app.config['PROPAGATE_EXCEPTIONS'] = True
 
     redis_store.init_app(app)
     jwt.init_app(app)
