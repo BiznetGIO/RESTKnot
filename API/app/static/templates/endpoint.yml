@@ -1,0 +1,664 @@
+version : adista 0.0.1 
+
+endpoint:
+  zn_type:
+    where:
+      tags:
+        id_type:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        nm_type:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_type:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        nm_type:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_type:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_type:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  zn_ttl:
+    where:
+      tags:
+        id_ttl:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        nm_ttl:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_ttl:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        nm_ttl:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_ttl:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_ttl:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  zn_zone:
+    where:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        nm_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    # edit:
+    #   fields:
+    #     zone_name:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: fields
+    #   others:
+    #     method:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_zone:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+    query:
+      select:
+        fields:
+          name: Query Field
+          desc: Exec Your Query
+        where:
+          name: Action Query
+          desc: Exec Your Query
+          default:
+        join:
+          name: Action Query
+          desc: Exec Your Query
+          default:
+
+      insert:
+        column:
+          name: Query Field
+          desc: Exec Your Query
+          default:
+        values:
+          name: Action Query
+          desc: Exec Your Query
+        return:
+          name: Action Query
+          desc: Exec Your Query
+          default:
+
+  zn_record:
+    where:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        nm_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    view:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_zone:
+          name: Tags Record ID
+          desc: Get One Data From Record Name
+          type: fields
+        id_type:
+          name: Tags Zone Id
+          desc: Get One Data From Zone
+          type: fields
+        nm_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        date_record:
+          name: Tags Zone Id
+          desc: Get One Data From Zone
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    # edit:
+    #   fields:
+    #     record_data_name:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: fields
+    #     zone_id:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: fields
+    #   tags:
+    #     record_data_id:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: tags
+    #   others:
+    #     method:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_record:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+  
+  zn_ttldata:
+    where:
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    view:
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_ttl:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        id_record:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        # ttl_data_name:
+        #   name: name search for domain
+        #   desc: Domain Variabel To Search
+        #   type: fields
+        id_ttl:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        id_record:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  zn_content:
+    where:
+      tags:
+        id_content:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    view:
+      tags:
+        id_content:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        nm_content:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        nm_content:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_content:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  zn_content_serial:
+    where:
+      tags:
+        id_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    view:
+      tags:
+        id_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        nm_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_record:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        nm_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_record:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        id_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_content_serial:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  sendcommand:
+    conf-insert:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    conf-read:
+      tags:
+      #   domain_id:
+      #     name: name search for domain
+      #     desc: Domain Variabel To Search
+      #     type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-read:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default: 
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-soa-insert:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+
+    zone-insert:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-ns-insert:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-begin:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-commit:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-srv-insert:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    
+    zone-mx-insert:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    zone-unset:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+
+  userdata:
+    insert:
+      tags:
+        username:
+          name: username tags
+          desc: Username 
+          type: tags
+      fields:
+        password:
+          name: pass tags
+          desc: Password For Login
+        full_name:
+          name: full name
+          desc: User field
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      tags:
+        username:
+          name: username tags
+          desc: Username Login
+          type: tags
+      fields:
+        password:
+          name: username tags
+          desc: Password For Login
+        full_name:
+          name: full name
+          desc: User field
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        username:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
