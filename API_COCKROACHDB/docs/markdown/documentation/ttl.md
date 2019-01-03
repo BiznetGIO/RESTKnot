@@ -1,3 +1,0 @@
-# TTL ENDPOINT
-
-### TTL T
