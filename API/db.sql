@@ -112,7 +112,7 @@ CREATE TABLE zn_record (
 	id_record INT NOT NULL DEFAULT unique_rowid(),
 	id_type INT NOT NULL,
 	id_zone INT NOT NULL,
-	date_record STRING(200) NULL,
+	date_record STRIcNG(200) NULL,
 	nm_record STRING(200) NULL,
 	CONSTRAINT "primary" PRIMARY KEY (id_record ASC),
 	CONSTRAINT fk_id_type_ref_type FOREIGN KEY (id_type) REFERENCES zn_type (id_type) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -127,12 +127,12 @@ CREATE TABLE zn_content_serial (
 	id_record INT NULL,
 	nm_content_serial STRING NULL,
 	CONSTRAINT zn_content_serial_pk PRIMARY KEY (id_content_serial ASC),
-	CONSTRAINT zn_content_serial_zn_record_fk FOREIGN KEY (id_record) REFERENCES zn_record (id_record),
+	CONSTRAINT zn_content_serial_zn_record_fk FOREIGN KEY (id_record) REFERENCES zn_record (id_record) ON DELETE CASCADE ON UPDATE CASCADE,
 	INDEX zn_content_serial_auto_index_zn_content_serial_zn_record_fk (id_record ASC),
 	FAMILY "primary" (id_content_serial, id_record, nm_content_serial)
 );
 
-CREATE VIEW v_content_serial (id_content_serial, id_zone, nm_zone, nm_record, nm_type, nm_content_serial) AS SELECT m1.id_content_serial, m3.id_zone, m3.nm_zone, m2.nm_record, m4.nm_type, m1.nm_content_serial FROM knotdb.public.zn_content_serial AS m1 JOIN knotdb.public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN knotdb.public.zn_zone AS m3 ON m2.id_zone = m3.id_zone JOIN knotdb.public.zn_type AS m4 ON m2.id_type = m4.id_type;
+CREATE VIEW v_content_serial (id_content_serial, id_zone, nm_zone, nm_record, nm_type, nm_content_serial) AS SELECT m1.id_content_serial, m3.id_zone, m3.nm_zone, m2.nm_record, m4.nm_type, m1.nm_content_serial FROM public.zn_content_serial AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_zone AS m3 ON m2.id_zone = m3.id_zone JOIN public.zn_type AS m4 ON m2.id_type = m4.id_type;
 
 CREATE TABLE zn_ttl (
 	id_ttl INT NULL DEFAULT unique_rowid(),
@@ -165,11 +165,11 @@ CREATE TABLE zn_content (
 	FAMILY "primary" (id_content, id_ttldata, nm_content)
 );
 
-CREATE VIEW v_contentdata (id_content, id_zone, nm_zone, id_record, nm_record, nm_type, nm_ttl, nm_content) AS SELECT m1.id_content, m5.id_zone, m5.nm_zone, m3.id_record, m3.nm_record, m6.nm_type, m4.nm_ttl, m1.nm_content FROM knotdb.public.zn_content AS m1 JOIN knotdb.public.zn_ttldata AS m2 ON m1.id_ttldata = m2.id_ttldata JOIN knotdb.public.zn_record AS m3 ON m2.id_record = m3.id_record JOIN knotdb.public.zn_ttl AS m4 ON m2.id_ttl = m4.id_ttl JOIN knotdb.public.zn_type AS m6 ON m3.id_type = m6.id_type JOIN knotdb.public.zn_zone AS m5 ON m3.id_zone = m5.id_zone;
+CREATE VIEW v_contentdata (id_content, id_zone, nm_zone, id_record, nm_record, nm_type, nm_ttl, nm_content) AS SELECT m1.id_content, m5.id_zone, m5.nm_zone, m3.id_record, m3.nm_record, m6.nm_type, m4.nm_ttl, m1.nm_content FROM public.zn_content AS m1 JOIN public.zn_ttldata AS m2 ON m1.id_ttldata = m2.id_ttldata JOIN public.zn_record AS m3 ON m2.id_record = m3.id_record JOIN public.zn_ttl AS m4 ON m2.id_ttl = m4.id_ttl JOIN public.zn_type AS m6 ON m3.id_type = m6.id_type JOIN public.zn_zone AS m5 ON m3.id_zone = m5.id_zone;
 
-CREATE VIEW v_record (id_record, id_zone, nm_zone, nm_record, date_record, nm_type) AS SELECT m1.id_record, m2.id_zone, m2.nm_zone, m1.nm_record, m1.date_record, m3.nm_type FROM knotdb.public.zn_record AS m1 JOIN knotdb.public.zn_zone AS m2 ON m1.id_zone = m2.id_zone JOIN knotdb.public.zn_type AS m3 ON m1.id_type = m3.id_type;
+CREATE VIEW v_record (id_record, id_zone, nm_zone, nm_record, date_record, nm_type) AS SELECT m1.id_record, m2.id_zone, m2.nm_zone, m1.nm_record, m1.date_record, m3.nm_type FROM public.zn_record AS m1 JOIN public.zn_zone AS m2 ON m1.id_zone = m2.id_zone JOIN public.zn_type AS m3 ON m1.id_type = m3.id_type;
 
-CREATE VIEW v_ttldata (id_ttldata, id_ttl, id_record, id_zone, nm_zone, nm_record, nm_ttl, nm_type) AS SELECT m1.id_ttldata, m1.id_ttl, m2.id_record, m4.id_zone, m4.nm_zone, m2.nm_record, m3.nm_ttl, m5.nm_type FROM knotdb.public.zn_ttldata AS m1 JOIN knotdb.public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN knotdb.public.zn_ttl AS m3 ON m1.id_ttl = m3.id_ttl JOIN knotdb.public.zn_zone AS m4 ON m2.id_zone = m4.id_zone JOIN knotdb.public.zn_type AS m5 ON m2.id_type = m5.id_type;
+CREATE VIEW v_ttldata (id_ttldata, id_ttl, id_record, id_zone, nm_zone, nm_record, nm_ttl, nm_type) AS SELECT m1.id_ttldata, m1.id_ttl, m2.id_record, m4.id_zone, m4.nm_zone, m2.nm_record, m3.nm_ttl, m5.nm_type FROM public.zn_ttldata AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_ttl AS m3 ON m1.id_ttl = m3.id_ttl JOIN public.zn_zone AS m4 ON m2.id_zone = m4.id_zone JOIN public.zn_type AS m5 ON m2.id_type = m5.id_type;
 
 INSERT INTO zn_zone (id_zone, nm_zone) VALUES
 	(403076482884698113, 'iank.com'),
