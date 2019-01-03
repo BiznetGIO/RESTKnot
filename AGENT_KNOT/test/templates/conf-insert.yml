@@ -1,0 +1,20 @@
+conf-begin:
+  sendblock:
+    cmd: conf-begin
+  receive:
+    type: block
+
+conf-set:
+  sendblock:
+    cmd: conf-set
+    section: zone
+    item: domain
+    data: crot.com
+  receive:
+    type: block
+
+conf-commit:
+  sendblock:
+    cmd: conf-commit
+  receive:
+    type: block

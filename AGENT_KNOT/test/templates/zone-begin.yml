@@ -1,0 +1,6 @@
+zone-begin:
+  sendblock:
+    cmd: zone-begin
+    data: crot.com
+  receive:
+    type: block

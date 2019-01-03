@@ -1,0 +1,24 @@
+zone-begin:
+  sendblock:
+    cmd: zone-begin
+    zone: crot.com
+  receive:
+    type: block
+
+zone-set:
+  sendblock:
+    cmd: zone-set
+    zone: crot.com
+    owner: namasubdomain
+    rtype: A
+    ttl: "300"
+    data: "1.2.3.4"
+  receive:
+    type: block
+
+zone-commit:
+  sendblock:
+    cmd: zone-commit
+    zone: crot.com
+  receive:
+    type: block

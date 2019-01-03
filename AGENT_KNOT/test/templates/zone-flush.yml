@@ -1,0 +1,6 @@
+zone-flush:
+  sendblock:
+    cmd: zone-flush
+    data: crot.com
+  receive:
+    type: block

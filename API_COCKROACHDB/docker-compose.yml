@@ -1,0 +1,17 @@
+version: '0.8.0'
+services:
+    restknot:
+        build: .
+        ports:
+          - "5000:5000"
+        volumes:
+          - .:/app
+        command: ["python3","manage.py" ,"server"]
+        links:
+          - "session"
+
+    session:
+        image: redis
+        command: ["redis-server", "--requirepass", "pass"]
+        ports:
+          - "6379:6379"

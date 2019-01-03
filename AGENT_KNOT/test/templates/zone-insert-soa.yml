@@ -1,0 +1,10 @@
+soa-set:
+  sendblock:
+    cmd: zone-set
+    zone: crot.com
+    owner: crot.com
+    rtype: SOA
+    ttl: "86400"
+    data: "ns1.biz.net.id. hostmaster.biz.net.id. 2018070410 10800 3600 604800 38400"
+  receive:
+    type: command

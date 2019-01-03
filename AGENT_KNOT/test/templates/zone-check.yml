@@ -1,0 +1,6 @@
+zone-check:
+  sendblock:
+    cmd: zone-check
+    data: crot.com
+  receive:
+    type: block

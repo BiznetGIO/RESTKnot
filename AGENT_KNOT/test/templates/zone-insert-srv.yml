@@ -1,0 +1,10 @@
+srv-set:
+  sendblock:
+    cmd: zone-set
+    zone: iank.com
+    owner: _test._tcp
+    rtype: SRV
+    ttl: '86400'
+    data: 0 5 5060 sip.server.com.
+  receive:
+    type: command

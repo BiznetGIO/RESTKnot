@@ -1,6 +1,0 @@
-zone-flush:
-  sendblock:
-    cmd: zone-flush
-    data: dariparser.com
-  receive:
-    type: block

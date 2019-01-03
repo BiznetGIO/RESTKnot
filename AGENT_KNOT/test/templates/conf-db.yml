@@ -1,0 +1,6 @@
+conf-init:
+  sendblock:
+    cmd: conf-init
+    data: 0
+  receive:
+    type: command

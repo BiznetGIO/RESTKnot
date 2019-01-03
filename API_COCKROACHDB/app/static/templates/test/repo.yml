@@ -1,0 +1,78 @@
+version: adista 0.0.1 
+
+endpoint:
+  create:
+    command:
+      - config_begin
+      - config_set:
+          data: test123
+      - config_commit
+      - config_read
+
+RECORD:
+  type:
+    A:
+      ttl: ALL
+      content:
+        params:
+          IPv4:
+            type: STR
+            desc: An IPv4 address must be a decimal dotted quad string, for example '192.168.123.10'
+    AAAA:
+      ttl: ALL
+      content:
+        params:
+          IPv6:
+            type: STR
+            desc: An IPv6 address must a coloned hex IPv6 address string, for example '2001:db8::c0ff:e:e'
+    CNAME:
+      ttl: ALL
+      content:
+        params:
+          hostname:
+            type: STR
+            desc: A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail. 
+    MX:
+      ttl: ALL
+      content:
+        params:
+          priority:
+            type: STR
+            desc: To differentiate them, each MX record has a priority (lower the number, higher the priority). The MX record with the highest priority is the actual target computer where mail boxes are located. '10' is a good default. 
+      serial:
+        params:
+          hostname:
+            type: STR
+            desc: A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail. 
+    TXT:
+      ttl: ALL
+      content:
+        params:
+          txtdata:
+            type: STR
+            desc: Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments. 
+    NS:
+      ttl: ALL
+      content:
+        params:
+          nameserver:
+            type: STR
+            desc: A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. 
+    SRV:
+      ttl: ALL
+      content:
+        params:
+          priority:
+            type: str
+            desc: The priority must only be within the range 0-65535 (lower is better ). 0 is a good default. 
+      serial:
+        params:
+          weight:
+            type: str
+            desc: The weight must only be within the range 0-65535 (higher is better ). 0 is a good default. 
+          port:
+            type: str
+            desc: The port must only be within the range 0-65535. The port varies depending on the service (ie 80, 5222, 5069, etc) 
+          target:
+            type: str
+            desc: This is the hostname of the machine running the service. It should exist as an A record and may only contain A-Z, a-z, 0-9, _, -, and .. 

@@ -1,5 +1,0 @@
-conf-init:
-  sendblock:
-    cmd: conf-init
-  receive:
-    type: block

@@ -1,0 +1,10 @@
+zone-read:
+  sendblock:
+    cmd: zone-read
+    zone: iank.com
+    # owner: lagi
+    # rtype: SOA
+    # ttl: "300"
+    # data: "1.2.3.4"
+  receive:
+    type: block
