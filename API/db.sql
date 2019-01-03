@@ -112,7 +112,7 @@ CREATE TABLE zn_record (
 	id_record INT NOT NULL DEFAULT unique_rowid(),
 	id_type INT NOT NULL,
 	id_zone INT NOT NULL,
-	date_record STRING(200) NULL,
+	date_record STRIcNG(200) NULL,
 	nm_record STRING(200) NULL,
 	CONSTRAINT "primary" PRIMARY KEY (id_record ASC),
 	CONSTRAINT fk_id_type_ref_type FOREIGN KEY (id_type) REFERENCES zn_type (id_type) ON DELETE CASCADE ON UPDATE CASCADE,
