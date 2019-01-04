@@ -171,6 +171,24 @@ CREATE VIEW v_record (id_record, id_zone, nm_zone, nm_record, date_record, nm_ty
 
 CREATE VIEW v_ttldata (id_ttldata, id_ttl, id_record, id_zone, nm_zone, nm_record, nm_ttl, nm_type) AS SELECT m1.id_ttldata, m1.id_ttl, m2.id_record, m4.id_zone, m4.nm_zone, m2.nm_record, m3.nm_ttl, m5.nm_type FROM public.zn_ttldata AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_ttl AS m3 ON m1.id_ttl = m3.id_ttl JOIN public.zn_zone AS m4 ON m2.id_zone = m4.id_zone JOIN public.zn_type AS m5 ON m2.id_type = m5.id_type;
 
+CREATE TABLE zn_user_zone (
+    id_user_zone INT NOT NULL DEFAULT unique_rowid(),
+    userdata_id INT NOT NULL,
+    id_zone INT NOT NULL,
+    CONSTRAINT "primary" PRIMARY KEY (id_user_zone ASC),
+    CONSTRAINT fk_userdata_id_ref FOREIGN KEY (userdata_id) REFERENCES userdata(userdata_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX user_zone_auto_index_fk_userdata_id_ref (userdata_id ASC),
+    CONSTRAINT fk_id_zone_ref_zone FOREIGN KEY (id_zone) REFERENCES zn_zone (id_zone) ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX user_zone_auto_index_fk_id_zone_ref_zone (id_zone ASC),
+    FAMILY "primary" (id_user_zone, userdata_id,id_zone)
+);
+
+CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, userlogin_id, nm_zone, email, username ) AS SELECT m1.id_user_zone ,
+ m2.userdata_id, m3.id_zone, m4.userlogin_id, m3.nm_zone, m2.email, m4.username
+ FROM public.zn_user_zone AS m1 JOIN public.userdata as m2 ON m1.userdata_id = m2.userdata_id JOIN public.zn_zone AS m3 ON m3.id_zone = m1.id_zone 
+ JOIN public.userlogin AS m4 ON m2.userdata_id=m4.userdata_id ;
+
+
 INSERT INTO zn_zone (id_zone, nm_zone) VALUES
 	(403076482884698113, 'iank.com'),
 	(403085995932844033, 'darirest.com'),
