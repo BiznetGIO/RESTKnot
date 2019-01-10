@@ -1,0 +1,94 @@
+{ "create" :
+    {
+        "record" : {
+            "data": {
+                "insert": {
+                "fields": {
+                    "nm_record":"--nm",
+                    "date_record":"--date",
+                    "id_zone":"--id-zone",
+                    "id_type":"--id-type"
+                }
+                    
+                }
+            },
+            "url" : "record"
+        },
+        "ttldata" : 
+        {
+            "data":{
+                "insert": {
+                    "fields": {
+                      "id_record": "--id-record",
+                      "id_ttl": "--id-ttl"
+                    }      
+                 }
+            },
+            "url" : "ttldata"
+        },
+        "content" :
+        {
+            "data": {
+                "insert": {
+                   "fields": {
+                        "id_ttldata": "--id-ttldata",
+                        "nm_content": "--nm-con"
+                   }                       
+                }
+             },
+             "url" : "content"
+        },
+        "content_serial" : 
+        {
+            "data" : {
+                "insert": {
+                   "fields": {
+                        "nm_content_serial": "--nm-con-ser",
+                        "id_record": "--id-record"
+                   }                       
+                }
+             },
+            "url" : "content_serial"
+        }
+    },
+
+    "search" : 
+    {
+        "zone" :
+        {
+            "data" :
+            {
+                "where": {
+                    "tags": {
+                        "nm_zone": ""
+                    }
+                        
+                }
+            }
+        },
+        "ttl" : 
+        {
+            "data" : {
+                "where": {
+                "tags": {
+                    "nm_ttl": ""
+                        }
+                    }    
+                }
+         },
+         "type" :
+         {
+            "data" : {
+                "where": {
+                    "tags": {
+                        "nm_type": ""
+                    }
+                }
+            }
+         }
+    },
+
+    "rm":{
+
+    }
+}

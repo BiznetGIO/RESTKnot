@@ -1,0 +1,51 @@
+{
+    "zone":
+    {
+        "fields" : {
+            "nm_zone" : ""
+        }
+    },
+    "record":
+    {
+        "fields": {
+            "nm_record":"",
+            "date_record": "",
+            "id_zone":"",
+            "id_type":""
+        }
+    },
+    "content":
+    {
+        "fields": {
+            "id_ttldata" : "",
+            "nm_content" : ""
+        }
+    },
+    "content_serial":
+    {
+        "fields" : {
+            "nm_content_serial" : "",
+            "id_record" : ""
+        }
+    },
+    "command" : {
+        "tags": {
+
+        }
+    },
+    "userdata":{
+        "email" : "",
+        "first_name" : "",
+        "last_name"  : "",
+        "location"   : "",
+        "city"       : "",
+        "province"   : ""
+    },
+
+    "userlogin" : {
+        "username" : "",
+        "password" : "",
+        "userdata_id" : ""
+    }
+
+}
