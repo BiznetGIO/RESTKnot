@@ -8,7 +8,7 @@ from app.middlewares.auth import jwt_required
 
 
 class Content(Resource):
-    @jwt_required
+    ##@jwt_required
     def get(self):
         command = utils.get_command(request.path)
         command = "zn_"+command
@@ -27,7 +27,7 @@ class Content(Resource):
                 obj_userdata.append(data)
             return response(200, data=obj_userdata)
 
-    @jwt_required
+    ##@jwt_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)

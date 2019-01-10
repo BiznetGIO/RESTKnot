@@ -207,10 +207,14 @@ INSERT INTO cs_slave (id_slave, nm_slave, ip_slave, port) VALUES
 	(402153106273501185, 'slave2', '182.253.237.111', '53');
 
 INSERT INTO userdata (userdata_id, email, first_name, last_name, location, city, province, created_at) VALUES
-	(402435301189451777, 'meongbego@gmail.com', 'mongkey', 'king', 'alamat', 'Jakarta', 'DKI Jakarta', '2018-11-22 10:51:47.417691+00:00');
+	(402435301189451777, 'meongbego@gmail.com', 'mongkey', 'king', 'alamat', 'Jakarta', 'DKI Jakarta', '2018-11-22 10:51:47.417691+00:00'),
+	(415415243485904897, 'ikanisfish@gmail.com', 'ikan', 'fish', 'laut', 'jawa', 'tengah', '2018-11-22 10:51:47.417691+00:00'),
+	(415416349489627137, 'test', 'test', 'test', 'test', 'test', 'test', '2018-11-22 10:51:47.417691+00:00');
 
 INSERT INTO userlogin (userlogin_id, userdata_id, username, password) VALUES
-	(402435953011326977, 402435301189451777, 'mongkey', '$pbkdf2-sha256$29000$l1Kq1TqnNIZQCgFgzHlvjQ$AgQtiZRd6x03mwBuUzPscZJ0Xk.eOFFWAqwQPIwlV50');
+	(402435953011326977, 402435301189451777, 'mongkey', '$pbkdf2-sha256$29000$l1Kq1TqnNIZQCgFgzHlvjQ$AgQtiZRd6x03mwBuUzPscZJ0Xk.eOFFWAqwQPIwlV50'),
+	(415415392702234625, 415415243485904897, 'ikan', '$pbkdf2-sha256$29000$zpkzRgghpPR.r9Wak5JSig$RcGRZSgYP4YGS5sEmPi4shHaxIJOXWDqqW5CpDGjHKg'),
+	(415416448693567489, 415416349489627137, 'testtoken', '$pbkdf2-sha256$29000$N.Zcaw3B.F/rHYOQsvaeMw$ZtJnxfyyC6O0POuV1RZdcmiv/QiNSV9A0fjnIeXm4gM');
 
 INSERT INTO zn_type (id_type, nm_type) VALUES
 	(402140280385142785, 'SOA'),

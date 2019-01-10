@@ -7,7 +7,7 @@ from app.models import model as db
 
 
 class UserdataResource(Resource):
-    @jwt_required
+    #@jwt_required
     def get(self):
         obj_userdata = list()
         try:
@@ -31,7 +31,7 @@ class UserdataResource(Resource):
 
 
 class UserdataResourceById(Resource):
-    @jwt_required
+    #@jwt_required
     def get(self, userdata_id):
         obj_userdata = []
         results = db.get_by_id(
