@@ -48,7 +48,7 @@ class SendCommandRest(Resource):
         #     respons = None
         # else:
         #     return response(200, data=respons)
-    @jwt_required
+    ##@jwt_required
     def post(self):
         url_env = os.getenv("SOCKET_AGENT_HOST")
         port = os.getenv("SOCKET_AGENT_PORT")
