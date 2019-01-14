@@ -85,10 +85,41 @@
                     }
                 }
             }
+         },
+         "record" : 
+        {
+            "data" : {
+                "where": {
+                "tags": {
+                    "nm_record": ""
+                        }
+                    }    
+                }
          }
     },
 
     "rm":{
-
+        "zone" : {
+            "data" :
+            {
+                "remove": {
+                    "tags": {
+                        "id_zone": ""
+                    }
+                        
+                }
+            }
+        },
+        "record" : {
+            "data" :
+            {
+                "remove": {
+                    "tags": {
+                        "id_record": ""
+                    }
+                        
+                }
+            }
+        }
     }
 }

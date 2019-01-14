@@ -1,6 +1,9 @@
 import json
 import requests
 import datetime
+import tabulate
+import coloredlogs
+import logging
 
 with open('libs/templates/var.json','r') as f :
     var_json = json.load(f)
@@ -56,7 +59,9 @@ def get_time():
     return res
 
 
-
+def log_err(stdin):
+    coloredlogs.install()
+    logging.error(stdin)    
 
 
 

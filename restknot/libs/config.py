@@ -13,8 +13,7 @@ def send_request(endpoint,data):
             url = url,
             data = json.dumps(data)
         )
-        result = result.json()
-        respons=result['message']['id']
+        respons = result.json()
     except Exception as e:
         respons = {
             "status" : False,
@@ -65,30 +64,60 @@ def setRecord(obj):
     json_data = jsonmodel['create']['record']['data']
     for i in json_data['insert']['fields']:
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
-    
-    temp['--id-record'] = send_request('record',json_data)
+    res = send_request('record',json_data)
+    temp['--id-record'] = res['message']['id']
     
 
     #insert ttldata
     json_data = jsonmodel['create']['ttldata']['data']
     for i in json_data['insert']['fields']:
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
-    temp['--id-ttldata'] = send_request('ttldata',json_data)
+    res = send_request('ttldata',json_data)
+    temp['--id-ttldata'] = res['message']['id']
     
     #insert content
     json_data = jsonmodel['create']['content']['data']
     for i in json_data['insert']['fields']:
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
-    print(json_data)
-    temp['--id-content'] = send_request('content',json_data)   
+    res = send_request('content',json_data)
+    temp['--id-content'] = res['message']['id']
     
     #insert content serial
     json_data = jsonmodel['create']['content_serial']['data']
     for i in json_data['insert']['fields']:
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
-    print(json_data)
-    temp['--id-ttldata'] = send_request('content_serial',json_data)
+    res = send_request('content_serial',json_data)
+    temp['--id-content-serial'] = res['message']['id']
 
 
     return data
-   
+
+def listing_endpoint(endpoint):
+    with open('libs/templates/var.json','r') as f :
+        var_json = json.load(f)
+    url = get_url(endpoint)
+    result = requests.get(url)
+    result = result.json()
+    result = result['data']
+    key = var_json['key'][endpoint]
+    st = ''
+    if result:
+        for i in result:
+            st += i[key]+'\t'
+    else :
+        "No value available"
+    return st
+
+def remove_data(name,endpoint):
+    json_data = jsonmodel['rm'][endpoint]['data']
+    url = get_url(endpoint)
+    key = get_idkey(endpoint)
+    delid = searchId(endpoint,name)
+    json_data['remove']['tags'][key] = delid
+    try :
+        requests.post(url, data = json.dumps(json_data))
+    except Exception as e:
+        respons = str(e)
+        print(respons)
+    return
+

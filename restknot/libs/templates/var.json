@@ -9,7 +9,8 @@
         "content_serial":"content_serial",
         "user"  : "user",
         "userlogin" : "user/add",
-        "command": "sendcommand"
+        "command": "sendcommand",
+        "signin" :  "sign"
     },
     "id"    : {
         "zone"  : "id_zone",
