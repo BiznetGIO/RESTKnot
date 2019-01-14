@@ -77,27 +77,12 @@ CREATE TABLE cs_notify_slave (
 CREATE TABLE userdata (
 	userdata_id INT NOT NULL DEFAULT unique_rowid(),
 	email STRING NULL,
-	first_name STRING(100) NULL,
-	last_name STRING(100) NULL,
-	location STRING NULL,
-	city STRING(50) NULL,
-	province STRING(100) NULL,
+	username STRING(100) NULL,
+	password STRING NULL,
 	created_at TIMESTAMP NULL DEFAULT current_timestamp(),
 	CONSTRAINT "primary" PRIMARY KEY (userdata_id ASC),
 	UNIQUE INDEX userdata_email_key (email ASC),
-	FAMILY "primary" (userdata_id, email, first_name, last_name, location, city, province, created_at)
-);
-
-CREATE TABLE userlogin (
-	userlogin_id INT NOT NULL DEFAULT unique_rowid(),
-	userdata_id INT NULL,
-	username STRING(100) NULL,
-	password STRING NULL,
-	CONSTRAINT "primary" PRIMARY KEY (userlogin_id ASC),
-	UNIQUE INDEX userlogin_username_key (username ASC),
-	CONSTRAINT fk_userdata_id_ref_userdata FOREIGN KEY (userdata_id) REFERENCES userdata (userdata_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	INDEX userlogin_userdata_id_idx (userdata_id ASC),
-	FAMILY "primary" (userlogin_id, userdata_id, username, password)
+	FAMILY "primary" (userdata_id, email, username,password, created_at)
 );
 
 CREATE TABLE zn_type (
@@ -183,7 +168,7 @@ CREATE TABLE zn_user_zone (
     FAMILY "primary" (id_user_zone, userdata_id,id_zone)
 );
 
-CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, userlogin_id, nm_zone, email, username ) AS SELECT m1.id_user_zone ,
+CREATE VIEW v_userzone (id_user_zone, userlogin_id, id_zone, userlogin_id, nm_zone, email, username ) AS SELECT m1.id_user_zone ,
  m2.userdata_id, m3.id_zone, m4.userlogin_id, m3.nm_zone, m2.email, m4.username
  FROM public.zn_user_zone AS m1 JOIN public.userdata as m2 ON m1.userdata_id = m2.userdata_id JOIN public.zn_zone AS m3 ON m3.id_zone = m1.id_zone 
  JOIN public.userlogin AS m4 ON m2.userdata_id=m4.userdata_id ;
@@ -206,10 +191,10 @@ INSERT INTO cs_slave (id_slave, nm_slave, ip_slave, port) VALUES
 	(402152759030939649, 'slave1', '182.253.237.110', '53'),
 	(402153106273501185, 'slave2', '182.253.237.111', '53');
 
-INSERT INTO userdata (userdata_id, email, first_name, last_name, location, city, province, created_at) VALUES
-	(402435301189451777, 'meongbego@gmail.com', 'mongkey', 'king', 'alamat', 'Jakarta', 'DKI Jakarta', '2018-11-22 10:51:47.417691+00:00'),
-	(415415243485904897, 'ikanisfish@gmail.com', 'ikan', 'fish', 'laut', 'jawa', 'tengah', '2018-11-22 10:51:47.417691+00:00'),
-	(415416349489627137, 'test', 'test', 'test', 'test', 'test', 'test', '2018-11-22 10:51:47.417691+00:00');
+INSERT INTO userdata (userdata_id, email, username, password, created_at) VALUES
+	(402435301189451777, 'meongbego@gmail.com', 'mongkey', '$pbkdf2-sha256$29000$l1Kq1TqnNIZQCgFgzHlvjQ$AgQtiZRd6x03mwBuUzPscZJ0Xk.eOFFWAqwQPIwlV50', '2018-11-22 10:51:47.417691+00:00'),
+	(415415243485904897, 'ikanisfish@gmail.com', 'ikan', '$pbkdf2-sha256$29000$zpkzRgghpPR.r9Wak5JSig$RcGRZSgYP4YGS5sEmPi4shHaxIJOXWDqqW5CpDGjHKg', '2018-11-22 10:51:47.417691+00:00'),
+	(415416349489627137,'test@gmail.com', 'test', '$pbkdf2-sha256$29000$N.Zcaw3B.F/rHYOQsvaeMw$ZtJnxfyyC6O0POuV1RZdcmiv/QiNSV9A0fjnIeXm4gM', '2018-11-22 10:51:47.417691+00:00');
 
 INSERT INTO userlogin (userlogin_id, userdata_id, username, password) VALUES
 	(402435953011326977, 402435301189451777, 'mongkey', '$pbkdf2-sha256$29000$l1Kq1TqnNIZQCgFgzHlvjQ$AgQtiZRd6x03mwBuUzPscZJ0Xk.eOFFWAqwQPIwlV50'),

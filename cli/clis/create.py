@@ -11,13 +11,13 @@ class Create(Base):
         create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) [-i] [--nm-con CON] [--nm-con-ser CONSER] 
 
     Options :
-    -h --help                                      Print usage
-    --nm NAME                               Set DNS/record name
-    -type=TYPE                              Set DNS type
-    --ttl TTL                                       Set DNS TTL 
+    -h --help                 Print usage
+    --nm NAME                 Set DNS/record name
+    -type=TYPE                Set DNS type
+    --ttl TTL                 Set DNS TTL 
     --nm-zn ZONENAME          Set zone of new record
-    -i --interactive                         Interactive Mode
-    --nm-con CON                        Set content name
+    -i --interactive          Interactive Mode
+    --nm-con CON              Set content name
     --nm-con-ser CONSER       Set content serial name
 
     Commands:

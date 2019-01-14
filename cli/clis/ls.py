@@ -2,6 +2,7 @@ import os
 from .base import Base
 from libs import utils as util
 from libs import config as app
+from libs.wrapper import *
 
 class Ls(Base):
     """
@@ -19,6 +20,7 @@ class Ls(Base):
      type                       List available type 
     
     """
+    @login_required
     def execute(self):
         if self.args['ttl'] :
             vallist = app.listing_endpoint('ttl')
