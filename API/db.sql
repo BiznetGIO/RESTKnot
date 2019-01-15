@@ -76,13 +76,12 @@ CREATE TABLE cs_notify_slave (
 
 CREATE TABLE userdata (
 	userdata_id INT NOT NULL DEFAULT unique_rowid(),
-	email STRING NULL,
-	username STRING(100) NULL,
-	password STRING NULL,
+	user_id STRING NOT NULL,
+	project_id STRING(100) NOT NULL,
 	created_at TIMESTAMP NULL DEFAULT current_timestamp(),
 	CONSTRAINT "primary" PRIMARY KEY (userdata_id ASC),
-	UNIQUE INDEX userdata_email_key (email ASC),
-	FAMILY "primary" (userdata_id, email, username,password, created_at)
+	UNIQUE INDEX userdata_user_id_key (user_id ASC),
+	FAMILY "primary" (userdata_id, user_id, project_id, created_at)
 );
 
 CREATE TABLE zn_type (
@@ -168,10 +167,10 @@ CREATE TABLE zn_user_zone (
     FAMILY "primary" (id_user_zone, userdata_id,id_zone)
 );
 
-CREATE VIEW v_userzone (id_user_zone, userlogin_id, id_zone, userlogin_id, nm_zone, email, username ) AS SELECT m1.id_user_zone ,
- m2.userdata_id, m3.id_zone, m4.userlogin_id, m3.nm_zone, m2.email, m4.username
+CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, user_id, project_id) AS SELECT m1.id_user_zone ,
+ m2.userdata_id, m3.id_zone, m2.user_id, m2.project_id
  FROM public.zn_user_zone AS m1 JOIN public.userdata as m2 ON m1.userdata_id = m2.userdata_id JOIN public.zn_zone AS m3 ON m3.id_zone = m1.id_zone 
- JOIN public.userlogin AS m4 ON m2.userdata_id=m4.userdata_id ;
+ ;
 
 
 INSERT INTO zn_zone (id_zone, nm_zone) VALUES
