@@ -4,7 +4,6 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2
 from app.libs import utils
 from app.models import model as db
-from app.middlewares.auth import jwt_required
 
 
 class ZoneName(Resource):

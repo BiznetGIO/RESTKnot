@@ -1,13 +1,11 @@
 from flask_restful import Resource, reqparse, fields
 from app.helpers.rest import *
 from app.helpers.memcache import *
-from app.middlewares.auth import jwt_required
 import datetime
 from app.models import model as db
 
 
 class UserdataResource(Resource):
-    #@jwt_required
     def get(self):
         obj_userdata = list()
         try:
@@ -18,12 +16,8 @@ class UserdataResource(Resource):
             for i in results :
                 data = {
                     "userdata_id": str(i['userdata_id']),
-                    "email" : i['email'],
-                    "first_name" : i['first_name'],
-                    "last_name" : i['last_name'],
-                    "location" : i['location'],
-                    "city" : i['city'],
-                    "province" : i['province'],
+                    "user_id" : i['first_name'],
+                    "project_id" : i['last_name'],
                     "created_at": str(i['created_at'])
                 }
                 obj_userdata.append(data)
@@ -31,7 +25,6 @@ class UserdataResource(Resource):
 
 
 class UserdataResourceById(Resource):
-    #@jwt_required
     def get(self, userdata_id):
         obj_userdata = []
         results = db.get_by_id(
@@ -42,38 +35,25 @@ class UserdataResourceById(Resource):
 
         for i in results :
             data = {
-                "userdata_id": str(i['userdata_id']),
-                "email" : i['email'],
-                "first_name" : i['first_name'],
-                "last_name" : i['last_name'],
-                "location" : i['location'],
-                "city" : i['city'],
-                "province" : i['province'],
-                "created_at": str(i['created_at'])
-            }
+                    "userdata_id": str(i['userdata_id']),
+                    "user_id" : i['first_name'],
+                    "project_id" : i['last_name'],
+                    "created_at": str(i['created_at'])
+                }
             obj_userdata.append(data)
         return response(200, data=obj_userdata)
 
 
 class UserdataInsert(Resource):
-    # @jwt_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('first_name', type=str, required=True)
-        parser.add_argument('last_name', type=str, required=True)
-        parser.add_argument('location', type=str, required=True)
-        parser.add_argument('city', type=str, required=True)
-        parser.add_argument('province', type=str, required=True)
+        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument('user_id', type=str, required=True)
         args = parser.parse_args()
 
         data_insert = {
-            "email" : args['email'],
-            "first_name" : args['first_name'],
-            "last_name" : args['last_name'],
-            "location" : args['location'],
-            "city" : args['city'],
-            "province" : args['province']
+            "project_id" : args['project_id'],
+            "user_id" : args['user_id'],
         }
         try:
             result = db.insert(table="userdata", data=data_insert)
@@ -93,7 +73,6 @@ class UserdataInsert(Resource):
 
 
 class UserdataRemove(Resource):
-    @jwt_required
     def delete(self, userdata_id):
         try:
             db.delete(
@@ -114,15 +93,10 @@ class UserdataRemove(Resource):
 
 
 class UserdataUpdate(Resource):
-    @jwt_required
     def put(self, userdata_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('first_name', type=str, required=True)
-        parser.add_argument('last_name', type=str, required=True)
-        parser.add_argument('location', type=str, required=True)
-        parser.add_argument('city', type=str, required=True)
-        parser.add_argument('province', type=str, required=True)
+        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument('user_id', type=str, required=True)
         args = parser.parse_args()
 
         data = {
@@ -130,16 +104,11 @@ class UserdataUpdate(Resource):
                 "userdata_id": userdata_id
             },
             "data":{
-                "email" : args['email'],
-                "first_name" : args['first_name'],
-                "last_name" : args['last_name'],
-                "location" : args['location'],
-                "city" : args['city'],
-                "province" : args['province']
+                "project_id" : args['project_id'],
+                "user_id" : args['user_id'],
             }
         }
 
-        
         try:
             db.update("userdata", data=data)
         except Exception as e:

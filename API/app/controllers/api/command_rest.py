@@ -6,7 +6,6 @@ from app.helpers import command as cmd
 from app.libs import utils
 # from app import sockets, BaseNamespace
 import json, os
-from app.middlewares.auth import jwt_required
 
 
 # class CmdNamespace(BaseNamespace):
@@ -205,7 +204,7 @@ class SendCommandRest(Resource):
                     "status" : False,
                     "error": str(e)
                 }
-                return response(400, data=result, message=repons)
+                return response(400, data=result, message=respons)
             else :
                 http_response = utils.send_http(url,respons)
                 result.append(http_response)

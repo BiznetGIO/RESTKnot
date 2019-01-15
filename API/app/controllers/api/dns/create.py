@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse, fields
 from app.helpers.rest import *
 from app.helpers.memcache import *
-from app.middlewares.auth import jwt_required
 import datetime
 from app.models import model as db
 from app.libs.utils import repodefault
