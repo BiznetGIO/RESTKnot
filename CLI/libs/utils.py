@@ -4,6 +4,9 @@ import datetime
 import tabulate
 import coloredlogs
 import logging
+from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit import prompt
+
 
 with open('libs/templates/var.json','r') as f :
     var_json = json.load(f)
@@ -63,39 +66,3 @@ def log_err(stdin):
     coloredlogs.install()
     logging.error(stdin)    
 
-
-
-
-
-    
-
-
-
-# def get_data(zn_nm,zn_type,zn_ttl,args):
-#     # GET ACTIVE USER HERE
-
-#     zn_data = dict()
-#     fields = dict()
-
-#     if args == "create" :
-#         cmd_json = 'insert'
-#         zn_data[cmd_json] = dict()
-#         if zn_nm is not None:
-#             fields['nm_zone'] = zn_nm
-#             zn_data[cmd_json]['fields']=fields    
-#     elif args == "rm" :
-#         cmd_json = 'remove'
-#         zn_data[cmd_json] = dict()
-#         if zn_nm is not None:
-#             fields['id_zone'] = get_id('zone',zn_nm)
-#             zn_data[cmd_json]['tags'] = fields
-#     elif args == "ls" :
-#         cmd_json = 'where'
-#         zn_data[cmd_json] = dict()
-#         if zn_nm is not None:
-#             fields['id_zone'] = get_id('zone',zn_nm)
-#             zn_data[cmd_json]['tags'] = fields
-
-#     return zn_data
-           
-            

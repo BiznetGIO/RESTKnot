@@ -21,6 +21,9 @@ api.add_resource(UserdataInsert, '/user')
 api.add_resource(UserdataUpdate, '/user/<userdata_id>')
 api.add_resource(UserdataRemove, '/user/<userdata_id>')
 api.add_resource(Usersignin,"/login")
+api.add_resource(UserDataZoneInsert,"/userzone")
+api.add_resource(UserDataZoneResource,"/userzone")
+
 
 api.add_resource(ZoneName, '/zone')
 api.add_resource(Type, '/type')

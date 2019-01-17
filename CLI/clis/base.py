@@ -1,6 +1,5 @@
 from docopt import docopt
 
-
 class Base(object):
     """Base class for the commands"""
 

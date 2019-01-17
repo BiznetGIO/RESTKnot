@@ -60,7 +60,8 @@
             {
                 "where": {
                     "tags": {
-                        "nm_zone": ""
+                        "nm_zone": "",
+                        "id_zone": ""
                     }
                         
                 }
@@ -71,7 +72,8 @@
             "data" : {
                 "where": {
                 "tags": {
-                    "nm_ttl": ""
+                    "nm_ttl": "",
+                    "id_ttl": ""
                         }
                     }    
                 }

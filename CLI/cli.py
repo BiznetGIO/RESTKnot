@@ -1,8 +1,8 @@
 """
 Usage:
-  restknot <command> [<args>...]
+  knot-cli <command> [<args>...]
 
-Run 'restknot COMMAND --help' for more information on a command.
+Run 'knot-cli <command> --help' for more information on a command.
 """
 
 from inspect import getmembers, isclass
@@ -31,9 +31,9 @@ def main():
     except AttributeError as e:
         print(e)
         raise DocoptExit()
-
     command = command_class(options, args)
     command.execute()
+    
 
 
 if __name__ == '__main__':

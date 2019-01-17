@@ -1,6 +1,8 @@
+
 import os
 import getpass
 from .base import Base
+from libs.auth import ex_logout
 from libs import config as app
 from libs import utils as util
 from libs.wrapper import *
@@ -8,16 +10,16 @@ from libs.wrapper import *
 class Login(Base):
     """
     usage:
-        login -n USERNAME
+        logout [-r]
 
     Options :
-    -n --username  USERNAME
+        -r          Delete Cache for Fresh Login
+
 
     Commands:
 
-    
     """
-    
+
     def execute(self):
-        pswd = getpass.getpass('Password : ')
-        self.args['--pwd'] = pswd
+        ex_logout(self.args['-r'])
+        

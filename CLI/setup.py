@@ -4,7 +4,7 @@ from codecs import open
 from os.path import abspath, dirname, join
 from subprocess import call
 from setuptools import Command, find_packages, setup
-from cli import __version__
+from __init__ import __version__
 
 this_dir = abspath(dirname(__file__))
 with open(join(this_dir, 'README.md'), encoding='utf-8') as file:
@@ -61,7 +61,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'restknot=cli.cli:main',
+            'knot-cli=cli:main',
         ],
     },
     cmdclass={'test': RunTests},

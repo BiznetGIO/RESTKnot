@@ -8,9 +8,9 @@
         "content":"content",
         "content_serial":"content_serial",
         "user"  : "user",
-        "userlogin" : "user/add",
         "command": "sendcommand",
-        "signin" :  "sign"
+        "login" :  "login",
+        "userzone": "userzone"
     },
     "id"    : {
         "zone"  : "id_zone",
@@ -20,8 +20,7 @@
         "ttldata": "id_ttldata",
         "content": "id_content",
         "content_serial": "id_content_serial",
-        "user"  : "userdata_id",
-        "userlogin": "userlogin_id"        
+        "user"  : "userdata_id"       
     },
     "key"   :   {
         "zone"  : "nm_zone",
@@ -30,7 +29,6 @@
         "record": "nm_record",
         "content": "nm_content",
         "content_serial":"nm_content_serial",
-        "user" : "email",
-        "userlogin" : "username"
+        "user" : "userdata_id"
     }
 }
