@@ -1,0 +1,13 @@
+exclude .gitignore
+exclude libs/templates/model.json.example
+include README.md
+include setup.cfg
+include requirements.txt
+include libs/templates/endpoints.json
+include libs/templates/var.json
+prune .cache
+prune .git
+prune build
+prune dist
+recursive-exclude *.egg-info *
+recursive-include tests *

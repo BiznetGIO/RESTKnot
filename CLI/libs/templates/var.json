@@ -1,0 +1,34 @@
+{
+    "endpoints" : {
+        "zone"  : "zone",
+        "ttl"   : "ttl",
+        "type"  : "type",
+        "record": "record",
+        "ttldata":"ttldata",
+        "content":"content",
+        "content_serial":"content_serial",
+        "user"  : "user",
+        "command": "sendcommand",
+        "login" :  "login",
+        "userzone": "userzone"
+    },
+    "id"    : {
+        "zone"  : "id_zone",
+        "type"  : "id_type",
+        "ttl"   : "id_ttl",
+        "record": "id_record",
+        "ttldata": "id_ttldata",
+        "content": "id_content",
+        "content_serial": "id_content_serial",
+        "user"  : "userdata_id"       
+    },
+    "key"   :   {
+        "zone"  : "nm_zone",
+        "ttl"   : "nm_ttl",
+        "type"  : "nm_type",
+        "record": "nm_record",
+        "content": "nm_content",
+        "content_serial":"nm_content_serial",
+        "user" : "userdata_id"
+    }
+}
