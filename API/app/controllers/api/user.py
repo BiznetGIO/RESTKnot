@@ -16,8 +16,8 @@ class UserdataResource(Resource):
             for i in results :
                 data = {
                     "userdata_id": str(i['userdata_id']),
-                    "user_id" : i['first_name'],
-                    "project_id" : i['last_name'],
+                    "user_id" : i['user_id'],
+                    "project_id" : i['project_id'],
                     "created_at": str(i['created_at'])
                 }
                 obj_userdata.append(data)
@@ -36,8 +36,8 @@ class UserdataResourceById(Resource):
         for i in results :
             data = {
                     "userdata_id": str(i['userdata_id']),
-                    "user_id" : i['first_name'],
-                    "project_id" : i['last_name'],
+                    "user_id" : i['user_id'],
+                    "project_id" : i['project_id'],
                     "created_at": str(i['created_at'])
                 }
             obj_userdata.append(data)
@@ -69,7 +69,7 @@ class UserdataInsert(Resource):
                 "id": result
             }
         finally:
-            return response(200, message=message,)
+            return response(200, message=message)
 
 
 class UserdataRemove(Resource):
@@ -124,3 +124,72 @@ class UserdataUpdate(Resource):
         finally:
             return response(200, message=message)
 
+class UserDataZoneInsert(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_zone', type=str, required=True)
+        parser.add_argument("user-id", type=str, required=True, location='headers')
+        args = parser.parse_args()
+        
+        args['user_id'] = args.pop('user-id')
+        
+        temp = db.get_all(table='userdata')
+        
+        for i in temp:
+            if str(i['user_id']) == args['user_id']:
+                userdata_id = str(i['userdata_id'])
+
+        data_insert = {
+            "id_zone" : args['id_zone'],
+            "userdata_id"   : userdata_id
+        }
+
+
+       
+        try :
+            result = db.insert(table='zn_user_zone', data=data_insert)
+        except Exception as e:
+            message = {
+                "status" : False,
+                "error"  : str(e)
+            }
+        else:
+            message = {
+                "status" : True,
+                "data"   : data_insert,
+                "id"     : result
+            }
+        finally:
+            return response(200, message=message)
+        
+
+class UserDataZoneResource(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("user-id", type=str, required=True, location='headers')
+        args = parser.parse_args()
+        
+        args['user_id'] = args.pop('user-id')
+
+        temp = db.get_all(table='userdata')
+        
+        for i in temp:
+            if str(i['user_id']) == args['user_id']:
+                userdata_id = str(i['userdata_id'])
+        
+
+
+        obj_userdata = []
+        results = db.get_by_id(
+            table="zn_user_zone",
+            field="userdata_id",
+            value = userdata_id
+        )
+        for i in results : 
+            data = {
+                "id_user_zone" : str(i['id_user_zone']),
+                "userdata_id"  : str(i['userdata_id']),
+                "id_zone"      : str(i['id_zone'])
+            }
+            obj_userdata.append(data)
+        return response(200, data = obj_userdata)

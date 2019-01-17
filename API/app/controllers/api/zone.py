@@ -4,9 +4,11 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2
 from app.libs import utils
 from app.models import model as db
+from app.middlewares.auth import login_required
 
 
 class ZoneName(Resource):
+    @login_required
     #@jwt_required
     def get(self):
         command = utils.get_command(request.path)
@@ -17,8 +19,7 @@ class ZoneName(Resource):
             for i in results :
                 data = {
                     "id_zone": str(i['id_zone']),
-                    "nm_zone" : i['nm_zone']
-                }
+                    "nm_zone" : i['nm_zone']                }
                 obj_userdata.append(data)
         except Exception:
             results = None

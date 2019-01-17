@@ -158,7 +158,7 @@ CREATE VIEW v_ttldata (id_ttldata, id_ttl, id_record, id_zone, nm_zone, nm_recor
 CREATE TABLE zn_user_zone (
     id_user_zone INT NOT NULL DEFAULT unique_rowid(),
     userdata_id INT NOT NULL,
-    id_zone INT NOT NULL,
+    id_zone INT NOT NULL UNIQUE,
     CONSTRAINT "primary" PRIMARY KEY (id_user_zone ASC),
     CONSTRAINT fk_userdata_id_ref FOREIGN KEY (userdata_id) REFERENCES userdata(userdata_id) ON DELETE CASCADE ON UPDATE CASCADE,
     INDEX user_zone_auto_index_fk_userdata_id_ref (userdata_id ASC),
@@ -167,8 +167,8 @@ CREATE TABLE zn_user_zone (
     FAMILY "primary" (id_user_zone, userdata_id,id_zone)
 );
 
-CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, user_id, project_id) AS SELECT m1.id_user_zone ,
- m2.userdata_id, m3.id_zone, m2.user_id, m2.project_id
+CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, user_id, project_id, nm_zone) AS SELECT m1.id_user_zone ,
+ m2.userdata_id, m3.id_zone, m2.user_id, m2.project_id, m3.nm_zone
  FROM public.zn_user_zone AS m1 JOIN public.userdata as m2 ON m1.userdata_id = m2.userdata_id JOIN public.zn_zone AS m3 ON m3.id_zone = m1.id_zone 
  ;
 
