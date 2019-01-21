@@ -10,6 +10,7 @@ from libs import utils as util
 import subprocess as sp
 import time
 from cmd import Cmd
+import json
 
 DUMP_FOLDER = os.path.expanduser("~")
 
@@ -27,7 +28,8 @@ def send_todb(user_id,project_id) :
     headers = {'Content-Type': "application/json"}
     try :
         url = util.get_url('user')
-        requests.post(url=url,data= data, headers=headers)
+        res = requests.post(url=url,data= json.dumps(data),headers=headers)
+        print(res.json().encode('utf-8'))
     except Exception as e:
         util.log_err(str(e))
     

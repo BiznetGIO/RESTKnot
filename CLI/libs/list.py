@@ -62,17 +62,22 @@ def list_dns():
     id_zone = get_data('userzone',headers,key='id_zone')
     data = jsonmodel['search']['zone']['data']
     dnslist = list()
-    for i in id_zone:
-        data['where']['tags']['id_zone'] = i
-        temp = config.send_request('zone', data= data, headers=headers)
-        temp = temp['data'][0]['nm_zone']
-        temp = temp.encode("utf-8")
-        dnslist.append(temp)
+    if id_zone is None:
+        print("You don't own any dns yet")
+        exit()
+
+    else :
+        for i in id_zone:
+            data['where']['tags']['id_zone'] = i
+            temp = config.send_request('zone', data= data, headers=headers)
+            temp = temp['data'][0]['nm_zone']
+            temp = temp.encode("utf-8")
+            dnslist.append(temp)
     return dnslist
 
 def list_record(dnslist, tag = None):
     #dnslist=["thepokis.com","iank.com","klakla.com"]
-    #dnslist = check_zone_authorization(dnslist)
+    dnslist = check_zone_authorization(dnslist)
     json_send = jsonmodel['view']['record']   
     list_var = list()
     data = dict()

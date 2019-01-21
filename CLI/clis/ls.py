@@ -37,7 +37,10 @@ class Ls(Base):
         elif self.args['dns']:
             vallist = sort.list_dns()
             print('Your Domains List Are : ')
-            print(vallist)
+            show = [["DNS NAME"]]
+            show.append(vallist)
+            print()
+            print(tabulate(show,headers='firstrow',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
             if self.args['--nm']:
                 zone = list()
@@ -47,6 +50,6 @@ class Ls(Base):
                 zone = sort.list_dns()
             vallist = sort.list_record(zone)
             vallist = util.table_cleanup(vallist)
-            print(tabulate(vallist, headers="keys", showindex="always"))
+            print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
             
             

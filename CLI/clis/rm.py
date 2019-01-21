@@ -31,7 +31,8 @@ class Rm(Base):
             zone = [self.args['--nm']]
             util.log_warning('The following record will also be deleted\n')
             listdns = ls.list_record(zone)
-            print(tabulate(listdns))
+            listdns = util.table_cleanup(listdns)
+            print(tabulate(listdns,headers="keys",tablefmt="rst"))
             if util.assurance() and check_password():
                 delete.remove_zone(zone[0])
             else:
@@ -53,7 +54,7 @@ class Rm(Base):
                 id_record.append(row['id_record'])
             if(len(show)>0):
                 show = util.table_cleanup(show)
-                print(tabulate(show, headers="keys" ,showindex="always"))
+                print(tabulate(show, headers="keys" ,showindex="always",tablefmt="rst"))
                 try : 
                     index = raw_input("""
 Type the index of the record (0~{}), if you want to remove multiple record
