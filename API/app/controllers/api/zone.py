@@ -8,7 +8,7 @@ from app.middlewares.auth import login_required
 
 
 class ZoneName(Resource):
-    @login_required
+    #@login_required
     #@jwt_required
     def get(self):
         command = utils.get_command(request.path)

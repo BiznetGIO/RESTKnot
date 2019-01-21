@@ -224,7 +224,7 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
-        id_zone:
+        nm_zone:
           name: Tags Record ID
           desc: Get One Data From Record Name
           type: fields
@@ -298,7 +298,12 @@ endpoint:
           desc: Domain Variabel To Search
     view:
       tags:
-        id_ttldata:
+        nm_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_record:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -379,7 +384,12 @@ endpoint:
           desc: Domain Variabel To Search
     view:
       tags:
-        id_content:
+        nm_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_ttldata:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -455,7 +465,17 @@ endpoint:
           desc: Domain Variabel To Search
     view:
       tags:
-        id_content_serial:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        nm_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_ttldata:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -637,6 +657,49 @@ endpoint:
 
 
   userdata:
+    insert:
+      tags:
+        user_id:
+          name: username tags
+          desc: Username 
+          type: tags
+        project_id:
+          name: username tags
+          desc: Username 
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      tags:
+        username:
+          name: username tags
+          desc: Username Login
+          type: tags
+      fields:
+        password:
+          name: username tags
+          desc: Password For Login
+        full_name:
+          name: full name
+          desc: User field
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        username:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+zn_user_zone:
     insert:
       tags:
         username:
