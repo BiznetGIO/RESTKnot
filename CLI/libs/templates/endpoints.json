@@ -123,5 +123,43 @@
                 }
             }
         }
+    },
+    "view" : {
+
+        "record" :{
+            "view" :{
+                "tags" :{
+                    "id_record" : "",
+                    "nm_zone" : ""
+                    }
+            }        
+        },
+        "ttldata" :{
+            "view" :{
+                "tags" :{
+                    "id_record" : "",
+                    "nm_zone" : ""
+                }
+            }
+        },
+        "content_data" :{
+            "view" : {
+                "tags" :{
+                    "id_record" : "",
+                    "nm_zone" : "",
+                    "id_ttldata" : ""
+                }
+            }
+        },
+        "content_serial" :{
+            "view" : {
+                "tags" :{
+                    "id_record" : "",
+                    "nm_zone" : "",
+                    "id_ttldata" : ""
+                }
+            }
+        }
+
     }
 }

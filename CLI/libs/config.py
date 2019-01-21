@@ -65,9 +65,11 @@ def setDefaultDns(name):
 
 def tying_zone(user_id,id_zone):
     header = get_headers()
-    header['user-id'] = user_id
+    header['user-id'] = str(user_id)
     data = {"id_zone" : str(id_zone)}
-    send_request("user_zone",data,header)
+    url = get_url('userzone')
+    res = requests.post(url = url, data = data, headers = header)
+    print(res)
 
 def setRecord(obj):
     

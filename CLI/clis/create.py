@@ -26,7 +26,7 @@ class Create(Base):
     
     """
     
-    @login_required
+    #@login_required
     def execute(self):
         if self.args['dns']:
             app.setDefaultDns(self.args['--nm'])

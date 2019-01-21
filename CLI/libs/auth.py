@@ -47,7 +47,7 @@ def signin():
     except Exception as e:
         respons = str(e)
         print("Login Failure !")
-        return
+        exit()
     if respons["code"] != 200 :
         print(respons["message"])
         exit()
@@ -133,15 +133,26 @@ def load_dumped_session():
         util.log_err("Loading Session Failed")
         util.log_err("Please login first")
         util.log_err(str(e))
+        exit()
 
 def get_token():
     token = load_dumped_session()
     return token['token']
 
 def get_headers():
-    headers = {"Access-Token" : get_token()}
+    headers = {"Access-Token" : get_token(), "user-id": get_user_id()}
     return headers
 
 def get_user_id():
     user_id = load_dumped_session()
     return user_id['user_id']
+
+def check_password():
+    print("Please re-enter password for authentication")
+    pwd = (get_env_values())['password']
+    pwd2 = get_password()
+    if pwd == pwd2:
+        return True
+    else:
+        print("Wrong password ")
+        return False

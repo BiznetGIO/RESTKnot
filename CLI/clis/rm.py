@@ -3,30 +3,69 @@ import sys
 from .base import Base
 from libs import utils as util
 from libs import config as app
+from libs import remove as delete
+from libs import list as ls
+from libs.auth import check_password
 from libs.wrapper import *
+from tabulate import tabulate
 
 class Rm(Base):
     """
     usage:
         rm dns (--nm NAME)
-        rm record (--nm-record NAME )
+        rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
 
     Options :
         -h --help               Print usage
-        --nm  NAME              DNS/Record's name to delete
+        --nm=NAME               DNS' name to delete
+        --nm-record=NAME        Filter record by record's name
+        --nm-zn=ZNNAME          Filter record by zone's name
 
     Commands:
      ttl                        List available ttl
      type                       List available type 
     
     """
-    @login_required
     def execute(self):
         if self.args['dns']:
-
-            #FILTER DIDIEU 
-            app.remove_data(self.args['--nm'],'zone')
-
+            zone = [self.args['--nm']]
+            util.log_warning('The following record will also be deleted\n')
+            listdns = ls.list_record(zone)
+            print(tabulate(listdns))
+            if util.assurance() and check_password():
+                delete.remove_zone(zone[0])
+            else:
+                exit()
         elif self.args['record']:
-
-            app.remove_data(self.args['--nm'],'record')
+            if self.args['--nm-zone']:
+                id_record = list()
+                zone = [self.args['--nm-zone']]
+                tags = self.args
+                show = list()
+                show = ls.list_record(zone,tags)
+                # for row in templist:
+                #     row = util.dictcleanup(row)
+                #     if row['nm_zone'] == zone[0]:
+                #         show.append(row)
+                #         id_record.append(row['id_record'])
+                for row in show:
+                    row = util.dictcleanup(row)
+                    id_record.append(row['id_record'])
+                if(len(show)>0):
+                    show = util.table_cleanup(show)
+                    print(tabulate(show, headers="keys" ,showindex="always"))
+                    index = raw_input("""
+Type the index of the record (0~{}), if you want to remove multiple record
+separate the index using comma (,)
+        """.format(len(show)-1))
+                    index = index.split(',')
+                    index = util.check_availability(index,(len(show)-1))
+                    sendid = list()
+                    for i in index:
+                        sendid.append(id_record[int(i)])
+                    util.log_warning('Removing record is irreversible, are you sure ?\n')
+                    if util.assurance() and check_password():
+                        delete.remove_record(sendid)
+                    else:
+                        exit()                    
+                ##ABIS INI SEND REQUEST
