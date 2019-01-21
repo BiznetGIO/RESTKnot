@@ -85,7 +85,8 @@ def list_record(dnslist, tag = None):
         else :
             res = res['data']
             for i in res:
-                list_var.append(i)
+                if i["nm_type"] not in ["SOA","NS"]:
+                    list_var.append(i)
     for record in list_var:
         json_send = jsonmodel['view']['ttldata']
         json_send['view']['tags']['id_record'] = record['id_record']
@@ -108,9 +109,10 @@ def list_record(dnslist, tag = None):
         res = config.send_request('content_serial', json_send)
         res = res['data']
         content_serial = ''
-        for data in res:
-            if data['nm_type'] == record['nm_type'] :
-                content_serial += data['nm_content_serial'] + ' '
+        if res is not None:
+            for data in res:
+                if data['nm_type'] == record['nm_type'] :
+                    content_serial += data['nm_content_serial'] + ' '
         record['nm_content_serial'] = content_serial
         
     if tag is not None:
@@ -135,7 +137,6 @@ def check_zone_authorization(dnslist):
     
 def filter_record(data,filter):
     tags = util.get_filter(filter)
-    print(tags)
     result = list()
     for row in data:
         check = bool(1)
@@ -146,3 +147,4 @@ def filter_record(data,filter):
             row = util.dictcleanup(row)
             result.append(row)
     return result                
+

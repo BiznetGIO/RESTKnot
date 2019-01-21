@@ -46,6 +46,7 @@ class Ls(Base):
             else :
                 zone = sort.list_dns()
             vallist = sort.list_record(zone)
-            print(tabulate(vallist))
+            vallist = util.table_cleanup(vallist)
+            print(tabulate(vallist, headers="keys", showindex="always"))
             
             

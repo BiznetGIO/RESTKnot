@@ -1,6 +1,6 @@
 import requests
 import json
-from libs.utils import get_url,get_time,get_idkey
+from libs.utils import get_url,get_time,get_idkey,dictcleanup
 from libs.auth import get_headers, get_user_id
 import copy
 
@@ -27,11 +27,14 @@ def searchId(endpoint,name):
     data = dict()
     data = jsonmodel['search'][endpoint]['data']
     url = get_url(endpoint)
-    key = list(data['where']['tags'].keys())[0]
+    keys = list(data['where']['tags'].keys())
+    for i in keys:
+        if 'id' not in i:
+            key = i
     data['where']['tags'][key] = str(name)
     try :
         res = requests.post(url = url,
-        data = json.dumps(data),
+        data = json.dumps(data, encoding='utf-8'),
         headers=get_headers())
         res = res.json()
         res = res['data']
@@ -69,7 +72,6 @@ def tying_zone(user_id,id_zone):
     data = {"id_zone" : str(id_zone)}
     url = get_url('userzone')
     res = requests.post(url = url, data = data, headers = header)
-    print(res)
 
 def setRecord(obj):
     
@@ -86,9 +88,10 @@ def setRecord(obj):
     json_data = jsonmodel['create']['record']['data']
     for i in json_data['insert']['fields']:
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
+
     res = send_request('record',json_data, headers=get_headers())
     temp['--id-record'] = res['message']['id']
-    
+
 
     #insert ttldata
     json_data = jsonmodel['create']['ttldata']['data']
@@ -103,15 +106,17 @@ def setRecord(obj):
         json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
     res = send_request('content',json_data, headers=get_headers())
     temp['--id-content'] = res['message']['id']
-    
-    #insert content serial
-    json_data = jsonmodel['create']['content_serial']['data']
-    for i in json_data['insert']['fields']:
-        json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
-    res = send_request('content_serial',json_data, headers=get_headers())
-    temp['--id-content-serial'] = res['message']['id']
 
+    #insert content serial
     record_type = obj['--type'].upper()
+
+    if record_type == 'SRV' or record_type == 'MX':
+        json_data = jsonmodel['create']['content_serial']['data']
+        for i in json_data['insert']['fields']:
+            json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
+        res = send_request('content_serial',json_data, headers=get_headers())
+        temp['--id-content-serial'] = res['message']['id']
+
     if record_type == 'MX':
         cmd = 'zone-mx-insert'
         datasync = {"command" : cmd, "tags" : temp['--id-zone']}

@@ -43,21 +43,25 @@ class Rm(Base):
                 tags = self.args
                 show = list()
                 show = ls.list_record(zone,tags)
-                # for row in templist:
-                #     row = util.dictcleanup(row)
-                #     if row['nm_zone'] == zone[0]:
-                #         show.append(row)
-                #         id_record.append(row['id_record'])
-                for row in show:
-                    row = util.dictcleanup(row)
-                    id_record.append(row['id_record'])
-                if(len(show)>0):
-                    show = util.table_cleanup(show)
-                    print(tabulate(show, headers="keys" ,showindex="always"))
+
+            else:
+                zone = ls.list_dns()
+                show = ls.list_record(zone)
+                id_record = list()
+            for row in show:
+                row = util.dictcleanup(row)
+                id_record.append(row['id_record'])
+            if(len(show)>0):
+                show = util.table_cleanup(show)
+                print(tabulate(show, headers="keys" ,showindex="always"))
+                try : 
                     index = raw_input("""
 Type the index of the record (0~{}), if you want to remove multiple record
 separate the index using comma (,)
-        """.format(len(show)-1))
+""".format(len(show)-1))
+                except :
+                    print("Invalid Input")
+                else :
                     index = index.split(',')
                     index = util.check_availability(index,(len(show)-1))
                     sendid = list()
@@ -68,4 +72,3 @@ separate the index using comma (,)
                         delete.remove_record(sendid)
                     else:
                         exit()                    
-                ##ABIS INI SEND REQUEST

@@ -104,6 +104,10 @@ def check_availability(obj,length):
             if int(i) > length or int(i) < 0:
                 print("index {} is invalid integer and will be ignored".format(i))
                 obj.remove(i)
+            elif i ==',':
+                pass
+            else :
+                print("invalid input")
         except Exception as e:
             print(str(e))
     return obj
