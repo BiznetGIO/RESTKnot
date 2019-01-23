@@ -39,7 +39,6 @@ class Ls(Base):
             print('Your Domains List Are : ')
             show = [["DNS NAME"]]
             show.append(vallist)
-            print()
             print(tabulate(show,headers='firstrow',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
             if self.args['--nm']:
