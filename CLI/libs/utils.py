@@ -2,6 +2,7 @@ import json
 import requests
 import datetime
 import tabulate
+import re
 import coloredlogs
 import logging
 from prompt_toolkit.completion import WordCompleter
@@ -15,10 +16,11 @@ with open('libs/templates/var.json','r') as f :
 
 
 def check_existence(endpoint,var):
+    from libs.auth import get_headers
     url = get_url(endpoint)
     key = var_json['key'][endpoint]
 
-    result = requests.get(url)
+    result = requests.get(url, headers= get_headers())
     result = result.json()
     result = result['data']
     for i in result:
@@ -36,7 +38,8 @@ def get_url(endpoint):
 
     return url
 
-def get_idkey(endpoint):
+def get_idkey(endpoint,headers):
+
     url = get_url(endpoint)
     res = requests.get(url)
     data = res.json()
@@ -138,3 +141,6 @@ def get_filter(obj):
             result[var[key]] = obj[key]
     return result
 
+# def check_alphanumeric(str):
+#     print(str)
+#     return re.match('^[\w-]+$', str.strip('.com')) is None

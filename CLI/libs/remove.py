@@ -16,7 +16,7 @@ def remove_zone(zone):
     id_zone = ls.get_data('zone',headers=headers, key='id_zone', tags='nm_zone', value=zone)
     json_send['remove']['tags']['id_zone'] = id_zone
     try :
-        res = app.send_request('zone', json_send, headers = headers)
+        res = app.send_request('zone', json_send)
     except Exception as e:
         util.log_err(e)
     finally :
@@ -29,7 +29,7 @@ def remove_record(records):
     for i in records:
         json_send['remove']['tags']['id_record'] = i
         try :
-            res = app.send_request('record', json_send, headers=headers)
+            res = app.send_request('record', json_send)
         except Exception as e:
             util.log_err(e)
         finally:

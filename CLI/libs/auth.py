@@ -28,8 +28,7 @@ def send_todb(user_id,project_id) :
     headers = {'Content-Type': "application/json"}
     try :
         url = util.get_url('user')
-        res = requests.post(url=url,data= json.dumps(data),headers=headers)
-        print(res.json().encode('utf-8'))
+        requests.post(url=url,data= json.dumps(data),headers=headers)
     except Exception as e:
         util.log_err(str(e))
     
@@ -52,13 +51,13 @@ def signin():
         exit()
     if respons["code"] != 200 :
         print(respons["message"])
-        exit()
+        return False
     else :
         respons = respons["data"]
         send_todb(respons['user_id'], respons['project_id'])
         create_env_file(usr,pwd, respons["user_id"], respons["project_id"], respons["token"])
         generate_session(respons["user_id"], respons["project_id"], respons["token"] )
-        return
+        return True
     
 
 def generate_session(user_id, project_id, token):
@@ -130,7 +129,7 @@ def load_dumped_session():
         else:
             if check_env():
                 signin()    
-            return load_dumped_session()
+                return load_dumped_session()
     except Exception as e:
         util.log_err("Loading Session Failed")
         util.log_err("Please login first")

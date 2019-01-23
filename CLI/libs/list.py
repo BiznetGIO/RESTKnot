@@ -26,6 +26,7 @@ def listing_endpoint(endpoint):
     return st
 
 def get_data(endpoint,headers,key=None,tags=None,value=None):
+    headers = auth.get_headers()
     url = util.get_url(endpoint)
     try:
         res = requests.get(url = url, headers = headers )
@@ -37,7 +38,7 @@ def get_data(endpoint,headers,key=None,tags=None,value=None):
         if key != None and not check:
             data = list()
             for i in res:
-                data.append(i[key].decode('utf-8'))
+                data.append(i[key])
 
         elif key == None and check :
             data = list()
@@ -69,9 +70,9 @@ def list_dns():
     else :
         for i in id_zone:
             data['where']['tags']['id_zone'] = i
-            temp = config.send_request('zone', data= data, headers=headers)
+            temp = config.send_request('zone', data= data)
             temp = temp['data'][0]['nm_zone']
-            temp = temp.encode("utf-8")
+            #temp = temp.encode("utf-8")
             dnslist.append(temp)
     return dnslist
 
@@ -130,13 +131,13 @@ def check_zone_authorization(dnslist):
     user_dns = list_dns()
     returnlist = list()
     for i in dnslist:
-        if i not in user_dns:
+        if i not in user_dns :
             print("You are not authorized to access {}".format(i))
         else :
             returnlist.append(i)
 
     if not returnlist:
-        exit()
+        return False
     else :
         return returnlist
     
