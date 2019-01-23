@@ -5,6 +5,8 @@ import datetime
 from app.models import model as db
 from app.libs.utils import repodefault
 import datetime
+from app.middlewares.auth import login_required
+
 
 def addSOADefault(zone):
     defaultdata = repodefault()
@@ -105,6 +107,7 @@ def addNSDefault(zone):
 
 class CreateDNS(Resource):
     # @jwt_required
+    @login_required
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('domain', type=str, required=True)

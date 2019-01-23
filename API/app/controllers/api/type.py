@@ -4,6 +4,7 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2
 from app.libs import utils
 from app.models import model as db
+from app.middlewares.auth import login_required
 
 
 class Type(Resource):
@@ -25,6 +26,7 @@ class Type(Resource):
             return response(200, data=obj_userdata)
 
     #@jwt_required
+    @login_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)
