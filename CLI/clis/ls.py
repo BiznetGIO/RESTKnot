@@ -2,36 +2,53 @@ import os
 from .base import Base
 from libs import utils as util
 from libs import config as app
-from libs import ls
+from libs import list as sort
 from libs.wrapper import *
+import string
+from tabulate import tabulate
 
 class Ls(Base):
     """
     usage:
         ls ttl
         ls type
-        ls record
+        ls record [--nm NAME]
         ls dns
 
     Options :
-   
+    
+    --nm                        Show list of selected zone
 
     Commands:
      ttl                        List available ttl
      type                       List available type 
     
     """
-    @login_required
+    #@login_required
     def execute(self):
         if self.args['ttl'] :
-            vallist = ls.listing_endpoint('ttl')
-            print('Available ttl values are : ')
+            vallist = sort.listing_endpoint('ttl')
+            print('Available TTL values are : ')
             print(vallist)
         elif self.args['type']:
-            vallist = ls.listing_endpoint('type')
-            print('Available type values are : ')
+            vallist = sort.listing_endpoint('type')
+            print('Available Types are : ')
             print(vallist)
         elif self.args['dns']:
-            vallist = ls.list_dns()
+            vallist = sort.list_dns()
             print('Your Domains List Are : ')
-            print(vallist)
+            show = [["DNS NAME"]]
+            show.append(vallist)
+            print(tabulate(show,headers='firstrow',showindex='always',tablefmt="rst"))
+        elif self.args['record'] :
+            if self.args['--nm']:
+                zone = list()
+                for i in self.args['NAME'].split(',') : 
+                    zone.append(i.replace(" ", ""))       
+            else :
+                zone = sort.list_dns()
+            vallist = sort.list_record(zone)
+            vallist = util.table_cleanup(vallist)
+            print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
+            
+            

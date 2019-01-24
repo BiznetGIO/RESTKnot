@@ -144,7 +144,6 @@ class UserDataZoneInsert(Resource):
             "userdata_id"   : userdata_id
         }
 
-
        
         try :
             result = db.insert(table='zn_user_zone', data=data_insert)

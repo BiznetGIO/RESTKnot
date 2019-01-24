@@ -10,6 +10,7 @@ from libs import utils as util
 import subprocess as sp
 import time
 from cmd import Cmd
+import json
 
 DUMP_FOLDER = os.path.expanduser("~")
 
@@ -27,7 +28,7 @@ def send_todb(user_id,project_id) :
     headers = {'Content-Type': "application/json"}
     try :
         url = util.get_url('user')
-        requests.post(url=url,data= data, headers=headers)
+        requests.post(url=url,data= json.dumps(data),headers=headers)
     except Exception as e:
         util.log_err(str(e))
     
@@ -47,16 +48,16 @@ def signin():
     except Exception as e:
         respons = str(e)
         print("Login Failure !")
-        return
+        exit()
     if respons["code"] != 200 :
         print(respons["message"])
-        exit()
+        return False
     else :
         respons = respons["data"]
         send_todb(respons['user_id'], respons['project_id'])
         create_env_file(usr,pwd, respons["user_id"], respons["project_id"], respons["token"])
         generate_session(respons["user_id"], respons["project_id"], respons["token"] )
-        return
+        return True
     
 
 def generate_session(user_id, project_id, token):
@@ -128,20 +129,31 @@ def load_dumped_session():
         else:
             if check_env():
                 signin()    
-            return load_dumped_session()
+                return load_dumped_session()
     except Exception as e:
         util.log_err("Loading Session Failed")
         util.log_err("Please login first")
         util.log_err(str(e))
+        exit()
 
 def get_token():
     token = load_dumped_session()
     return token['token']
 
 def get_headers():
-    headers = {"Access-Token" : get_token()}
+    headers = {"Access-Token" : get_token(), "user-id": get_user_id()}
     return headers
 
 def get_user_id():
     user_id = load_dumped_session()
     return user_id['user_id']
+
+def check_password():
+    print("Please re-enter password for authentication")
+    pwd = (get_env_values())['password']
+    pwd2 = get_password()
+    if pwd == pwd2:
+        return True
+    else:
+        print("Wrong password ")
+        return False

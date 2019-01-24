@@ -6,6 +6,8 @@ from app.helpers import command as cmd
 from app.libs import utils
 # from app import sockets, BaseNamespace
 import json, os
+from app.middlewares.auth import login_required
+
 
 
 # class CmdNamespace(BaseNamespace):
@@ -48,6 +50,7 @@ class SendCommandRest(Resource):
         # else:
         #     return response(200, data=respons)
     ##@jwt_required
+    @login_required
     def post(self):
         url_env = os.getenv("SOCKET_AGENT_HOST")
         port = os.getenv("SOCKET_AGENT_PORT")
@@ -85,14 +88,16 @@ class SendCommandRest(Resource):
             result= list()
             for i in init_data['data']:
                 tags = i['tags']
-
+            print(" 1 ===> ",tags)
             begin_json = cmd.zone_begin(tags)
+            print("2 ===> ", begin_json)
             begin_respon = utils.send_http(url,begin_json)
+            print("3 ===>", begin_respon)
             result.append(begin_respon)
 
             try : 
                 respons = cmd.zone_soa_insert_default(tags)
-            
+                print(" 4 ====> ", respons)
             except Exception as e :
                 respons = {
                     "Status" : False,
@@ -102,9 +107,10 @@ class SendCommandRest(Resource):
             else: 
                 http_respons = utils.send_http(url,respons)
                 result.append(http_respons)
-
+                print(" 5 ===> ", http_respons)
                 commit_json = cmd.zone_commit(tags)
                 commit_response = utils.send_http(url,commit_json)
+                print(" 6 ===> ", commit_response)
                 result.append(commit_response)
                 
                 return response(200, data=result)

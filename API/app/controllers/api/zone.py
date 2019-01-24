@@ -8,8 +8,8 @@ from app.middlewares.auth import login_required
 
 
 class ZoneName(Resource):
-    @login_required
     #@jwt_required
+    @login_required
     def get(self):
         command = utils.get_command(request.path)
         command = "zn_"+command
@@ -27,6 +27,7 @@ class ZoneName(Resource):
             return response(200, data=obj_userdata)
 
     #@jwt_required
+    @login_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)

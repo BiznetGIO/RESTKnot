@@ -4,6 +4,7 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2,db
 from app.libs import utils
 from app.models import model
+from app.middlewares.auth import login_required
 
 
 class Record(Resource):

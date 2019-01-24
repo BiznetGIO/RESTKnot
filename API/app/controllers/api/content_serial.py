@@ -4,10 +4,12 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2,db
 from app.libs import utils
 from app.models import model
+from app.middlewares.auth import login_required
 
 
 class ContentSerial(Resource):
     #@jwt_required
+    @login_required
     def get(self):
         command = utils.get_command(request.path)
         command = "zn_"+command
@@ -27,6 +29,7 @@ class ContentSerial(Resource):
             return response(200, data=obj_userdata)
 
     #@jwt_required
+    @login_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)
