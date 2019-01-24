@@ -16,7 +16,7 @@ Command Line Interface for Restknot
 ## Usage
 
 ### Login and Account
-Knot-cli requires you to create an account on [portal-neo] (https://portal.neo.id/). Note that before using knot-cli you have to login using
+Knot-cli requires you to create an account on [portal-neo](https://portal.neo.id/). Note that before using knot-cli you have to login using
 
 ```
 knot-cli login
