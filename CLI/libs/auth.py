@@ -14,7 +14,7 @@ import json
 
 DUMP_FOLDER = os.path.expanduser("~")
 
-def get_username():
+def get_username(): #pragma: no cover
     usr = raw_input("username : ")
     usr = str(usr)
     return usr
@@ -62,7 +62,8 @@ def signin():
 
 def generate_session(user_id, project_id, token):
     sess =  {"user_id" : user_id, "project_id": project_id, "token" : token}
-    dump_session(sess)   
+    dump_session(sess)
+    return sess   
 
 def create_env_file(username, password, user_id, project_id, token):
     if not os.path.isdir("{}/restknot".format(DUMP_FOLDER)):
@@ -86,9 +87,13 @@ def get_env_values():
         restknot_env = {}
         restknot_env['username'] = os.environ.get('OS_USERNAME')
         restknot_env['password'] = os.environ.get('OS_PASSWORD')
+        restknot_env['user_id']  = os.environ.get('OS_USER_ID')
+        restknot_env['project_id'] = os.environ.get('OS_PROJECT_ID')
+        restknot_env['token']   = os.environ.get('OS_TOKEN')
         return restknot_env
     else:
         util.log_err("Can't find restknot.env")
+
 
 def load_env_file():
     return load_dotenv("{}/restknot/.restknot.env".format(DUMP_FOLDER), override=True)
@@ -120,21 +125,18 @@ def check_session():
     return os.path.isfile("/tmp/session.pkl")
 
 def load_dumped_session():
-    try:
-        if check_session():
-            sess = None
-            with open('/tmp/session.pkl', 'rb') as f:
-                sess = dill.load(f)
-            return sess
-        else:
-            if check_env():
-                signin()    
-                return load_dumped_session()
-    except Exception as e:
+    if check_session():
+        sess = None
+        with open('/tmp/session.pkl', 'rb') as f:
+            sess = dill.load(f)
+        return sess
+    elif check_env():
+        regenerate_session()  
+        return load_dumped_session()
+    else :
         util.log_err("Loading Session Failed")
         util.log_err("Please login first")
-        util.log_err(str(e))
-        exit()
+        return False
 
 def get_token():
     token = load_dumped_session()
@@ -148,7 +150,8 @@ def get_user_id():
     user_id = load_dumped_session()
     return user_id['user_id']
 
-def check_password():
+
+def check_password(): #pragma: no cover
     print("Please re-enter password for authentication")
     pwd = (get_env_values())['password']
     pwd2 = get_password()
@@ -157,3 +160,12 @@ def check_password():
     else:
         print("Wrong password ")
         return False
+
+def regenerate_session():
+    try :
+        env_data = get_env_values()
+        generate_session(user_id=env_data['user_id'],project_id=env_data['project_id'],token=env_data['token'])
+
+    except Exception as e:
+        print(str(e))
+        exit()

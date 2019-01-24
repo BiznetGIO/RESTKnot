@@ -26,8 +26,12 @@ class TestLogin:
         for i in range(2):
             auth.ex_logout()
         assert auth.check_session() == False
-    
+
     @pytest.mark.run(order=2)
+    def test_login_again(self):
+        assert auth.load_dumped_session() != False
+    
+    @pytest.mark.run(order=3)
     def test_logout_hard(self,monkeypatch):
         self.test_login_success(monkeypatch)
         auth.ex_logout(True)
@@ -35,11 +39,11 @@ class TestLogin:
         
         assert result == False
     
-    @pytest.mark.run(order=3)
-    def test_no_session(self):
-        assert auth.load_dumped_session() == None
-
     @pytest.mark.run(order=4)
+    def test_no_session(self):
+        assert auth.load_dumped_session() == False
+
+    @pytest.mark.run(order=5)
     def test_fail_login_wrong_account(self,monkeypatch):
         
         monkeypatch.setattr('libs.auth.get_username', lambda : 'user')
@@ -47,7 +51,7 @@ class TestLogin:
         with pytest.raises(SystemExit):
             auth.signin()
     
-    @pytest.mark.run(order=5)
+    @pytest.mark.run(order=6)
     def test_fresh_login(self,monkeypatch):
         load_dotenv("~/Documents/.restknot.env")
         os.rmdir("{}/restknot".format(FOLDER))
