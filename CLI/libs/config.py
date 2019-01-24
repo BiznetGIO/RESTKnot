@@ -148,19 +148,19 @@ def setRecord(obj):
     return data
 
 
-def remove_data(name,endpoint):
-    json_data = jsonmodel['rm'][endpoint]['data']
-    url = get_url(endpoint)
-    key = get_idkey(endpoint, headers=get_headers())
-    delid = searchId(endpoint,name)
-    json_data['remove']['tags'][key] = delid
-    try :
-        requests.post(url, data = json.dumps(json_data)
-        , headers=get_headers())
-    except Exception as e:
-        respons = str(e)
-        print(respons)
-    return
+# def remove_data(name,endpoint):
+#     json_data = jsonmodel['rm'][endpoint]['data']
+#     url = get_url(endpoint)
+#     key = get_idkey(endpoint, headers=get_headers())
+#     delid = searchId(endpoint,name)
+#     json_data['remove']['tags'][key] = delid
+#     try :
+#         requests.post(url, data = json.dumps(json_data)
+#         , headers=get_headers())
+#     except Exception as e:
+#         respons = str(e)
+#         print(respons)
+#     return
 
 def sync(obj):
     cmd = obj['command']

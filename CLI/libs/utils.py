@@ -50,16 +50,16 @@ def get_idkey(endpoint,headers):
 
 
 
-def eleminator(obj):
-    delkeys = list()
-    for i in obj:
-        if obj[i] is None or obj[i] is False :
-            delkeys.append(i)
+# def eleminator(obj):
+#     delkeys = list()
+#     for i in obj:
+#         if obj[i] is None or obj[i] is False :
+#             delkeys.append(i)
     
-    for i in delkeys:
-        obj.pop(i)
+#     for i in delkeys:
+#         obj.pop(i)
     
-    return obj
+#     return obj
         
 def get_time():
     now = datetime.datetime.now()
@@ -71,11 +71,11 @@ def log_err(stdin):
     coloredlogs.install()
     logging.error(stdin)    
 
-def log_warning(stdin):
+def log_warning(stdin): #pragma: no cover
     coloredlogs.install()
     logging.warning(stdin)
 
-def assurance():
+def assurance(): #pragma: no cover
     catch = raw_input("Are you sure ? (Y/N)")
     catch = catch.upper()
     if catch == 'Y' or catch == 'YES':
@@ -109,7 +109,7 @@ def check_availability(obj,length):
                 obj.remove(i)
             elif i ==',':
                 pass
-            else :
+            elif type(i) != int:
                 print("invalid input")
         except Exception as e:
             print(str(e))
@@ -144,3 +144,8 @@ def get_filter(obj):
 # def check_alphanumeric(str):
 #     print(str)
 #     return re.match('^[\w-]+$', str.strip('.com')) is None
+def convert(data):
+    if isinstance(data, bytes):  return data.decode('ascii')
+    if isinstance(data, dict):   return dict(map(convert, data.items()))
+    if isinstance(data, tuple):  return map(convert, data)
+    return data
