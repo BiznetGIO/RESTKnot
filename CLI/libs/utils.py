@@ -110,7 +110,8 @@ def check_availability(obj,length):
             elif i ==',':
                 pass
             elif type(i) != int:
-                print("invalid input")
+                #print("invalid input")
+                pass
         except Exception as e:
             print(str(e))
     return obj

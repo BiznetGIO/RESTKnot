@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from prompt_toolkit.shortcuts import confirm
 
 import getpass
+import sys
 import os
 import requests
 import dill
@@ -110,14 +111,18 @@ def ex_logout(r=False):
             os.remove("{}/restknot/.restknot.env".format(DUMP_FOLDER))
         time.sleep(1)
         sp.call('clear',shell=True)
-    else :
+    elif check_env() and not check_session() :
+        if r:
+            os.remove("{}/restknot/.restknot.env".format(DUMP_FOLDER))
+        time.sleep(1)
+    else:
         print("No active user")
 
 
 def dump_session(sess):
     try:
         with open('/tmp/session.pkl','wb') as f:
-            dill.dump(sess, f)
+            dill.dump(sess, f, protocol=2)
     except Exception as e:
         util.log_err("Dump session failed")
 
@@ -136,15 +141,19 @@ def load_dumped_session():
     else :
         util.log_err("Loading Session Failed")
         util.log_err("Please login first")
-        return False
+        sys.exit()
 
 def get_token():
     token = load_dumped_session()
     return token['token']
 
 def get_headers():
-    headers = {"Access-Token" : get_token(), "user-id": get_user_id()}
-    return headers
+    try :
+        headers = {"Access-Token" : get_token(), "user-id": get_user_id()}
+    except Exception as e:
+        return
+    else:
+        return headers
 
 def get_user_id():
     user_id = load_dumped_session()

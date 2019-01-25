@@ -23,14 +23,16 @@ def remove_zone(zone):
         return res
 
 def remove_record(records):
-    json_send = jsonmodel['rm']['record']['data']
-    headers = auth.get_headers()
-    headers['user-id']=auth.get_user_id()
-    for i in records:
-        json_send['remove']['tags']['id_record'] = i
-        try :
-            res = app.send_request('record', json_send)
-        except Exception as e:
-            util.log_err(e)
-        finally:
-            return res
+        json_send = jsonmodel['rm']['record']['data']
+        headers = auth.get_headers()
+        headers['user-id']=auth.get_user_id()
+        result=list()
+        for i in records:
+            json_send = jsonmodel['rm']['record']['data']
+            json_send['remove']['tags']['id_record'] = i
+            try :
+                res = app.send_request('record', json_send)
+                result.append(res)
+            except Exception as e:
+                util.log_err(e)
+        return result

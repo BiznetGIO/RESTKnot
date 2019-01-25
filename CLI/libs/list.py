@@ -68,16 +68,17 @@ def list_dns():
         exit()
 
     else :
-        for i in id_zone:
-            data['where']['tags']['id_zone'] = i
-            temp = config.send_request('zone', data= data)
-            temp = temp['data'][0]['nm_zone']
-            #temp = temp.encode("utf-8")
-            dnslist.append(temp)
+        try:
+            for i in id_zone:
+                data['where']['tags']['id_zone'] = i
+                temp = config.send_request('zone', data= data)
+                temp = temp['data'][0]['nm_zone']
+                dnslist.append(temp)
+        except Exception as e:
+            print(str(e))
     return dnslist
 
 def list_record(dnslist, tag = None):
-    #dnslist=["thepokis.com","iank.com","klakla.com"]
     dnslist = check_zone_authorization(dnslist)
     json_send = jsonmodel['view']['record']   
     list_var = list()
