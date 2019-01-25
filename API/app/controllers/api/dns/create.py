@@ -138,7 +138,6 @@ def addNSDefault(zone):
 
 
 class CreateDNS(Resource):
-
     @login_required
     def post(self):
         parser = reqparse.RequestParser()
@@ -163,9 +162,9 @@ class CreateDNS(Resource):
             id_zone_ns = addNSDefault(zone)
 
             # #UNCOMENT TO SYNC AUTO
-            # sync_conf_insert(data_insert)
-            # sync_soa(id_zone_soa)
-            # sync_ns(id_zone_ns)
+            sync_conf_insert(data_insert)
+            sync_soa(id_zone_soa)
+            sync_ns(id_zone_ns)
             # #UNCOMENT TO SYNC AUTO
         respon = list()
 
