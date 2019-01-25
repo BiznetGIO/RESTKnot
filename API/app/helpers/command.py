@@ -4,7 +4,7 @@ from app import db
 from app.libs import utils
 
 
-def z_begin(tags):
+def z_begin(url,tags):
     domain_name = None
     fields = tags['id_zone']
     domain_data = model.get_by_id("zn_zone", "id_zone", fields)
@@ -21,10 +21,10 @@ def z_begin(tags):
             }
         }
     }
-    return utils.sendSocket(json_command)
+    return utils.send_http(url,json_command)
     # return json_command
 
-def z_commit(tags):
+def z_commit(url,tags):
     domain_name = None
     fields = tags['id_zone']
     domain_data = model.get_by_id("zn_zone", "id_zone", fields)
@@ -42,7 +42,7 @@ def z_commit(tags):
             }
         }
     }
-    return utils.sendSocket(json_command)
+    return utils.send_http(url,json_command)
 
 def config_insert(tags):
     fields = str(list(tags.keys())[0])

@@ -146,9 +146,9 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            res_begin = cmd.zone_begin(tags)
+            res_begin = cmd.z_begin(url, tags)
             respons.append(res_begin)
-            try :           
+            try :
                 resu = cmd.zone_ns_insert(tags)
             except Exception as e:
                 respons = {
@@ -161,7 +161,7 @@ class SendCommandRest(Resource):
                     http_response = utils.send_http(url,i)
                     respons.append(http_response)
 
-                res_commit = cmd.z_commit(tags)
+                res_commit = cmd.z_commit(url,tags)
                 respons.append(res_commit)
                 return response(200, data=respons)
 
