@@ -133,14 +133,12 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            res_begin = cmd.z_begin(tags)
-            respons.append(res_begin)
-           
+            json_begin = cmd.zone_begin_http(url,tags) 
+            respons.append(json_begin)
             json_command = cmd.zone_insert(tags)
             http_response = utils.send_http(url,json_command)
             respons.append(http_response)
-
-            res_commit = cmd.z_commit(tags)
+            res_commit = cmd.zone_commit_http(url,tags)
             respons.append(res_commit)
             return response(200, data=respons)
 
@@ -148,7 +146,7 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            res_begin = cmd.z_begin(tags)
+            res_begin = cmd.zone_begin(tags)
             respons.append(res_begin)
             try :           
                 resu = cmd.zone_ns_insert(tags)
@@ -220,11 +218,28 @@ class SendCommandRest(Resource):
                 result.append(commit_response)
                 return response(200, data=result)
 
-#delete zone
-        # if init_data['action'] == 'zone-unset':
-        #     result = list()
-        #     for i in init_data['data']:
-        #         tags = i['tags']
-
-
+        # delete all zone
+        if init_data['action'] == 'conf-unset':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            data = cmd.conf_unset(tags)
+            cmd.conf_begin_http(url)
+            http_respons = utils.send_http(url,data)
+            cmd.conf_commit_http(url)
+            return response(200, data=http_respons)
         
+        if init_data['action'] == 'zone-unset':
+            result = list()
+            for i in init_data['data']:
+                print(i)
+                tags = i['tags']
+            respons = list()
+            res_begin = cmd.zone_begin_http(url,tags)
+            respons.append(res_begin)
+            json_command = cmd.zone_unset(tags)
+            http_response = utils.send_http(url,json_command)
+            respons.append(http_response)
+            res_commit = cmd.zone_commit_http(url, tags)
+            respons.append(res_commit)
+            return response(200, data=respons)

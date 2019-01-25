@@ -3,9 +3,12 @@ from command.control.libknot import control
 from command.control import client
 import json, os
 
+knot_lib = os.getenv("KNOT_LIB")
+
 
 def tes_conn():
-    control.load_lib("libknot.so.8")
+    
+    control.load_lib(knot_lib)
     ctl = control.KnotCtl()
     # ctl.connect(str(os.getenv('KNOT_SOCKET')))
     ctl.connect("/var/run/knot/knot.sock")
@@ -131,7 +134,8 @@ def parse_command_zone(json_data):
     return cli_shell
 
 def execute_command(initialiaze):
-    control.load_lib("libknot.so.8")
+    # control.load_lib("libknot.so.7")
+    control.load_lib(knot_lib)
     ctl = control.KnotCtl()
     # ctl.connect(str(os.getenv('KNOT_SOCKET')))
     ctl.connect("/var/run/knot/knot.sock")

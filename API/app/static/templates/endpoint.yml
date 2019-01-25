@@ -580,10 +580,6 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
       others:
         method:
           name: name search for domain
@@ -645,6 +641,17 @@ endpoint:
           desc: Domain Variabel To Search
 
     zone-unset:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    conf-unset:
       tags:
         id_zone:
           name: name search for domain

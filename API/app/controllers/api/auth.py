@@ -48,7 +48,7 @@ class Usersignin(Resource):
             try:
                 dill_object = dill.dumps(stored_data)
                 redis_store.set(access_token, dill_object)
-                redis_store.expired(3600)
+                redis_store.expire(access_token, 3600)
             except Exception as e:
                 resp = {
                     "error": str(e)
