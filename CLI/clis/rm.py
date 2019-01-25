@@ -55,21 +55,17 @@ class Rm(Base):
             if(len(show)>0):
                 show = util.table_cleanup(show)
                 print(tabulate(show, headers="keys" ,showindex="always",tablefmt="rst"))
-                try : 
-                    index = raw_input("""
+                index = raw_input("""
 Type the index of the record (0~{}), if you want to remove multiple record
 separate the index using comma (,)
 """.format(len(show)-1))
-                except :
-                    print("Invalid Input")
-                else :
-                    index = index.split(',')
-                    index = util.check_availability(index,(len(show)-1))
-                    sendid = list()
-                    for i in index:
-                        sendid.append(id_record[int(i)])
-                    util.log_warning('Removing record is irreversible, are you sure ?\n')
-                    if util.assurance() and check_password():
-                        delete.remove_record(sendid)
-                    else:
-                        exit()                    
+                index = index.split(',')
+                index = util.check_availability(index,(len(show)-1))
+                sendid = list()
+                for i in index:
+                    sendid.append(id_record[int(i)])
+                util.log_warning('Removing record is irreversible, are you sure ?\n')
+                if util.assurance() and check_password():
+                    res = delete.remove_record(sendid)
+                else:
+                    exit()                    

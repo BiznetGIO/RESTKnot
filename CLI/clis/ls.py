@@ -36,10 +36,14 @@ class Ls(Base):
             print(vallist)
         elif self.args['dns']:
             vallist = sort.list_dns()
+            util.convert(vallist)
+            show = list()
+            for i in vallist:
+                var = {"DNS NAME" : i}
+                show.append(var)
             print('Your Domains List Are : ')
-            show = [["DNS NAME"]]
-            show.append(vallist)
-            print(tabulate(show,headers='firstrow',showindex='always',tablefmt="rst"))
+            
+            print(tabulate(show,headers='keys',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
             if self.args['--nm']:
                 zone = list()
@@ -48,7 +52,10 @@ class Ls(Base):
             else :
                 zone = sort.list_dns()
             vallist = sort.list_record(zone)
-            vallist = util.table_cleanup(vallist)
-            print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
+            if vallist:
+                vallist = util.table_cleanup(vallist)
+                print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
+            else :
+                print("You have no record yet!")
             
             
