@@ -3,17 +3,49 @@ from app.helpers.rest import *
 from app.helpers.memcache import *
 import datetime
 from app.models import model as db
-from app.libs.utils import repodefault
-import datetime
+from app.libs.utils import repodefault, send_http
+import datetime, os
 from app.middlewares.auth import login_required
+from app.helpers import command as cmd
 
+
+url_env = os.getenv("SOCKET_AGENT_HOST")
+port = os.getenv("SOCKET_AGENT_PORT")
+url_fix= url_env+":"+port
+url = url_fix+"/api/command_rest"
+
+def sync_conf_insert(id_zone):
+    tags = {
+        "id_zone" : id_zone
+    }
+    respons_c_insert = cmd.config_insert(tags)
+    cmd.conf_begin_http(url)
+    send_http(url,respons_c_insert)
+    cmd.conf_commit_http(url)
+
+def sync_soa(id_zone):
+    tags = {
+        "id_zone" : id_zone
+    }
+    cmd.z_begin(url,tags)
+    respons = cmd.zone_soa_insert_default(tags)
+    send_http(url,respons)
+    cmd.z_commit(url, tags)
+
+def sync_ns(id_zone):
+    tags = {
+        "id_zone" : id_zone
+    }
+    cmd.z_begin(url, tags)
+    result_ns = cmd.zone_ns_insert(tags)
+    for i in result_ns:
+        send_http(url, i)
+    cmd.z_commit(url,tags)
 
 def addSOADefault(zone):
     defaultdata = repodefault()
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","SOA")
-
-    # ADD SOA DEFAULT RECORD
     date = datetime.datetime.now().strftime("%Y%m%d%H")
     record_soa = {
         "nm_record": zone,
@@ -21,7 +53,6 @@ def addSOADefault(zone):
         "id_zone":str(zone_data[0]['id_zone']),
         "id_type":str(type_data[0]['id_type'])
     }
-
     try:
         db.insert("zn_record", record_soa)
     except Exception as e:
@@ -60,7 +91,7 @@ def addSOADefault(zone):
             db.insert("zn_content_serial", serial_content)
         except Exception as e:
             print(e)
-
+    return str(zone_data[0]['id_zone'])
 
 def addNSDefault(zone):
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
@@ -103,10 +134,10 @@ def addNSDefault(zone):
             db.insert("zn_content", content_ns)
         except Exception as e:
             print(e)
+    return str(zone_data[0]['id_zone'])
 
 
 class CreateDNS(Resource):
-    # @jwt_required
     @login_required
     def post(self):
         parser = reqparse.RequestParser()
@@ -117,8 +148,9 @@ class CreateDNS(Resource):
             'nm_zone': zone
         }
         check = False
+        data_insert = None
         try:
-            db.insert("zn_zone", zone_domain)
+            data_insert = db.insert("zn_zone", zone_domain)
             check = True
         except Exception as e:
             msg = str(e)
@@ -126,12 +158,19 @@ class CreateDNS(Resource):
         if not check:
             print(msg)
         else:
-            addSOADefault(zone)
-            addNSDefault(zone)
+            id_zone_soa = addSOADefault(zone)
+            id_zone_ns = addNSDefault(zone)
+
+            # #UNCOMENT TO SYNC AUTO
+            sync_conf_insert(data_insert)
+            sync_soa(id_zone_soa)
+            sync_ns(id_zone_ns)
+            # #UNCOMENT TO SYNC AUTO
         respon = list()
+
         try:
             zone_data = db.get_by_id("zn_zone","nm_zone", zone)
-        except Exception:
+        except Exception as e:
             data = {
                 "status": False,
                 "messages": str(e)

@@ -116,7 +116,7 @@ CREATE TABLE zn_content_serial (
 	FAMILY "primary" (id_content_serial, id_record, nm_content_serial)
 );
 
-CREATE VIEW v_content_serial (id_content_serial, id_zone, nm_zone, nm_record, nm_type, nm_content_serial) AS SELECT m1.id_content_serial, m3.id_zone, m3.nm_zone, m2.nm_record, m4.nm_type, m1.nm_content_serial FROM public.zn_content_serial AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_zone AS m3 ON m2.id_zone = m3.id_zone JOIN public.zn_type AS m4 ON m2.id_type = m4.id_type;
+CREATE VIEW v_content_serial (id_content_serial, id_zone, nm_zone, nm_record, id_record, nm_type, nm_content_serial) AS SELECT m1.id_content_serial, m3.id_zone, m3.nm_zone, m2.nm_record, m4.nm_type, m1.nm_content_serial FROM public.zn_content_serial AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_zone AS m3 ON m2.id_zone = m3.id_zone JOIN public.zn_type AS m4 ON m2.id_type = m4.id_type;
 
 CREATE TABLE zn_ttl (
 	id_ttl INT NULL DEFAULT unique_rowid(),

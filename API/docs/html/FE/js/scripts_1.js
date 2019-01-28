@@ -16,7 +16,7 @@ function content_get(id){
 
 }
 
-function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
+function addRecordNew(url,zone_id, record_name, type_name_id, ttl_id, json_content){
     var json_record_name = {
         "insert": {
            "fields": {
@@ -27,7 +27,7 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
            }
         }
     }
-    var save_onerecord= ajaxDor("http://127.0.0.1:6968/api/record",json_record_name)
+    var save_onerecord= ajaxDor(url+"/api/record",json_record_name)
     save_onerecord.done(function(respon){
         var id_record = respon.message['id']
         console.log("RECORD : ", respon)
@@ -40,7 +40,7 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
             }
         }
 
-        var send_ttl = ajaxDor("http://127.0.0.1:6968/api/ttldata", json_ttl_data)
+        var send_ttl = ajaxDor(url+"/api/ttldata", json_ttl_data)
         send_ttl.done(function(respons){
             console.log("TTL DATA : ", respon)
             console.log("JSON _CONTENT",json_content)
@@ -57,7 +57,7 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
                 }
                 if(json_content[i].serial_data == ""){
                     console.log("serial_data = ndak ada")
-                    var reqs = ajaxDor("http://127.0.0.1:6968/api/content",json_content_to)
+                    var reqs = ajaxDor(url+"/api/content",json_content_to)
                     reqs.done(function(respon){
                         console.log("CONTENT : ", respon)
                         document.location.reload();
@@ -65,7 +65,7 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
                 }
                 else{
                     var t_a = ""
-                    var reqs = ajaxDor("http://127.0.0.1:6968/api/content",json_content_to)
+                    var reqs = ajaxDor(url+"/api/content",json_content_to)
                     reqs.done(function(respon){
                         console.log("CONTENT : ", respon)
                     });
@@ -80,7 +80,7 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
                                }
                             }
                         }
-                        var reqs = ajaxDor("http://127.0.0.1:6968/api/content_serial",json_serial_data)
+                        var reqs = ajaxDor(url+"/api/content_serial",json_serial_data)
                         reqs.done(function(respon){
                             console.log("SERIAL CONTENT : ", respon)
                         });
@@ -96,9 +96,13 @@ function addRecordNew(zone_id, record_name, type_name_id, ttl_id, json_content){
 }
 
 function ajaxDor(link,json_data){
+    var apikey = window.localStorage.getItem("apikey");
     var req =  $.ajax({
         url:link,
         type:"POST",
+        headers:{
+            "Access-Token": apikey
+        },
         data: JSON.stringify(json_data),
         contentType:"application/json",
         dataType:"json"
@@ -106,8 +110,13 @@ function ajaxDor(link,json_data){
     return req
 }
 
+
 $(document).ready(function(){
-    rule_content = [
+    var check_login = window.localStorage.getItem("apikey");
+    var url_knot = 'http://127.0.0.1';
+    var port_knot = '6968';
+    var uri_fix = url_knot+":"+port_knot;
+    var rule_content = [
         {
             "id" : "402329131320508417",
             "content": 1,
@@ -127,6 +136,148 @@ $(document).ready(function(){
             "id" : "402427533112147969"
         }
     ]
+
+    // ## check_login
+    if (check_login == null){
+        $("#login_section").show()
+        $("#domain_section").hide()
+        $("#data_section").hide()
+    }
+    else{
+        $("#login_section").hide()
+        $("#domain_section").show()
+        $("#data_section").show()
+    }
+
+
+    $('#btn_login').click(function(){
+        $( "#form_login" ).on( "submit", function(event) {
+            var data = $(this).serializeArray();
+            var request = $.post(uri_fix+"/api/login", data);
+
+            request.done(function(respon){
+                console.log(respon.data.apikey)
+                window.localStorage.setItem("apikey", respon.data.token);
+                location.reload()
+            });
+            event.preventDefault();
+        });
+
+    });
+
+    $('#btn_logout').click(function(){
+        localStorage.removeItem('apikey');
+        location.reload()
+    });
+
+    $('#record_section').hide();
+
+    $.ajax({
+        url: uri_fix+'/api/zone',
+        dataType: 'json',
+        headers:{
+            "Access-Token": check_login
+        },
+        success: function(resp) {
+            var table = $('#domain_table').DataTable({
+                "select": true,
+                "data": resp.data,
+                "columns": [
+                    { "data": "id_zone" },
+                    { "data": "nm_zone" }
+                ],
+            });
+            $('#domain_table tbody').on( 'click', 'tr', function (e) {
+                $('#record_section').show()
+                $('#record_table').html("")
+                var data = table.row(this).data();
+                
+                json_data = {
+                    "where": {
+                       "tags": {
+                           "id_zone": data.id_zone
+                       }
+                    }
+                 }
+                 $("#zone_f_id").val(data.id_zone)
+                 $.ajax({
+                    url: uri_fix+"/api/record",
+                    type:"POST",
+                    headers:{
+                        "Access-Token": check_login
+                    },
+                    data: JSON.stringify(json_data),
+                    contentType:"application/json",
+                    dataType:"json",
+                    
+                    success: function(respon){
+                        console.log(respon.data)
+                        // $("record_table tbody").load(respon.data.data);
+                        var $thead = $('<thead>').append(
+                            $('<tr>').append(
+                                $('<td>').text("Record ID"),
+                                $('<td>').text("Record Name"),
+                                $('<td>').text("Zone ID"),
+                                $('<td>').text("Type Name ID"),
+                                $('<td>').text("Content")
+                            )
+                        );
+                        $('#record_table').append($thead)
+                        tbody = $("<tbody>")
+                        $.each(respon.data, function(i, item) {
+                            var tr = $('<tr>').append(
+                                $('<td>').text(item.id_record),
+                                $('<td>').text(item.nm_record),
+                                $('<td>').text(item.id_zone),
+                                $('<td>').text(item.id_type),
+                                $('<td>').html("<a href='#' onclick='content_get("+item.id_record+")' class='btn btn-xs content_btn'>Content</a>")
+                            );
+                            tbody.append(tr)
+                        });
+                        // console.log(tbody)
+                        $('#record_table').append(tbody)
+
+                        $.ajax({
+                            url: uri_fix+"/api/type",
+                            type:"GET",
+                            headers:{
+                                "Access-Token": check_login
+                            },
+                            success: function(respon){
+                                var data = $.map(respon.data, function (obj) {
+                                    obj.id = obj.id_type;
+                                    obj.text = obj.nm_type; 
+                                    return obj;
+                                });
+                                $('#typename_id').select2({
+                                    data : data
+                                });
+                            }
+                        });
+
+
+                        $.ajax({
+                            url:uri_fix+"/api/ttl",
+                            type:"GET",
+                            headers:{
+                                "Access-Token": check_login
+                            },
+                            success: function(respon){
+                                var data = $.map(respon.data, function (obj) {
+                                    obj.id = obj.id_ttl;
+                                    obj.text = obj.nm_ttl; 
+                                    return obj;
+                                });
+                                $('#ttl_id_name').select2({
+                                    data : data
+                                });
+                            }
+                        });
+                    }
+                  });
+            });
+        }
+    });
 
     $('#typename_id').change(function(){
         $("#serial_content_section").html("");
@@ -189,117 +340,27 @@ $(document).ready(function(){
                 }
             }
         }
-        addRecordNew(zone_f_id, record_name, type_name_id, ttl_id_name, json_content)
+        addRecordNew(uri_fix,zone_f_id, record_name, type_name_id, ttl_id_name, json_content)
     });
 
 
      $('#btnCreateDomain').click(function(){
         $( "#form_domain" ).on( "submit", function(event) {
             var data = $(this).serializeArray();
-            console.log(data)
-            var request = $.post("http://127.0.0.1:6968/api/user/dnscreate", data);
-            request.done(function(data){
+            var req =  $.ajax({
+                url:uri_fix+"/api/user/dnscreate",
+                type: "post",
+                headers:{
+                    "Access-Token": check_login
+                },
+                data: data
+            });
+
+            req.done(function(data){
                 document.location.reload();
             });
 
             event.preventDefault();
         });
-    });
-
-    $('#record_section').hide();
-
-    $.ajax({
-        url: 'http://127.0.0.1:6968/api/zone',
-        dataType: 'json',
-        success: function(resp) {
-            var table = $('#domain_table').DataTable({
-                "select": true,
-                "data": resp.data,
-                "columns": [
-                    { "data": "id_zone" },
-                    { "data": "nm_zone" }
-                ],
-            });
-            $('#domain_table tbody').on( 'click', 'tr', function (e) {
-                $('#record_section').show()
-                $('#record_table').html("")
-                var data = table.row(this).data();
-                
-                json_data = {
-                    "where": {
-                       "tags": {
-                           "id_zone": data.id_zone
-                       }
-                    }
-                 }
-                 $("#zone_f_id").val(data.id_zone)
-                 $.ajax({
-                    url:"http://127.0.0.1:6968/api/record",
-                    type:"POST",
-                    data: JSON.stringify(json_data),
-                    contentType:"application/json",
-                    dataType:"json",
-                    
-                    success: function(respon){
-                        console.log(respon.data)
-                        // $("record_table tbody").load(respon.data.data);
-                        var $thead = $('<thead>').append(
-                            $('<tr>').append(
-                                $('<td>').text("Record ID"),
-                                $('<td>').text("Record Name"),
-                                $('<td>').text("Zone ID"),
-                                $('<td>').text("Type Name ID"),
-                                $('<td>').text("Content")
-                            )
-                        );
-                        $('#record_table').append($thead)
-                        tbody = $("<tbody>")
-                        $.each(respon.data, function(i, item) {
-                            var tr = $('<tr>').append(
-                                $('<td>').text(item.id_record),
-                                $('<td>').text(item.nm_record),
-                                $('<td>').text(item.id_zone),
-                                $('<td>').text(item.id_type),
-                                $('<td>').html("<a href='#' onclick='content_get("+item.id_record+")' class='btn btn-xs content_btn'>Content</a>")
-                            );
-                            tbody.append(tr)
-                        });
-                        // console.log(tbody)
-                        $('#record_table').append(tbody)
-
-                        $.ajax({
-                            url:"http://127.0.0.1:6968/api/type",
-                            type:"GET",
-                            success: function(respon){
-                                var data = $.map(respon.data, function (obj) {
-                                    obj.id = obj.id_type;
-                                    obj.text = obj.nm_type; 
-                                    return obj;
-                                });
-                                $('#typename_id').select2({
-                                    data : data
-                                });
-                            }
-                        });
-
-
-                        $.ajax({
-                            url:"http://127.0.0.1:6968/api/ttl",
-                            type:"GET",
-                            success: function(respon){
-                                var data = $.map(respon.data, function (obj) {
-                                    obj.id = obj.id_ttl;
-                                    obj.text = obj.nm_ttl; 
-                                    return obj;
-                                });
-                                $('#ttl_id_name').select2({
-                                    data : data
-                                });
-                            }
-                        });
-                    }
-                  });
-            });
-        }
     });
 });
