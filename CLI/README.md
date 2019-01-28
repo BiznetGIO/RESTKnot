@@ -113,6 +113,6 @@ On record removal, knot-cli will give you a list of your record based on filter 
 
 Enter index of the record that you want to remove, then knot-cli will ask for your confirmation.
 
-![rm record 2](https://github.com/riszkymf/RESTKnot/blob/devel/CLI/docs/img/rm1.jpg "Record removal 2")
+![rm record 2](https://github.com/riszkymf/RESTKnot/blob/devel/CLI/docs/img/rm2.jpg "Record removal 2")
 
 
