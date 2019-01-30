@@ -252,6 +252,7 @@ def zone_begin_http(url, tags):
             }
         }
     }
+    
     res = utils.send_http(url, json_command)
     return res
 
@@ -318,23 +319,38 @@ def zone_insert(tags):
     rows = db.fetchall()
     for row in rows:
         ctdata.append(dict(zip(column_ctdata, row)))
-    print(ttldata)
-    json_command={
-        "zone-set": {
+    if record[0]['nm_type'] == "CNAME":
+        json_command={
+        "cname-set": {
             "sendblock": {
                 "cmd": "zone-set",
                 "zone": record[0]['nm_zone'],
                 "owner": record[0]['nm_record'],
                 "rtype": record[0]['nm_type'],
                 "ttl": ttldata[0]['nm_ttl'],
-                "data": ctdata[0]['nm_content']
+                "data": ctdata[0]['nm_content']+"."
             },
             "receive": {
                 "type": "block"
             }
         }
     }
-    # print(json_command)
+    else:
+        json_command={
+            "zone-set": {
+                "sendblock": {
+                    "cmd": "zone-set",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "rtype": record[0]['nm_type'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "data": ctdata[0]['nm_content']
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
     return json_command
 
 def zone_ns_insert(tags):
@@ -544,7 +560,8 @@ def zone_unset(tags):
             "sendblock": {
                 "cmd": "zone-unset",
                 "zone": record[0]['nm_zone'],
-                "owner": record[0]['nm_record']
+                "owner": record[0]['nm_record'],
+                "rtype": record[0]['nm_type']
             },
             "receive": {
                 "type": "block"
