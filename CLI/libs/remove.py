@@ -23,8 +23,6 @@ def remove_zone(zone):
 
 def remove_record(records):
         json_send = jsonmodel['rm']['record']['data']
-        headers = auth.get_headers()
-        headers['user-id']=auth.get_user_id()
         result=list()
         for i in records:
             json_send = jsonmodel['rm']['record']['data']
