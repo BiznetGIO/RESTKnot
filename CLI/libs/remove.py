@@ -11,9 +11,7 @@ with open('libs/templates/endpoints.json','r') as model :
 
 def remove_zone(zone):
     json_send = jsonmodel['rm']['zone']['data']
-    headers = auth.get_headers()
-    headers['user-id'] = auth.get_user_id()
-    id_zone = ls.get_data('zone',headers=headers, key='id_zone', tags='nm_zone', value=zone)
+    id_zone = ls.get_data('zone', key='id_zone', tags='nm_zone', value=zone)
     json_send['remove']['tags']['id_zone'] = id_zone
     try :
         res = app.send_request('zone', json_send)

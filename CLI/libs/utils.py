@@ -5,6 +5,7 @@ import tabulate
 import re
 import coloredlogs
 import logging
+import yaml
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit import prompt
 
@@ -19,16 +20,23 @@ def check_existence(endpoint,var):
     from libs.auth import get_headers
     url = get_url(endpoint)
     key = var_json['key'][endpoint]
-
-    result = requests.get(url, headers= get_headers())
-    result = result.json()
-    result = result['data']
-    for i in result:
-        if i[key] == var:
-            respons = True
-            break
-        else :
-            respons = False
+    headers = get_headers()
+    headers = headers['data']
+    try :
+        result = requests.get(url, headers=headers )
+        result = result.json()
+        result = result['data']
+    except Exception as e:
+        respons = generate_respons(False,str(e))
+    if result is None:
+        respons = generate_respons(False,'Your token has expired')
+    else :   
+        for i in result:
+            if i[key] == var:
+                respons = generate_respons(True,'Value already exist',i[key])
+                break
+            else :
+                respons = generate_respons(False,'Value doesnt exist')
     return respons
 
 def get_url(endpoint):
@@ -76,7 +84,7 @@ def log_warning(stdin): #pragma: no cover
     logging.warning(stdin)
 
 def assurance(): #pragma: no cover
-    catch = raw_input("Are you sure ? (Y/N)")
+    catch = input("Are you sure ? (Y/N)")
     catch = catch.upper()
     if catch == 'Y' or catch == 'YES':
         return True
@@ -117,7 +125,8 @@ def check_availability(obj,length):
     return obj
 
 def table_cleanup(obj):
-    keys = obj[0].keys()
+    obj = convert(obj)
+    keys = list(obj[0].keys())
     temp = list()
     for key in keys:
         if 'id' in key:
@@ -137,8 +146,12 @@ def get_filter(obj):
     keys = obj.keys()
     result = dict()
 
+    
     for key in keys:
         if key in var.keys() and obj[key] is not None:
+            if key == '--ttl' or key == '--type':
+                check=check_existence(key.strip('-'),obj[key])
+                if not check['status'] : continue
             result[var[key]] = obj[key]
     return result
 
@@ -146,7 +159,15 @@ def get_filter(obj):
 #     print(str)
 #     return re.match('^[\w-]+$', str.strip('.com')) is None
 def convert(data):
-    if isinstance(data, bytes):  return data.decode('ascii')
-    if isinstance(data, dict):   return dict(map(convert, data.items()))
-    if isinstance(data, tuple):  return map(convert, data)
-    return data
+  if isinstance(data, bytes):      return data.decode()
+  if isinstance(data, (str, int)): return str(data)
+  if isinstance(data, dict):       return dict(map(convert, data.items()))
+  if isinstance(data, tuple):      return tuple(map(convert, data))
+  if isinstance(data, list):       return list(map(convert, data))
+  if isinstance(data, set):        return set(map(convert, data))
+
+def generate_respons(status,message,data=None):
+    if data : return {"status" : status, "data" : data, "message": message}
+    else : return {"status": status, "message" : message}
+
+ 

@@ -12,11 +12,12 @@ import subprocess as sp
 import time
 from cmd import Cmd
 import json
+import datetime
 
 DUMP_FOLDER = os.path.expanduser("~")
 
 def get_username(): #pragma: no cover
-    usr = raw_input("username : ")
+    usr = input("username : ")
     usr = str(usr)
     return usr
 
@@ -47,22 +48,24 @@ def signin():
         respons = requests.post(url,json_data)
         respons = respons.json()
     except Exception as e:
-        respons = str(e)
-        print("Login Failure !")
-        exit()
-    if respons["code"] != 200 :
-        print(respons["message"])
-        return False
+        msg = "Login failure ! \n"+str(e)
+        print(msg)
+        return util.generate_respons(False,msg)
     else :
-        respons = respons["data"]
-        send_todb(respons['user_id'], respons['project_id'])
-        create_env_file(usr,pwd, respons["user_id"], respons["project_id"], respons["token"])
-        generate_session(respons["user_id"], respons["project_id"], respons["token"] )
-        return True
+        if respons["code"] != 200 :
+            print(respons["message"])
+            return util.generate_respons(False,respons["message"])
+        data = respons["data"]
+        send_todb(data['user_id'], data['project_id'])
+        create_env_file(usr,pwd, data["user_id"], data["project_id"], data["token"])
+        generate_session(data["user_id"], data["project_id"], data["token"] )
+
+        return util.generate_respons(True,"success",data)
     
 
 def generate_session(user_id, project_id, token):
-    sess =  {"user_id" : user_id, "project_id": project_id, "token" : token}
+    timestamp = datetime.datetime.now().timestamp()
+    sess =  {"user_id" : user_id, "project_id": project_id, "token" : token, "timestamp" : timestamp}
     dump_session(sess)
     return sess   
 
@@ -134,30 +137,45 @@ def load_dumped_session():
         sess = None
         with open('/tmp/session.pkl', 'rb') as f:
             sess = dill.load(f)
-        return sess
+        return util.generate_respons(True,"success",sess)
     elif check_env():
         regenerate_session()  
         return load_dumped_session()
     else :
         util.log_err("Loading Session Failed")
-        util.log_err("Please login first")
-        sys.exit()
+        msg = "Please login first"
+        return util.generate_respons(False,msg)
 
 def get_token():
-    token = load_dumped_session()
-    return token['token']
+    result = load_dumped_session()
+    try:
+        token = result['data']['token']
+    except Exception:
+        return util.generate_respons(False,"Token Failure")
+    else:
+        return util.generate_respons(True,"Success",token) 
 
 def get_headers():
+    timestamp = timestamp_check()
+    if not timestamp['status']:
+        signin()
     try :
-        headers = {"Access-Token" : get_token(), "user-id": get_user_id()}
+        token = get_token()
+        user_id = get_user_id()
+        headers = {"Access-Token" : token['data'], "user-id": user_id['data']}
     except Exception as e:
-        return
+        return util.generate_respons(False,str(e))
     else:
-        return headers
+        return util.generate_respons(True,'success',headers)
 
 def get_user_id():
-    user_id = load_dumped_session()
-    return user_id['user_id']
+    result = load_dumped_session()
+    try:
+        user_id = result['data']['user_id']
+    except Exception:
+        return util.generate_respons(False,"User ID Failure")
+    else:
+        return util.generate_respons(True,"Success",user_id) 
 
 
 def check_password(): #pragma: no cover
@@ -174,7 +192,18 @@ def regenerate_session():
     try :
         env_data = get_env_values()
         generate_session(user_id=env_data['user_id'],project_id=env_data['project_id'],token=env_data['token'])
-
+        return util.generate_respons(True,"success")
     except Exception as e:
-        print(str(e))
-        exit()
+        return util.generate_respons(False,str(e))
+
+
+def timestamp_check():
+    sess = load_dumped_session()
+    ts1 = sess['data']['timestamp']
+    ts2 = datetime.datetime.now().timestamp()
+    delta = (datetime.datetime.fromtimestamp(ts2))-(datetime.datetime.fromtimestamp(ts1))
+    sec = delta.total_seconds()
+    if sec > 3600:
+        return util.generate_respons(False,"Token expired")
+    else :
+        return util.generate_respons(True,"success")

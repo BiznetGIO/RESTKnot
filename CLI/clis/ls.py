@@ -37,6 +37,7 @@ class Ls(Base):
         elif self.args['dns']:
             vallist = sort.list_dns()
             util.convert(vallist)
+            vallist = vallist['data']
             show = list()
             for i in vallist:
                 var = {"DNS NAME" : i}
@@ -51,11 +52,13 @@ class Ls(Base):
                     zone.append(i.replace(" ", ""))       
             else :
                 zone = sort.list_dns()
+                zone = zone['data']
             vallist = sort.list_record(zone)
-            if vallist:
-                vallist = util.table_cleanup(vallist)
+            if vallist['status']:
+                vallist = util.table_cleanup(vallist['data'])
                 print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
             else :
+                print(vallist['message'])
                 print("You have no record yet!")
             
             
