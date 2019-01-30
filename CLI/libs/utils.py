@@ -91,7 +91,7 @@ def assurance(): #pragma: no cover
     else :
         return False
 
-def dictcleanup(obj):
+def dictcleanup(obj): #pragma: no cover 
     result = dict()
     keys = obj.keys()
     for key in keys:
@@ -100,7 +100,7 @@ def dictcleanup(obj):
 
     return result
 
-def listcleanup(obj):
+def listcleanup(obj): #pragma: no cover 
     for row in obj:
         row = row.encode('utf-8')
     return row
