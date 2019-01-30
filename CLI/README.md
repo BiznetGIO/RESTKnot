@@ -9,7 +9,7 @@ Command Line Interface for Restknot
 ## What is knot-cli
 
 
-
+Knot-cli is a command line interface to operate RESTKnot
 
 
 
@@ -21,18 +21,20 @@ List of available command on knot-cli
 ```
 create dns (--nm=NAME) [-i]
 create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con CON) [--nm-con-ser CONSER] 
+create record -f FILENAME
 ```
 
 Options : 
 ```
-    -h --help                 Print usage
-    --nm NAME                 Set DNS/record name
-    -type=TYPE                Set DNS type
-    --ttl TTL                 Set DNS TTL 
-    --nm-zn ZONENAME          Set zone of new record
-    -i --interactive          Interactive Mode
-    --nm-con CON              Set content name
-    --nm-con-ser CONSER       Set content serial name
+-h --help                 Print usage
+--nm NAME                 Set DNS/record name
+-type=TYPE                Set DNS type
+--ttl TTL                 Set DNS TTL 
+--nm-zn ZONENAME          Set zone of new record
+-i --interactive          Interactive Mode
+--nm-con CON              Set content name
+--nm-con-ser CONSER       Set content serial name
+-f FILENAME               Create Record using YAML
 ```
 
 #### List
@@ -85,8 +87,69 @@ To create a new zone and records, use the following commands respectively
 
 ```
 create dns (--nm=NAME)
+```
+```
 create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con) [--nm-con-ser CONSER]
 ```
+```
+create record -f FILENAME
+```
+
+#### Creating Record  from YAML File
+
+Place your yaml file in
+```
+~/restknot
+```
+
+and must follow this format
+```yaml
+
+"zone_name":
+    "record_name_1":
+        - "record_type1":
+            "ttl" : "ttl_value"
+            "content_name" : "content_value"
+        - "record_type2":
+            "ttl" : "ttl_value"
+            "content_name" : "content_value"
+            "content_serial" : "content_serial_value"
+    "record_name_2":
+        - "record_type":
+            "ttl" : "ttl_value"
+            .
+            ...
+"other_zone":
+    "record_name_1":
+        - "record_type2":
+            .
+            ...
+
+```
+
+
+```YAML
+"klakla.com" :
+    "budak" :
+        - "MX" :
+            "ttl" : "1800"
+            "content" : "contoh1"
+            "content-serial" : "contoh2"
+        - "AAAA":
+            "ttl" : "3600"
+            "content" : "IPv6"
+    "papah" :
+        - "CNAME":
+            "ttl" : "900"
+            "content" : "waduksiah"
+"thepokis.com":
+    "ampun":
+        - "A" :
+            "ttl" : "1800"
+            "content" : "test"
+
+```
+
 
 Remember to check available type and ttl before creating records, also MX and SRV record need serial content on creation. 
 
