@@ -155,7 +155,7 @@ class SendCommandRest(Resource):
                     "Status" : False,
                     "Error" : str(e)
                 }
-                return response(400, data=result, message=respons )
+                return response(400, message=respons )
             else:
                 for i in resu:
                     http_response = utils.send_http(url,i)

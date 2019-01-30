@@ -341,7 +341,7 @@ def zone_ns_insert(tags):
     fields = str(list(tags.keys())[0])
     record = list()
     column_record = model.get_columns("v_record")
-    query = "select * from v_record where "+fields+"='"+fields+"' AND nm_type='NS'"
+    query = "select * from v_record where "+fields+"='"+tags[fields]+"' AND nm_type='NS'"
     db.execute(query)
     rows = db.fetchall()
     for row in rows:
