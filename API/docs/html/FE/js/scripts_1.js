@@ -8,7 +8,7 @@ function content_get(id){
     }
 
     console.log(JSON.stringify(json_data))
-    var content_data = ajaxDor("http://127.0.0.1:6968/api/content", json_data)
+    var content_data = ajaxDor("http://103.89.5.121:6968/api/content", json_data)
     content_data.done(function(respon){
         console.log(respon)
         // alert(respon.data)
@@ -113,7 +113,7 @@ function ajaxDor(link,json_data){
 
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
-    var url_knot = 'http://127.0.0.1';
+    var url_knot = 'http://103.89.5.121';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
