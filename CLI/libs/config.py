@@ -46,7 +46,7 @@ def searchId(endpoint,name):
         res = res['data']
         respons = res[0][get_idkey(endpoint, headers=headers)]
     except Exception as e:
-        return generate_respons(False,'lahkan')     
+        return generate_respons(False,str(e))     
     return generate_respons(True,'success',respons)
 
 def setDefaultDns(name):
@@ -91,12 +91,17 @@ def setRecord(obj):
         if not check['status']:
             return generate_respons(True,'Authorization failure')
         
-        data = searchId('zone',obj['--nm-zn'])
-        temp['--id-zone'] = data['data']
-        data = searchId('type',obj['--type'].upper())
-        temp['--id-type'] = data['data']
-        data = searchId('ttl',obj['--ttl'])
-        temp['--id-ttl'] = data['data']
+        try :
+            data = searchId('zone',obj['--nm-zn'])
+            temp['--id-zone'] = data['data']
+            data = searchId('type',obj['--type'].upper())
+            temp['--id-type'] = data['data']
+            data = searchId('ttl',obj['--ttl'])
+            temp['--id-ttl'] = data['data']
+        
+        except Exception as e:
+            return generate_respons(False,"Zone/Type/TTL doesn't exist\n" + str(e))
+        
         #insert Record
         json_data = copy.deepcopy(jsonmodel['create']['record']['data'])
         for i in json_data['insert']['fields']:
