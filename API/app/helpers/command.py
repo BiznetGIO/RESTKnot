@@ -46,7 +46,8 @@ def z_commit(url,tags):
 
 def config_insert(tags):
     fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, fields)
+    print(fields)
+    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     # print(domain_data)
     domain_name = ""
     domain_id = ""
@@ -73,7 +74,7 @@ def config_insert(tags):
 def zone_read(tags):
     domain_name = None
     fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, fields)
+    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     for i in domain_data:
         domain_name = i['nm_zone']
     json_command={
@@ -161,14 +162,14 @@ def zone_soa_insert_default(tags):
     fields = str(list(tags.keys())[0])
     record = list()
     column_record = model.get_columns("v_record")
-    query = "select * from v_record where "+fields+"='"+fields+"' AND nm_type='SOA'"
+    query = "select * from v_record where "+fields+"='"+tags[fields]+"' AND nm_type='SOA'"
     db.execute(query)
     rows = db.fetchall()
     for row in rows:
         record.append(dict(zip(column_record, row)))
 
     column_ttl = model.get_columns("v_ttldata")
-    query = "select * from v_ttldata where "+fields+"='"+fields+"' AND nm_type='SOA'"
+    query = "select * from v_ttldata where "+fields+"='"+tags[fields]+"' AND nm_type='SOA'"
     db.execute(query)
     rows = db.fetchall()
     ttldata = list()
@@ -177,7 +178,7 @@ def zone_soa_insert_default(tags):
     
     content_data = list()
     column_cdata= model.get_columns("v_contentdata")
-    query = "select * from v_contentdata where "+fields+"='"+fields+"' AND nm_type='SOA'"
+    query = "select * from v_contentdata where "+fields+"='"+tags[fields]+"' AND nm_type='SOA'"
     db.execute(query)
     rows = db.fetchall()
     for row in rows:
@@ -185,7 +186,7 @@ def zone_soa_insert_default(tags):
 
     content_serial = list()
     column_cserial= model.get_columns("v_content_serial")
-    query = "select * from v_content_serial where "+fields+"='"+fields+"' AND nm_type='SOA'"
+    query = "select * from v_content_serial where "+fields+"='"+tags[fields]+"' AND nm_type='SOA'"
     db.execute(query)
     rows = db.fetchall()
     for row in rows:
@@ -221,7 +222,7 @@ def zone_soa_insert_default(tags):
 def zone_begin(tags):
     domain_name = None
     fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, fields)
+    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     for i in domain_data:
         domain_name = i['nm_zone']
     json_command={
@@ -274,7 +275,7 @@ def zone_commit_http(url, tags):
 def zone_commit(tags):
     domain_name = None
     fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, fields)
+    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     for i in domain_data:
         domain_name = i['nm_zone']
 
