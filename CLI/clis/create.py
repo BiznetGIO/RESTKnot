@@ -10,6 +10,7 @@ class Create(Base):
     usage:
         create dns (--nm=NAME) [-i]
         create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con CON) [--nm-con-ser CONSER] 
+        create record -f FILENAME
 
     Options :
     -h --help                 Print usage
@@ -20,6 +21,7 @@ class Create(Base):
     -i --interactive          Interactive Mode
     --nm-con CON              Set content name
     --nm-con-ser CONSER       Set content serial name
+    -f FILENAME               Create Record using YAML
 
     Commands:
      dns                        Create DNS
@@ -30,12 +32,17 @@ class Create(Base):
     #@login_required
     def execute(self):
         if self.args['dns']:
-            if util.check_existence('zone',self.args['--nm']):
-                print("Zone already exist, try again")
+            
+            check = util.check_existence('zone',self.args['--nm'])
+            if check['status']:
+                print("ZONE ALREADY EXIST")
             else :
-                app.setDefaultDns(self.args['--nm'])
+                if 'expired' in check['message']:
+                    print(check['message'])
+                else :
+                    app.setDefaultDns(self.args['--nm'])
 
-        elif self.args['record']:
+        elif self.args['record'] and not self.args['-f']:
             check = dict()
             skip = False
             nodata = ' '
@@ -58,5 +65,13 @@ class Create(Base):
             else: 
                 self.args['--date'] = util.get_time()
                 app.setRecord(self.args)
-                
+        elif self.args['record'] and self.args['-f']:
+            path = self.args['-f']
+            data = app.load_yaml(path)
+            data = app.parse_yaml(data['data'])
+        
+            send = data['data']
+            for row in send:
+                res=app.setRecord(row)
+            
         

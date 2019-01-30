@@ -13,7 +13,8 @@ def listing_endpoint(endpoint):
     with open('libs/templates/var.json','r') as f :
         var_json = json.load(f)
     url = util.get_url(endpoint)
-    result = requests.get(url, headers=auth.get_headers())
+    headers = auth.get_headers()
+    result = requests.get(url, headers=headers['data'])
     result = result.json()
     result = result['data']
     key = var_json['key'][endpoint]
@@ -25,16 +26,16 @@ def listing_endpoint(endpoint):
         "No value available"
     return st
 
-def get_data(endpoint,headers,key=None,tags=None,value=None):
+def get_data(endpoint,key=None,tags=None,value=None):
     headers = auth.get_headers()
     url = util.get_url(endpoint)
     try:
-        res = requests.get(url = url, headers = headers )
+        res = requests.get(url = url, headers = headers['data'] )
         res = res.json()
         res = res['data']
 
         check = bool(tags)&bool(value)
-
+        data = list()
         if key != None and not check:
             data = list()
             for i in res:
@@ -49,23 +50,22 @@ def get_data(endpoint,headers,key=None,tags=None,value=None):
         elif bool(key)&check:
             for i in res:
                 if i[tags] == value:
-                    data = i[key]
+                    data.append(i[key])
         else :
             data = res
-        return data
+        return util.generate_respons(True,"success",data)
 
     except Exception as e:
         util.log_err(e)
+        return util.generate_respons(False,str(e))
 
 def list_dns():
-    headers = auth.get_headers()
-    headers['user-id'] = auth.get_user_id()
-    id_zone = get_data('userzone',headers,key='id_zone')
+    id_zone = get_data('userzone',key='id_zone')
+    id_zone = id_zone['data']
     data = jsonmodel['search']['zone']['data']
     dnslist = list()
     if id_zone is None:
-        print("You don't own any dns yet")
-        exit()
+        return util.generate_respons(True,"You don't own any dns yet")
 
     else :
         try:
@@ -76,10 +76,14 @@ def list_dns():
                 dnslist.append(temp)
         except Exception as e:
             print(str(e))
-    return dnslist
+            return util.generate_respons(False,str(e))
+    return util.generate_respons(True,"success",dnslist)
 
 def list_record(dnslist, tag = None):
     dnslist = check_zone_authorization(dnslist)
+    if not 'data' in dnslist.keys():
+        return util.generate_respons(False,"Zone doesn't exist")
+    dnslist = dnslist['data']
     json_send = jsonmodel['view']['record']   
     list_var = list()
     data = dict()
@@ -124,12 +128,13 @@ def list_record(dnslist, tag = None):
         
     if tag is not None:
         result = filter_record(list_var,tag)
-        return result
+        return util.generate_respons(True,'success',result)
     else :
-        return list_var
+        return util.generate_respons(True,'success',list_var)
 
 def check_zone_authorization(dnslist):
-    user_dns = list_dns()
+    listed = list_dns()
+    user_dns = listed['data']
     returnlist = list()
     for i in dnslist:
         if i not in user_dns :
@@ -138,9 +143,9 @@ def check_zone_authorization(dnslist):
             returnlist.append(i)
 
     if not returnlist:
-        return False
+        return util.generate_respons(True,"Success")
     else :
-        return returnlist
+        return util.generate_respons(True,"success",returnlist)
     
 def filter_record(data,filter):
     tags = util.get_filter(filter)
@@ -151,7 +156,7 @@ def filter_record(data,filter):
             if row[tag] != tags[tag]:
                 check = check & bool(0)
         if check == bool(1):
-            row = util.dictcleanup(row)
+            row = util.convert(row)
             result.append(row)
     return result                
 

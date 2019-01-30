@@ -44,18 +44,26 @@ class Rm(Base):
                 tags = self.args
                 show = list()
                 show = ls.list_record(zone,tags)
+                try :
+                    show = show['data']
+                except Exception:
+                    print("Data doesn't exist")
+                    exit()
 
             else:
                 zone = ls.list_dns()
+                zone = zone['data']
                 show = ls.list_record(zone)
+                show = show['data']
+                show = util.convert(show)
                 id_record = list()
             for row in show:
-                row = util.dictcleanup(row)
+                row = util.convert(row)
                 id_record.append(row['id_record'])
             if(len(show)>0):
                 show = util.table_cleanup(show)
                 print(tabulate(show, headers="keys" ,showindex="always",tablefmt="rst"))
-                index = raw_input("""
+                index = input("""
 Type the index of the record (0~{}), if you want to remove multiple record
 separate the index using comma (,)
 """.format(len(show)-1))

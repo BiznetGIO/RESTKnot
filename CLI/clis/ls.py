@@ -12,7 +12,7 @@ class Ls(Base):
     usage:
         ls ttl
         ls type
-        ls record [--nm NAME]
+        ls record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
         ls dns
 
     Options :
@@ -37,6 +37,7 @@ class Ls(Base):
         elif self.args['dns']:
             vallist = sort.list_dns()
             util.convert(vallist)
+            vallist = vallist['data']
             show = list()
             for i in vallist:
                 var = {"DNS NAME" : i}
@@ -45,17 +46,20 @@ class Ls(Base):
             
             print(tabulate(show,headers='keys',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
-            if self.args['--nm']:
-                zone = list()
-                for i in self.args['NAME'].split(',') : 
-                    zone.append(i.replace(" ", ""))       
+            if self.args['--nm-zone']:
+                id_record = list()
+                zone = [self.args['--nm-zone']]
+                tags = self.args
+                vallist = ls.list_record(zone,tags)          
             else :
                 zone = sort.list_dns()
-            vallist = sort.list_record(zone)
-            if vallist:
-                vallist = util.table_cleanup(vallist)
+                zone = zone['data']
+                vallist = sort.list_record(zone)
+            if vallist['status']:
+                vallist = util.table_cleanup(vallist['data'])
                 print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
             else :
+                print(vallist['message'])
                 print("You have no record yet!")
             
             
