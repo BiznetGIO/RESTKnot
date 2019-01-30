@@ -64,7 +64,8 @@ def signin():
     
 
 def generate_session(user_id, project_id, token):
-    timestamp = datetime.datetime.now().timestamp()
+    now = datetime.datetime.now()
+    timestamp = now.strftime("%Y%m%d%H%M%S%f")
     sess =  {"user_id" : user_id, "project_id": project_id, "token" : token, "timestamp" : timestamp}
     dump_session(sess)
     return sess   
@@ -199,10 +200,11 @@ def regenerate_session():
 
 def timestamp_check():
     sess = load_dumped_session()
-    ts1 = sess['data']['timestamp']
-    ts2 = datetime.datetime.now().timestamp()
-    delta = (datetime.datetime.fromtimestamp(ts2))-(datetime.datetime.fromtimestamp(ts1))
-    sec = delta.total_seconds()
+    sess = sess['data']['timestamp']
+    ts1 = datetime.datetime.strptime(sess,"%Y%m%d%H%M%S%f")
+    ts2 = datetime.datetime.now()
+    delta = (ts2-ts1)
+    sec = delta.seconds
     if sec > 3600:
         return util.generate_respons(False,"Token expired")
     else :
