@@ -14,6 +14,8 @@ port = os.getenv("SOCKET_AGENT_PORT")
 url_fix= url_env+":"+port
 url = url_fix+"/api/command_rest"
 
+date = datetime.datetime.now().strftime("%Y%m%d%H")
+
 def sync_conf_insert(id_zone):
     tags = {
         "id_zone" : id_zone
@@ -42,11 +44,20 @@ def sync_ns(id_zone):
         send_http(url, i)
     cmd.z_commit(url,tags)
 
+def sync_cname_default(id_zone, id_record):
+    tags = {
+        "id_record": id_record
+    }
+    cmd.zone_begin_http(url,tags)
+    json_command = cmd.zone_insert(tags)
+    send_http(url,json_command)
+    cmd.zone_commit_http(url,tags)
+
 def addSOADefault(zone):
     defaultdata = repodefault()
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","SOA")
-    date = datetime.datetime.now().strftime("%Y%m%d%H")
+
     record_soa = {
         "nm_record": zone,
         "date_record": str(date),
@@ -96,7 +107,7 @@ def addSOADefault(zone):
 def addNSDefault(zone):
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","NS")
-    date = datetime.datetime.now().strftime("%Y%m%d%H")
+    
     record_ns = {
         "nm_record": "@",
         "date_record": str(date),
@@ -136,6 +147,42 @@ def addNSDefault(zone):
             print(e)
     return str(zone_data[0]['id_zone'])
 
+def addCNAMEDefault(id_zone, nm_zone):
+    id_record = None
+    data_record = {
+        "nm_record": "www",
+        "date_record":str(date),
+        "id_type": "402427533112147969",
+        "id_zone": id_zone
+    }
+
+    try:
+        id_record = db.insert("zn_record", data=data_record)
+    except Exception as e:
+        print(e)
+
+    data_ttl = {
+        "id_record": id_record,
+        "id_ttl": "402140815780249601"
+    }
+
+    try:
+        id_ttl_data = db.insert("zn_ttldata", data=data_ttl)
+    except Exception as e:
+        print(e)
+
+    data_content = {
+        "id_ttldata": id_ttl_data,
+        "nm_content": nm_zone+"."
+    }
+
+    try:
+        db.insert("zn_content", data=data_content)
+    except Exception as e:
+        print(e)
+
+    return id_record
+
 
 class CreateDNS(Resource):
     @login_required
@@ -160,12 +207,15 @@ class CreateDNS(Resource):
         else:
             id_zone_soa = addSOADefault(zone)
             id_zone_ns = addNSDefault(zone)
+            id_record = addCNAMEDefault(data_insert, zone)
 
             # #UNCOMENT TO SYNC AUTO
             sync_conf_insert(data_insert)
             sync_soa(id_zone_soa)
             sync_ns(id_zone_ns)
+            sync_cname_default(data_insert, id_record)
             # #UNCOMENT TO SYNC AUTO
+            
         respon = list()
 
         try:
