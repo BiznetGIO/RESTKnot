@@ -110,3 +110,14 @@ def send_http(url, data, headers=None):
     data = json.loads(respons['data'])
     respons['data'] = data
     return respons
+
+def change_state(field, field_value, state):
+    data_state = {
+        "where":{
+            field : field_value
+        },
+        "data":{
+            "state" : state
+        }
+    }
+    return data_state

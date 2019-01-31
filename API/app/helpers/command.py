@@ -46,9 +46,7 @@ def z_commit(url,tags):
 
 def config_insert(tags):
     fields = str(list(tags.keys())[0])
-    print(fields)
     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    # print(domain_data)
     domain_name = ""
     domain_id = ""
     
@@ -143,20 +141,6 @@ def conf_commit_http(url):
     }
     utils.send_http(url, json_command)
 
-
-# def conf_commit():
-#     json_command={
-#         "conf-begin": {
-#             "sendblock": {
-#                 "cmd": "conf-commit"
-#             },
-#             "receive": {
-#                 "type": "block"
-#             }
-#         }
-#     }
-#     utils.sendSocket(json_command)
-
 def zone_soa_insert_default(tags):
     # Get Zone
     fields = str(list(tags.keys())[0])
@@ -217,7 +201,7 @@ def zone_soa_insert_default(tags):
             }
         }
     }
-    return json_command
+    return record[0]['id_record'], json_command
 
 def zone_begin(tags):
     domain_name = None
@@ -378,7 +362,10 @@ def zone_ns_insert(tags):
                 }
             }
         }
-        command_ns.append(json_command)
+        command_ns.append({
+            "id_record": record[0]['id_record'],
+            "command": json_command
+        })
     return command_ns
 
 def zone_insert_srv(tags):
