@@ -1,6 +1,8 @@
 import requests
 import json
-from libs.utils import get_url,get_time,get_idkey,dictcleanup
+import os
+import yaml
+from libs.utils import generate_respons,get_url,get_time,get_idkey,dictcleanup
 from libs.auth import get_headers, get_user_id
 import copy
 
@@ -8,8 +10,11 @@ with open('libs/templates/endpoints.json', 'r') as f :
     jsonmodel = json.load(f)
     f.close()
 
+DUMP_FOLDER = os.path.expanduser("~")
+
 def send_request(endpoint,data):
     headers = get_headers()
+    headers = headers['data']
     url = get_url(endpoint)
     try :
         result = requests.post(
@@ -19,10 +24,7 @@ def send_request(endpoint,data):
         )
         respons = result.json()
     except Exception as e:
-        respons = {
-            "status" : False,
-            "error"  : str(e) + "at " + str(endpoint)
-        }    
+        respons=generate_respons(False,str(e))
     return respons
 
 def searchId(endpoint,name):
@@ -30,6 +32,8 @@ def searchId(endpoint,name):
     data = jsonmodel['search'][endpoint]['data']
     url = get_url(endpoint)
     keys = list(data['where']['tags'].keys())
+    headers = get_headers()
+    headers = headers['data']
     for i in keys:
         if 'id' not in i:
             key = i
@@ -37,27 +41,23 @@ def searchId(endpoint,name):
     try :
         res = requests.post(url = url,
         data = json.dumps(data),
-        headers=get_headers())
+        headers=headers)
         res = res.json()
         res = res['data']
-        respons = res[0][get_idkey(endpoint, headers=get_headers())]
+        respons = res[0][get_idkey(endpoint, headers=headers)]
     except Exception as e:
-        respons = {
-            "status" : False,
-            "error"  : str(e)
-        }        
-    return respons
+        return generate_respons(False,str(e))     
+    return generate_respons(True,'success',respons)
 
 def setDefaultDns(name):
-    # if check_alphanumeric:
-    #     print('Invalid input')
-    #     return False
+
     
-    header = get_headers()
-    header['user_id'] = get_user_id()
-    res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
+    header = (get_headers())['data']
+    header['user_id'] = (get_user_id())['data']
+    res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
     data = {'domain' : str(name)}
-    ,headers=get_headers())
+    ,headers=header)
+    print(res)
     res = res.json()
     if 'code' not in res :
         print(res['message'])
@@ -74,7 +74,7 @@ def setDefaultDns(name):
     res=sync(syncdat)
 
 def tying_zone(user_id,id_zone):
-    header = get_headers()
+    header = (get_headers())['data']
     header['user-id'] = str(user_id)
     data = {"id_zone" : str(id_zone)}
     url = get_url('userzone')
@@ -88,19 +88,26 @@ def setRecord(obj):
 
         temp = copy.deepcopy(obj)
         
-        check_zone_authorization([obj['--nm-zn']])
-
-
-        data = searchId('zone',obj['--nm-zn'])
-        temp['--id-zone'] = data
-        data = searchId('type',obj['--type'].upper())
-        temp['--id-type'] = data
-        data = searchId('ttl',obj['--ttl'])
-        temp['--id-ttl'] = data
+        check = check_zone_authorization([obj['--nm-zn']])
+        if not check['status']:
+            return generate_respons(True,'Authorization failure')
+        
+        try :
+            data = searchId('zone',obj['--nm-zn'])
+            temp['--id-zone'] = data['data']
+            data = searchId('type',obj['--type'].upper())
+            temp['--id-type'] = data['data']
+            data = searchId('ttl',obj['--ttl'])
+            temp['--id-ttl'] = data['data']
+        
+        except Exception as e:
+            return generate_respons(False,"Zone/Type/TTL doesn't exist\n" + str(e))
+        
         #insert Record
         json_data = copy.deepcopy(jsonmodel['create']['record']['data'])
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
+        
         res = send_request('record',json_data)
         temp['--id-record'] = res['message']['id']
 
@@ -113,6 +120,7 @@ def setRecord(obj):
         temp['--id-ttldata'] = res['message']['id']
         
         #insert content
+        
         json_data = jsonmodel['create']['content']['data']
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
@@ -144,8 +152,9 @@ def setRecord(obj):
         sync(datasync)
     except Exception as e:
         print("Error \n",str(e))
+        return generate_respons(False,'Sync failure')
 
-    return data
+    return generate_respons(True,'success',data)
 
 
 # def remove_data(name,endpoint):
@@ -176,3 +185,50 @@ def sync(obj):
     
     return res
     
+def check_yaml(filename):
+    path = ("{}/restknot/"+filename).format(DUMP_FOLDER)
+    return os.path.isfile(path)
+
+def load_yaml(filename):
+    if check_yaml(filename):
+        data = None
+        try:
+            with open(("{}/restknot/"+filename).format(DUMP_FOLDER),'r') as f :
+                data = yaml.load(f)
+            return generate_respons(True,'success',data)
+        except Exception as e:
+            return generate_repons(False,str(e))
+    else:
+        return util.generate_respons(False,"File doesn't exist")
+
+def parse_yaml(data):
+    data_list = list()
+    try :
+        for i in data:
+            for j in data[i]:
+                    for k in data[i][j]:
+                            data_dict = dict()
+                            data_dict['--nm-zn']=i
+                            data_dict['--nm'] = j
+                            key = list(k.keys())
+                            key = key[0]
+                            data_dict['--type'] = key.upper()
+                            data_dict['--ttl'] = k[key]['ttl']
+                            data_dict['--nm-con'] = k[key]['content']
+                            data_dict['--date'] = get_time()
+                            if 'content-serial' in k[key]:
+                                    data_dict['--nm-con-ser']=k[key]['content-serial']
+                            data_list.append(data_dict)
+        for i in data_list:
+            if i['--type'] == 'SRV' or i['--type']=='MX':
+                    if not '--nm-con-ser' in i:
+                            data_list.remove(i)
+            else :
+                    if '--nm-con-ser' in i:
+                            data_dict.remove(i)
+        
+        respon = generate_respons(True,'success',data_list)
+    except Exception as e:
+        respon = generate_respons(False,str(e))
+    finally :
+        return respon

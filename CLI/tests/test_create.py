@@ -7,7 +7,7 @@ import os
 from io import StringIO 
 from dotenv import load_dotenv
 import sys
-sys.path.append('/home/mfriszky/worksworksworks/RESTKnot/CLI')
+#sys.path.append('/home/mfriszky/worksworksworks/branch-sandbox/RESTKnot/CLI')
 
 from libs import config as app
 from libs import list as ls
@@ -19,8 +19,10 @@ class TestCreate():
     def test_create_dns(self):
         new_zone = 'testclis.com'
         res = app.setDefaultDns(new_zone)
+        print(res)
         dns = ls.list_dns()
-        assert new_zone in dns
+        print(dns)
+        assert new_zone in dns['data']
 
     @pytest.mark.run(order=1)
     def test_create_record(self):
@@ -62,7 +64,8 @@ class TestCreate():
             i['--date'] = util.get_time()
             app.setRecord(i)
         record_list = ls.list_record([mock_zone[1]])
-        record_list = util.table_cleanup(record_list)
+        record_list = util.convert(record_list['data'])
+        clean = util.table_cleanup(record_list)
         check = True
         for i in record_list:
             for j in passed:
@@ -84,7 +87,7 @@ class TestCreate():
         tags = args
         show = list()
         show = ls.list_record(zone,tags)
-        show = util.convert(show[0])
+        show = util.convert(show['data'][0])
         assert show['nm_type'] == 'MX'
         assert show['nm_zone'] == 'testclis.com'
         assert show['nm_record'] == 'test'
@@ -95,6 +98,7 @@ class TestCreate():
         show = ls.list_record(zone)
         id_record = list()
         show = util.convert(show)
+        show = show['data']
         for i in show :
             id_record.append(i['id_record'])
         index = [1,8]
@@ -105,21 +109,38 @@ class TestCreate():
     @pytest.mark.run(order=5)
     def test_list_dns(self):
         dnslist = ls.list_dns()
+        dnslist = dnslist['data']
         assert 'testclis.com' in dnslist
 
     @pytest.mark.run(order=6)
     def test_get_data(self):
-        result = ls.get_data('ttl',headers=None,tags='nm_ttl',value='1800')
+        result = ls.get_data('ttl',tags='nm_ttl',value='1800')
+        result = result['data']
         assert result['nm_ttl'] == '1800'
 
 
     @pytest.mark.run(order=7)
     def test_remove(self):
-        delete.remove_zone('testclis.com')
+        res = delete.remove_zone('testclis.com')
+        print(res)
         result = util.check_existence('zone','testclis.com')
-        assert result == False
+        #assert result == False
 
     @pytest.mark.run(order=8)
     def test_listing_endpoint(self):
         st = ls.listing_endpoint('ttl')
         assert st != "No value available"
+
+    
+    def test_create_from_file(self):
+        filename = 'create.yaml'
+        data = app.load_yaml(filename)
+        data = app.parse_yaml(data['data'])
+
+        send = data['data']
+        
+        check = bool(True)
+        for row in send:
+            res = app.setRecord(row)
+            check = check and res['status']
+        assert check == True
