@@ -20,7 +20,8 @@ class Record(Resource):
                     "id_zone": str(i['id_zone']),
                     "id_type": str(i['id_type']),
                     "nm_record": str(i['nm_record']),
-                    "date_record" : i['date_record']
+                    "date_record" : i['date_record'],
+                    "state" : i['state'] 
                 }
                 obj_userdata.append(data)
         except Exception:
@@ -79,7 +80,8 @@ class Record(Resource):
                         "id_zone": str(i['id_zone']),
                         "id_type": str(i['id_type']),
                         "nm_record": str(i['nm_record']),
-                        "date_record" : i['date_record']
+                        "date_record" : i['date_record'],
+                        "state" : i['state'] 
                     }
                     obj_userdata.append(data)
                 respons = {
