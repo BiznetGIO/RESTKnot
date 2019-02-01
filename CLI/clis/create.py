@@ -52,7 +52,6 @@ class Create(Base):
             check['type'] = temp['status']
             temp = util.check_existence('ttl',self.args['--ttl'])
             check['ttl'] = temp['status']
-            print(check)
 
             if self.args['--type'].upper() == 'MX' or self.args['--type'].upper() == 'SRV':
                 if self.args['--nm-con-ser'] is None:
@@ -73,7 +72,7 @@ class Create(Base):
             data = app.load_yaml(path)
             dnslist = list(data['data'].keys())
             check = check_zone_authorization(dnslist)
-            sendlist = None
+            sendlist = list()
             if 'data' not in check:
                 sendlist = dnslist
                 

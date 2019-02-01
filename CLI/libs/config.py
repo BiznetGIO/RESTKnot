@@ -57,7 +57,6 @@ def setDefaultDns(name):
     res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
     data = {'domain' : str(name)}
     ,headers=header)
-    print(res)
     res = res.json()
     if 'code' not in res :
         print(res['message'])
@@ -140,16 +139,14 @@ def setRecord(obj):
 
     if record_type == 'MX':
         cmd = 'zone-mx-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-zone']}
+        datasync = {"command" : cmd, "tags" : temp['--id-record']}
     elif record_type == 'SRV':
         cmd = 'zone-srv-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-zone']}
-    else :
-        cmd = 'zone-insert'
         datasync = {"command" : cmd, "tags" : temp['--id-record']}
 
     try:
-        sync(datasync)
+        res = sync(datasync)
+        print(data)
     except Exception as e:
         print("Error \n",str(e))
         return generate_respons(False,'Sync failure')
@@ -175,14 +172,10 @@ def sync(obj):
     cmd = obj['command']
     tags = obj['tags']
     data_send = {cmd : {"tags" : ''}}
-    
-    if cmd != 'zone-insert':
-        data_send[cmd]['tags'] =  {"id_zone" : tags}
-    else :
-        data_send[cmd]['tags'] = {"id_record" : tags}
-        
+
+    data_send[cmd]['tags'] = {"id_record" : tags}
+    print(data_send)
     res=send_request('command', data_send)
-    
     return res
     
 def check_yaml(filename):
