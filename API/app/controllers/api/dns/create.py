@@ -3,7 +3,7 @@ from app.helpers.rest import *
 from app.helpers.memcache import *
 import datetime
 from app.models import model as db
-from app.libs.utils import repodefault, send_http
+from app.libs.utils import repodefault, send_http, change_state
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
@@ -22,7 +22,12 @@ def sync_conf_insert(id_zone):
     }
     respons_c_insert = cmd.config_insert(tags)
     cmd.conf_begin_http(url)
-    send_http(url,respons_c_insert)
+    check_res = send_http(url,respons_c_insert)
+    if check_res:
+        # state change
+        state = change_state("id_zone", id_zone, "1")
+        check = db.update("zn_zone", data = state)
+        print(check)
     cmd.conf_commit_http(url)
 
 def sync_soa(id_zone):
@@ -30,8 +35,13 @@ def sync_soa(id_zone):
         "id_zone" : id_zone
     }
     cmd.z_begin(url,tags)
-    respons = cmd.zone_soa_insert_default(tags)
-    send_http(url,respons)
+    id_record,respons = cmd.zone_soa_insert_default(tags)
+    check_res = send_http(url,respons)
+    if check_res:
+        # state change
+        state = change_state("id_record", id_record, "1")
+        db.update("zn_record", data = state)
+
     cmd.z_commit(url, tags)
 
 def sync_ns(id_zone):
@@ -41,7 +51,10 @@ def sync_ns(id_zone):
     cmd.z_begin(url, tags)
     result_ns = cmd.zone_ns_insert(tags)
     for i in result_ns:
-        send_http(url, i)
+        check_res = send_http(url, i['command'])
+        if check_res:
+            state = change_state("id_record", i['id_record'], "1")
+            db.update("zn_record", data = state)
     cmd.z_commit(url,tags)
 
 def sync_cname_default(id_zone, id_record):
@@ -50,7 +63,11 @@ def sync_cname_default(id_zone, id_record):
     }
     cmd.zone_begin_http(url,tags)
     json_command = cmd.zone_insert(tags)
-    send_http(url,json_command)
+    check_res = send_http(url,json_command)
+    if check_res:
+        # state change
+        state = change_state("id_record", id_record, "1")
+        db.update("zn_record", data = state)
     cmd.zone_commit_http(url,tags)
 
 def addSOADefault(zone):

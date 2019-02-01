@@ -106,7 +106,6 @@ def send_http(url, data, headers=None):
     json_data = json.dumps(data)
     send = requests.post(url, data=json_data, headers=headers)
     respons = send.json()
-    print(respons)
     data = json.loads(respons['data'])
     respons['data'] = data
     return respons
@@ -114,10 +113,10 @@ def send_http(url, data, headers=None):
 def change_state(field, field_value, state):
     data_state = {
         "where":{
-            field : field_value
+            field : str(field_value)
         },
         "data":{
-            "state" : state
+            "state" : str(state)
         }
     }
     return data_state

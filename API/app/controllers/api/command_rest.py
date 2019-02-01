@@ -38,7 +38,7 @@ class SendCommandRest(Resource):
             http_respons = utils.send_http(url,respons)
             if http_respons:
                 # state change
-                state = utils.change_state("id_zone", tags['id_zone'], 1)
+                state = utils.change_state("id_zone", tags['id_zone'], "1")
                 db.update("zn_zone", data = state)
 
             cmd.conf_commit_http(url)
@@ -72,7 +72,7 @@ class SendCommandRest(Resource):
                 http_respons = utils.send_http(url,respons)
                 # state change
                 if http_respons:
-                    state = utils.change_state("id_record", id_record, 1)
+                    state = utils.change_state("id_record", id_record, "1")
                     db.update("zn_record", data = state)
 
                 result.append(http_respons)
@@ -104,8 +104,8 @@ class SendCommandRest(Resource):
             json_command = cmd.zone_insert(tags)
             http_response = utils.send_http(url,json_command)
             # change state
-            if http_respons:
-                state = utils.change_state("id_record", tags['id_record'], 1)
+            if http_response:
+                state = utils.change_state("id_record", tags['id_record'], "1")
                 try:
                     db.update("zn_record", data = state)
                 except Exception as e:
@@ -134,8 +134,8 @@ class SendCommandRest(Resource):
                     state = None
                     http_response = utils.send_http(url,i['command'])
                     # state change
-                    if http_respons:
-                        state = utils.change_state("id_record", i['id_record'], 1)
+                    if http_response:
+                        state = utils.change_state("id_record", i['id_record'], "1")
                         try:
                             db.update("zn_record", data = state)
                         except Exception as e:
@@ -164,8 +164,8 @@ class SendCommandRest(Resource):
                 return response(400, data=result, message=respons)
             else:
                 http_response = utils.send_http(url,respons)
-                if http_respons:
-                    state = utils.change_state("id_record", tags['id_record'], 1)
+                if http_response:
+                    state = utils.change_state("id_record", tags['id_record'], "1")
                     try:
                         db.update("zn_record", data = state)
                     except Exception as e:
@@ -199,7 +199,7 @@ class SendCommandRest(Resource):
                 http_response = utils.send_http(url,respons)
                 # change state
                 if http_respons:
-                    state = utils.change_state("id_record", tags['id_record'], 1)
+                    state = utils.change_state("id_record", tags['id_record'], "1")
                     try:
                         db.update("zn_record", data = state)
                     except Exception as e:
