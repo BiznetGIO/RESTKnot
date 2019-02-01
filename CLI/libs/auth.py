@@ -204,8 +204,8 @@ def timestamp_check():
     ts1 = datetime.datetime.strptime(sess,"%Y%m%d%H%M%S%f")
     ts2 = datetime.datetime.now()
     delta = (ts2-ts1)
-    sec = delta.seconds
-    if sec > 3600:
+
+    if delta.seconds > 3600 or delta.days > 0:
         return util.generate_respons(False,"Token expired")
     else :
         return util.generate_respons(True,"success")
