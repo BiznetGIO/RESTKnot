@@ -29,10 +29,11 @@ class Rm(Base):
     def execute(self):
         if self.args['dns']:
             zone = [self.args['--nm']]
-            util.log_warning('The following record will also be deleted\n')
             listdns = ls.list_record(zone)
-            listdns = util.table_cleanup(listdns)
-            print(tabulate(listdns,headers="keys",tablefmt="rst"))
+            if 'data' in listdns:
+                listdns = util.table_cleanup(listdns)
+                util.log_warning('The following record will also be deleted\n')
+                print(tabulate(listdns,headers="keys",tablefmt="rst"))
             if util.assurance() and check_password():
                 delete.remove_zone(zone[0])
             else:

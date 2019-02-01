@@ -128,7 +128,11 @@ and must follow this format
 ```
 
 
+<<<<<<< HEAD
+```YAML
+=======
 ```yaml
+>>>>>>> 424bb8977d9b93eb1670507559267638f957a6fe
 "klakla.com" :
     "budak" :
         - "MX" :

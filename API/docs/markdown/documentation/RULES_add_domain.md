@@ -330,6 +330,7 @@ response:
 }
 ```
 
+
 ## CHECK YOUR DOMAIN AFTER SYNC TO KNOT
 
 After Sync NOW check Your Config

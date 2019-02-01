@@ -224,10 +224,6 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
-        nm_zone:
-          name: Tags Record ID
-          desc: Get One Data From Record Name
-          type: fields
       others:
         method:
           name: name search for domain

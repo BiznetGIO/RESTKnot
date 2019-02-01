@@ -437,7 +437,7 @@ response:
 {
    "zone-mx-insert": {
       "tags": {
-      	"id_zone" : "402468020781678593"
+      	"id_record" : "402468020781678593"
       }
    }
 }
@@ -516,7 +516,6 @@ response:
 {
    "zone-read": {
       "tags": {
-      	"id_zone" : "402468020781678593"
       }
    }
 }
