@@ -143,10 +143,12 @@ def setRecord(obj):
     elif record_type == 'SRV':
         cmd = 'zone-srv-insert'
         datasync = {"command" : cmd, "tags" : temp['--id-record']}
+    else :
+        cmd = 'zone-insert'
+        datasync = {"command" : cmd, "tags" : temp['--id-record']}
 
     try:
         res = sync(datasync)
-        print(data)
     except Exception as e:
         print("Error \n",str(e))
         return generate_respons(False,'Sync failure')
