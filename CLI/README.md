@@ -130,7 +130,6 @@ and must follow this format
 
 
 ```yaml
->>>>>>> 424bb8977d9b93eb1670507559267638f957a6fe
 "klakla.com" :
     "budak" :
         - "MX" :
