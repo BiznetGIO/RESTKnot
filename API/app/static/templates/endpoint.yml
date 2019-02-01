@@ -223,6 +223,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
+          default:
       others:
         method:
           name: name search for domain
