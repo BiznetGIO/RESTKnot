@@ -153,7 +153,8 @@ class Record(Resource):
                         "nm_zone": str(i['nm_zone']),
                         "nm_type": str(i['nm_type']),
                         "nm_record": str(i['nm_record']),
-                        "date_record" : i['date_record']
+                        "date_record" : i['date_record'],
+                        "state" : i['state'] 
                     }
                     obj_userdata.append(data)
                 respons = {
