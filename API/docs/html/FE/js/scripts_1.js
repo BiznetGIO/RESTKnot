@@ -1,21 +1,3 @@
-function content_get(id){
-   json_data = {
-        "view": {
-            "tags": {
-                "id_record" : id.toString()
-            }
-        }
-    }
-
-    console.log(JSON.stringify(json_data))
-    var content_data = ajaxDor("http://127.0.0.1:6968/api/content", json_data)
-    content_data.done(function(respon){
-        console.log(respon)
-        // alert(respon.data)
-    });
-
-}
-
 function addRecordNew(url,zone_id, record_name, type_name_id, ttl_id, json_content){
     var json_record_name = {
         "insert": {
@@ -113,7 +95,8 @@ function ajaxDor(link,json_data){
 
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
-    var url_knot = 'http://127.0.0.1';
+    var url_knot = 'http://103.89.5.121';
+    // var url_knot = 'http://127.0.0.1';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -134,6 +117,12 @@ $(document).ready(function(){
             "content": 1,
             "serial":0,
             "id" : "402427533112147969"
+        },
+        {
+            "name": "NS",
+            "content": 1,
+            "serial":0,
+            "id" : "402393625286410241"
         }
     ]
 
@@ -229,13 +218,44 @@ $(document).ready(function(){
                                 $('<td>').text(item.id_record),
                                 $('<td>').text(item.nm_record),
                                 $('<td>').text(item.id_zone),
-                                $('<td>').text(item.id_type),
-                                $('<td>').html("<a href='#' onclick='content_get("+item.id_record+")' class='btn btn-xs content_btn'>Content</a>")
+                                $('<td>').text(item.id_type)
                             );
                             tbody.append(tr)
                         });
                         // console.log(tbody)
                         $('#record_table').append(tbody)
+
+                        var tr = $('#record_table').find('tr');
+                        tr.bind('click', function(event) {
+                            var values = '';
+                            // tr.removeClass('row-highlight');
+                            var tds = $(this).addClass('row-highlight').find('td');
+
+                            $.each(tds, function(index, item) {
+                                if (index == 0){
+                                    // content_get(item.innerHTML)
+                                    json_data = {
+                                        "view": {
+                                            "tags": {
+                                                "id_record" : item.innerHTML
+                                            }
+                                        }
+                                    }
+                                    var content_data = ajaxDor("http://103.89.5.121:6968/api/content", json_data)
+                                    content_data.done(function(respon){
+                                        var data = respon.data
+                                        var dt = ""
+                                        for (i=0; i < data.length; i++){
+                                            // console.log(data[i].nm_content)
+                                            // console.log(data[i].nm_type)
+                                            // console.log(data[i].nm_ttl)
+                                            dt = dt+ "content: "+data[i].nm_content+" |  type: "+data[i].nm_type+" | ttl: "+data[i].nm_ttl+"\n"
+                                        }
+                                        alert(dt)
+                                    });
+                                }
+                            });
+                        });
 
                         $.ajax({
                             url: uri_fix+"/api/type",
@@ -363,4 +383,5 @@ $(document).ready(function(){
             event.preventDefault();
         });
     });
+
 });
