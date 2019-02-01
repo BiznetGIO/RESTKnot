@@ -54,9 +54,10 @@ def setDefaultDns(name):
     
     header = (get_headers())['data']
     header['user_id'] = (get_user_id())['data']
-    res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
+    res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
     data = {'domain' : str(name)}
     ,headers=header)
+    print(res)
     res = res.json()
     if 'code' not in res :
         print(res['message'])

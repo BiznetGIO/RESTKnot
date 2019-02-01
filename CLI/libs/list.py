@@ -61,13 +61,14 @@ def get_data(endpoint,key=None,tags=None,value=None):
 
 def list_dns():
     id_zone = get_data('userzone',key='id_zone')
-    id_zone = id_zone['data']
-    data = jsonmodel['search']['zone']['data']
-    dnslist = list()
-    if id_zone is None:
-        return util.generate_respons(True,"You don't own any dns yet")
+    if not 'data' in id_zone:
+        return util.generate_respons(False,"You don't own any dns yet")
+    
 
     else :
+        id_zone = id_zone['data']
+        data = jsonmodel['search']['zone']['data']
+        dnslist = list()
         try:
             for i in id_zone:
                 data['where']['tags']['id_zone'] = i

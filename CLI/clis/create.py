@@ -46,10 +46,13 @@ class Create(Base):
             check = dict()
             skip = False
             nodata = ' '
-            check['zone'] = check_zone_authorization([self.args['--nm-zn']])
-            check['type'] = util.check_existence('type',self.args['--type'].upper())
-            check['ttl'] = util.check_existence('ttl',self.args['--ttl'])
-
+            temp = check_zone_authorization([self.args['--nm-zn']])
+            check['zone'] = temp['status']
+            temp = util.check_existence('type',self.args['--type'].upper())
+            check['type'] = temp['status']
+            temp = util.check_existence('ttl',self.args['--ttl'])
+            check['ttl'] = temp['status']
+            print(check)
 
             if self.args['--type'].upper() == 'MX' or self.args['--type'].upper() == 'SRV':
                 if self.args['--nm-con-ser'] is None:
@@ -68,6 +71,27 @@ class Create(Base):
         elif self.args['record'] and self.args['-f']:
             path = self.args['-f']
             data = app.load_yaml(path)
+            dnslist = list(data['data'].keys())
+            check = check_zone_authorization(dnslist)
+            sendlist = None
+            if 'data' not in check:
+                sendlist = dnslist
+                
+            else :
+                for i in dnslist:
+                    if i not in check['data']:
+                        sendlist.append(i)
+            
+            if sendlist:
+                print(str(sendlist) + " doesn't exist. Do you want to create these dns and continue? (Y/N)")
+                if util.assurance():
+                    for i in sendlist:
+                        app.setDefaultDns(i)
+                else :
+                    print("ABORT")
+                    exit()
+
+
             data = app.parse_yaml(data['data'])
         
             send = data['data']

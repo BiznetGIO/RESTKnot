@@ -128,7 +128,7 @@ and must follow this format
 ```
 
 
-```YAML
+```yaml
 "klakla.com" :
     "budak" :
         - "MX" :
@@ -147,7 +147,6 @@ and must follow this format
         - "A" :
             "ttl" : "1800"
             "content" : "test"
-
 ```
 
 
@@ -172,10 +171,10 @@ When you're removing dns, knot-cli will give you a list of records that will als
 
 On record removal, knot-cli will give you a list of your record based on filter (or all of your record if no filter is given). 
 
-![knot-cli rm1](/docs/img/rm1.jpg?raw=True "Record removal")
+![knot-cli rm1](https://github.com/riszkymf/RESTKnot/blob/devel/CLI/docs/img/rm1.jpg "Record removal")
 
 Enter index of the record that you want to remove, then knot-cli will ask for your confirmation.
 
-![knot-cli rm2](/docs/img/rm2.jpg "Record removal 2")
+![knot-cli rm2](https://github.com/riszkymf/RESTKnot/blob/devel/CLI/docs/img/rm2.jpg "Record removal 2")
 
 

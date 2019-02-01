@@ -36,6 +36,9 @@ class Ls(Base):
             print(vallist)
         elif self.args['dns']:
             vallist = sort.list_dns()
+            if vallist['status'] == False:
+                print(vallist['message'])
+                exit()
             util.convert(vallist)
             vallist = vallist['data']
             show = list()
@@ -53,8 +56,12 @@ class Ls(Base):
                 vallist = ls.list_record(zone,tags)          
             else :
                 zone = sort.list_dns()
-                zone = zone['data']
-                vallist = sort.list_record(zone)
+                try:
+                    zone = zone['data']
+                    vallist = sort.list_record(zone)
+                except Exception:
+                    print(zone['message'])
+                    exit()
             if vallist['status']:
                 vallist = util.table_cleanup(vallist['data'])
                 print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))

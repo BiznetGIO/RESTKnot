@@ -40,7 +40,7 @@ def check_existence(endpoint,var):
     return respons
 
 def get_url(endpoint):
-    url = "http://127.0.0.1:6968/api/"
+    url = "http://103.89.5.121:6968/api/"
 
     url = url + var_json['endpoints'][endpoint]
 
