@@ -176,7 +176,6 @@ def sync(obj):
     data_send = {cmd : {"tags" : ''}}
 
     data_send[cmd]['tags'] = {"id_record" : tags}
-    print(data_send)
     res=send_request('command', data_send)
     return res
     
