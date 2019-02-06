@@ -25,11 +25,14 @@ def check_existence(endpoint,var):
     try :
         result = requests.get(url, headers=headers )
         result = result.json()
+        msg = result['message']
         result = result['data']
     except Exception as e:
         respons = generate_respons(False,str(e))
     if result is None:
-        respons = generate_respons(False,'Your token has expired')
+        if 'Invalid access token' in msg:
+            respons = generate_respons(False,'Your token has expired')
+        else : respons = generate_respons(False, "No DNS")
     else :   
         for i in result:
             if i[key] == var:
@@ -41,6 +44,7 @@ def check_existence(endpoint,var):
 
 def get_url(endpoint):
     url = "http://103.89.5.121:6968/api/"
+    #url = "http://127.0.0.1:6968/api/"
 
     url = url + var_json['endpoints'][endpoint]
 

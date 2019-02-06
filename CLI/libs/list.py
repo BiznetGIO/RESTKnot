@@ -1,5 +1,8 @@
 import json
 import requests
+import sys
+import tqdm
+from tqdm import tqdm
 from libs import auth
 from libs import config
 from libs import utils as util
@@ -63,8 +66,7 @@ def list_dns():
     id_zone = get_data('userzone',key='id_zone')
     if not 'data' in id_zone:
         return util.generate_respons(False,"You don't own any dns yet")
-    
-
+   
     else :
         id_zone = id_zone['data']
         data = jsonmodel['search']['zone']['data']
@@ -79,59 +81,6 @@ def list_dns():
             print(str(e))
             return util.generate_respons(False,str(e))
     return util.generate_respons(True,"success",dnslist)
-
-# def list_record_need_fix(dnslist, tag = None):
-#     dnslist = check_zone_authorization(dnslist)
-#     if not 'data' in dnslist.keys():
-#         return util.generate_respons(False,"Zone doesn't exist")
-#     dnslist = dnslist['data']
-#     json_send = jsonmodel['view']['record']   
-#     list_var = list()
-#     data = dict()
-#     for zone in dnslist:
-#         data['zone'] = dict()
-#         json_send['view']['tags']['nm_zone'] = zone
-#         res = config.send_request('record',json_send)
-#         if res['data'] is None:
-#             print('{} dont have any record' .format(str(zone)))
-#         else :
-#             res = res['data']
-#             for i in res:
-#                 if i["nm_type"] not in ["SOA","NS"]:
-#                     list_var.append(i)
-#     for record in list_var:
-#         json_send = jsonmodel['view']['ttldata']
-#         json_send['view']['tags']['id_record'] = record['id_record']
-#         res = config.send_request('ttldata',json_send)
-#         res = res['data']
-#         keys = res[0].keys()
-#         for key in keys:
-#             record[key] = res[0][key]
-       
-#         json_send = jsonmodel['view']['content_data']
-#         json_send['view']['tags']['id_record'] = record['id_record']
-#         res = config.send_request('content',json_send)
-#         res = res['data']
-#         content = ''
-#         for i in res:
-#             content += i['nm_content']+' '
-#         record['nm_content'] = content
-#         json_send = jsonmodel['view']['content_serial']
-#         json_send['view']['tags']['nm_zone'] = record['nm_zone']
-#         res = config.send_request('content_serial', json_send)
-#         res = res['data']
-#         content_serial = ''
-#         if res is not None:
-#             for data in res:
-#                 if data['nm_type'] == record['nm_type'] :
-#                     content_serial += data['nm_content_serial'] + ' '
-#         record['nm_content_serial'] = content_serial
-        
-#     if tag is not None:
-#         result = filter_record(list_var,tag)
-#         return util.generate_respons(True,'success',result)
-#     else :
-#         return util.generate_respons(True,'success',list_var)
 
 def check_zone_authorization(dnslist):
     listed = list_dns()
@@ -165,6 +114,7 @@ def filter_record(data,filter):
 
 
 def list_record(dnslist, tag = None):
+    pbar=tqdm(total=100)
     dnslist = check_zone_authorization(dnslist)
     if not 'data' in dnslist.keys():
         return util.generate_respons(False,"Zone doesn't exist")
@@ -173,15 +123,18 @@ def list_record(dnslist, tag = None):
     recorddata = list()
     
     #get dns data
-
+    step = (100/(3*len(dnslist)))
+    pbar.set_description("Obtaining DNS")
     for dns in dnslist:
         res = get_data("zone",tags="nm_zone",value=dns)
         res = res['data'][0]
         dnsdata.append(res)
+        pbar.update(step)
+        
 
     
     #get record data
-
+    pbar.set_description("Obtaining Record Data")
     temp = list()
     for dns in dnsdata:
         json_send = jsonmodel['search']['record']['data']
@@ -197,8 +150,9 @@ def list_record(dnslist, tag = None):
                 result = config.send_request('record', json_send)
                 result = result['data'][0]
                 recorddata.append({**i,**result})
-    
+        pbar.update(step)
     ### GET TTLDATA, CONTENT
+    step = (100/(6*len(recorddata)))
     for record in recorddata:
         json_send = jsonmodel['view']['ttldata']
         json_send['view']['tags']['id_record'] = record['id_record']
@@ -214,6 +168,7 @@ def list_record(dnslist, tag = None):
         for i in res:
             st += i['nm_content'] + ' '
         record.update({"nm_content" : st})
+        pbar.update(step)
 
     for record in recorddata:
         if record['nm_type'] == 'SRV' or record['nm_type'] == 'MX' :
@@ -225,13 +180,14 @@ def list_record(dnslist, tag = None):
             for row in res:
                 st += row['nm_content_serial']
             record.update({"nm_content_serial" : st})
+        pbar.update(step)
 
     idx = len(recorddata)-1
     while idx >=0 :
         if recorddata[idx]['nm_type'] == 'SOA' or recorddata[idx]['nm_type'] == 'NS':
             del recorddata[idx]
         idx=idx-1
-
+    pbar.close()
 
     if tag is not None:
         result = filter_record(recorddata,tag)
