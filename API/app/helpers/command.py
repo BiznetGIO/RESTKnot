@@ -179,13 +179,14 @@ def zone_soa_insert_default(tags):
     serial_data = ""
     data = ""
     date_t = record[0]['date_record']
+
     for ns in content_data:
         data = data+" "+ns['nm_content']
+    data_ns_soa = data
+
     for serial in content_serial:
         serial_data = serial_data+" "+serial['nm_content_serial']
-    data_ns_soa = data
     data_ns_serial = serial_data
-    
     json_command={
         "soa-set": {
             "sendblock": {
@@ -201,6 +202,7 @@ def zone_soa_insert_default(tags):
             }
         }
     }
+    # print(json_command)
     return record[0]['id_record'], json_command
 
 def zone_begin(tags):
