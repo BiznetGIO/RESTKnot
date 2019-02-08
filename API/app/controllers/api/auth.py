@@ -36,6 +36,7 @@ class Usersignin(Resource):
             stored_data = {
                 'username': username,
                 'user_id':user_id,
+                'project_id': project_id,
                 'timestamp': arrow.now(),
                 'session': sess
             }

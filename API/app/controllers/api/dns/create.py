@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, fields
+from flask_restful import Resource, reqparse, fields, request
 from app.helpers.rest import *
 from app.helpers.memcache import *
 import datetime
@@ -7,6 +7,8 @@ from app.libs.utils import repodefault, send_http, change_state
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
+from app import redis_store
+import dill
 
 
 url_env = os.getenv("SOCKET_AGENT_HOST")
@@ -204,6 +206,11 @@ def addCNAMEDefault(id_zone, nm_zone):
 class CreateDNS(Resource):
     @login_required
     def post(self):
+        token = request.headers['Access-Token']
+        redis_data = redis_store.get(token)
+        dill_data = dill.loads(redis_data)
+        project_id = dill_data['project_id']
+
         parser = reqparse.RequestParser()
         parser.add_argument('domain', type=str, required=True)
         args = parser.parse_args()
@@ -213,6 +220,7 @@ class CreateDNS(Resource):
         }
         check = False
         data_insert = None
+
         try:
             data_insert = db.insert("zn_zone", zone_domain)
             check = True
@@ -222,6 +230,14 @@ class CreateDNS(Resource):
         if not check:
             print(msg)
         else:
+            userdata = db.get_by_id("userdata", "project_id", str(project_id))
+            userdata_id = userdata[0]['userdata_id']
+            dt_user_zone = {
+                'id_zone': str(data_insert),
+                'userdata_id': str(userdata_id)
+            }
+            db.insert("zn_user_zone", dt_user_zone)
+
             id_zone_soa = addSOADefault(zone)
             id_zone_ns = addNSDefault(zone)
             id_record = addCNAMEDefault(data_insert, zone)
@@ -232,7 +248,7 @@ class CreateDNS(Resource):
             sync_ns(id_zone_ns)
             sync_cname_default(data_insert, id_record)
             # #UNCOMENT TO SYNC AUTO
-            
+
         respon = list()
 
         try:
@@ -248,7 +264,8 @@ class CreateDNS(Resource):
             for i in zone_data:
                 data = {
                     'id_zone': str(i['id_zone']),
-                    'nm_zone': i['nm_zone']
+                    'nm_zone': i['nm_zone'],
+                    'state': i['state']
                 }
             respon = {
                 "status": True,
