@@ -56,8 +56,6 @@ def insert(table, data = None):
         id_of_new_row = db.fetchone()[0]
         return str(id_of_new_row)
 
-
-
 def update(table, data = None):
     value = ''
     rows = data['data']

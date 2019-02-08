@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>EXAMPLE</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<!-- Latest compiled and minified CSS -->
+	
+	<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
+	<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.css" />
+	<link href="css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class="container-fluid">
+		<div class="row" id="login_section">
+				<div class="col-md-4">
+				</div>
+				<div class="col-md-4">
+					<form role="form" id="form_login">
+						<div class="form-group">
+							<label for="">
+								Email address
+							</label>
+							<input type="text" class="form-control" id="username" name="username" />
+						</div>
+						<div class="form-group">
+								
+							<label for="exampleInputPassword1">
+								Password
+							</label>
+							<input type="password" class="form-control" id="password" name="password" />
+						</div>
+						<button class="btn btn-primary" id="btn_login">
+							Login
+						</button>
+					</form>
+				</div>
+				<div class="col-md-4">
+				</div>
+		</div>
+		<div class="row" id="domain_section">
+			<div class="col-md-2"></div>
+			<dir class="col-md-8">
+				<h3>
+					Create Domain
+				</h3>
+				<form role="form" id="form_domain">
+					<div class="form-group">
+							
+						<label for="domain">
+							Domain Name
+						</label>
+						<input type="" class="form-control" name="domain" id="domain_value" />
+					</div>
+					<button class="btn btn-primary" id="btnCreateDomain">
+						Create Domain
+					</button>
+				</form>
+
+			</dir>
+			<div class="col-md-2">
+				<button class="btn btn-primary" id="btn_logout">logout</button>
+			</div>
+		</div>
+		<div class="row" id="data_section">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<h3>
+					List Domain
+				</h3>
+				<hr>
+				<table class="table" id="domain_table">
+					<thead>
+						<tr>
+							<th>
+								Zone ID
+							</th>
+							<th>
+								Zone Name
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+				<hr>
+				<h3>
+					List Record
+				</h3>
+				<table class="table" id="record_table"></table>
+				<section id="record_section">
+					<h3>Create Record</h3>
+					<input type="text" class="form-control hide" id="jns_record" value="" readonly hidden/>
+					<div role="form">
+						<div class="form-group">
+							<label>Zone ID</label>
+							<input type="text" class="form-control" id="zone_f_id" readonly/>
+						</div>
+						<div class="form-group">
+							<label>Record Name</label>
+							<input type="text" class="form-control" id="r_name" />
+						</div>
+						<div class="form-group">
+							<label>TYPE NAME</label>
+							<select class="form-control" id="typename_id">
+								<option value=""></option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>TTL</label>
+							<select class="form-control" id="ttl_id_name">
+								<option value=""></option>
+							</select>
+						</div>
+						<section id="content_section">
+							<br>
+							Serial
+							<hr>
+							<div id="serial_content_section"></div>
+							<hr>
+						</section>
+						<section id="content_data_section">
+							<div id="serial_data_content_section"></div>
+							<hr>
+						</section>
+						<button id="btnAddRecord" class="btn btn-primary">
+							Add Record
+						</button>
+					</div>
+				</section>
+			</div>
+			<div class="col-md-2">
+			</div>
+		</div>
+
+	</div>
+    <script src="js/jquery.min.js"></script>
+	<!-- <script src="js/bootstrap-table.min.js"></script> -->
+	<script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.js"></script>
+    <script src="js/scripts_1.js"></script>
+  </body>
+</html>

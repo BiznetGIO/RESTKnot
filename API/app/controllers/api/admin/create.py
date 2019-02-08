@@ -203,17 +203,14 @@ def addCNAMEDefault(id_zone, nm_zone):
     return id_record
 
 
-class CreateDNS(Resource):
+class CreateDNSAdminRole(Resource):
     @login_required
     def post(self):
-        token = request.headers['Access-Token']
-        redis_data = redis_store.get(token)
-        dill_data = dill.loads(redis_data)
-        project_id = dill_data['project_id']
-
         parser = reqparse.RequestParser()
         parser.add_argument('domain', type=str, required=True)
+        parser.add_argument('project_id', type=str, required=True)
         args = parser.parse_args()
+        project_id = args['project_id']
         zone = args['domain']
         zone_domain = {
             'nm_zone': zone

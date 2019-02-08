@@ -19,7 +19,9 @@ class ZoneName(Resource):
             for i in results :
                 data = {
                     "id_zone": str(i['id_zone']),
-                    "nm_zone" : i['nm_zone']                }
+                    "nm_zone" : i['nm_zone'],
+                    "state" : i['state']
+                }
                 obj_userdata.append(data)
         except Exception:
             results = None
@@ -74,7 +76,8 @@ class ZoneName(Resource):
                 for i in result :
                     data = {
                         "id_zone": str(i['id_zone']),
-                        "nm_zone" : i['nm_zone']
+                        "nm_zone" : i['nm_zone'],
+                        "state" : i['state'] 
                     }
                     obj_userdata.append(data)
                 respons = {

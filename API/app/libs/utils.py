@@ -102,10 +102,21 @@ def get_tag():
 #         tags = i['tags']
 #     return measurement, tags
 
-def send_http(url, data):
+def send_http(url, data, headers=None):
     json_data = json.dumps(data)
-    send = requests.post(url, data=json_data)
+    send = requests.post(url, data=json_data, headers=headers)
     respons = send.json()
     data = json.loads(respons['data'])
     respons['data'] = data
     return respons
+
+def change_state(field, field_value, state):
+    data_state = {
+        "where":{
+            field : str(field_value)
+        },
+        "data":{
+            "state" : str(state)
+        }
+    }
+    return data_state
