@@ -62,11 +62,11 @@ class Ls(Base):
                 except Exception:
                     print(zone['message'])
                     exit()
-            if vallist['status']:
+            if vallist['status'] and 'data' in vallist:
                 vallist = util.table_cleanup(vallist['data'])
                 print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
             else :
-                print(vallist['message'])
+                #print(vallist['message'])
                 print("You have no record yet!")
             
             

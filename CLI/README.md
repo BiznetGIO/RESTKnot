@@ -128,26 +128,26 @@ and must follow this format
 ```
 
 
+
 ```yaml
-"klakla.com":
-    "budak":
-        - "MX":
-            "ttl": "1800"
-            "content": "contoh1"
-            "content-serial": "contoh2"
+"klakla.com" :
+    "budak" :
+        - "MX" :
+            "ttl" : "1800"
+            "content" : "contoh1"
+            "content-serial" : "contoh2"
         - "AAAA":
-            "ttl": "3600"
-            "content": "IPv6"
-    "papah":
+            "ttl" : "3600"
+            "content" : "IPv6"
+    "papah" :
         - "CNAME":
-            "ttl": "900"
-            "content": "waduksiah"
+            "ttl" : "900"
+            "content" : "waduksiah"
 "thepokis.com":
     "ampun":
-        - "A":
-            "ttl": "1800"
-            "content": "test"
-
+        - "A" :
+            "ttl" : "1800"
+            "content" : "test"
 ```
 
 
