@@ -3,8 +3,13 @@ import requests
 import datetime
 import tabulate
 import re
+import struct
+import npyscreen
 import coloredlogs
 import logging
+import fcntl
+import termios
+import os
 import yaml
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit import prompt
@@ -62,17 +67,7 @@ def get_idkey(endpoint,headers):
 
 
 
-# def eleminator(obj):
-#     delkeys = list()
-#     for i in obj:
-#         if obj[i] is None or obj[i] is False :
-#             delkeys.append(i)
-    
-#     for i in delkeys:
-#         obj.pop(i)
-    
-#     return obj
-        
+
 def get_time():
     now = datetime.datetime.now()
     res = now.strftime("%Y%m%d%H")

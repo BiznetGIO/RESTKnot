@@ -4,7 +4,7 @@ import time
 from tqdm import tqdm
 from .base import Base
 from libs import utils as util
-from libs.list import check_zone_authorization,list_dns, listing_endpoint
+from libs.listing import check_zone_authorization,list_dns, listing_endpoint
 from libs import config as app
 from libs.wrapper import *
 from tabulate import tabulate

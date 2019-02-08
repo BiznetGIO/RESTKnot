@@ -4,7 +4,7 @@ import tqdm
 from tqdm import tqdm
 from libs import config as app
 from libs import utils as util
-from libs import list as ls
+from libs import listing as ls
 from libs import auth
 
 with open('libs/templates/endpoints.json','r') as model :

@@ -1,6 +1,7 @@
 """
 Usage:
   knot-cli <command> [<args>...]
+  knot-cli -h | --help
 
 Run 'knot-cli <command> --help' for more information on a command.
 """

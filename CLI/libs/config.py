@@ -57,9 +57,8 @@ def setDefaultDns(name):
     header['user_id'] = (get_user_id())['data']
     res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
     data = {'domain' : str(name)},headers=header)
-    # res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
-    # data = {'domain' : str(name)}
-    # ,headers=header)
+    #res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
+    #data = {'domain' : str(name)}, headers=header)
     res = res.json()
     if 'code' not in res :
         print(res['message'])
@@ -83,7 +82,7 @@ def tying_zone(user_id,id_zone):
     res = requests.post(url = url, data = data, headers = header)
 
 def setRecord(obj):
-    from libs.list import check_zone_authorization
+    from libs.listing import check_zone_authorization
     with open('libs/templates/endpoints.json', 'r') as f :
         jsonmodel = json.load(f)
         pbar = tqdm(total=100)
