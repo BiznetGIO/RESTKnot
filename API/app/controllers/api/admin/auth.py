@@ -10,42 +10,41 @@ import datetime
 import dill
 import os
 
-GLOBAL_AUTH_URL = 'https://keystone.wjv-1.neo.id:443/v3'
-GLOBAL_USER_DOMAIN_NAME = 'neo.id'
 
-
-class Usersignin(Resource):
+class AdminAuth(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True)
         parser.add_argument('password', type=str, required=True)
+        parser.add_argument('project_id', type=str, required=True)
 
         args = parser.parse_args()
 
         username = args['username']
         password = args['password']
+        project_id = args['project_id']
 
-        try:
-            sess = login_utils.generate_session(username, password, GLOBAL_AUTH_URL, GLOBAL_USER_DOMAIN_NAME)
-        except Exception as e:
-            return str(e)
-        else:
+        os_admin = os.getenv('ADMIN_USER')
+        os_password = os.getenv("ADMIN_PASSWORD")
 
-            user_id = sess.get_user_id()
-            project_id = login_utils.get_project_id(sess)
+        if username == os_admin and os_password==password:
+            data_user = db.get_by_id("userdata", "project_id", project_id)
+            if not data_user:
+                return response(200, message= "Project ID Not Found")
+
             stored_data = {
                 'username': username,
-                'user_id':user_id,
-                'project_id': project_id,
+                'project_id': data_user[0]['project_id'],
+                'user_id': data_user[0]['user_id'],
                 'timestamp': arrow.now(),
-                'session': sess
+                'session': "admin"
             }
 
             random_string = uuid.uuid4()
             raw_token = '{}{}'.format(random_string, username)
             access_token = hashlib.sha256(raw_token.encode(
                 'utf-8')).hexdigest()
-            
+
             try:
                 dill_object = dill.dumps(stored_data)
                 redis_store.set(access_token, dill_object)
@@ -54,13 +53,15 @@ class Usersignin(Resource):
                 resp = {
                     "error": str(e)
                 }
-                return response(200, message= resp)
+                return response(401, message= resp)
             else:
                 data = {
-                    "user_id" : user_id,
-                    "project_id": project_id,
+                    'project_id': data_user[0]['project_id'],
+                    'user_id': data_user[0]['user_id'],
                     "token": access_token
                 }
                 return response(200, data= data)
+        else:
+            return response(401, message= "Not Found")
 
 

@@ -198,7 +198,7 @@ class SendCommandRest(Resource):
             else :
                 http_response = utils.send_http(url,respons)
                 # change state
-                if http_respons:
+                if http_response:
                     state = utils.change_state("id_record", tags['id_record'], "1")
                     try:
                         db.update("zn_record", data = state)

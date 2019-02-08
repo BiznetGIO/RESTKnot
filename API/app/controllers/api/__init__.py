@@ -11,7 +11,8 @@ from .content import *
 from .content_serial import *
 from .dns.create import *
 from .command_rest import *
-
+from .admin.auth import *
+from .admin.create import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -24,7 +25,7 @@ api.add_resource(Usersignin,"/login")
 api.add_resource(UserDataZoneInsert,"/userzone")
 api.add_resource(UserDataZoneResource,"/userzone")
 
-
+## DNS API
 api.add_resource(ZoneName, '/zone')
 api.add_resource(Type, '/type')
 api.add_resource(TtlName, '/ttl')
@@ -34,4 +35,9 @@ api.add_resource(Content, '/content')
 api.add_resource(ContentSerial, '/content_serial')
 api.add_resource(SendCommandRest, '/sendcommand')
 api.add_resource(CreateDNS, '/user/dnscreate')
+
+## ADMIN AUTH
+api.add_resource(AdminAuth, '/admin/login')
+api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
+
 

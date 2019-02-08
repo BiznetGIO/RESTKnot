@@ -19,9 +19,7 @@ class TestCreate():
     def test_create_dns(self):
         new_zone = 'testclis.com'
         res = app.setDefaultDns(new_zone)
-        print(res)
         dns = ls.list_dns()
-        print(dns)
         assert new_zone in dns['data']
 
     @pytest.mark.run(order=1)
@@ -115,7 +113,7 @@ class TestCreate():
     @pytest.mark.run(order=6)
     def test_get_data(self):
         result = ls.get_data('ttl',tags='nm_ttl',value='1800')
-        result = result['data']
+        result = result['data'][0]
         assert result['nm_ttl'] == '1800'
 
 

@@ -2,6 +2,8 @@ import requests
 import json
 import os
 import yaml
+import tqdm
+from tqdm import tqdm
 from libs.utils import generate_respons,get_url,get_time,get_idkey,dictcleanup
 from libs.auth import get_headers, get_user_id
 import copy
@@ -50,13 +52,13 @@ def searchId(endpoint,name):
     return generate_respons(True,'success',respons)
 
 def setDefaultDns(name):
-
     
     header = (get_headers())['data']
     header['user_id'] = (get_user_id())['data']
     res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
-    data = {'domain' : str(name)}
-    ,headers=header)
+    data = {'domain' : str(name)},headers=header)
+    #res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
+    #data = {'domain' : str(name)}, headers=header)
     res = res.json()
     if 'code' not in res :
         print(res['message'])
@@ -80,11 +82,11 @@ def tying_zone(user_id,id_zone):
     res = requests.post(url = url, data = data, headers = header)
 
 def setRecord(obj):
-    from libs.list import check_zone_authorization
+    from libs.listing import check_zone_authorization
     with open('libs/templates/endpoints.json', 'r') as f :
         jsonmodel = json.load(f)
-
-
+        pbar = tqdm(total=100)
+        pbar.set_description("Preparing Data")
         temp = copy.deepcopy(obj)
         
         check = check_zone_authorization([obj['--nm-zn']])
@@ -101,7 +103,8 @@ def setRecord(obj):
         
         except Exception as e:
             return generate_respons(False,"Zone/Type/TTL doesn't exist\n" + str(e))
-        
+        pbar.update(20)
+        pbar.set_description("Sending Record")
         #insert Record
         json_data = copy.deepcopy(jsonmodel['create']['record']['data'])
         for i in json_data['insert']['fields']:
@@ -110,22 +113,24 @@ def setRecord(obj):
         res = send_request('record',json_data)
         temp['--id-record'] = res['message']['id']
 
-
+        pbar.update(20)
+        pbar.set_description("Sending TTL")
         #insert ttldata
         json_data = jsonmodel['create']['ttldata']['data']
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
         res = send_request('ttldata',json_data)
         temp['--id-ttldata'] = res['message']['id']
-        
+        pbar.update(20)
         #insert content
-        
+        pbar.set_description("Sending Content Data")
         json_data = jsonmodel['create']['content']['data']
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
         res = send_request('content',json_data)
         temp['--id-content'] = res['message']['id']
-
+        pbar.set_description("Sending Content Data")
+        pbar.update(20)
         #insert content serial
         record_type = obj['--type'].upper()
 
@@ -148,11 +153,14 @@ def setRecord(obj):
         datasync = {"command" : cmd, "tags" : temp['--id-record']}
 
     try:
+        pbar.set_description("Sync Data")
         res = sync(datasync)
+        pbar.update(20)
+        pbar.close()
+        
     except Exception as e:
         print("Error \n",str(e))
         return generate_respons(False,'Sync failure')
-
     return generate_respons(True,'success',data)
 
 
