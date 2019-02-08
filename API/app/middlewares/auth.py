@@ -6,7 +6,7 @@ from functools import wraps
 import os
 
 def check_admin_mode(ip):
-    whitelist_ip = os.getenv('ADMIN_HOST')
+    whitelist_ip = os.getenv('ACL')
     admin_ip = whitelist_ip.split(",")
     admin_ip = [i.replace(' ','') for i in admin_ip]
     check_ip = ip in admin_ip
