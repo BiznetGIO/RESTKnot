@@ -4,7 +4,7 @@ from .base import Base
 from libs import utils as util
 from libs import config as app
 from libs import remove as delete
-from libs import list as ls
+from libs import listing as ls
 from libs.auth import check_password
 from libs.wrapper import *
 from tabulate import tabulate
@@ -31,6 +31,7 @@ class Rm(Base):
             zone = [self.args['--nm']]
             listdns = ls.list_record(zone)
             if 'data' in listdns:
+                listdns = listdns['data']
                 listdns = util.table_cleanup(listdns)
                 util.log_warning('The following record will also be deleted\n')
                 print(tabulate(listdns,headers="keys",tablefmt="rst"))
