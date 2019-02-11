@@ -14,6 +14,7 @@ class Rm(Base):
     usage:
         rm dns (--nm NAME)
         rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
+        rm -h | --help
 
     Options :
         -h --help               Print usage
@@ -48,8 +49,9 @@ class Rm(Base):
                 show = ls.list_record(zone,tags)
                 try :
                     show = show['data']
-                except Exception:
-                    print("Data doesn't exist")
+                except Exception as e:
+                    sys.stderr.write("Data doesn't exist")
+                    sys.stderr.write(str(e))
                     exit()
 
             else:
