@@ -29,7 +29,6 @@ def sync_conf_insert(id_zone):
         # state change
         state = change_state("id_zone", id_zone, "1")
         check = db.update("zn_zone", data = state)
-        print(check)
     cmd.conf_commit_http(url)
 
 def sync_soa(id_zone):

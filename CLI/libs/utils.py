@@ -4,7 +4,7 @@ import datetime
 import tabulate
 import re
 import struct
-import npyscreen
+import sys
 import coloredlogs
 import logging
 import fcntl
@@ -120,7 +120,8 @@ def check_availability(obj,length):
                 #print("invalid input")
                 pass
         except Exception as e:
-            print(str(e))
+            #print(str(e))
+            sys.stderr.write(str(e))
     return obj
 
 def table_cleanup(obj):

@@ -59,10 +59,11 @@ def get_data(endpoint,key=None,tags=None,value=None):
         return util.generate_respons(True,"success",data)
 
     except Exception as e:
-        util.log_err(e)
+        util.log_err(str(e))
         return util.generate_respons(False,str(e))
 
 def list_dns():
+    
     id_zone = get_data('userzone',key='id_zone')
     if not 'data' in id_zone:
         return util.generate_respons(False,"You don't own any dns yet")
@@ -78,7 +79,8 @@ def list_dns():
                 temp = temp['data'][0]['nm_zone']
                 dnslist.append(temp)
         except Exception as e:
-            print(str(e))
+            sys.stderr.write(str(e))
+            #print(str(e))
             return util.generate_respons(False,str(e))
     return util.generate_respons(True,"success",dnslist)
 

@@ -10,7 +10,7 @@ import sys
 #sys.path.append('/home/mfriszky/worksworksworks/branch-sandbox/RESTKnot/CLI')
 
 from libs import config as app
-from libs import list as ls
+from libs import listing as ls
 from libs import utils as util
 from libs import remove as delete
 
@@ -133,6 +133,24 @@ class TestCreate():
     def test_create_from_file(self):
         filename = 'create.yaml'
         data = app.load_yaml(filename)
+        
+        dnslist = list(data['data'].keys())
+        print(dnslist)
+        check = ls.check_zone_authorization(dnslist)
+
+        sendlist = list()
+
+        if 'data' not in check:
+            sendlist = dnslist
+        
+        else :
+            for dns in dnslist:
+                if dns not in check['data']:
+                    sendlist.append(dns)
+
+        if sendlist:
+            for dns in sendlist:
+                app.setDefaultDns(dns)
         data = app.parse_yaml(data['data'])
 
         send = data['data']
@@ -142,3 +160,9 @@ class TestCreate():
             res = app.setRecord(row)
             check = check and res['status']
         assert check == True
+        self.cleanup(dnslist)
+
+
+    def cleanup(self,dnslist):
+        for dns in dnslist:
+            delete.remove_zone(dns)

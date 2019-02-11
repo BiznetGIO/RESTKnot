@@ -166,3 +166,13 @@ sudo python manage.py server
 Installing CockroachDB Reference [action](https://www.cockroachlabs.com/docs/stable/)
 
 ## Dockerize Development
+
+## Documentation
+------------------------
+[Information on rules of various type of record 
+](https://raw.githubusercontent.com/BiznetGIO/RESTKnot/master/API/docs/markdown/documentation/RULES.md)
+
+[Rules on creating new domain](https://raw.githubusercontent.com/BiznetGIO/RESTKnot/master/API/docs/markdown/documentation/RULES_add_domain.md)
+
+[Rules on creating new record](https://github.com/BiznetGIO/RESTKnot/blob/master/API/docs/markdown/documentation/RULES_add_record.md)
+
