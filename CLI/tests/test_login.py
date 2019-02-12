@@ -34,7 +34,11 @@ class TestLogin:
     @pytest.mark.run(order=3)
     def test_logout_hard(self,monkeypatch):
         self.test_login_success(monkeypatch)
+        auth.ex_logout()
         auth.ex_logout(True)
+        self.test_login_success(monkeypatch)
+        auth.ex_logout(True)
+        auth.ex_logout
         result = bool(auth.check_session()) or bool(auth.check_env())
         
         assert result == False
