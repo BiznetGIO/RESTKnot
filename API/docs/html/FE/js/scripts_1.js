@@ -95,8 +95,8 @@ function ajaxDor(link,json_data){
 
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
-    var url_knot = 'http://103.89.5.121';
-    // var url_knot = 'http://127.0.0.1';
+    // var url_knot = 'http://103.89.5.121';
+    var url_knot = 'http://127.0.0.1';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -241,7 +241,7 @@ $(document).ready(function(){
                                             }
                                         }
                                     }
-                                    var content_data = ajaxDor("http://103.89.5.121:6968/api/content", json_data)
+                                    var content_data = ajaxDor(uri_fix+"/api/content", json_data)
                                     content_data.done(function(respon){
                                         var data = respon.data
                                         var dt = ""

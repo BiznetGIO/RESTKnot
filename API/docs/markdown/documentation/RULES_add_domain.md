@@ -1,5 +1,5 @@
 ## CREATE DOMAIN
-enpoint : api/user/dnscreate
+endpoint : api/user/dnscreate
 
 form :
 - domain : string
@@ -24,7 +24,7 @@ response:
 ```
 
 ## SYNC DOMAIN TO KNOT
-After your upload domain i API Now Syncronize Your To Knot
+After inserting your domain in API, syncrhonize it to Knot server
 
 endpoint: api/sendcommand
 
