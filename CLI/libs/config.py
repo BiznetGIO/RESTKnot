@@ -57,16 +57,15 @@ def setDefaultDns(name):
     header = (get_headers())['data']
     header['user_id'] = (get_user_id())['data']
     res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
-    data = {'domain' : str(name)},headers=header)
-    #res = requests.post("http://127.0.0.1:6968/api/user/dnscreate",
-    #data = {'domain' : str(name)}, headers=header)
+    data = {'domain' : str(name)}
+    ,headers=header)
     res = res.json()
     print(res)
     if 'code' not in res :
         sys.stderr.write(res['message'])
         return generate_respons(False,res['message'])
     
-    tying_zone(header['user_id'],res['data']['data']['id_zone'])
+    #tying_zone(header['user_id'],res['data']['data']['id_zone'])
 
     tags = res['data']['data']['id_zone']
     # syncdat = {"command" : "conf-insert", "tags" : str(tags)}

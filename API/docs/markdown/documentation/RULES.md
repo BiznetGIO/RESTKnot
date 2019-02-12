@@ -3,24 +3,28 @@
 RECORD:
   type:
     A:
+      example: 192.168.123.10
       content:
         params:
           IPv4:
             type: STR
-            desc: An IPv4 address must be a decimal dotted quad string, for example '192.168.123.10'
+            desc: An IPv4 address must be a decimal dotted quad string.
     AAAA:
+      example: 2001:db8::c0ff:e:e
       content:
         params:
           IPv6:
             type: STR
-            desc: An IPv6 address must a coloned hex IPv6 address string, for example '2001:db8::c0ff:e:e'
+            desc: An IPv6 address must a coloned hex IPv6 address string.
     CNAME:
+      example: example.com
       content:
         params:
           hostname:
             type: STR
-            desc: A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail. 
+            desc: A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An MX record may never be an ip/ipv6 address, and must not point to a CNAME. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail. A CNAME record must always point to another domain name, never directly to ip address
     MX:
+      example: 10 mail.example.com
       content:
         params:
           priority:
@@ -32,18 +36,48 @@ RECORD:
             type: STR
             desc: A hostname should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. An mx may never be an ip/ipv6 address, and must not point to a cname. Entering incorrect information here can negatively impact your ability to receive and in some cases send mail. 
     TXT:
+      example: "this is an example of TXT record"
       content:
         params:
           txtdata:
             type: STR
             desc: Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple 255 character segments. 
     NS:
+      example: ns1.rincewind.com
       content:
         params:
           nameserver:
             type: STR
             desc: A nameserver should be valid and may only contain A-Z, a-z, 0-9, _, -, and .. 
+    SOA:
+      example: example.com sam.vimes.com 2018102107 86400 7200 3600000 86400
+      content:
+        params:
+          nameserver:
+            type: STR
+            desc: The primary name server for the domain and should match the nameserver on NS-record. e.g 'example.com'
+          email:
+            type: STR
+            desc: The e-mail address of the responsible party for the zone. Typically an email address with '@' character replaced with period. e.g 'sam.vimes.com'
+      serial:
+        params:
+          serial: 
+            type: STR
+            desc: A timestamp that's updated whenever DNS zone changes. e.g 2018102107
+          refresh:
+            type: STR
+            desc: A number of seconds before the zone should be refreshed. e.g 86400
+          retry:
+            type: STR
+            desc: A number of seconds before a failed refresh should be retried. e.g 7200
+          expire:
+            type: STR
+            desc: The upper limit in seconds before the zone is considered no longer authoritative. e.g 3600000
+          ttl:
+            type: STR
+            desc: The negative result TTL (for example, how long a resolver should consider a negative result for a subdomain to be valid before retrying). e.g 86400
     SRV:
+      example: 0 60 5060 bigbox.example.com.
       content:
         params:
           priority:

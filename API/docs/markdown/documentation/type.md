@@ -1,23 +1,22 @@
 # TYPE ENDPOINT
-Zone consists of several endpoints including:
+Type consists of several endpoints including:
 
 ### TYPE ALL
-- path : /api/type
-- method : get
+- path: /api/type
+- method: get
 - response: application/json
 - body: no
 - roles: admin
-
-Type all usage to get all data of record type
+- usage: Get all data on record type
 
 ### TYPE ADD
-- path : /api/type
-- method : post
+- path: /api/type
+- method: post
 - response: application/json
 - body: raw
 - roles: admin
+- usage: Add new record type value
 
-Function to enter one data in the type of DNS record type later
 raw:
 ```
 {
@@ -29,7 +28,7 @@ raw:
 }
 ```
 fields:
-- nm_type
+- nm_type: Record type that's going to be inserted
 
 example:
 ```
@@ -41,68 +40,74 @@ example:
    }
 }
 ```
-some examples of the type of record type you see Rules
+See [rules](RULES_add_record.md) for other examples
 
 ### TYPE WHERE
 
-- path : /api/type
-- method : post
+- path: /api/type
+- method: post
 - response: application/json
 - body: raw
 - roles: admin
+- usage: Find type data by tag (id or name) for filtering. 
 
-Function To Filtering Type Data
 raw:
 ```
 {
    "where": {
       "tags": {
-      	"id_type": type::id_type
+      	"id_type": type::id_type,
+         "nm_type": type::nm_type
       }
    }
 }
 ```
 
 tags:
-- id_type
+- id_type: id of the record that you're searching
+- nm_type: name of the record data that you're searching
 
-Get One all data value for id_type
 example:
 ```
 {
    "where": {
       "tags": {
-      	"id_type": "402329670102745089"
+      	"nm_type": "SOA"
       }
       	
    }
 }
 ```
 ### TYPE REMOVE
-- path : /api/type
-- method : post
+- path: /api/type
+- method: post
 - response: application/json
 - body: raw
 - roles: admin
-
-Get Value Type Function 
+- usage: remove record type
 raw:
+```
+{
+   "remove": {
+      "tags": {
+      	"id_type": type::id_type
+      }
+   }
+}
+```
+tags:
+- id_type: id of record type that will be removed
+
+example:
 ```
 {
    "remove": {
       "tags": {
       	"id_type": "402329670102745089"
       }
-      	
    }
 }
 ```
-tags:
-- id_type
-
-
-
-
 
 
 
