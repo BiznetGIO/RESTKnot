@@ -6,7 +6,6 @@ from .base import Base
 from libs import utils as util
 from libs.listing import check_zone_authorization,list_dns, listing_endpoint
 from libs import config as app
-from libs.wrapper import *
 from tabulate import tabulate
 
 class Create(Base):
@@ -16,6 +15,8 @@ class Create(Base):
         create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con CON) [--nm-con-ser CONSER] 
         create record -f FILENAME
         create record
+        
+        create  -h | --help
 
     Options :
     -h --help                 Print usage
@@ -29,8 +30,7 @@ class Create(Base):
 
     Commands:
      dns                        Create DNS
-     record                     Create record 
-    
+     record                     Create record  
     """
     
     #@login_required

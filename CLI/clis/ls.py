@@ -1,4 +1,5 @@
 import os
+import sys
 from .base import Base
 from libs import utils as util
 from libs import config as app
@@ -14,6 +15,7 @@ class Ls(Base):
         ls type
         ls record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
         ls dns
+        ls -h | --help
 
     Options :
     
@@ -60,7 +62,7 @@ class Ls(Base):
                     zone = zone['data']
                     vallist = sort.list_record(zone)
                 except Exception:
-                    print(zone['message'])
+                    sys.stderr.write(zone['message'])
                     exit()
             if vallist['status'] and 'data' in vallist:
                 vallist = util.table_cleanup(vallist['data'])

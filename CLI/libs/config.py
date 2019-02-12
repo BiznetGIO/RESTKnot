@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import yaml
+import sys
 import tqdm
 from tqdm import tqdm
 from libs.utils import generate_respons,get_url,get_time,get_idkey,dictcleanup
@@ -59,19 +60,20 @@ def setDefaultDns(name):
     data = {'domain' : str(name)}
     ,headers=header)
     res = res.json()
+    print(res)
     if 'code' not in res :
-        print(res['message'])
-        return False
+        sys.stderr.write(res['message'])
+        return generate_respons(False,res['message'])
     
     #tying_zone(header['user_id'],res['data']['data']['id_zone'])
 
     tags = res['data']['data']['id_zone']
-    syncdat = {"command" : "conf-insert", "tags" : str(tags)}
-    res=sync(syncdat)
-    syncdat = {"command" : "zone-soa-insert", "tags" : str(tags)}
-    res=sync(syncdat)
-    syncdat = {"command" : "zone-ns-insert", "tags" : str(tags)}
-    res=sync(syncdat)
+    # syncdat = {"command" : "conf-insert", "tags" : str(tags)}
+    # res=sync(syncdat)
+    # syncdat = {"command" : "zone-soa-insert", "tags" : str(tags)}
+    # res=sync(syncdat)
+    # syncdat = {"command" : "zone-ns-insert", "tags" : str(tags)}
+    # res=sync(syncdat)
 
 def tying_zone(user_id,id_zone):
     header = (get_headers())['data']
@@ -158,7 +160,8 @@ def setRecord(obj):
         pbar.close()
         
     except Exception as e:
-        print("Error \n",str(e))
+        #print("Error \n",str(e))
+        sys.stderr.write(str(e))
         return generate_respons(False,'Sync failure')
     return generate_respons(True,'success',data)
 
@@ -195,12 +198,14 @@ def load_yaml(filename):
         data = None
         try:
             with open(("{}/restknot/"+filename).format(DUMP_FOLDER),'r') as f :
+                print(f)
                 data = yaml.load(f)
+                print(locals())
             return generate_respons(True,'success',data)
         except Exception as e:
-            return generate_repons(False,str(e))
+            return generate_respons(False,str(e))
     else:
-        return util.generate_respons(False,"File doesn't exist")
+        return generate_respons(False,"File doesn't exist")
 
 def parse_yaml(data):
     data_list = list()
@@ -220,14 +225,19 @@ def parse_yaml(data):
                             if 'content-serial' in k[key]:
                                     data_dict['--nm-con-ser']=k[key]['content-serial']
                             data_list.append(data_dict)
-        for i in data_list:
-            if i['--type'] == 'SRV' or i['--type']=='MX':
-                    if not '--nm-con-ser' in i:
-                            data_list.remove(i)
+       
+        idx = len(data_list)-1
+        while idx >= 0:
+            if data_list[idx]['--type'] == 'SRV' or data_list[idx]['--type'] == 'MX':
+                if not '--nm-con-ser' in data_list[idx]:
+                    del data_list[idx]
+                    
+
             else :
-                    if '--nm-con-ser' in i:
-                            data_dict.remove(i)
-        
+                if '--nm-con-ser' in data_list[idx]:
+                    del data_list[idx]
+            idx = idx-1
+
         respon = generate_respons(True,'success',data_list)
     except Exception as e:
         respon = generate_respons(False,str(e))

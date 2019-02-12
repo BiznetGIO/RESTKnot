@@ -1,8 +1,6 @@
 # knot-cli
 
 
-
-
 Command Line Interface for Restknot
 
 
@@ -20,6 +18,7 @@ List of available command on knot-cli
 #### Create
 ```
 create dns (--nm=NAME) [-i]
+create record
 create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con CON) [--nm-con-ser CONSER] 
 create record -f FILENAME
 ```
@@ -85,12 +84,34 @@ use logout -r to remove all your data for fresh login in the future
 
 To create a new zone and records, use the following commands respectively 
 
+### Zone
 ```
 create dns (--nm=NAME)
+
+Options : 
+    --nm NAME                 Set DNS/record name
 ```
+
+### Record
+
+Use following commands for creating records
+```
+create record
+```
+
+Or if you want to manually input your record's details
 ```
 create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con) [--nm-con-ser CONSER]
 ```
+```
+    -type=TYPE                Set DNS type
+    --ttl TTL                 Set DNS TTL 
+    --nm-zn ZONENAME          Set zone of new record
+    --nm-con CON              Set content name
+    --nm-con-ser CONSER       Set content serial name
+```
+You can also create records from yaml. 
+
 ```
 create record -f FILENAME
 ```
@@ -102,7 +123,7 @@ Place your yaml file in
 ~/restknot
 ```
 
-and must follow this format
+and follow this format
 ```yaml
 
 "zone_name":
@@ -127,31 +148,10 @@ and must follow this format
 
 ```
 
+See [create.yaml](https://raw.githubusercontent.com/BiznetGIO/RESTKnot/master/CLI/example/create.yaml) for further information
 
 
-```yaml
-"klakla.com" :
-    "budak" :
-        - "MX" :
-            "ttl" : "1800"
-            "content" : "contoh1"
-            "content-serial" : "contoh2"
-        - "AAAA":
-            "ttl" : "3600"
-            "content" : "IPv6"
-    "papah" :
-        - "CNAME":
-            "ttl" : "900"
-            "content" : "waduksiah"
-"thepokis.com":
-    "ampun":
-        - "A" :
-            "ttl" : "1800"
-            "content" : "test"
-```
-
-
-Remember to check available type and ttl before creating records, also MX and SRV record need serial content on creation. 
+Remember to check available type and ttl before creating records, also MX and SRV record need serial content on creation. For further information on record  type, see [documentation](https://github.com/BiznetGIO/RESTKnot/blob/master/API/docs/markdown/documentation/RULES.md) 
 
 
 ```
