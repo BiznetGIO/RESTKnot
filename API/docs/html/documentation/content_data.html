@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>CONTENT DATA ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="content-data-endpoint"><a class="header-link" href="#content-data-endpoint"></a>CONTENT DATA ENDPOINT</h1>
+<p>The purpose of Content Data endpoint is to create, read or delete content data from an existing record.
+Content Data consists of several endpoints including:</p>
+<h3 id="content-data-all"><a class="header-link" href="#content-data-all"></a>CONTENT DATA ALL</h3>
+<ul class="list">
+<li>path: /api/content</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: admin</li>
+<li>usage: Get all content data and its related ttldata id</li>
+</ul>
+<h3 id="content-data-add"><a class="header-link" href="#content-data-add"></a>CONTENT DATA ADD</h3>
+<ul class="list">
+<li>path: /api/content</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>relation : <a href="./record.html">record</a>,<a href="./ttl.html">ttl</a></li>
+<li>usage: Add content data for existing record</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: ttldata::id_ttldata,
+        <span class="hljs-attr">"nm_content"</span>: string
+      }
+
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>id_ttldata: ID ttldata of the corresponding record which content data will be inserted</li>
+<li>nm_content: content data of the record. For further information of content data for various record see <a href="./RULES.html">rules</a></li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"420627361432338433"</span>,
+        <span class="hljs-attr">"nm_content"</span>: <span class="hljs-string">"1.1.1.1"</span>
+      }
+
+   }
+}</code></pre><p>See <a href="./RULES_add_record.html#connecting-acnameaaatxt-record-to-ttl-data">rules</a>  for other examples</p>
+<h3 id="content-data-where"><a class="header-link" href="#content-data-where"></a>CONTENT DATA WHERE</h3>
+<ul class="list">
+<li>path: /api/content</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>relation: <a href="./record.html">record</a>,<a href="./ttldata.html">ttldata</a></li>
+<li>usage: Filter content data by one or all of its tags.</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_content"</span>: content::id_content,
+        <span class="hljs-attr">"id_record"</span>: record::id_record,
+          <span class="hljs-attr">"id_ttldata"</span>: ttldata::id_ttldata
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_ttldata: Filter data by its ttldata id</li>
+<li>id_content: Filter data by its content id</li>
+<li>id_record: Filter data by its record id</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"402145755976826881"</span>
+      }
+
+   }
+}</code></pre><h3 id="content-data-remove"><a class="header-link" href="#content-data-remove"></a>CONTENT DATA REMOVE</h3>
+<ul class="list">
+<li>path: /api/content</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: remove ttl value of a record
+raw:<pre class="hljs"><code>{
+ <span class="hljs-attr">"remove"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_content"</span>: content::id_ttldata
+    }
+ }
+}</code></pre>tags:</li>
+<li>id_content: id of content that will be removed</li>
+</ul>
+<p>example : </p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_content"</span>: <span class="hljs-string">"402145755976826881"</span>
+      }
+
+   }
+}</code></pre><h3 id="content-data-view"><a class="header-link" href="#content-data-view"></a>CONTENT DATA VIEW</h3>
+<ul class="list">
+<li>path: /api/content</li>
+<li>method: post</li>
+<li>respone: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>relation: <a href="./record.html">record</a>, <a href="./zone.html">zone</a>, <a href="./ttldata.html">ttldata</a></li>
+<li>usage: View content data and its related data using one or all tags.</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"view"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: zone::nm_zone,
+        <span class="hljs-attr">"id_record"</span>: record::id_record,
+        <span class="hljs-attr">"id_ttldata"</span>: ttldata:id_ttldata
+      }         
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>nm_zone: Filter search by zone name</li>
+<li>id_record: Filter search by record&#39;s id</li>
+<li>id_ttldata: Filter search by ttldata&#39;s id</li>
+</ul>
+<pre class="hljs"><code>example:
+{
+    <span class="hljs-string">"view"</span>: {
+        <span class="hljs-string">"tags"</span>: {
+            <span class="hljs-string">"id_record"</span>: <span class="hljs-string">"425573109236203521"</span>
+        }
+    }
+}</code></pre>    </article>
+  </body>
+</html>

@@ -140,13 +140,13 @@ raw:
       }     	
    }
 }
-
+```
 tags:
 - nm_zone: Filter search by zone name
 - id_record: Filter search by record's id
 - id_ttldata: Filter search by ttldata's id
 
-
+```
 example:
 {
     "view": {
@@ -155,3 +155,4 @@ example:
         }
     }
 }
+```

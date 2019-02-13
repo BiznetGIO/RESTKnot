@@ -19,9 +19,9 @@
 }
 ```
 
-- id_type indicates the type of record that is input please choose by taking one of the options from TYPE data
-- id_zone means that where you put the record that you entered please choose by taking one of the options from Zone data
-- date_record recommended to strftime function or equivalent function
+- id_type : The type of the record that will be inserted. See [RULES](rules.md) for further information on available record type.
+- id_zone : id of the zone in which record will be inserted. See [record](record.md) for further information.
+- date_record: recommended using strftime function or equivalent.
 
 example:
 ```
@@ -37,7 +37,7 @@ example:
    }
 }
 ```
-If set in no sub domain change value nm_record to @
+nm_record must not be empty. If you're not planning to create a subdomain, please put '@' as nm_record
 
 example:
 ```
@@ -261,7 +261,7 @@ response:
 }
 ```
 
-### CHECK YOUR SYNC
+### CHECKING YOUR CONFIGURATION
 
 - endpoint: api/sendcommand
 - method: post
@@ -379,7 +379,7 @@ The difference in the MX Type Record is that there is a serial on each record, t
 
 ### ADD SERIAL CONTENT TO MX
 
-The rule for filling in the MX Record is to give Value priority to the content then fill the hostname in the serial content
+The rule for filling in the MX Record is to give Value priority to the content then fill the hostname in the serial content.
 
 - endpoint: api/serial_content
 - method: post
@@ -395,7 +395,7 @@ The rule for filling in the MX Record is to give Value priority to the content t
    }
 }
 ```
-- note my id_record is 402484026268352513
+- note that my id_record is 402484026268352513
 
 
 example:
@@ -588,9 +588,11 @@ response:
 }
 ```
 
-## SRV RECORD
+## OTHERS
 
-Following MX Record Step and Rule
+- SRV records' synchronization is similar to MX RECORD except the body. See [documentation](sendcommand.md) for information
+
+- See [documentation](RULES.md) for available record types and its content
 
 
 

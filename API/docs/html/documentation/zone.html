@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>ZONE ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="zone-endpoint"><a class="header-link" href="#zone-endpoint"></a>ZONE ENDPOINT</h1>
+<p>Zone consists of several endpoints including:</p>
+<h3 id="type-all"><a class="header-link" href="#type-all"></a>TYPE ALL</h3>
+<ul class="list">
+<li>path: /api/zone</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: admin</li>
+<li>usage: Get all zone data</li>
+</ul>
+<h3 id="zone-add"><a class="header-link" href="#zone-add"></a>ZONE ADD</h3>
+<ul class="list">
+<li>path: /api/zone</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Add new zone</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: string
+      }
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_zone: Name of the zone that would be inserted</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: <span class="hljs-string">"tylerberkarya.com"</span>
+      }
+   }
+}</code></pre><p>See <a href="./RULES_add_domain.html">rules</a> for other examples</p>
+<h3 id="zone-where"><a class="header-link" href="#zone-where"></a>ZONE WHERE</h3>
+<ul class="list">
+<li>path: /api/zone</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Find zone data by tag (id or name) for filtering. </li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span>: zone::id_zone,
+        <span class="hljs-attr">"nm_zone"</span>: zone::nm_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of the zone that you&#39;re searching</li>
+<li>nm_zone: name of the zone data that you&#39;re searching</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"nm_type"</span>: <span class="hljs-string">"kucing.com"</span>
+      }
+
+   }
+}</code></pre><h3 id="zone-remove"><a class="header-link" href="#zone-remove"></a>ZONE REMOVE</h3>
+<ul class="list">
+<li>path: /api/zone</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: remove zone</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span>: zone::id_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of zone that will be removed</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span>: <span class="hljs-string">"402329670102745089"</span>
+      }
+   }
+}</code></pre>    </article>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>TTLDATA ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="ttldata-endpoint"><a class="header-link" href="#ttldata-endpoint"></a>TTLDATA ENDPOINT</h1>
+<p>The purpose of TTLData endpoint is to link a record and its ttl value.
+TTLData consists of several endpoints including:</p>
+<h3 id="ttldata-all"><a class="header-link" href="#ttldata-all"></a>TTLDATA ALL</h3>
+<ul class="list">
+<li>path: /api/ttldata</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: admin</li>
+<li>usage: Get all ttl values and its related record id</li>
+</ul>
+<h3 id="ttldata-add"><a class="header-link" href="#ttldata-add"></a>TTLDATA ADD</h3>
+<ul class="list">
+<li>path: /api/ttldata</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>relation: <a href="./record.html">record</a>, <a href="./ttl.html">ttl</a></li>
+<li>usage: Add ttl value for existing record</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+        <span class="hljs-attr">"id_record"</span>: record::id_record,
+        <span class="hljs-attr">"id_ttl"</span>: ttl::id_ttl
+      }
+
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>id_record: ID record that will be processed</li>
+<li>id_ttl: ID ttl that will be inserted to record</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+        <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"420627223526047745"</span>,
+        <span class="hljs-attr">"id_ttl"</span>: <span class="hljs-string">"402427994557939713"</span>
+      }
+
+   }
+}</code></pre><p>See <a href="./RULES_add_record.html#connecting-acnameaaatxt-record-to-ttl-data">rules</a> for steps before adding ttldata</p>
+<h3 id="type-where"><a class="header-link" href="#type-where"></a>TYPE WHERE</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Find ttldata by its id for filtering. </li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: ttldata::id_ttldata
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_ttldata: id of the ttldata that you&#39;re searching</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"402145755976826881"</span>
+      }
+
+   }
+}</code></pre><h3 id="ttldata-remove"><a class="header-link" href="#ttldata-remove"></a>TTLDATA REMOVE</h3>
+<ul class="list">
+<li>path: /api/ttldata</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: remove ttl value of a record
+raw:<pre class="hljs"><code>{
+ <span class="hljs-attr">"remove"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_ttldata"</span>: ttldata:id_ttldata
+    }
+ }
+}</code></pre>tags:</li>
+<li>id_ttldata: id of ttldata that will be removed</li>
+</ul>
+<p>example : </p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"402145755976826881"</span>
+      }
+
+   }
+}</code></pre><h3 id="ttldata-view"><a class="header-link" href="#ttldata-view"></a>TTLDATA VIEW</h3>
+<ul class="list">
+<li>path: /api/ttldata</li>
+<li>method: post</li>
+<li>respone: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>relation: <a href="./record.html">record</a>, <a href="./zone.html">zone</a></li>
+<li>usage: View ttldata values and its related data using one or both tags.</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"view"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: zone::nm_zone,
+        <span class="hljs-attr">"id_record"</span>: record::id_record
+      }         
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>nm_zone: Filter search by zone name</li>
+<li>id_record: Filter search by record&#39;s id</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"view"</span>: {
+        <span class="hljs-attr">"tags"</span>: {
+            <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"425573109236203521"</span>
+        }
+    }
+}</code></pre>    </article>
+  </body>
+</html>

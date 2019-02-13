@@ -84,7 +84,8 @@ example:
 - response: application/json
 - body: raw
 - roles: admin
-- usage: remove record type
+- usage: remove zone
+
 raw:
 ```
 {

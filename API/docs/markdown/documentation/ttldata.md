@@ -133,12 +133,13 @@ raw:
       }     	
    }
 }
-
+```
 tags:
 - nm_zone: Filter search by zone name
 - id_record: Filter search by record's id
 
 example:
+```
 {
     "view": {
         "tags": {
@@ -146,3 +147,4 @@ example:
         }
     }
 }
+```

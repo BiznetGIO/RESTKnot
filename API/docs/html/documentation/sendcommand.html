@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>SENDCOMMAND ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="sendcommand-endpoint"><a class="header-link" href="#sendcommand-endpoint"></a>SENDCOMMAND ENDPOINT</h1>
+<p>The purpose of sendcommand is to synchronize records and zones with knot server.</p>
+<p>For steps and practical example, see <a href="./RULES_add_record.html">rules</a></p>
+<p>Sendcommands consists of several endpoints including:</p>
+<h3 id="conf-insert-command"><a class="header-link" href="#conf-insert-command"></a>CONF INSERT COMMAND</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize zone to knot server</li>
+</ul>
+<p>raw</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"conf-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+      }
+   }
+}</code></pre><p>tags: id of target zone</p>
+<h3 id="conf-read"><a class="header-link" href="#conf-read"></a>CONF READ</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: To get whole configuration in knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"conf-read"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+
+      }
+   }
+}</code></pre><h3 id="zone-read"><a class="header-link" href="#zone-read"></a>ZONE READ</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Check configuration of specific zone in knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-read"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of the target zone</li>
+</ul>
+<h3 id="zone-begin"><a class="header-link" href="#zone-begin"></a>ZONE BEGIN</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Start a writing transaction of specific zone in knot server
+raw:<pre class="hljs"><code>{
+ <span class="hljs-attr">"zone-begin"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+    }
+ }
+}</code></pre>tags:</li>
+<li>id_zone: id of target zone</li>
+</ul>
+<h3 id="zone-commit"><a class="header-link" href="#zone-commit"></a>ZONE COMMIT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Commit transaction on specific zone in knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-commit"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of target zone</li>
+</ul>
+<h3 id="synchronizing-record"><a class="header-link" href="#synchronizing-record"></a>SYNCHRONIZING RECORD</h3>
+<hr>
+<h3 id="important"><a class="header-link" href="#important"></a>IMPORTANT</h3>
+<p>Before you synchronize records to knot server, please look at the table below to see which endpoint you should use according to the record&#39;s type</p>
+<table>
+<thead>
+<tr>
+<th>Record Type</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SRV</td>
+<td>zone-srv-insert</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>zone-mx-insert</td>
+</tr>
+<tr>
+<td>SOA</td>
+<td>zone-soa-insert</td>
+</tr>
+<tr>
+<td>NS</td>
+<td>zone-ns-insert,   zone-insert</td>
+</tr>
+<tr>
+<td>Other</td>
+<td>zone-insert</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zone-insert"><a class="header-link" href="#zone-insert"></a>ZONE INSERT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize record with types other than SOA,SRV,MX to knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : record::id_record
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of target record</li>
+</ul>
+<h3 id="zone-soa-insert"><a class="header-link" href="#zone-soa-insert"></a>ZONE SOA INSERT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize SOA type record to knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-soa-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of target zone</li>
+</ul>
+<h3 id="zone-srv-insert"><a class="header-link" href="#zone-srv-insert"></a>ZONE SRV INSERT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize SRV record to knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-srv-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : record::id_record
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of target record</li>
+</ul>
+<h3 id="zone-ns-insert"><a class="header-link" href="#zone-ns-insert"></a>ZONE NS INSERT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize NS record to knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-ns-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : record::id_record
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of target record</li>
+</ul>
+<h3 id="zone-mx-insert"><a class="header-link" href="#zone-mx-insert"></a>ZONE MX INSERT</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Synchronize MX record to knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-mx-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : record::id_record
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of target record</li>
+</ul>
+<h3 id="conf-unset"><a class="header-link" href="#conf-unset"></a>CONF UNSET</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Unset configuration of target zone</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"conf-unset"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_zone: id of target zone</li>
+</ul>
+<h3 id="zone-record-unset"><a class="header-link" href="#zone-record-unset"></a>ZONE RECORD UNSET</h3>
+<ul class="list">
+<li>path: /api/sendcommand</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: unset specific record configuration on knot server</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-unset"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : record::id_record
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of target record</li>
+</ul>
+    </article>
+  </body>
+</html>

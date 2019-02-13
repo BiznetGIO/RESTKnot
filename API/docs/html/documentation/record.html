@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>RECORD ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="record-endpoint"><a class="header-link" href="#record-endpoint"></a>RECORD ENDPOINT</h1>
+<p>Record consists of several endpoints including:</p>
+<h3 id="record-all"><a class="header-link" href="#record-all"></a>RECORD ALL</h3>
+<ul class="list">
+<li>path: /api/record</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: user</li>
+<li>usage: Get all available record data</li>
+</ul>
+<h3 id="record-add"><a class="header-link" href="#record-add"></a>RECORD ADD</h3>
+<ul class="list">
+<li>path: /api/ttl</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: user</li>
+<li>relation: <a href="./zone.html">zone</a>, <a href="./ttl.html">ttl</a>,<a href="./type.html">type</a></li>
+<li>usage: Add new record for an existing zone</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"insert"</span>: {
+        <span class="hljs-attr">"fields"</span>: {
+            <span class="hljs-attr">"nm_record"</span>: string,
+            <span class="hljs-attr">"id_zone"</span>: zone::id_zone,
+            <span class="hljs-attr">"id_type"</span>: type::id_type,
+            <span class="hljs-attr">"date_record"</span>: str
+        }
+    }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_record: Name of the record that&#39;s going to be inserted</li>
+<li>id_zone: ID of corresponding zone for this record</li>
+<li>id_type: ID of the type of this record</li>
+<li>date_record: The date when this record is added, format (YYYYMMDDHH)</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_record"</span>:<span class="hljs-string">"www"</span>,
+        <span class="hljs-attr">"date_record"</span>:<span class="hljs-string">"2018070410"</span>,
+        <span class="hljs-attr">"id_zone"</span>:<span class="hljs-string">"420622599268663297"</span>,
+        <span class="hljs-attr">"id_type"</span>:<span class="hljs-string">"402386688803307521"</span>
+      }
+
+   }
+}</code></pre><p>See <a href="./RULES_add_record.html">rules</a> for other examples</p>
+<h3 id="record-where"><a class="header-link" href="#record-where"></a>RECORD WHERE</h3>
+<ul class="list">
+<li>path: /api/record</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: user</li>
+<li>relation: <a href="./zone.html">zone</a></li>
+<li>usage: Find type data by one or combination of tags for filtering. </li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"where"</span>: {
+        <span class="hljs-attr">"tags"</span>:{
+            <span class="hljs-attr">"id_record"</span>: record::id_record,
+            <span class="hljs-attr">"nm_record"</span>: record::nm_record,
+            <span class="hljs-attr">"id_zone"</span>: zone::id_zone
+        }
+    }
+}</code></pre><ul class="list">
+<li>id_record: Filter data by record&#39;s id</li>
+<li>nm_record: Filter data by record&#39;s name</li>
+<li><p>id_zone: Filter data by zone&#39;s id
+example:</p>
+<pre class="hljs"><code>{
+ <span class="hljs-attr">"where"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_zone"</span>: <span class="hljs-string">"425573109236203521"</span>
+    }
+
+ }
+}</code></pre></li>
+</ul>
+<h3 id="record-remove"><a class="header-link" href="#record-remove"></a>RECORD REMOVE</h3>
+<ul class="list">
+<li>path: /api/record</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: user</li>
+<li>usage: remove record data</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span>: record::id_record
+      }
+
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of record data that will be removed</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402329670102745089"</span>
+      }
+
+   }
+}</code></pre><h3 id="record-view"><a class="header-link" href="#record-view"></a>RECORD VIEW</h3>
+<ul class="list">
+<li>path: /api/record</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: user</li>
+<li>usage: View record and its related data</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span>: record::id_record
+      }
+
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_record: id of record data that will be removed</li>
+</ul>
+<p>raw</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"view"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span>: record::id_record
+      }
+
+   }
+}</code></pre><p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"view"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402329670102745089"</span>
+      }
+
+   }
+}</code></pre>    </article>
+  </body>
+</html>
