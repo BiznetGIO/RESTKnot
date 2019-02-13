@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>TTL ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="ttl-endpoint"><a class="header-link" href="#ttl-endpoint"></a>TTL ENDPOINT</h1>
+<p>TTL consists of several endpoints including:</p>
+<h3 id="ttl-all"><a class="header-link" href="#ttl-all"></a>TTL ALL</h3>
+<ul class="list">
+<li>path: /api/ttl</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: admin</li>
+<li>usage: Get all available TTL values</li>
+</ul>
+<h3 id="ttl-add"><a class="header-link" href="#ttl-add"></a>TTL ADD</h3>
+<ul class="list">
+<li>path: /api/ttl</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Add new TTL value</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"insert"</span>: {
+        <span class="hljs-attr">"fields"</span>: {
+            <span class="hljs-attr">"nm_ttl"</span>: string
+        }
+    }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_ttl : TTL value that&#39;s going to be inserted</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"insert"</span>: {
+        <span class="hljs-attr">"fields"</span>: {
+            <span class="hljs-attr">"nm_ttl"</span>: <span class="hljs-string">"300"</span>
+        }
+    }
+}</code></pre><p>See <a href="./RULES_add_record.html">rules</a> for other examples</p>
+<h3 id="ttl-where"><a class="header-link" href="#ttl-where"></a>TTL WHERE</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Find type data by tag (id or name) for filtering. </li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"where"</span>: {
+        <span class="hljs-attr">"tags"</span>:{
+            <span class="hljs-attr">"id_ttl"</span>: ttl::id_ttl,
+            <span class="hljs-attr">"nm_ttl"</span>: string
+        }
+    }
+}</code></pre><ul class="list">
+<li>id_ttl: id of the ttl that you&#39;re searching</li>
+<li>nm_ttl: name of the ttl that you&#39;re searching</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"nm_ttl"</span>: <span class="hljs-string">"300"</span>
+      }
+
+   }
+}</code></pre><h3 id="ttl-remove"><a class="header-link" href="#ttl-remove"></a>TTL REMOVE</h3>
+<ul class="list">
+<li>path: /api/ttl</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: remove ttl values</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttl"</span>: ttl::id_ttl
+      }
+
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_ttl: id of ttl value that will be removed</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_ttl"</span>: <span class="hljs-string">"402329670102745089"</span>
+      }
+
+   }
+}</code></pre>    </article>
+  </body>
+</html>

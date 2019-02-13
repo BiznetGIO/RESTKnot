@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>TYPE ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="type-endpoint"><a class="header-link" href="#type-endpoint"></a>TYPE ENDPOINT</h1>
+<p>Type consists of several endpoints including:</p>
+<h3 id="type-all"><a class="header-link" href="#type-all"></a>TYPE ALL</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: admin</li>
+<li>usage: Get all data on record type</li>
+</ul>
+<h3 id="type-add"><a class="header-link" href="#type-add"></a>TYPE ADD</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Add new record type value</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_type"</span>: string
+      }
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_type: Record type that&#39;s going to be inserted</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_type"</span>: <span class="hljs-string">"A"</span>
+      }
+   }
+}</code></pre><p>See <a href="./RULES_add_record.html">rules</a> for other examples</p>
+<h3 id="type-where"><a class="header-link" href="#type-where"></a>TYPE WHERE</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Find type data by tag (id or name) for filtering. </li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_type"</span>: type::id_type,
+         <span class="hljs-attr">"nm_type"</span>: type::nm_type
+      }
+   }
+}</code></pre><p>tags:</p>
+<ul class="list">
+<li>id_type: id of the record that you&#39;re searching</li>
+<li>nm_type: name of the record data that you&#39;re searching</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"where"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"nm_type"</span>: <span class="hljs-string">"SOA"</span>
+      }
+
+   }
+}</code></pre><h3 id="type-remove"><a class="header-link" href="#type-remove"></a>TYPE REMOVE</h3>
+<ul class="list">
+<li>path: /api/type</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: remove record type
+raw:<pre class="hljs"><code>{
+ <span class="hljs-attr">"remove"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_type"</span>: type::id_type
+    }
+ }
+}</code></pre>tags:</li>
+<li>id_type: id of record type that will be removed</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"remove"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_type"</span>: <span class="hljs-string">"402329670102745089"</span>
+      }
+   }
+}</code></pre>    </article>
+  </body>
+</html>

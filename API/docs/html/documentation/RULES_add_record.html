@@ -1,0 +1,521 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>CREATE RECORD</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="create-record"><a class="header-link" href="#create-record"></a>CREATE RECORD</h1>
+<h2 id="a,cname,aaa,txt-record"><a class="header-link" href="#a,cname,aaa,txt-record"></a>A,CNAME,AAA,TXT RECORD</h2>
+<h3 id="create-record-1"><a class="header-link" href="#create-record-1"></a>create record</h3>
+<ul class="list">
+<li>endpoint: api/record</li>
+<li>method: post</li>
+<li><p>raw : json</p>
+<pre class="hljs"><code>{
+ <span class="hljs-string">"insert"</span>: {
+    <span class="hljs-string">"fields"</span>: {
+        <span class="hljs-string">"nm_record"</span>: <span class="hljs-built_in">string</span>,
+      <span class="hljs-string">"date_record"</span>: <span class="hljs-built_in">string</span>, #format <span class="hljs-number">2018070410</span>
+      <span class="hljs-string">"id_zone"</span>: zone<span class="hljs-type">::id_zone</span>,
+      <span class="hljs-string">"id_type"</span>: <span class="hljs-keyword">type</span><span class="hljs-type">::id_type</span>
+    }
+
+ }
+}</code></pre></li>
+<li><p>id_type : The type of the record that will be inserted. See <a href="./rules.html">RULES</a> for further information on available record type.</p>
+</li>
+<li>id_zone : id of the zone in which record will be inserted. See <a href="./record.html">record</a> for further information.</li>
+<li>date_record: recommended using strftime function or equivalent.</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_record"</span>:<span class="hljs-string">"pipit"</span>,
+        <span class="hljs-attr">"date_record"</span>:<span class="hljs-string">"2018070410"</span>,
+        <span class="hljs-attr">"id_zone"</span>:<span class="hljs-string">"402468020781678593"</span>,
+        <span class="hljs-attr">"id_type"</span>:<span class="hljs-string">"402386688803307521"</span>
+      }
+
+   }
+}</code></pre><p>nm_record must not be empty. If you&#39;re not planning to create a subdomain, please put &#39;@&#39; as nm_record</p>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_record"</span>:<span class="hljs-string">"@"</span>,
+        <span class="hljs-attr">"date_record"</span>:<span class="hljs-string">"2018070410"</span>,
+        <span class="hljs-attr">"id_zone"</span>:<span class="hljs-string">"402468020781678593"</span>,
+        <span class="hljs-attr">"id_type"</span>:<span class="hljs-string">"402386688803307521"</span>
+      }
+
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">4</span>,
+    <span class="hljs-attr">"data"</span>: {
+        <span class="hljs-attr">"id_zone"</span>: <span class="hljs-string">"402468020781678593"</span>,
+        <span class="hljs-attr">"id_type"</span>: <span class="hljs-string">"402386688803307521"</span>,
+        <span class="hljs-attr">"nm_record"</span>: <span class="hljs-string">"pipit"</span>,
+        <span class="hljs-attr">"date_record"</span>: <span class="hljs-string">"2018070410"</span>
+    },
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: {
+        <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Fine!"</span>
+    }
+}</code></pre><h3 id="connecting-a,cname,aaa,txt-record-to-ttl-data"><a class="header-link" href="#connecting-a,cname,aaa,txt-record-to-ttl-data"></a>Connecting A,CNAME,AAA,TXT record to TTL Data</h3>
+<ul class="list">
+<li>endpoint: api/ttldata</li>
+<li>method: post</li>
+<li><p>raw : json</p>
+<pre class="hljs"><code>{
+ <span class="hljs-attr">"insert"</span>: {
+    <span class="hljs-attr">"fields"</span>: {
+      <span class="hljs-attr">"id_record"</span>: record::id_record,
+      <span class="hljs-attr">"id_ttl"</span>: ttl::id_ttl
+    }
+
+ }
+}</code></pre></li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+        <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402475422581915649"</span>,
+        <span class="hljs-attr">"id_ttl"</span>: <span class="hljs-string">"402427994557939713"</span>
+      }
+
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">"data"</span>: {
+        <span class="hljs-attr">"id_ttl"</span>: <span class="hljs-string">"402427994557939713"</span>,
+        <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402475422581915649"</span>
+    },
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: {
+        <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Fine!"</span>
+    }
+}</code></pre><h3 id="add-content-for-your-record"><a class="header-link" href="#add-content-for-your-record"></a>Add Content For Your Record</h3>
+<ul class="list">
+<li>endpoint: api/content</li>
+<li>method: post</li>
+<li><p>raw : json</p>
+<pre class="hljs"><code>{
+ <span class="hljs-attr">"insert"</span>: {
+    <span class="hljs-attr">"fields"</span>: {
+        <span class="hljs-attr">"id_ttldata"</span>: ttldata::id_ttldata,
+      <span class="hljs-attr">"nm_content"</span>: string
+    }
+
+ }
+}</code></pre><p>keep in mind that the value of nm_content can be different according to the RECORD TYPE you entered, in this example the author uses an IP address because the record entered is type A</p>
+</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"4024786369878017"</span>,
+        <span class="hljs-attr">"nm_content"</span>: <span class="hljs-string">"1.1.1.1"</span>
+      }
+
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">"data"</span>: {
+        <span class="hljs-attr">"id_ttldata"</span>: <span class="hljs-string">"402476086369878017"</span>,
+        <span class="hljs-attr">"nm_content"</span>: <span class="hljs-string">"1.1.1.1"</span>
+    },
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: {
+        <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Fine!"</span>
+    }
+}</code></pre><h3 id="sync-your-record-to-knot"><a class="header-link" href="#sync-your-record-to-knot"></a>SYNC YOUR RECORD TO KNOT</h3>
+<ul class="list">
+<li>endpoint: api/sendcommand</li>
+<li>method: post</li>
+<li>raw : json<pre class="hljs"><code>{
+ <span class="hljs-attr">"zone-insert"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_record"</span> : record::id_record
+    }
+ }
+}</code></pre></li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : <span class="hljs-string">"402475422581915649"</span>
+      }
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"command"</span>: [
+                {
+                    <span class="hljs-attr">"zone-begin"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                },
+                {
+                    <span class="hljs-attr">"zone-set"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-set"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>,
+                                <span class="hljs-attr">"owner"</span>: <span class="hljs-string">"pipit"</span>,
+                                <span class="hljs-attr">"rtype"</span>: <span class="hljs-string">"A"</span>,
+                                <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"14400"</span>,
+                                <span class="hljs-attr">"data"</span>: <span class="hljs-string">"1.1.1.1"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                },
+                {
+                    <span class="hljs-attr">"zone-commit"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ],
+            <span class="hljs-attr">"receive"</span>: {}
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h3 id="checking-your-configuration"><a class="header-link" href="#checking-your-configuration"></a>CHECKING YOUR CONFIGURATION</h3>
+<ul class="list">
+<li>endpoint: api/sendcommand</li>
+<li>method: post</li>
+<li>raw : json<pre class="hljs"><code>{
+ <span class="hljs-attr">"zone-read"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_zone"</span> : zone::id_zone
+    }
+ }
+}</code></pre></li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-read"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : <span class="hljs-string">"402468020781678593"</span>
+      }
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"command"</span>: [
+                {
+                    <span class="hljs-attr">"zone-read"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-read"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ],
+            <span class="hljs-attr">"receive"</span>: {
+                <span class="hljs-attr">"mainburung.com."</span>: {
+                    <span class="hljs-attr">"mainburung.com."</span>: {
+                        <span class="hljs-attr">"NS"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id."</span>,
+                                <span class="hljs-string">"hostmaster.biz.net.id."</span>
+                            ]
+                        },
+                        <span class="hljs-attr">"SOA"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id. hostmaster.biz.net.id. 2018112223 10800 3600 604800 38400"</span>
+                            ]
+                        }
+                    },
+                    <span class="hljs-attr">"pipit.mainburung.com."</span>: {
+                        <span class="hljs-attr">"A"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"14400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"1.1.1.1"</span>
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h3 id="additional"><a class="header-link" href="#additional"></a>Additional</h3>
+<pre class="hljs"><code><span class="hljs-attribute">A</span>:
+    <span class="hljs-attribute">content</span>:
+          <span class="hljs-attribute">IP</span>:
+            <span class="hljs-attribute">type</span>: string
+            <span class="hljs-attribute">example</span>: <span class="hljs-string">"1.1.1.1"</span>
+<span class="hljs-attribute">CNAME</span>:
+    <span class="hljs-attribute">content</span>:
+          <span class="hljs-attribute">hostname</span>:
+            <span class="hljs-attribute">type</span>: string
+            <span class="hljs-attribute">example</span>: "host.com
+<span class="hljs-attribute">AAAA</span>:
+    <span class="hljs-attribute">content</span>:
+          <span class="hljs-attribute">IPv6</span>:
+            <span class="hljs-attribute">type</span>: string
+            <span class="hljs-attribute">example</span>: <span class="hljs-string">"fe80::638f:c7a3:2545:6857"</span>
+<span class="hljs-attribute">NS</span>:
+    <span class="hljs-attribute">content</span>:
+        <span class="hljs-attribute">nameserver</span>:
+            <span class="hljs-attribute">type</span>: string
+            <span class="hljs-attribute">example</span>: <span class="hljs-string">"ns1.biz.net.id."</span>
+</code></pre><h2 id="mx-record"><a class="header-link" href="#mx-record"></a>MX RECORD</h2>
+<p>The difference in the MX Type Record is that there is a serial on each record, the step to enter the same record until it completes entering the content</p>
+<h3 id="add-serial-content-to-mx"><a class="header-link" href="#add-serial-content-to-mx"></a>ADD SERIAL CONTENT TO MX</h3>
+<p>The rule for filling in the MX Record is to give Value priority to the content then fill the hostname in the serial content.</p>
+<ul class="list">
+<li>endpoint: api/serial_content</li>
+<li>method: post</li>
+<li><p>raw : json</p>
+<pre class="hljs"><code>{
+ <span class="hljs-attr">"insert"</span>: {
+    <span class="hljs-attr">"fields"</span>: {
+        <span class="hljs-attr">"nm_content_serial"</span>: string,
+      <span class="hljs-attr">"id_record"</span>: record::id_record
+    }
+
+ }
+}</code></pre></li>
+<li>note that my id_record is 402484026268352513</li>
+</ul>
+<p>example:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_content_serial"</span>: <span class="hljs-string">"host.com"</span>,
+        <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402484026268352513"</span>
+      }
+
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">"data"</span>: {
+        <span class="hljs-attr">"nm_content_serial"</span>: <span class="hljs-string">"host.com"</span>,
+        <span class="hljs-attr">"id_record"</span>: <span class="hljs-string">"402484026268352513"</span>
+    },
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: {
+        <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Fine!"</span>
+    }
+}</code></pre><h3 id="sync-your-mx-content"><a class="header-link" href="#sync-your-mx-content"></a>SYNC YOUR MX CONTENT</h3>
+<ul class="list">
+<li>endpoint: api/sendcommand</li>
+<li>method: post</li>
+<li>raw : json<pre class="hljs"><code>{
+ <span class="hljs-attr">"zone-mx-insert"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+        <span class="hljs-attr">"id_record"</span> : <span class="hljs-string">"402468020781678593"</span>
+    }
+ }
+}</code></pre></li>
+</ul>
+<p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"data"</span>: [
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-begin"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ],
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Block Type Command Execute"</span>
+            }
+        ],
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-read"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ]
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h3 id="check-mx-record"><a class="header-link" href="#check-mx-record"></a>CHECK MX RECORD</h3>
+<ul class="list">
+<li>endpoint: api/sendcommand</li>
+<li>method: post</li>
+<li>raw : json<pre class="hljs"><code>{
+ <span class="hljs-attr">"zone-read"</span>: {
+    <span class="hljs-attr">"tags"</span>: {
+    }
+ }
+}</code></pre></li>
+</ul>
+<p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"command"</span>: [
+                {
+                    <span class="hljs-attr">"zone-read"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-read"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ],
+            <span class="hljs-attr">"receive"</span>: {
+                <span class="hljs-attr">"mainburung.com."</span>: {
+                    <span class="hljs-attr">"mainburung.com."</span>: {
+                        <span class="hljs-attr">"NS"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id."</span>,
+                                <span class="hljs-string">"hostmaster.biz.net.id."</span>
+                            ]
+                        },
+                        <span class="hljs-attr">"SOA"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id. hostmaster.biz.net.id. 2018112224 10800 3600 604800 38400"</span>
+                            ]
+                        }
+                    },
+                    <span class="hljs-attr">"pipit.mainburung.com."</span>: {
+                        <span class="hljs-attr">"A"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"14400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"1.1.1.1"</span>
+                            ]
+                        }
+                    },
+                    <span class="hljs-attr">"tekukur.mainburung.com."</span>: {
+                        <span class="hljs-attr">"MX"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"14400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"0 host.com.mainburung.com."</span>
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h2 id="others"><a class="header-link" href="#others"></a>OTHERS</h2>
+<ul class="list">
+<li><p>SRV records&#39; synchronization is similar to MX RECORD except the body. See <a href="./sendcommand.html">documentation</a> for information</p>
+</li>
+<li><p>See <a href="./RULES.html">documentation</a> for available record types and its content</p>
+</li>
+</ul>
+    </article>
+  </body>
+</html>
