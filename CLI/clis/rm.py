@@ -53,7 +53,6 @@ class Rm(Base):
                     sys.stderr.write("Data doesn't exist")
                     sys.stderr.write(str(e))
                     exit()
-
             else:
                 zone = ls.list_dns()
                 zone = zone['data']
