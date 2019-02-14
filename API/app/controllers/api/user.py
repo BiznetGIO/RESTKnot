@@ -3,9 +3,11 @@ from app.helpers.rest import *
 from app.helpers.memcache import *
 import datetime
 from app.models import model as db
+from app.middlewares.auth import login_required
 
 
 class UserdataResource(Resource):
+    @login_required
     def get(self):
         obj_userdata = list()
         try:
@@ -73,6 +75,7 @@ class UserdataInsert(Resource):
 
 
 class UserdataRemove(Resource):
+    @login_required
     def delete(self, userdata_id):
         try:
             db.delete(
@@ -91,7 +94,7 @@ class UserdataRemove(Resource):
         finally:
             return response(200, message=message)
 
-
+@login_required
 class UserdataUpdate(Resource):
     def put(self, userdata_id):
         parser = reqparse.RequestParser()
