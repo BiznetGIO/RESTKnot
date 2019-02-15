@@ -10,7 +10,7 @@ from tabulate import tabulate
 
 class Ls(Base):
     """
-    usage:
+    Usage:
         ls ttl
         ls type
         ls record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
@@ -19,12 +19,17 @@ class Ls(Base):
 
     Options :
     
-    --nm                        Show list of selected zone
-
+    --nm-zone ZNNAME            Filter by zone's name
+    --nm-record NAME            Filter by record's name
+    --type TYPE                 Filter by record's type
+    -h --help                   Print usage and helps
+    
     Commands:
      ttl                        List available ttl
      type                       List available type 
-    
+     record                     List available record
+     zone                       List available zone
+
     """
     #@login_required
     def execute(self):
@@ -43,16 +48,16 @@ class Ls(Base):
                 exit()
             util.convert(vallist)
             vallist = vallist['data']
-            show = list()
-            for i in vallist:
-                var = {"DNS NAME" : i}
-                show.append(var)
+            d_dns = list()
+            for row in vallist:
+                state = sort.get_data("zone","state","nm_zone",row)
+                state = state["data"][0]
+                d_dns.append({"nm_zone" : row, "state" : state})
             print('Your Domains List Are : ')
             
-            print(tabulate(show,headers='keys',showindex='always',tablefmt="rst"))
+            print(tabulate(d_dns,headers='keys',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
             if self.args['--nm-zone']:
-                id_record = list()
                 zone = [self.args['--nm-zone']]
                 tags = self.args
                 vallist = ls.list_record(zone,tags)          
@@ -62,13 +67,13 @@ class Ls(Base):
                     zone = zone['data']
                     vallist = sort.list_record(zone)
                 except Exception:
-                    sys.stderr.write(zone['message'])
+                    sys.stderr.write(zone['message']+'\n')
                     exit()
             if vallist['status'] and 'data' in vallist:
                 vallist = util.table_cleanup(vallist['data'])
                 print(tabulate(vallist, headers="keys", showindex="always",tablefmt="rst"))
             else :
-                #print(vallist['message'])
-                print("You have no record yet!")
+                
+                print("You have no record yet.")
             
             

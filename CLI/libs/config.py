@@ -60,14 +60,12 @@ def setDefaultDns(name):
     data = {'domain' : str(name)}
     ,headers=header)
     res = res.json()
-    print(res)
     if 'code' not in res :
         sys.stderr.write(res['message'])
         return generate_respons(False,res['message'])
     
-    #tying_zone(header['user_id'],res['data']['data']['id_zone'])
-
-    tags = res['data']['data']['id_zone']
+    tying_zone(header['user_id'],res['data']['data']['id_zone'])
+    # tags = res['data']['data']['id_zone']
     # syncdat = {"command" : "conf-insert", "tags" : str(tags)}
     # res=sync(syncdat)
     # syncdat = {"command" : "zone-soa-insert", "tags" : str(tags)}
@@ -143,19 +141,15 @@ def setRecord(obj):
             temp['--id-content-serial'] = res['message']['id']
         f.close()
 
-    if record_type == 'MX':
-        cmd = 'zone-mx-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
-    elif record_type == 'SRV':
-        cmd = 'zone-srv-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
+    if record_type == 'SOA' or record_type == 'NS':
+        d_sync = {"sync" : record_type, "data" : {"id_zone" : temp['--id-zone']}}
     else :
-        cmd = 'zone-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
+        d_sync = {"sync" : "record", "data" : { "type": record_type, "id_record" : temp['--id-record']}}
+
 
     try:
         pbar.set_description("Sync Data")
-        res = sync(datasync)
+        res = syncdat(d_sync)
         pbar.update(20)
         pbar.close()
         
@@ -164,31 +158,7 @@ def setRecord(obj):
         sys.stderr.write(str(e))
         return generate_respons(False,'Sync failure')
     return generate_respons(True,'success',data)
-
-
-# def remove_data(name,endpoint):
-#     json_data = jsonmodel['rm'][endpoint]['data']
-#     url = get_url(endpoint)
-#     key = get_idkey(endpoint, headers=get_headers())
-#     delid = searchId(endpoint,name)
-#     json_data['remove']['tags'][key] = delid
-#     try :
-#         requests.post(url, data = json.dumps(json_data)
-#         , headers=get_headers())
-#     except Exception as e:
-#         respons = str(e)
-#         print(respons)
-#     return
-
-def sync(obj):
-    cmd = obj['command']
-    tags = obj['tags']
-    data_send = {cmd : {"tags" : ''}}
-
-    data_send[cmd]['tags'] = {"id_record" : tags}
-    res=send_request('command', data_send)
-    return res
-    
+  
 def check_yaml(filename):
     path = ("{}/restknot/"+filename).format(DUMP_FOLDER)
     return os.path.isfile(path)
@@ -198,9 +168,7 @@ def load_yaml(filename):
         data = None
         try:
             with open(("{}/restknot/"+filename).format(DUMP_FOLDER),'r') as f :
-                print(f)
                 data = yaml.load(f)
-                print(locals())
             return generate_respons(True,'success',data)
         except Exception as e:
             return generate_respons(False,str(e))
@@ -243,3 +211,38 @@ def parse_yaml(data):
         respon = generate_respons(False,str(e))
     finally :
         return respon
+
+
+def syncdat(obj):
+    if obj['sync'] == 'dns':
+        d_json = {
+                    "conf-insert": {
+                        "tags": {
+                            "id_zone" : obj['data']['id_zone']
+                        }
+                    }
+                }
+    elif obj['sync'].upper() == 'SOA':
+        d_json = {"zone-soa-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+    elif obj['sync'].upper() == 'NS':
+        d_json = {"zone-ns-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+    elif obj['sync'] == 'record' :    
+        r_type = obj['data']['type']
+        if r_type.upper() == 'SRV':
+            cmd = 'zone-srv-insert'
+        elif r_type.upper() == 'MX':
+            cmd = 'zone-mx-insert'
+        else :
+            cmd = 'zone-insert'
+        d_json = {cmd:{"tags":{"id_record":obj['data']['id_record']}}}
+
+    try : 
+        res = send_request('command',d_json)
+        if res["code"] == 200:
+            return generate_respons(True,"Success")
+        else :
+            return generate_respons(False, "Fail")
+    except Exception as e:
+        print(res)
+        print(d_json)
+        return generate_respons(False,str(e))

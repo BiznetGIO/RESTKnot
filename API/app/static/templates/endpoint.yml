@@ -288,6 +288,11 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
+        id_record:
+          name: name search for ttldata
+          desc: Filter ttldata by id_record
+          type: tags
+          defaul:
       others:
         method:
           name: name search for domain

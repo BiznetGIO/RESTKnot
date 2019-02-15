@@ -74,7 +74,7 @@ def get_time():
     return res
 
 
-def log_err(stdin):
+def log_err(stdin): #pragma: no cover
     coloredlogs.install()
     logging.error(stdin)    
 

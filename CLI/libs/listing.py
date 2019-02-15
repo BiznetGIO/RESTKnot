@@ -57,6 +57,10 @@ def get_data(endpoint,key=None,tags=None,value=None):
         else :
             data = res
         return util.generate_respons(True,"success",data)
+    
+    except TypeError :
+        util.log_err("DNS is empty")
+        return util.generate_respons(False,"DNS is empty")
 
     except Exception as e:
         util.log_err(str(e))
@@ -80,7 +84,6 @@ def list_dns():
                 dnslist.append(temp)
         except Exception as e:
             sys.stderr.write(str(e))
-            #print(str(e))
             return util.generate_respons(False,str(e))
     return util.generate_respons(True,"success",dnslist)
 
