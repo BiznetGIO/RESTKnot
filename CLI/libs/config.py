@@ -141,19 +141,15 @@ def setRecord(obj):
             temp['--id-content-serial'] = res['message']['id']
         f.close()
 
-    if record_type == 'MX':
-        cmd = 'zone-mx-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
-    elif record_type == 'SRV':
-        cmd = 'zone-srv-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
+    if record_type == 'SOA' or record_type == 'NS':
+        d_sync = {"sync" : record_type, "data" : {"id_zone" : temp['--id-zone']}}
     else :
-        cmd = 'zone-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
+        d_sync = {"sync" : "record", "data" : { "type": record_type, "id_record" : temp['--id-record']}}
+
 
     try:
         pbar.set_description("Sync Data")
-        res = sync(datasync)
+        res = syncdat(d_sync)
         pbar.update(20)
         pbar.close()
         
@@ -162,16 +158,7 @@ def setRecord(obj):
         sys.stderr.write(str(e))
         return generate_respons(False,'Sync failure')
     return generate_respons(True,'success',data)
-
-def sync(obj):
-    cmd = obj['command']
-    tags = obj['tags']
-    data_send = {cmd : {"tags" : ''}}
-
-    data_send[cmd]['tags'] = {"id_record" : tags}
-    res=send_request('command', data_send)
-    return res
-    
+  
 def check_yaml(filename):
     path = ("{}/restknot/"+filename).format(DUMP_FOLDER)
     return os.path.isfile(path)
@@ -236,13 +223,13 @@ def syncdat(obj):
                     }
                 }
     elif obj['sync'].upper() == 'SOA':
-        d_json = {"conf-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+        d_json = {"zone-soa-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+    elif obj['sync'].upper() == 'NS':
+        d_json = {"zone-ns-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
     elif obj['sync'] == 'record' :    
         r_type = obj['data']['type']
         if r_type.upper() == 'SRV':
             cmd = 'zone-srv-insert'
-        elif r_type.upper() == 'NS':
-            cmd = 'zone-ns-insert'
         elif r_type.upper() == 'MX':
             cmd = 'zone-mx-insert'
         else :
@@ -251,9 +238,11 @@ def syncdat(obj):
 
     try : 
         res = send_request('command',d_json)
-        if res["code"] == '200':
+        if res["code"] == 200:
             return generate_respons(True,"Success")
         else :
             return generate_respons(False, "Fail")
     except Exception as e:
+        print(res)
+        print(d_json)
         return generate_respons(False,str(e))
