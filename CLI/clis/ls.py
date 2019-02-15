@@ -48,13 +48,16 @@ class Ls(Base):
                 exit()
             util.convert(vallist)
             vallist = vallist['data']
-            vallist = util.table_cleanup(vallist)
+            d_dns = list()
+            for row in vallist:
+                state = sort.get_data("zone","state","nm_zone",row)
+                state = state["data"][0]
+                d_dns.append({"nm_zone" : row, "state" : state})
             print('Your Domains List Are : ')
             
-            print(tabulate(vallist,headers='keys',showindex='always',tablefmt="rst"))
+            print(tabulate(d_dns,headers='keys',showindex='always',tablefmt="rst"))
         elif self.args['record'] :
             if self.args['--nm-zone']:
-                id_record = list()
                 zone = [self.args['--nm-zone']]
                 tags = self.args
                 vallist = ls.list_record(zone,tags)          

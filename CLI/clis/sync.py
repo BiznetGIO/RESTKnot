@@ -53,7 +53,9 @@ separate the index using comma (,)
                         d_sync = { "sync" : "dns", "data" : {"id_zone" : d_id[int(idx)] } }
                         res=app.syncdat(d_sync)
                         # if not res["status"]:
-                        #     sys.stderr.write("Failure on {}".format(d_unsync[idx]["nm_zone"]))             
+                        #     sys.stderr.write("Failure on {}".format(d_unsync[idx]["nm_zone"])) 
+                else :
+                    print("All dns is already synchronized with knot server")            
         elif self.args['record']:
             zone = sort.list_dns()
             zone = zone['data']

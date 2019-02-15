@@ -30,12 +30,15 @@ class Rm(Base):
     def execute(self):
         if self.args['dns']:
             zone = [self.args['--nm']]
-            listdns = ls.list_record(zone)
-            if 'data' in listdns:
-                listdns = listdns['data']
-                listdns = util.table_cleanup(listdns)
-                util.log_warning('The following record will also be deleted\n')
-                print(tabulate(listdns,headers="keys",tablefmt="rst"))
+            try :
+                listdns = ls.list_record(zone)
+                if 'data' in listdns:
+                    listdns = listdns['data']
+                    listdns = util.table_cleanup(listdns)
+                    util.log_warning('The following record will also be deleted\n')
+                    print(tabulate(listdns,headers="keys",tablefmt="rst"))
+            except TypeError :
+                print("DNS don't have record")
             if util.assurance() and check_password():
                 delete.remove_zone(zone[0])
             else:
