@@ -112,8 +112,9 @@ class UserdataRemove(Resource):
         finally:
             return response(200, message=message)
 
-@login_required
+
 class UserdataUpdate(Resource):
+    @login_required
     def put(self, userdata_id):
         parser = reqparse.RequestParser()
         parser.add_argument('project_id', type=str, required=True)

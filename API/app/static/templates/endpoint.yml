@@ -471,6 +471,11 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
         nm_zone:
           name: name search for domain
           desc: Domain Variabel To Search
