@@ -54,7 +54,7 @@ class UserdataResourceByProjectId(Resource):
             return response(200, "User Data Not Found")
         else :
             for i in results: 
-                if i['project_id'] == project_id:
+                if i['project_id'] == str(project_id):
                     data = {
                         "userdata_id" : str(i['userdata_id']),
                         "user_id"     : i['user_id'],
@@ -62,7 +62,7 @@ class UserdataResourceByProjectId(Resource):
                         "created_at"  : str(i['created_at'])
                     }
                     obj_userdata.append(data)
-                return response(200, data=obj_userdata)
+            return response(200, data=obj_userdata)
 
 
 class UserdataInsert(Resource):
