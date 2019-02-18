@@ -20,11 +20,11 @@ api.add_resource(UserdataResource, '/user')
 api.add_resource(UserdataResourceById, '/user/<userdata_id>')
 api.add_resource(UserdataInsert, '/user')
 api.add_resource(UserdataUpdate, '/user/<userdata_id>')
+api.add_resource(UserdataResourceByProjectId, '/user/<project_id>')
 api.add_resource(UserdataRemove, '/user/<userdata_id>')
 api.add_resource(Usersignin,"/login")
 api.add_resource(UserDataZoneInsert,"/userzone")
 api.add_resource(UserDataZoneResource,"/userzone")
-api.add_resource(UserdataResourceByProjectId, '/user/<project_id>')
 
 
 ## DNS API
