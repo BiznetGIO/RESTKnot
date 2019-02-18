@@ -24,6 +24,8 @@ api.add_resource(UserdataRemove, '/user/<userdata_id>')
 api.add_resource(Usersignin,"/login")
 api.add_resource(UserDataZoneInsert,"/userzone")
 api.add_resource(UserDataZoneResource,"/userzone")
+api.add_resource(UserdataResourceByProjectId, '/user/<project_id>')
+
 
 ## DNS API
 api.add_resource(ZoneName, '/zone')

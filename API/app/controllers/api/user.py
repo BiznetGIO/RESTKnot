@@ -73,6 +73,26 @@ class UserdataInsert(Resource):
         finally:
             return response(200, message=message)
 
+class UserdataResourceByProjectId(Resource):
+    @login_required
+    def get(self,project_id):
+        obj_userdata = list()
+        try:
+            results = db.get_all("userdata")
+        except Exception :
+            return response(200, "User Data Not Found")
+        else :
+            for i in results: 
+                if i['project_id'] == project_id:
+                    data = {
+                        "userdata_id" : str(i['userdata_id']),
+                        "user_id"     : i['user_id'],
+                        "project_id"  : i["project_id"],
+                        "created_at"  : str(i['created_at'])
+                    }
+                    obj_userdata.append(data)
+                return response(200, data=obj_userdata)
+
 
 class UserdataRemove(Resource):
     @login_required
