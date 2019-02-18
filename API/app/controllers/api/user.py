@@ -46,6 +46,7 @@ class UserdataResourceById(Resource):
         return response(200, data=obj_userdata)
 
 class UserdataResourceByProjectId(Resource):
+    @login_required
     def get(self,project_id):
         obj_userdata = list()
         try:
