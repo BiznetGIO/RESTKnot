@@ -235,5 +235,4 @@ def syncdat(obj):
             return generate_respons(False, "Fail")
     except Exception as e:
         print(res)
-        print(d_json)
         return generate_respons(False,str(e))
