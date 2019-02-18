@@ -63,15 +63,7 @@ def setDefaultDns(name):
     if 'code' not in res :
         sys.stderr.write(res['message'])
         return generate_respons(False,res['message'])
-    
     tying_zone(header['user_id'],res['data']['data']['id_zone'])
-    # tags = res['data']['data']['id_zone']
-    # syncdat = {"command" : "conf-insert", "tags" : str(tags)}
-    # res=sync(syncdat)
-    # syncdat = {"command" : "zone-soa-insert", "tags" : str(tags)}
-    # res=sync(syncdat)
-    # syncdat = {"command" : "zone-ns-insert", "tags" : str(tags)}
-    # res=sync(syncdat)
 
 def tying_zone(user_id,id_zone):
     header = (get_headers())['data']
@@ -154,7 +146,6 @@ def setRecord(obj):
         pbar.close()
         
     except Exception as e:
-        #print("Error \n",str(e))
         sys.stderr.write(str(e))
         return generate_respons(False,'Sync failure')
     return generate_respons(True,'success',data)
