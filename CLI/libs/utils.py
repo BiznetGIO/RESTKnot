@@ -155,9 +155,7 @@ def get_filter(obj):
             result[var[key]] = obj[key]
     return result
 
-# def check_alphanumeric(str):
-#     print(str)
-#     return re.match('^[\w-]+$', str.strip('.com')) is None
+
 def convert(data):
   if isinstance(data, bytes):      return data.decode()
   if isinstance(data, (str, int)): return str(data)
