@@ -29,6 +29,7 @@ def sync_conf_insert(id_zone):
         # state change
         state = change_state("id_zone", id_zone, "1")
         check = db.update("zn_zone", data = state)
+        print(check)
     cmd.conf_commit_http(url)
 
 def sync_soa(id_zone):
@@ -77,7 +78,7 @@ def addSOADefault(zone):
     type_data = db.get_by_id("zn_type","nm_type","SOA")
 
     record_soa = {
-        "nm_record": zone,
+        "nm_record": '@',
         "date_record": str(date),
         "id_zone":str(zone_data[0]['id_zone']),
         "id_type":str(type_data[0]['id_type'])

@@ -216,10 +216,16 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             data = cmd.conf_unset(tags)
+            data_purge = cmd.conf_purge(tags)
             cmd.conf_begin_http(url)
+            http_respons_purge = utils.send_http(url,data_purge)
             http_respons = utils.send_http(url,data)
+            resp = {
+                "zone-purge": http_respons_purge,
+                "zone-unset": http_respons
+            }
             cmd.conf_commit_http(url)
-            return response(200, data=http_respons)
+            return response(200, data=resp)
         
         if init_data['action'] == 'zone-unset':
             result = list()

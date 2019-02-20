@@ -78,7 +78,7 @@ def addSOADefault(zone):
     type_data = db.get_by_id("zn_type","nm_type","SOA")
 
     record_soa = {
-        "nm_record": zone,
+        "nm_record": '@',
         "date_record": str(date),
         "id_zone":str(zone_data[0]['id_zone']),
         "id_type":str(type_data[0]['id_type'])
