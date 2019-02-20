@@ -550,13 +550,21 @@ def zone_unset(tags):
     rows = db.fetchall()
     for row in rows:
         record.append(dict(zip(column_record, row)))
+    ctdata = list()
+    column_ctdata = model.get_columns("v_contentdata")
+    query = "select * from v_contentdata where id_record='"+str(record[0]['id_record'])+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        ctdata.append(dict(zip(column_ctdata, row)))
     json_command={
         "zone-unset": {
             "sendblock": {
                 "cmd": "zone-unset",
                 "zone": record[0]['nm_zone'],
                 "owner": record[0]['nm_record'],
-                "rtype": record[0]['nm_type']
+                "rtype": record[0]['nm_type'],
+                "data": ctdata[0]['nm_content']
             },
             "receive": {
                 "type": "block"
