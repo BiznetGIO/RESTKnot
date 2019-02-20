@@ -542,6 +542,7 @@ def conf_purge(tags):
     return json_command
 
 def zone_unset(tags):
+    json_command = None
     id_record = tags['id_record']
     record = list()
     column_record = model.get_columns("v_record")
@@ -550,6 +551,15 @@ def zone_unset(tags):
     rows = db.fetchall()
     for row in rows:
         record.append(dict(zip(column_record, row)))
+
+    ttldata = list()
+    column_ttldata = model.get_columns("v_ttldata")
+    query = "select * from v_ttldata where id_record='"+str(record[0]['id_record'])+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        ttldata.append(dict(zip(column_ttldata, row)))
+
     ctdata = list()
     column_ctdata = model.get_columns("v_contentdata")
     query = "select * from v_contentdata where id_record='"+str(record[0]['id_record'])+"'"
@@ -557,19 +567,52 @@ def zone_unset(tags):
     rows = db.fetchall()
     for row in rows:
         ctdata.append(dict(zip(column_ctdata, row)))
+    content_data = ""
+    for ct in ctdata:
+        content_data = content_data+ct['nm_content']
+
+    content_serial = list()
+    column_cserial= model.get_columns("v_content_serial")
+    query = "select * from v_content_serial where id_record='"+str(record[0]['id_record'])+"' AND nm_type='"+record[0]['nm_type']+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        content_serial.append(dict(zip(column_cserial, row)))
+    serial_data = ""
+    if content_serial:
+        for serial in content_serial:
+            serial_data = serial_data+serial['nm_content_serial']
+
     json_command={
         "zone-unset": {
             "sendblock": {
                 "cmd": "zone-unset",
                 "zone": record[0]['nm_zone'],
                 "owner": record[0]['nm_record'],
+                "ttl": ttldata[0]['nm_ttl'],
                 "rtype": record[0]['nm_type'],
-                "data": ctdata[0]['nm_content']
+                "data": content_data+" "+serial_data
             },
             "receive": {
                 "type": "block"
             }
         }
     }
+
+    # json_command={
+    #     "zone-unset": {
+    #         "sendblock": {
+    #             "cmd": "zone-unset",
+    #             "zone": record[0]['nm_zone'],
+    #             "owner": record[0]['nm_record'],
+    #             "ttl": ttldata[0]['nm_ttl'],
+    #             "rtype": record[0]['nm_type'],
+    #             "data": ctdata[0]['nm_content']
+    #         },
+    #         "receive": {
+    #             "type": "block"
+    #         }
+    #     }
+    # }
     return json_command
 
