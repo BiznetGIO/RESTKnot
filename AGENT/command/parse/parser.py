@@ -1,7 +1,7 @@
 from command.utility import utils
 from command.control.libknot import control
 from command.control import client
-import json, os
+import json, os, logging
 
 knot_lib = os.getenv("KNOT_LIB")
 
@@ -105,6 +105,7 @@ def parser_json(obj_data):
 
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
+            
             exec_cliss = utils.exec_shell(cli_shell)
             projec_obj.append({
                 project: exec_cliss
@@ -127,10 +128,13 @@ def parse_command_zone(json_data):
     owner=''
     if own == zone:
         owner = zone
+        cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+    elif own == '@':
+        owner = own
+        cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
     else:
         owner = json_data['owner']+"."+zone
-
-    cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+        cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
     return cli_shell
 
 def execute_command(initialiaze):
