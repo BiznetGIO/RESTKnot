@@ -10,7 +10,8 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+dist/				print('\n\n==============')
+				print(data)
 downloads/
 eggs/
 .eggs/
@@ -126,3 +127,6 @@ requirements_lama.txt
 production/*
 
 testing.py
+
+coverage_html_report/
+.coveragerc
