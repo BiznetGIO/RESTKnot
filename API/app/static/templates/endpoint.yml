@@ -292,7 +292,7 @@ endpoint:
           name: name search for ttldata
           desc: Filter ttldata by id_record
           type: tags
-          defaul:
+          default:
       others:
         method:
           name: name search for domain
@@ -400,7 +400,7 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
-        id_ttldata:
+        id_content:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -477,11 +477,6 @@ endpoint:
           type: tags
           default:
         nm_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_ttldata:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags

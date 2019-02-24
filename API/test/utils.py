@@ -1,16 +1,60 @@
 import json
 import requests
 
-def getId(name,endpoint,tokentest):
-    url = 'http://127.0.0.1:6968/api/'+endpoint
-    val = name
-    key = 'nm_'+endpoint
-    id_key = 'id_'+endpoint
-    res = requests.request("GET",url=url,headers = tokentest)
-    data = res.json()
-    return_id = ''
-    for i in data['data']:
-        if(i[key] == val):
-            return_id = i[id_key]
+
+class setupData:
+	url = {
+			"zone"  : "zone",
+			"ttl"   : "ttl",
+			"type"  : "type",
+			"record": "record",
+			"ttldata":"ttldata",
+			"content":"content",
+			"content_serial":"content_serial",
+			"user"  : "user",
+			"command": "sendcommand",
+			"login" :  "login",
+			"userzone": "userzone"}
+	
+	model = {   
+			"add" : {"insert" : {"fields" : {}}},
+			"remove" : {"remove" : {"tags"  : {}}},
+			"where" : {"where" : {"tags" : {}}},
+            "view" : {"view" : {"tags" : {}}}
+	}
+        
+
+
+
+def get_id(endpoint,data,headers):
+    url = get_url(endpoint)
+    print(url)
+    send = get_model("where",data)
+    send = json.dumps(send)
+    result = requests.post(url=url,data=send,headers=headers)
+    result = result.json()
+    return result['data']
+
+def post_data(endpoint,data,headers):
+    url = get_url(endpoint)
+    data = json.dumps(data)
+    result = requests.post(url=str(url),data=data,headers=headers)
+    result = result.json()
+    return result
+
+def get_url(endpoint):
+    data = setupData()
+    url = "http://127.0.0.1:6968/api/"+data.url[endpoint]
+    return url
+
+def get_model(model,data):
+    json_model = setupData()
+    d_model = json_model.model[model]
+    for i in d_model:
+        for j in d_model[i]:
+            if d_model[i][j]:
+                d_model[i][j].clear()
+            d_model[i][j] = data
+    return d_model
+
     
-    return return_id
