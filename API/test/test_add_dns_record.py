@@ -186,7 +186,7 @@ class TestCreate:
 	@pytest.mark.run(order = 4)
 	def test_search_data(self,client,get_header):
 		d_mock = self.var_mock.ids['result'][0]
-
+		v_end = ['ttldata','record','content','content_serial']
 		for key,value in d_mock.items():
 			if 'id_' in key:
 				url = key.lstrip('id_')
@@ -195,3 +195,15 @@ class TestCreate:
 				data = utils.get_model('where',{key : value})
 				res = self.post_data(client,url,data,get_header)
 				assert res.status_code == 200
+
+				if url in v_end:
+					data = utils.get_model("view",{key : ""})
+					res = self.post_data(client,url,data,get_header)
+					assert res.status_code == 200
+
+
+					data = utils.get_model("view",{"id_record" : d_mock["id_record"]})
+					res = self.post_data(client,url,data,get_header)
+					assert res.status_code == 200
+
+

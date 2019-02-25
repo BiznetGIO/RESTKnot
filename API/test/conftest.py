@@ -19,6 +19,7 @@ class MockData:
             "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "mx_content", "nm_content_serial" : "serial_example"},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
+    creds = {"user_id" : "9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91", "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"}
 
 mock = MockData()
 base_url = "http://127.0.0.1:6968/api/"
@@ -52,7 +53,9 @@ def get_mock():
     return mock.data
 
 
-
+@pytest.fixture
+def get_creds():
+    return mock.creds
 
 
 # @pytest.fixture(scope = 'session', autouse=True)
