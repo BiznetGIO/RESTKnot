@@ -53,3 +53,35 @@ raw
 
 - user_id: user id of your portal neo account
 - project_id: project id of your portal neo account
+
+### CREATING DEFAULT DNS
+- path: /api/user/dnscreate
+- method: post
+- response: application/json
+- body: raw
+- roles: user
+- usage: Create default dns configuration
+
+raw:
+```
+{
+   "insert": {
+      "fields": {
+      	"nm_zone": string
+      }
+   }
+}
+```
+fields:
+- nm_zone: Name of the zone that would be inserted
+
+
+### GET USER DATA BY PROJECT_ID
+
+- path: /api/user/project/{userdata::project_id}
+- method: get
+- response: application/json
+- body: no
+- roles: all
+- usage: Get userdata by project id
+
