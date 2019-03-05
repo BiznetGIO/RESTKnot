@@ -4,8 +4,10 @@ from app.helpers import cmd_parser as cmd
 from app.libs import utils
 from app.models import model as db
 import os
+from app.middlewares.auth import login_required
 
 
+@login_required
 class Slave(Resource):
 	def get(self):
 		command = utils.get_command(request.path)
@@ -111,7 +113,7 @@ class Slave(Resource):
 			finally:
 				return response(200,data=tags,message=respons)
 
-			
+@login_required
 class SlaveNotify(Resource):
 	def get(self):
 		command = utils.get_command(request.path)
@@ -214,7 +216,7 @@ class SlaveNotify(Resource):
 				return response(200,data=tags,message=respons)
 
 
-			
+@login_required
 class SlaveACL(Resource):
 	def get(self):
 		command = utils.get_command(request.path)

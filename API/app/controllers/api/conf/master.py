@@ -4,8 +4,11 @@ from app.helpers import cmd_parser as cmd
 from app.libs import utils
 from app.models import model as db
 import os
+from app.middlewares.auth import login_required
 
 
+
+@login_required
 class MasterData(Resource):
   def get(self):
     command = utils.get_command(request.path)
@@ -111,7 +114,7 @@ class MasterData(Resource):
       finally:
         return response(200,data=tags,message=respons)
 
-      
+@login_required
 class MasterNotify(Resource):
   def get(self):
     command = utils.get_command(request.path)
@@ -216,7 +219,7 @@ class MasterNotify(Resource):
         return response(200,data=tags,message=respons)
 
 
-      
+@login_required
 class MasterACL(Resource):
   def get(self):
     command = utils.get_command(request.path)
