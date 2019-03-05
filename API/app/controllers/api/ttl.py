@@ -23,7 +23,6 @@ class TtlName(Resource):
         except Exception:
             results = None
         else:
-            print(obj_userdata)
             return response(200, data=obj_userdata)
 
     #@jwt_required
