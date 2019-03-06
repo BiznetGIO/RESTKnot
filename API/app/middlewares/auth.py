@@ -6,6 +6,7 @@ from functools import wraps
 from netaddr import IPNetwork, IPAddress
 import os
 
+os.environ["ACL"] = "127.0.0.1"
 
 def check_ip_range(ip, cidr):
     return IPAddress(ip) in IPNetwork(cidr)
