@@ -6,7 +6,6 @@ from functools import wraps
 from netaddr import IPNetwork, IPAddress
 import os
 
-
 def check_ip_range(ip, cidr):
     return IPAddress(ip) in IPNetwork(cidr)
 
