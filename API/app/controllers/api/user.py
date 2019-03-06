@@ -45,6 +45,25 @@ class UserdataResourceById(Resource):
             obj_userdata.append(data)
         return response(200, data=obj_userdata)
 
+class UserdataResourceByUserId(Resource):
+    def get(self, user_id):
+        obj_userdata = []
+        results = db.get_by_id(
+                    table="userdata",
+                    field="user_id",
+                    value=user_id
+                )
+
+        for i in results :
+            data = {
+                    "userdata_id": str(i['userdata_id']),
+                    "user_id" : i['user_id'],
+                    "project_id" : i['project_id'],
+                    "created_at": str(i['created_at'])
+                }
+            obj_userdata.append(data)
+        return response(200, data=obj_userdata)
+
 class UserdataResourceByProjectId(Resource):
     @login_required
     def get(self,project_id):
