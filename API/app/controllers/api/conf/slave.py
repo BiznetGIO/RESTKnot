@@ -7,8 +7,8 @@ import os
 from app.middlewares.auth import login_required
 
 
-@login_required
 class Slave(Resource):
+	@login_required
 	def get(self):
 		command = utils.get_command(request.path)
 		command = "cs_"+command
@@ -27,7 +27,9 @@ class Slave(Resource):
 			results = None
 		else:
 			return response(200, data=obj_userdata)
-
+  
+	
+	@login_required
 	def post(self):
 		json_req = request.get_json(force=True)
 		command = utils.get_command(request.path)
@@ -113,8 +115,9 @@ class Slave(Resource):
 			finally:
 				return response(200,data=tags,message=respons)
 
-@login_required
 class SlaveNotify(Resource):
+
+	@login_required
 	def get(self):
 		command = utils.get_command(request.path)
 		command = "cs_"+command
@@ -133,6 +136,7 @@ class SlaveNotify(Resource):
 		else:
 			return response(200, data=obj_userdata)
 
+	@login_required
 	def post(self):
 		json_req = request.get_json(force=True)
 		command = utils.get_command(request.path)
@@ -216,8 +220,8 @@ class SlaveNotify(Resource):
 				return response(200,data=tags,message=respons)
 
 
-@login_required
 class SlaveACL(Resource):
+	@login_required
 	def get(self):
 		command = utils.get_command(request.path)
 		command = "cs_"+command
@@ -236,6 +240,7 @@ class SlaveACL(Resource):
 		else:
 			return response(200, data=obj_userdata)
 
+	@login_required
 	def post(self):
 		
 		json_req = request.get_json(force=True)

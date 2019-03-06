@@ -8,8 +8,8 @@ from app.middlewares.auth import login_required
 
 
 
-@login_required
 class MasterData(Resource):
+  @login_required
   def get(self):
     command = utils.get_command(request.path)
     command = "cs_"+command
@@ -29,6 +29,7 @@ class MasterData(Resource):
     else:
       return response(200, data=obj_userdata)
 
+  @login_required
   def post(self):
     json_req = request.get_json(force=True)
     command = utils.get_command(request.path)
@@ -114,8 +115,8 @@ class MasterData(Resource):
       finally:
         return response(200,data=tags,message=respons)
 
-@login_required
 class MasterNotify(Resource):
+  @login_required
   def get(self):
     command = utils.get_command(request.path)
     command = "cs_"+command
@@ -133,7 +134,9 @@ class MasterNotify(Resource):
       results = None
     else:
       return response(200, data=obj_userdata)
-
+  
+  
+  @login_required
   def post(self):
     
     json_req = request.get_json(force=True)
@@ -219,8 +222,8 @@ class MasterNotify(Resource):
         return response(200,data=tags,message=respons)
 
 
-@login_required
 class MasterACL(Resource):
+  @login_required
   def get(self):
     command = utils.get_command(request.path)
     command = "cs_"+command
@@ -239,6 +242,8 @@ class MasterACL(Resource):
     else:
       return response(200, data=obj_userdata)
 
+  
+  @login_required  
   def post(self):
 
     json_req = request.get_json(force=True)
