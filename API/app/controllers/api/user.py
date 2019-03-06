@@ -27,6 +27,7 @@ class UserdataResource(Resource):
 
 
 class UserdataResourceById(Resource):
+    @login_required
     def get(self, userdata_id):
         obj_userdata = []
         results = db.get_by_id(
@@ -46,6 +47,7 @@ class UserdataResourceById(Resource):
         return response(200, data=obj_userdata)
 
 class UserdataResourceByUserId(Resource):
+    @login_required
     def get(self, user_id):
         obj_userdata = []
         results = db.get_by_id(
