@@ -95,8 +95,8 @@ function ajaxDor(link,json_data){
 
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
-    // var url_knot = 'http://103.89.5.121';
-    var url_knot = 'http://127.0.0.1';
+    var url_knot = 'http://103.89.5.121';
+    // var url_knot = 'http://127.0.0.1';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -123,6 +123,12 @@ $(document).ready(function(){
             "content": 1,
             "serial":0,
             "id" : "402393625286410241"
+        },
+        {
+            "name": "MX",
+            "content": 1,
+            "serial":1,
+            "id" : "402427545745850369"
         }
     ]
 

@@ -135,6 +135,7 @@ def parse_command_zone(json_data):
     else:
         owner = json_data['owner']+"."+zone
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+    print(cli_shell)
     return cli_shell
 
 def execute_command(initialiaze):

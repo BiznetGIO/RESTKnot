@@ -598,21 +598,36 @@ def zone_unset(tags):
             }
         }
     }
+    return json_command
 
-    # json_command={
-    #     "zone-unset": {
-    #         "sendblock": {
-    #             "cmd": "zone-unset",
-    #             "zone": record[0]['nm_zone'],
-    #             "owner": record[0]['nm_record'],
-    #             "ttl": ttldata[0]['nm_ttl'],
-    #             "rtype": record[0]['nm_type'],
-    #             "data": ctdata[0]['nm_content']
-    #         },
-    #         "receive": {
-    #             "type": "block"
-    #         }
-    #     }
-    # }
+def conf_set_notify_master(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    column_record = model.get_columns("v_cs_notify_slave")
+    query = "select * from v_cs_notify_slave where id_zone='"+fields+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record, row)))
+    data = ""
+    for i in record:
+        data = data+i['nm_slave']+" "
+    data = "'"+data+"'"
+    
+    json_command = {
+        "mx-set": {
+            "sendblock": {
+                "cmd": "conf-set",
+                "zone": record[0]['nm_zone'],
+                "rtype": 'notify',
+                "ttl": "",
+                "data": data
+            },
+            "receive": {
+                "type": "command"
+            }
+        }
+    }
     return json_command
 
