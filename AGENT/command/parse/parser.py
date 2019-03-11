@@ -5,40 +5,6 @@ import json, os, logging
 
 knot_lib = os.getenv("KNOT_LIB")
 
-
-def tes_conn():
-    
-    control.load_lib(knot_lib)
-    ctl = control.KnotCtl()
-    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
-    ctl.connect("/var/run/knot/knot.sock")
-    try:
-        # ctl.send_block(cmd="conf-begin")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-set", section="zone", item="domain", data="ianktesting.com")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-commit")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-read", section="zone", item="domain")
-        # resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-begin", data="ianktesting.com")
-        resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-set", data="ianktesting.com. ianktesting.com. 800 A 10.10.10.10")
-        resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-commit", data="ianktesting.com")
-        resp = ctl.receive_block()
-    except Exception as e:
-        raise e
-    finally:
-        ctl.send(control.KnotCtlType.END)
-        ctl.close()
-
 def check_command(command):
     sdl_data = utils.repodata()
     try:
@@ -118,7 +84,6 @@ def parser_json(obj_data):
             return projec_obj
 
 def parse_command_zone(json_data):
-
     cmd = json_data['cmd']
     zone = json_data['zone']
     own = json_data['owner']
@@ -126,6 +91,7 @@ def parse_command_zone(json_data):
     rtype = json_data['rtype']
     ttl = json_data['ttl']
     owner=''
+    
     if own == zone:
         owner = zone
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
@@ -133,9 +99,11 @@ def parse_command_zone(json_data):
         owner = own
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
     else:
-        owner = json_data['owner']+"."+zone
-        cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
-    print(cli_shell)
+        if rtype=='notify':
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].notify' "+data
+        else:
+            owner = json_data['owner']+"."+zone
+            cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
     return cli_shell
 
 def execute_command(initialiaze):
