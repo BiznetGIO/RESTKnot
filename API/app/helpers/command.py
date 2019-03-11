@@ -612,16 +612,48 @@ def conf_set_notify_master(tags):
         record.append(dict(zip(column_record, row)))
     data = ""
     for i in record:
-        data = data+i['nm_slave']+" "
-    data = "'"+data+"'"
-    
+        data = data+" '"+i['nm_slave']+"'"
     json_command = {
-        "mx-set": {
+        "notify-set": {
             "sendblock": {
                 "cmd": "conf-set",
                 "zone": record[0]['nm_zone'],
                 "rtype": 'notify',
-                "ttl": "",
+                "owner": 'master',
+                "ttl":'',
+                "data": data
+            },
+            "receive": {
+                "type": "command"
+            }
+        }
+    }
+    return json_command
+
+def conf_set_notify_slave(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    column_record = model.get_columns("v_cs_notify_slave")
+    query = "select * from v_cs_notify_slave where id_zone='"+fields+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record, row)))
+    data = ""
+    cek_temps = None
+    for i in record:
+        if cek_temps != i['nm_master']:
+            data = data+"'"+i['nm_master']+"'"
+        cek_temps = i['nm_master']
+    json_command = {
+        "notify-set": {
+            "sendblock": {
+                "cmd": "conf-set",
+                "zone": record[0]['nm_zone'],
+                "rtype": 'notify',
+                "owner": 'slave',
+                "ttl":'',
                 "data": data
             },
             "receive": {

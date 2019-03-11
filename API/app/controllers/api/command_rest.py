@@ -246,13 +246,18 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
+            cmd.conf_begin_http(url)
+            respons = cmd.conf_set_notify_master(tags)
+            http_response = utils.send_http(url,respons)
+            cmd.conf_commit_http(url)
+            return response(200, data=http_response)
 
-            # begin_json = cmd.zone_begin_http(url, tags)
-            # # begin_respon = utils.send_http(url,begin_json)
-            # result.append(begin_json)
-            respons = cmd.conf_set_notify_master(tags) 
+        if init_data['action'] == 'slave-notify':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            # cmd.conf_begin_http(url)
+            respons = cmd.conf_set_notify_slave(tags)
             # http_response = utils.send_http(url,respons)
-            # result.append(http_response)
-            # commit_json = cmd.zone_commit_http(url, tags)
-            # result.append(commit_json)
+            # cmd.conf_commit_http(url)
             return response(200, data=respons)
