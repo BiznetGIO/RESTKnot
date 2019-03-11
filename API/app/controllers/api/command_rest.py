@@ -256,8 +256,8 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            # cmd.conf_begin_http(url)
+            cmd.conf_begin_http(url)
             respons = cmd.conf_set_notify_slave(tags)
-            # http_response = utils.send_http(url,respons)
-            # cmd.conf_commit_http(url)
-            return response(200, data=respons)
+            http_response = utils.send_http(url,respons)
+            cmd.conf_commit_http(url)
+            return response(200, data=http_response)
