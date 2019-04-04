@@ -21,10 +21,21 @@ CREATE TABLE cs_acl_master (
 	id_acl_master INT NOT NULL DEFAULT unique_rowid(),
 	id_zone INT NULL,
 	id_master INT NULL,
+	state INT NOT NULL DEFAULT 0:::INT,
 	CONSTRAINT cs_acl_master_pk PRIMARY KEY (id_acl_master ASC),
 	INDEX cs_acl_master_auto_index_cs_acl_master_zone_fk (id_zone ASC),
 	INDEX cs_acl_master_auto_index_cs_acl_master_cs_master_fk (id_master ASC),
-	FAMILY "primary" (id_acl_master, id_zone, id_master)
+	FAMILY "primary" (id_acl_master, id_zone, id_master, state)
+);
+
+CREATE TABLE cs_acl_master_log (
+	id_cs_acl_master_log INT NOT NULL DEFAULT unique_rowid(),
+	id_acl_master INT NOT NULL,
+	messages VARCHAR NULL,
+	command_type VARCHAR NULL,
+	CONSTRAINT cs_acl_master_log_pk PRIMARY KEY (id_cs_acl_master_log ASC),
+	INDEX cs_acl_master_log_auto_index_cs_acl_master_log_cs_acl_master_fk (id_acl_master ASC),
+	FAMILY "primary" (id_cs_acl_master_log, id_acl_master, messages, command_type)
 );
 
 CREATE TABLE cs_slave (
@@ -41,30 +52,63 @@ CREATE TABLE cs_acl_slave (
 	id_acl_slave INT NOT NULL DEFAULT unique_rowid(),
 	id_acl_master INT NULL,
 	id_slave INT NULL,
+	state INT NULL DEFAULT 0:::INT,
 	CONSTRAINT cs_acl_slave_pk PRIMARY KEY (id_acl_slave ASC),
 	INDEX cs_acl_slave_auto_index_cs_acl_slave_cs_acl_master_fk (id_acl_master ASC),
 	INDEX cs_acl_slave_auto_index_cs_acl_slave_cs_slave_fk (id_slave ASC),
-	FAMILY "primary" (id_acl_slave, id_acl_master, id_slave)
+	FAMILY "primary" (id_acl_slave, id_acl_master, id_slave, state)
+);
+
+CREATE TABLE cs_acl_slave_log (
+	id_cs_slave_log INT NOT NULL DEFAULT unique_rowid(),
+	id_acl_slave INT NOT NULL,
+	command_type VARCHAR NULL,
+	messages VARCHAR NULL,
+	CONSTRAINT "primary" PRIMARY KEY (id_cs_slave_log ASC),
+	INDEX cs_acl_slave_log_auto_index_cs_acl_slave_fk (id_acl_slave ASC),
+	FAMILY "primary" (id_cs_slave_log, id_acl_slave, command_type, messages)
 );
 
 CREATE TABLE cs_notify_master (
 	id_notify_master INT NOT NULL DEFAULT unique_rowid(),
 	id_zone INT NULL,
 	id_master INT NULL,
+	state INT NOT NULL DEFAULT 0:::INT,
 	CONSTRAINT cs_notify_pk PRIMARY KEY (id_notify_master ASC),
 	INDEX cs_notify_auto_index_cs_notify_cs_master_fk (id_master ASC),
 	INDEX cs_notify_auto_index_cs_notify_zone_fk (id_zone ASC),
-	FAMILY "primary" (id_notify_master, id_zone, id_master)
+	FAMILY "primary" (id_notify_master, id_zone, id_master, state)
+);
+
+CREATE TABLE cs_notify_master_log (
+	id_cs_master_log INT NOT NULL DEFAULT unique_rowid(),
+	id_notify_master INT NOT NULL,
+	messages VARCHAR NULL,
+	command_type VARCHAR NULL,
+	CONSTRAINT cs_notify_master_log_pk PRIMARY KEY (id_cs_master_log ASC),
+	INDEX cs_notify_master_log_auto_index_cs_notify_master_log_cs_notify_master_fk (id_notify_master ASC),
+	FAMILY "primary" (id_cs_master_log, id_notify_master, messages, command_type)
 );
 
 CREATE TABLE cs_notify_slave (
 	id_notify_slave INT NOT NULL DEFAULT unique_rowid(),
 	id_notify_master INT NULL,
 	id_slave INT NULL,
+	state INT NOT NULL DEFAULT 0:::INT,
 	CONSTRAINT cs_notify_slave_pk PRIMARY KEY (id_notify_slave ASC),
 	INDEX cs_notify_slave_auto_index_cs_notify_slave_cs_slave_fk (id_slave ASC),
 	INDEX cs_notify_slave_auto_index_cs_notify_slave_cs_notify_master_fk (id_notify_master ASC),
-	FAMILY "primary" (id_notify_slave, id_notify_master, id_slave)
+	FAMILY "primary" (id_notify_slave, id_notify_master, id_slave, state)
+);
+
+CREATE TABLE cs_notify_slave_log (
+	id_cs_notify_slave_log INT NOT NULL DEFAULT unique_rowid(),
+	id_notify_slave INT NOT NULL,
+	messages VARCHAR NULL,
+	command_type VARCHAR NULL,
+	CONSTRAINT cs_notify_slave_log_pk PRIMARY KEY (id_cs_notify_slave_log ASC),
+	INDEX cs_notify_slave_log_auto_index_cs_notify_slave_log_cs_notify_slave_fk (id_notify_slave ASC),
+	FAMILY "primary" (id_cs_notify_slave_log, id_notify_slave, messages, command_type)
 );
 
 CREATE TABLE userdata (
@@ -174,23 +218,55 @@ INSERT INTO zn_zone (id_zone, nm_zone, state) VALUES
 INSERT INTO cs_master (id_master, nm_master, ip_master, port) VALUES
 	(402152439124393985, 'master1', '127.0.0.1', '6967');
 
-INSERT INTO cs_acl_master (id_acl_master, id_zone, id_master) VALUES
-	(440035696139730945, 427820188203778049, 402152439124393985);
+INSERT INTO cs_acl_master (id_acl_master, id_zone, id_master, state) VALUES
+	(440035696139730945, 427820188203778049, 402152439124393985, 0);
+
+INSERT INTO cs_acl_master_log (id_cs_acl_master_log, id_acl_master, messages, command_type) VALUES
+	(440075501029785601, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl'),
+	(440075732972142593, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl'),
+	(440076115867336705, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl'),
+	(440076169721839617, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl'),
+	(440076227652812801, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl'),
+	(440076259252142081, 440035696139730945, e'error: (not exists) zone[kalkun.com].acl = slave1\n', 'acl');
 
 INSERT INTO cs_slave (id_slave, nm_slave, ip_slave, port) VALUES
 	(402152759030939649, 'slave1', '127.0.0.1', '6967'),
 	(402153106273501185, 'slave2', '127.0.0.1', '6967');
 
-INSERT INTO cs_acl_slave (id_acl_slave, id_acl_master, id_slave) VALUES
-	(440036862719524865, 440035696139730945, 402152759030939649),
-	(440036862754717697, 440035696139730945, 402153106273501185);
+INSERT INTO cs_acl_slave (id_acl_slave, id_acl_master, id_slave, state) VALUES
+	(440036862719524865, 440035696139730945, 402152759030939649, 0),
+	(440036862754717697, 440035696139730945, 402153106273501185, 0);
 
-INSERT INTO cs_notify_master (id_notify_master, id_zone, id_master) VALUES
-	(432940401229987841, 427820188203778049, 402152439124393985);
+INSERT INTO cs_acl_slave_log (id_cs_slave_log, id_acl_slave, command_type, messages) VALUES
+	(440079785892904961, 440036862719524865, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440079786731536385, 440036862754717697, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440079901365829633, 440036862719524865, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440079902254333953, 440036862754717697, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440079949388349441, 440036862719524865, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440079950283702273, 440036862754717697, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440080054533914625, 440036862719524865, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n'),
+	(440080055357145089, 440036862754717697, 'add: acl', e'error: (not exists) zone[kalkun.com].acl = notify_from_master\n');
 
-INSERT INTO cs_notify_slave (id_notify_slave, id_notify_master, id_slave) VALUES
-	(432940678112247809, 432940401229987841, 402152759030939649),
-	(432940737990656001, 432940401229987841, 402153106273501185);
+INSERT INTO cs_notify_master (id_notify_master, id_zone, id_master, state) VALUES
+	(432940401229987841, 427820188203778049, 402152439124393985, 0);
+
+INSERT INTO cs_notify_master_log (id_cs_master_log, id_notify_master, messages, command_type) VALUES
+	(440076893305667585, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'notify'),
+	(440076983512334337, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'notify'),
+	(440077241849643009, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'notify'),
+	(440077298529959937, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'notify'),
+	(440077331121700865, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'notify'),
+	(440077686818570241, 432940401229987841, e'error: (not exists) zone[kalkun.com].notify = slave1\n', 'add: notify');
+
+INSERT INTO cs_notify_slave (id_notify_slave, id_notify_master, id_slave, state) VALUES
+	(432940678112247809, 432940401229987841, 402152759030939649, 3),
+	(432940737990656001, 432940401229987841, 402153106273501185, 3);
+
+INSERT INTO cs_notify_slave_log (id_cs_notify_slave_log, id_notify_slave, messages, command_type) VALUES
+	(440078630053347329, 432940678112247809, e'error: (invalid item) zone[kalkun.com].master master1\n', 'add: notify'),
+	(440078630943391745, 432940737990656001, e'error: (invalid item) zone[kalkun.com].master master1\n', 'add: notify'),
+	(440078792802729985, 432940678112247809, e'error: (invalid item) zone[kalkun.com].master master1\n', 'add: notify'),
+	(440078793704374273, 432940737990656001, e'error: (invalid item) zone[kalkun.com].master master1\n', 'add: notify');
 
 INSERT INTO userdata (userdata_id, user_id, project_id, created_at) VALUES
 	(420471426627371009, 'd539f0b5f4ede5de830a56fd959f74069f383f5a00dc1ffd09c01cd18a2b587b', '15e38c18de014fa1b769f12dba4168f3', '2019-01-25 03:48:16.114126+00:00'),
@@ -327,12 +403,16 @@ INSERT INTO zn_user_zone (id_user_zone, userdata_id, id_zone) VALUES
 
 ALTER TABLE cs_acl_master ADD CONSTRAINT cs_acl_master_zone_fk FOREIGN KEY (id_zone) REFERENCES zn_zone (id_zone) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_acl_master ADD CONSTRAINT cs_acl_master_cs_master_fk FOREIGN KEY (id_master) REFERENCES cs_master (id_master);
+ALTER TABLE cs_acl_master_log ADD CONSTRAINT cs_acl_master_log_cs_acl_master_fk FOREIGN KEY (id_acl_master) REFERENCES cs_acl_master (id_acl_master) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_acl_slave ADD CONSTRAINT cs_acl_slave_cs_acl_master_fk FOREIGN KEY (id_acl_master) REFERENCES cs_acl_master (id_acl_master) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_acl_slave ADD CONSTRAINT cs_acl_slave_cs_slave_fk FOREIGN KEY (id_slave) REFERENCES cs_slave (id_slave) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE cs_acl_slave_log ADD CONSTRAINT cs_acl_slave_fk FOREIGN KEY (id_acl_slave) REFERENCES cs_acl_slave (id_acl_slave) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_notify_master ADD CONSTRAINT cs_notify_cs_master_fk FOREIGN KEY (id_master) REFERENCES cs_master (id_master) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_notify_master ADD CONSTRAINT cs_notify_zone_fk FOREIGN KEY (id_zone) REFERENCES zn_zone (id_zone) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE cs_notify_master_log ADD CONSTRAINT cs_notify_master_log_cs_notify_master_fk FOREIGN KEY (id_notify_master) REFERENCES cs_notify_master (id_notify_master) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_notify_slave ADD CONSTRAINT cs_notify_slave_cs_slave_fk FOREIGN KEY (id_slave) REFERENCES cs_slave (id_slave) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE cs_notify_slave ADD CONSTRAINT cs_notify_slave_cs_notify_master_fk FOREIGN KEY (id_notify_master) REFERENCES cs_notify_master (id_notify_master) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE cs_notify_slave_log ADD CONSTRAINT cs_notify_slave_log_cs_notify_slave_fk FOREIGN KEY (id_notify_slave) REFERENCES cs_notify_slave (id_notify_slave) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_record ADD CONSTRAINT fk_id_type_ref_type FOREIGN KEY (id_type) REFERENCES zn_type (id_type) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_record ADD CONSTRAINT fk_id_zone_ref_zone FOREIGN KEY (id_zone) REFERENCES zn_zone (id_zone) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_content_serial ADD CONSTRAINT zn_content_serial_zn_record_fk FOREIGN KEY (id_record) REFERENCES zn_record (id_record) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -345,12 +425,16 @@ ALTER TABLE zn_user_zone ADD CONSTRAINT fk_userdata_id_ref FOREIGN KEY (userdata
 -- Validate foreign key constraints. These can fail if there was unvalidated data during the dump.
 ALTER TABLE cs_acl_master VALIDATE CONSTRAINT cs_acl_master_zone_fk;
 ALTER TABLE cs_acl_master VALIDATE CONSTRAINT cs_acl_master_cs_master_fk;
+ALTER TABLE cs_acl_master_log VALIDATE CONSTRAINT cs_acl_master_log_cs_acl_master_fk;
 ALTER TABLE cs_acl_slave VALIDATE CONSTRAINT cs_acl_slave_cs_acl_master_fk;
 ALTER TABLE cs_acl_slave VALIDATE CONSTRAINT cs_acl_slave_cs_slave_fk;
+ALTER TABLE cs_acl_slave_log VALIDATE CONSTRAINT cs_acl_slave_fk;
 ALTER TABLE cs_notify_master VALIDATE CONSTRAINT cs_notify_cs_master_fk;
 ALTER TABLE cs_notify_master VALIDATE CONSTRAINT cs_notify_zone_fk;
+ALTER TABLE cs_notify_master_log VALIDATE CONSTRAINT cs_notify_master_log_cs_notify_master_fk;
 ALTER TABLE cs_notify_slave VALIDATE CONSTRAINT cs_notify_slave_cs_slave_fk;
 ALTER TABLE cs_notify_slave VALIDATE CONSTRAINT cs_notify_slave_cs_notify_master_fk;
+ALTER TABLE cs_notify_slave_log VALIDATE CONSTRAINT cs_notify_slave_log_cs_notify_slave_fk;
 ALTER TABLE zn_record VALIDATE CONSTRAINT fk_id_type_ref_type;
 ALTER TABLE zn_record VALIDATE CONSTRAINT fk_id_zone_ref_zone;
 ALTER TABLE zn_content_serial VALIDATE CONSTRAINT zn_content_serial_zn_record_fk;

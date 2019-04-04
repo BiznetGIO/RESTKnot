@@ -638,7 +638,8 @@ def conf_set_notify_master(tags):
                     "type": "command",
                     "master": keys['nm_master'],
                     "uri": keys['ip_master'],
-                    "port": keys['port']
+                    "port": keys['port'],
+                    "id_notify_master": keys['id_notify_master']
                 }
             }
         }
@@ -689,7 +690,8 @@ def conf_set_notify_slave(tags):
                     "type": "command",
                     "slave": keys['nm_slave'],
                     "uri":keys['ip_slave'],
-                    "port": keys['slave_port']
+                    "port": keys['slave_port'],
+                    "id_notify_slave": keys['id_notify_slave']
                 }
             }
         }
@@ -735,7 +737,8 @@ def conf_set_acl_master(tags):
                     "type": "command",
                     "master": keys['nm_master'],
                     "uri": keys['ip_master'],
-                    "port": keys['port']
+                    "port": keys['port'],
+                    "id_acl_master": keys['id_acl_master']
                 }
             }
         }
@@ -748,15 +751,15 @@ def conf_set_acl_slave(tags):
     fields = tags['id_zone']
     record = list()
     record_master = list()
-    column_record_slave = model.get_columns("v_cs_notify_slave")
-    query_slave = "select * from v_cs_notify_slave where id_zone='"+fields+"'"
+    column_record_slave = model.get_columns("v_cs_acl_slave")
+    query_slave = "select * from v_cs_acl_slave where id_zone='"+fields+"'"
     db.execute(query_slave)
     rows = db.fetchall()
     for row in rows:
         record.append(dict(zip(column_record_slave, row)))
 
-    column_record_master = model.get_columns("v_cs_notify_master")
-    query_master = "select * from v_cs_notify_master where id_zone='"+fields+"'"
+    column_record_master = model.get_columns("v_cs_acl_master")
+    query_master = "select * from v_cs_acl_master where id_zone='"+fields+"'"
     db.execute(query_master)
     rows_master = db.fetchall()
     for r_master in rows_master:
@@ -772,6 +775,7 @@ def conf_set_acl_slave(tags):
     json_command = list()
 
     for keys in record:
+        print(keys)
         json_data = {
             "cluster-set": {
                 "sendblock": {
@@ -786,7 +790,8 @@ def conf_set_acl_slave(tags):
                     "type": "command",
                     "slave": keys['nm_slave'],
                     "uri":keys['ip_slave'],
-                    "port": keys['slave_port']
+                    "port": keys['port_slave'],
+                    "id_acl_slave": keys['id_acl_slave']
                 }
             }
         }

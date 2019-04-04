@@ -74,3 +74,15 @@ receive:
     slave_uri:
       name : Type
       description: Type Receive
+    id_acl_master:
+      name : Type
+      description: Type Receive
+    id_acl_slave:
+      name : Type
+      description: Type Receive
+    id_notify_master:
+      name : Type
+      description: Type Receive
+    id_notify_slave:
+      name : Type
+      description: Type Receive
