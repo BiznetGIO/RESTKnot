@@ -68,10 +68,12 @@ def parser_json(obj_data):
                 action_obj.append({
                     action: data_obj
                 })
-
+            # print("DEBUG : ", action_obj)
+        
+        
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
-            
+            print(cli_shell)
             exec_cliss = utils.exec_shell(cli_shell)
             projec_obj.append({
                 project: exec_cliss
@@ -91,7 +93,6 @@ def parse_command_zone(json_data):
     rtype = json_data['rtype']
     ttl = json_data['ttl']
     owner=''
-    
     if own == zone:
         owner = zone
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
@@ -99,8 +100,18 @@ def parse_command_zone(json_data):
         owner = own
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
     else:
-        if rtype=='notify':
+        if rtype=='notify' and own=="slave":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].master '"+data
+        elif rtype=='notify' and own=="master":
             cli_shell = "knotc "+cmd+" 'zone["+zone+"].notify' "+data
+        elif rtype=='acl' and own=="master":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' "+data
+        elif rtype=='acl' and own=="slave":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' 'notify_from_master'"
+        elif rtype=='file' and own=="all":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].file' '"+zone+".zone'"
+        elif rtype=='module' and own=="all":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].module' 'mod-stats/default'"
         else:
             owner = json_data['owner']+"."+zone
             cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data

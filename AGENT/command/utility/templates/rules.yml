@@ -50,3 +50,27 @@ receive:
     type:
       name : Type
       description: Type Receive
+    master:
+      name : Type
+      description: Type Receive
+    slave:
+      name : Type
+      description: Type Receive
+    uri:
+      name : Type
+      description: Type Receive
+    port:
+      name : Type
+      description: Type Receive
+    master_port:
+      name : Type
+      description: Type Receive
+    slave_port:
+      name : Type
+      description: Type Receive
+    master_uri:
+      name : Type
+      description: Type Receive
+    slave_uri:
+      name : Type
+      description: Type Receive

@@ -246,11 +246,27 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            cmd.conf_begin_http(url)
             respons = cmd.conf_set_notify_master(tags)
-            http_response = utils.send_http(url,respons)
-            cmd.conf_commit_http(url)
-            return response(200, data=http_response)
+            for i in respons:
+                server_port = i['cluster-set']['receive']['port']
+                server_uri = "http://"+i['cluster-set']['receive']['uri']+":"+server_port+"/api/command_rest"
+                cmd.conf_begin_http(server_uri)
+                http_response = utils.send_http(server_uri,i)
+                cmd.conf_commit_http(server_uri)
+            return response(200, data=respons)
+
+        if init_data['action'] == 'master-acl':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.conf_set_acl_master(tags)
+            for i in respons:
+                server_port = i['cluster-set']['receive']['port']
+                server_uri = "http://"+i['cluster-set']['receive']['uri']+":"+server_port+"/api/command_rest"
+                cmd.conf_begin_http(server_uri)
+                http_response = utils.send_http(server_uri,i)
+                cmd.conf_commit_http(server_uri)
+            return response(200, data=respons)
 
         if init_data['action'] == 'slave-notify':
             result = list()
@@ -259,11 +275,67 @@ class SendCommandRest(Resource):
             respons = cmd.conf_set_notify_slave(tags)
             result = list()
             for i in respons:
-                url = i['notify-set']['receive']['uri']
-                url_fix= "http://"+url+":"+port
-                url = url_fix+"/api/command_rest"
-                cmd.conf_begin_http(url)
-                http_response = utils.send_http(url,i)
-                cmd.conf_commit_http(url)
+                url = i['cluster-set']['receive']['uri']
+                url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
+                slave_server_url = url_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
+                result.append(http_response)
+            return response(200, data=result)
+
+        if init_data['action'] == 'slave-acl':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.conf_set_acl_slave(tags)
+            result = list()
+            for i in respons:
+                url = i['cluster-set']['receive']['uri']
+                url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
+                slave_server_url = url_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
+                result.append(http_response)
+            return response(200, data=result)
+
+        if init_data['action'] == 'file-set':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.conf_set_file(tags)
+            result = list()
+            for i in respons:
+                url_slave = i['cluster-set']['receive']['slave_uri']
+                url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
+                slave_server_url = url_slave_fix+"/api/command_rest"
+                url_master = i['cluster-set']['receive']['master_uri']
+                url_master_fix= "http://"+url_master+":"+i['cluster-set']['receive']['master_port']
+                master_server_url = url_master_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                http_response = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
+                result.append(http_response)
+            return response(200, data=result)
+
+        if init_data['action'] == 'module-set':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cmd.conf_set_module(tags)
+            result = list()
+            for i in respons:
+                url_slave = i['cluster-set']['receive']['slave_uri']
+                url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
+                slave_server_url = url_slave_fix+"/api/command_rest"
+                url_master = i['cluster-set']['receive']['master_uri']
+                url_master_fix= "http://"+url_master+":"+i['cluster-set']['receive']['master_port']
+                master_server_url = url_master_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                http_response = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
                 result.append(http_response)
             return response(200, data=result)

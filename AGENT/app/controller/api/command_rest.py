@@ -5,7 +5,6 @@ import json
 class CommandRest(Resource):
     def get(self):
         pass
-
     def post(self):
         json_req = request.get_json(force=True)
         try:
