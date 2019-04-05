@@ -43,7 +43,6 @@ def sync_soa(id_zone):
         # state change
         state = change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
-
     cmd.z_commit(url, tags)
 
 def sync_ns(id_zone):

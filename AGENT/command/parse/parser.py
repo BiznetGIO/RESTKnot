@@ -71,6 +71,7 @@ def parser_json(obj_data):
             # print("DEBUG : ", action_obj)
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
+            print(cli_shell)
             exec_cliss = utils.exec_shell(cli_shell)
             projec_obj.append({
                 project: exec_cliss
@@ -123,6 +124,7 @@ def execute_command(initialiaze):
     try:
         resp = None
         no = 0
+        print(initialiaze)
         for data in initialiaze:
             no = no + 1
             parameter_block = None

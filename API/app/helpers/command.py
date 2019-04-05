@@ -102,18 +102,6 @@ def conf_read():
     }
     return json_command
 
-# def conf_begin():
-#     json_command={
-#         "conf-begin": {
-#             "sendblock": {
-#                 "cmd": "conf-begin"
-#             },
-#             "receive": {
-#                 "type": "block"
-#             }
-#         }
-#     }
-#     utils.sendSocket(json_command)
 
 def conf_begin_http(url):
     json_command={
@@ -128,6 +116,7 @@ def conf_begin_http(url):
     }
     utils.send_http(url, json_command)
 
+
 def conf_commit_http(url):
     json_command={
         "conf-begin": {
@@ -140,6 +129,7 @@ def conf_commit_http(url):
         }
     }
     utils.send_http(url, json_command)
+
 
 def zone_soa_insert_default(tags):
     # Get Zone
@@ -202,7 +192,6 @@ def zone_soa_insert_default(tags):
             }
         }
     }
-    # print(json_command)
     return record[0]['id_record'], json_command
 
 def zone_begin(tags):
@@ -719,7 +708,7 @@ def conf_set_acl_master(tags):
         record_slave.append(dict(zip(column_record_slave, rw)))
     data = ""
     for i in record_slave:
-        data = data+" '"+i['nm_slave']+"'"
+        data = data+" '"+i['nm_slave']+"_acl'"
     json_command = list()
 
     for keys in record:

@@ -64,8 +64,15 @@ def send_http(url, data, headers=None):
     json_data = json.dumps(data)
     send = requests.post(url, data=json_data, headers=headers)
     respons = send.json()
-    data = json.loads(respons['data'])
-    respons['data'] = data
+    try:
+        data = json.loads(respons['data'])
+    except Exception as e:
+        print(url)
+        
+        print(respons)
+        raise
+    else:
+        respons['data'] = data
     return respons
 
 def change_state(field, field_value, state):

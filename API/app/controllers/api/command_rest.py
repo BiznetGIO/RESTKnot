@@ -7,6 +7,7 @@ from app.libs import utils
 # from app import sockets, BaseNamespace
 import json, os
 from app.middlewares.auth import login_required
+from app.helpers import cl_command
 
 
 class SendCommandRest(Resource):
@@ -275,19 +276,19 @@ class SendCommandRest(Resource):
                     else:
                         data_state = {
                             "where":{
-                                "id_acl_master" : str(i['cluster-set']['receive']['id_acl_master'])
+                                "id_notify_master" : str(i['cluster-set']['receive']['id_notify_master'])
                             },
                             "data":{
                                 "state" : "1"
                             }
                         }
                         log_data = {
-                            "id_acl_master": str(i['cluster-set']['receive']['id_acl_master']),
+                            "id_notify_master": str(i['cluster-set']['receive']['id_notify_master']),
                             "messages": a['cluster-set'],
                             "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
                         }
-                    db.insert("cs_acl_master_log", log_data)
-                    db.update("cs_acl_master", data_state)
+                    db.insert("cs_notify_master_log", log_data)
+                    db.update("cs_notify_master", data_state)
                 cmd.conf_commit_http(server_uri)
                 result.append(http_response)
             return response(200, data=result)
@@ -297,6 +298,7 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.conf_set_acl_master(tags)
+            # print(respons)
             for i in respons:
                 server_port = i['cluster-set']['receive']['port']
                 server_uri = "http://"+i['cluster-set']['receive']['uri']+":"+server_port+"/api/command_rest"
@@ -320,8 +322,6 @@ class SendCommandRest(Resource):
                             "messages": a['cluster-set'],
                             "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
                         }
-                        # db.insert("cs_acl_master_log", log_data)
-                        # db.update("cs_acl_master", data_state)
                     else:
                         data_state = {
                             "where":{
@@ -417,7 +417,6 @@ class SendCommandRest(Resource):
                                 "state" : "0"
                             }
                         }
-
                         log_data = {
                             "id_acl_slave": str(i['cluster-set']['receive']['id_acl_slave']),
                             "messages": a['cluster-set'],
@@ -460,12 +459,6 @@ class SendCommandRest(Resource):
                 http_response_slave = utils.send_http(slave_server_url,i)
                 result.append(http_response_slave)
                 http_response = utils.send_http(master_server_url,i)
-                # for a in http_response['description']:
-                #     print(a['cluster-set'])
-                #     if a['cluster-set'] != "OK\n":
-                #         print("AAAAAA")
-                #     else:
-                #         print("BBBBBBB")
                 cmd.conf_commit_http(slave_server_url)
                 result.append(http_response)
 
@@ -476,7 +469,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.conf_set_module(tags)
-            result = list()
             for i in respons:
                 url_slave = i['cluster-set']['receive']['slave_uri']
                 url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
@@ -490,3 +482,10 @@ class SendCommandRest(Resource):
                 cmd.conf_commit_http(slave_server_url)
                 result.append(http_response)
             return response(200, data=result)
+
+        if init_data['action'] == 'cluster-zone':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cl_command.cluster_zone(tags)
+            return response(200, data=respons)
