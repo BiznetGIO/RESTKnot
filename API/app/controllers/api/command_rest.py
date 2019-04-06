@@ -457,9 +457,12 @@ class SendCommandRest(Resource):
                 master_server_url = url_master_fix+"/api/command_rest"
                 cmd.conf_begin_http(slave_server_url)
                 http_response_slave = utils.send_http(slave_server_url,i)
-                result.append(http_response_slave)
-                http_response = utils.send_http(master_server_url,i)
                 cmd.conf_commit_http(slave_server_url)
+                result.append(http_response_slave)
+
+                cmd.conf_begin_http(master_server_url)
+                http_response = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(master_server_url)
                 result.append(http_response)
 
             return response(200, data=result)
@@ -477,10 +480,14 @@ class SendCommandRest(Resource):
                 url_master_fix= "http://"+url_master+":"+i['cluster-set']['receive']['master_port']
                 master_server_url = url_master_fix+"/api/command_rest"
                 cmd.conf_begin_http(slave_server_url)
-                http_response = utils.send_http(slave_server_url,i)
-                http_response = utils.send_http(master_server_url,i)
+                http_response_slave = utils.send_http(slave_server_url,i)
                 cmd.conf_commit_http(slave_server_url)
-                result.append(http_response)
+                result.append(http_response_slave)
+                
+                cmd.conf_begin_http(master_server_url)
+                http_response_master = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(master_server_url)
+                result.append(http_response_master)
             return response(200, data=result)
 
         if init_data['action'] == 'cluster-zone':

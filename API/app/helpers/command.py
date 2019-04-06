@@ -759,12 +759,11 @@ def conf_set_acl_slave(tags):
     cek_temps = None
     for i in record_master:
         if cek_temps != i['nm_master']:
-            data = data+"'"+i['nm_master']+"'"
+            data = data+"'"+i['nm_master']+"_acl'"
         cek_temps = i['nm_master']
     json_command = list()
 
     for keys in record:
-        print(keys)
         json_data = {
             "cluster-set": {
                 "sendblock": {
@@ -778,6 +777,7 @@ def conf_set_acl_slave(tags):
                 "receive": {
                     "type": "command",
                     "slave": keys['nm_slave'],
+                    "master": keys['nm_master'],
                     "uri":keys['ip_slave'],
                     "port": keys['port_slave'],
                     "id_acl_slave": keys['id_acl_slave']

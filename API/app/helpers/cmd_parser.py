@@ -41,26 +41,22 @@ def parser(json, command=None):
                 tags_check = None
 
             if fields_check is None and tags_check is not None:
-                print("FIELDS NONE")
                 parameter = {
                     'table': command,
                     'tags' : tagfields['tags']
                 }
             elif fields_check is not None and tags_check is None:
-                print("TAGS NONE")
                 parameter = {
                     'table': command,
                     'fields' : tagfields['fields']
                 }
             elif fields_check is not None and tags_check is not None:
-                print("TAGS AND FIELD NOT NONE")
                 parameter = {
                     'table': command,
                     'fields' : tagfields['fields'],
                     'tags' : tagfields['tags']
                 }
             else:
-                print("QUERY EXEC")
                 data = {
                     key_query : tagfields[key]
                 }
@@ -123,12 +119,9 @@ def select_query(table,data):
 def insert_query(table,data):
     query = "insert into "+table+""
     column= None
-    print('DATS => ',data['column'])
     if type(data['column']['name']) is list:
-        print('ENTER')
         query = query +"("
         for i in data['column']['name']:
-            print('--> ',i)
             if column is None:
                 column = i
             else:
@@ -159,6 +152,5 @@ def insert_query(table,data):
             query = query+ " returning " + str(data['return'])+";"
     else:
         query = query+";"
-    print('Q=> ',query)
     return query
 

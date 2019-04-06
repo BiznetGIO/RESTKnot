@@ -99,13 +99,13 @@ def parse_command_zone(json_data):
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
     else:
         if rtype=='notify' and own=="slave":
-            cli_shell = "knotc "+cmd+" 'zone["+zone+"].master '"+data
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].master' "+data
         elif rtype=='notify' and own=="master":
             cli_shell = "knotc "+cmd+" 'zone["+zone+"].notify' "+data
         elif rtype=='acl' and own=="master":
             cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' "+data
         elif rtype=='acl' and own=="slave":
-            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' 'notify_from_master'"
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' "+data
         elif rtype=='file' and own=="all":
             cli_shell = "knotc "+cmd+" 'zone["+zone+"].file' '"+zone+".zone'"
         elif rtype=='module' and own=="all":
