@@ -67,8 +67,8 @@ def send_http(url, data, headers=None):
     try:
         data = json.loads(respons['data'])
     except Exception as e:
+        print(e)
         print(url)
-        
         print(respons)
         raise
     else:
