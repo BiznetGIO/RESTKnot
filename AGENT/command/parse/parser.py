@@ -70,7 +70,7 @@ def parser_json(obj_data):
                 })
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
-            print(cli_shell)
+            # print(cli_shell)
             exec_cliss = utils.exec_shell(cli_shell)
             projec_obj.append({
                 project: exec_cliss
