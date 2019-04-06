@@ -186,7 +186,6 @@ $(document).ready(function(){
                 $('#record_section').show()
                 $('#record_table').html("")
                 var data = table.row(this).data();
-                
                 json_data = {
                     "where": {
                        "tags": {
@@ -204,7 +203,6 @@ $(document).ready(function(){
                     data: JSON.stringify(json_data),
                     contentType:"application/json",
                     dataType:"json",
-                    
                     success: function(respon){
                         console.log(respon.data)
                         // $("record_table tbody").load(respon.data.data);
