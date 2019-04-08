@@ -4,24 +4,24 @@ from flask import Flask
 from werkzeug.contrib.cache import MemcachedCache
 from flask_cors import CORS
 from flask_redis import FlaskRedis
-from socketIO_client import SocketIO, BaseNamespace
 import psycopg2
 
 redis_store = FlaskRedis()
 root_dir = os.path.dirname(os.path.abspath(__file__))
-cache = MemcachedCache(['{}:{}'.format(os.getenv('MEMCACHE_HOST'), os.getenv('MEMCACHE_PORT'))])
+cache = MemcachedCache(['{}:{}'.format(
+    os.environ.get("MEMCACHE_HOST", os.getenv('MEMCACHE_HOST')),
+    os.environ.get("MEMCACHE_PORT", os.getenv('MEMCACHE_PORT')))])
 
 conn = psycopg2.connect(
-    database=os.getenv('DB_NAME'),
-    user=os.getenv('DB_USER'),
-    sslmode=os.getenv('DB_SSL'),
-    port=os.getenv('DB_PORT'),
-    host=os.getenv('DB_HOST')
+    database=os.environ.get("DB_NAME", os.getenv('DB_NAME')),
+    user=os.environ.get("DB_USER", os.getenv('DB_USER')),
+    sslmode=os.environ.get("DB_SSL", os.getenv('DB_SSL')),
+    port=os.environ.get("DB_PORT", os.getenv('DB_PORT')),
+    host=os.environ.get("DB_HOST", os.getenv('DB_HOST'))
 )
 
 conn.set_session(autocommit=True)
 db = conn.cursor()
-sockets = SocketIO(os.getenv('SOCKET_AGENT_HOST'), os.getenv('SOCKET_AGENT_PORT'))
 
 def create_app():
     app = Flask(__name__)
@@ -32,7 +32,7 @@ def create_app():
     from .controllers import api_blueprint
     from .controllers import swaggerui_blueprint
 
-    app.register_blueprint(swaggerui_blueprint, url_prefix=os.getenv('SWAGGER_URL'))
+    app.register_blueprint(swaggerui_blueprint, url_prefix=os.environ.get("SWAGGER_URL", os.getenv('SWAGGER_URL')))
     app.register_blueprint(api_blueprint)
 
     return app

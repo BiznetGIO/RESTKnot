@@ -16,8 +16,8 @@ class SendCommandRest(Resource):
 
     @login_required
     def post(self):
-        url_env = os.getenv("SOCKET_AGENT_HOST")
-        port = os.getenv("SOCKET_AGENT_PORT")
+        url_env = os.environ.get("SOCKET_AGENT_HOST", os.getenv('SOCKET_AGENT_HOST'))
+        port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
         url_fix= url_env+":"+port
         url = url_fix+"/api/command_rest"
         json_req = request.get_json(force=True)

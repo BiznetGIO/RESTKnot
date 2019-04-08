@@ -24,8 +24,8 @@ class AdminAuth(Resource):
         password = args['password']
         project_id = args['project_id']
 
-        os_admin = os.getenv('ADMIN_USER')
-        os_password = os.getenv("ADMIN_PASSWORD")
+        os_admin = os.environ.get("ADMIN_USER", os.getenv('ADMIN_USER'))
+        os_password = os.environ.get("ADMIN_PASSWORD", os.getenv('ADMIN_PASSWORD'))
 
         if username == os_admin and os_password==password:
             data_user = db.get_by_id("userdata", "project_id", project_id)
