@@ -4,6 +4,7 @@ from command.control import client
 import json, os, logging
 
 knot_lib = os.getenv("KNOT_LIB")
+knot_socket = os.getenv("KNOT_SOCKET")
 
 def check_command(command):
     sdl_data = utils.repodata()
@@ -70,7 +71,6 @@ def parser_json(obj_data):
                 })
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
-            # print(cli_shell)
             exec_cliss = utils.exec_shell(cli_shell)
             projec_obj.append({
                 project: exec_cliss
@@ -115,11 +115,9 @@ def parse_command_zone(json_data):
     return cli_shell
 
 def execute_command(initialiaze):
-    # control.load_lib("libknot.so.7")
     control.load_lib(knot_lib)
     ctl = control.KnotCtl()
-    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
-    ctl.connect("/var/run/knot/knot.sock")
+    ctl.connect(knot_socket)
     try:
         resp = None
         no = 0
@@ -131,7 +129,7 @@ def execute_command(initialiaze):
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
-    except Exception as e:
+    except Exception:
         resp = {}
         return json.dumps(resp, indent=4)
     ctl.send(control.KnotCtlType.END)

@@ -16,7 +16,4 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 app.register_blueprint(api_blueprint)
 
 
-# adding namespace endpoint
-
-
 
