@@ -26,6 +26,8 @@ db = conn.cursor()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(configs.Config)
+    app.config['REDIS_URL'] = os.environ.get(
+        "FLASK_REDIS_URL",os.getenv("FLASK_REDIS_URL"))
     app.config['PROPAGATE_EXCEPTIONS'] = True
     redis_store.init_app(app)
     CORS(app, resources={r"/api/*": {"origins": "*"}})

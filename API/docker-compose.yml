@@ -1,12 +1,24 @@
 version: '0.8.0'
 services:
     restknot:
-        build: .
+        image: meongbego/knot
         ports:
           - "5000:5000"
-        volumes:
-          - .:/app
-        command: ["python3","manage.py" ,"server"]
+        environment:
+          - APP_HOST=0.0.0.0
+          - APP_PORT=5000
+          - DB_NAME=knotdb
+          - DB_HOST=172.17.0.1
+          - DB_PORT=26257
+          - DB_USER=root
+          - DB_SSL=disable
+          - SOCKET_AGENT_HOST=http://103.58.102.42
+          - SOCKET_AGENT_PORT=6967
+          - FLASK_REDIS_URL=redis://:pass@session:6379/0
+          - WORKER=2
+          - ENVIRONMENT=production
+          - COMMAND=server
+        command: ["sh","run.sh"]
         links:
           - "session"
 
