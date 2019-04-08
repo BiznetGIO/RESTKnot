@@ -23,6 +23,7 @@ services:
         links:
           - "session"
           - "db"
+          - "db2"
 
     session:
         image: redis
@@ -37,4 +38,13 @@ services:
       command: start --insecure --advertise-addr=db --cache=.25 --max-sql-memory=.25
       ports:
         - "26257:26257"
-        - "8080:8080"
+        - "26256:8080"
+    db2:
+      image: cockroachdb/cockroach
+      command: start --advertise-host=db2 --join=db:26257 --cache=.25 --max-sql-memory=.25 --insecure
+      volumes:
+         - db2:/cockroach/cockroach-data
+      ports:
+        - "26258:26257"
+      links:
+          - "db"
