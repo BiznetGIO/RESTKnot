@@ -496,3 +496,10 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             respons = cl_command.cluster_zone(tags)
             return response(200, data=respons)
+
+        if init_data['action'] == 'cluster-unset':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            respons = cl_command.unset_cluster(tags)
+            return response(200, data=respons)
