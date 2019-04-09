@@ -621,7 +621,7 @@ def conf_set_notify_master(tags):
                     "rtype": 'notify',
                     "owner": 'master',
                     "ttl":'',
-                    "data": data
+                    "data": keys['nm_master']
                 },
                 "receive": {
                     "type": "command",
@@ -655,13 +655,6 @@ def conf_set_notify_slave(tags):
     for r_master in rows_master:
         record_master.append(dict(zip(column_record_master, r_master)))
 
-
-    data = ""
-    cek_temps = None
-    for i in record_master:
-        if cek_temps != i['nm_master']:
-            data = data+"'"+i['nm_master']+"'"
-        cek_temps = i['nm_master']
     json_command = list()
 
     for keys in record:
@@ -673,7 +666,7 @@ def conf_set_notify_slave(tags):
                     "rtype": 'notify',
                     "owner": 'slave',
                     "ttl":"",
-                    "data": data
+                    "data": keys['nm_slave']
                 },
                 "receive": {
                     "type": "command",
@@ -706,11 +699,7 @@ def conf_set_acl_master(tags):
     rows_slave = db.fetchall()
     for rw in rows_slave:
         record_slave.append(dict(zip(column_record_slave, rw)))
-    data = ""
-    for i in record_slave:
-        data = data+" '"+i['nm_slave']+"_acl'"
     json_command = list()
-
     for keys in record:
         json_data = {
             "cluster-set": {
@@ -720,7 +709,7 @@ def conf_set_acl_master(tags):
                     "rtype": 'acl',
                     "owner": 'master',
                     "ttl":'',
-                    "data": data
+                    "data": keys['nm_master']
                 },
                 "receive": {
                     "type": "command",
@@ -754,13 +743,6 @@ def conf_set_acl_slave(tags):
     for r_master in rows_master:
         record_master.append(dict(zip(column_record_master, r_master)))
 
-
-    data = ""
-    cek_temps = None
-    for i in record_master:
-        if cek_temps != i['nm_master']:
-            data = data+"'"+i['nm_master']+"_acl'"
-        cek_temps = i['nm_master']
     json_command = list()
 
     for keys in record:
@@ -772,7 +754,7 @@ def conf_set_acl_slave(tags):
                     "rtype": 'acl',
                     "owner": 'slave',
                     "ttl":"",
-                    "data": data
+                    "data": keys['nm_slave']
                 },
                 "receive": {
                     "type": "command",

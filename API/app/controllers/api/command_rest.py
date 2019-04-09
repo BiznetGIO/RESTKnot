@@ -231,7 +231,6 @@ class SendCommandRest(Resource):
         if init_data['action'] == 'zone-unset':
             result = list()
             for i in init_data['data']:
-                print(i)
                 tags = i['tags']
             respons = list()
             res_begin = cmd.zone_begin_http(url,tags)
@@ -491,6 +490,7 @@ class SendCommandRest(Resource):
             return response(200, data=result)
 
         if init_data['action'] == 'cluster-zone':
+
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
