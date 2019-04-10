@@ -490,7 +490,6 @@ class SendCommandRest(Resource):
             return response(200, data=result)
 
         if init_data['action'] == 'cluster-zone':
-
             result = list()
             for i in init_data['data']:
                 tags = i['tags']

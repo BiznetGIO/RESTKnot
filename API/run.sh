@@ -42,8 +42,6 @@ if [ $command = 'server' ]
     then
     if [ $env = 'production' ]
         then
-        rep_ok 'STARTING | UPDATE HEAT CONFIGURATION'
-        python3 manage.py pull
         rep_ok 'STARTING | SERVER'
         run_gunicorn $APP_HOST $APP_PORT $worker
 
