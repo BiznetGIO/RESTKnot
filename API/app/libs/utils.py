@@ -1,49 +1,7 @@
 import yaml, os,hashlib
 from app import root_dir
 from datetime import datetime
-from app import sockets, BaseNamespace
 import json, requests
-
-class CmdNamespace(BaseNamespace):
-    def initialize(self):
-        self.response = None
-
-    # def on_response(self, *args):
-    #     list_data = list(args)
-    #     respons_sockets = list()
-    #     for i in list_data:
-    #         if i['data']['data'] == 'null':
-    #             if i['data']['Description'] == '[]':
-    #                 data = {
-    #                     "command": i['data']['Description'],
-    #                     "error": True,
-    #                     "messages": "Block Type Command Not Parsing"
-    #                 }
-    #             else:
-    #                 data = {
-    #                     "status": True,
-    #                     "messages": "Block Type Command Execute"
-    #                 }
-    #         else:
-    #             data = {
-    #                 "status": i['data']['result'],
-    #                 "command": i['data']['Description'],
-    #                 "receive": json.loads(i['data']['data'])
-    #             }
-    #         respons_sockets.append(data)
-    #     self.response = respons_sockets
-
-def sendSocket(respons):
-    try:
-        command = sockets.define(CmdNamespace, '/command')
-        command.emit('command',respons)
-        sockets.wait(seconds=1)
-        socket_respons = command.response
-    except Exception as e:
-        print("EROR DATA",e)
-        raise
-    else:
-        return socket_respons
 
 def timeset():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -106,8 +64,15 @@ def send_http(url, data, headers=None):
     json_data = json.dumps(data)
     send = requests.post(url, data=json_data, headers=headers)
     respons = send.json()
-    data = json.loads(respons['data'])
-    respons['data'] = data
+    try:
+        data = json.loads(respons['data'])
+    except Exception as e:
+        print(e)
+        print(url)
+        print(respons)
+        raise
+    else:
+        respons['data'] = data
     return respons
 
 def change_state(field, field_value, state):

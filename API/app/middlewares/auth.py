@@ -10,7 +10,7 @@ def check_ip_range(ip, cidr):
     return IPAddress(ip) in IPNetwork(cidr)
 
 def check_admin_mode(ip):
-    whitelist_ip = os.getenv('ACL')
+    whitelist_ip = os.environ.get("ACL", os.getenv('ACL'))
     cidr = whitelist_ip.split(",")
     check_ip = None
     for i in cidr:

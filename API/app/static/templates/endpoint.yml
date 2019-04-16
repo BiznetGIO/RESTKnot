@@ -663,6 +663,119 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
+    master-notify:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    master-acl:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-notify:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    file-set:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    module-set:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-acl:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    master-file:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-file:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    cluster-zone:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    cluster-unset:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
   cs_slave:
     where:
       tags:
@@ -1138,7 +1251,7 @@ endpoint:
           name: methode name
           desc: Domain Variabel To Search
 
-zn_user_zone:
+  zn_user_zone:
     insert:
       tags:
         username:

@@ -15,7 +15,7 @@ def read_rest(data):
     else:
         response={
             "result": True,
-            "Description": initialiaze_command,
+            "description": initialiaze_command,
             "status": "Command Execute",
             "data": data
         }

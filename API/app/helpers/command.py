@@ -102,18 +102,6 @@ def conf_read():
     }
     return json_command
 
-# def conf_begin():
-#     json_command={
-#         "conf-begin": {
-#             "sendblock": {
-#                 "cmd": "conf-begin"
-#             },
-#             "receive": {
-#                 "type": "block"
-#             }
-#         }
-#     }
-#     utils.sendSocket(json_command)
 
 def conf_begin_http(url):
     json_command={
@@ -128,6 +116,7 @@ def conf_begin_http(url):
     }
     utils.send_http(url, json_command)
 
+
 def conf_commit_http(url):
     json_command={
         "conf-begin": {
@@ -140,6 +129,7 @@ def conf_commit_http(url):
         }
     }
     utils.send_http(url, json_command)
+
 
 def zone_soa_insert_default(tags):
     # Get Zone
@@ -202,7 +192,6 @@ def zone_soa_insert_default(tags):
             }
         }
     }
-    # print(json_command)
     return record[0]['id_record'], json_command
 
 def zone_begin(tags):
@@ -598,21 +587,254 @@ def zone_unset(tags):
             }
         }
     }
-
-    # json_command={
-    #     "zone-unset": {
-    #         "sendblock": {
-    #             "cmd": "zone-unset",
-    #             "zone": record[0]['nm_zone'],
-    #             "owner": record[0]['nm_record'],
-    #             "ttl": ttldata[0]['nm_ttl'],
-    #             "rtype": record[0]['nm_type'],
-    #             "data": ctdata[0]['nm_content']
-    #         },
-    #         "receive": {
-    #             "type": "block"
-    #         }
-    #     }
-    # }
     return json_command
 
+def conf_set_notify_master(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    record_slave = list()
+    column_record_master = model.get_columns("v_cs_notify_master")
+    query_master = "select * from v_cs_notify_master where id_zone='"+fields+"'"
+    db.execute(query_master)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record_master, row)))
+
+    column_record_slave = model.get_columns("v_cs_notify_slave")
+    query_slave = "select * from v_cs_notify_slave where id_zone='"+fields+"'"
+    db.execute(query_slave)
+    rows_slave = db.fetchall()
+    for rw in rows_slave:
+        record_slave.append(dict(zip(column_record_slave, rw)))
+    data = ""
+    for i in record_slave:
+        data = data+" '"+i['nm_slave']+"'"
+    json_command = list()
+
+    for keys in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": keys['nm_zone'],
+                    "rtype": 'notify',
+                    "owner": 'master',
+                    "ttl":'',
+                    "data": keys['nm_master']
+                },
+                "receive": {
+                    "type": "command",
+                    "master": keys['nm_master'],
+                    "uri": keys['ip_master'],
+                    "port": keys['port'],
+                    "id_notify_master": keys['id_notify_master']
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
+
+
+def conf_set_notify_slave(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    record_master = list()
+    column_record_slave = model.get_columns("v_cs_notify_slave")
+    query_slave = "select * from v_cs_notify_slave where id_zone='"+fields+"'"
+    db.execute(query_slave)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record_slave, row)))
+
+    column_record_master = model.get_columns("v_cs_notify_master")
+    query_master = "select * from v_cs_notify_master where id_zone='"+fields+"'"
+    db.execute(query_master)
+    rows_master = db.fetchall()
+    for r_master in rows_master:
+        record_master.append(dict(zip(column_record_master, r_master)))
+
+    json_command = list()
+
+    for keys in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": keys['nm_zone'],
+                    "rtype": 'notify',
+                    "owner": 'slave',
+                    "ttl":"",
+                    "data": keys['nm_slave']
+                },
+                "receive": {
+                    "type": "command",
+                    "slave": keys['nm_slave'],
+                    "uri":keys['ip_slave'],
+                    "port": keys['slave_port'],
+                    "id_notify_slave": keys['id_notify_slave']
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
+
+
+def conf_set_acl_master(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    record_slave = list()
+    column_record_master = model.get_columns("v_cs_acl_master")
+    query_master = "select * from v_cs_acl_master where id_zone='"+fields+"'"
+    db.execute(query_master)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record_master, row)))
+
+    column_record_slave = model.get_columns("v_cs_acl_slave")
+    query_slave = "select * from v_cs_acl_slave where id_zone='"+fields+"'"
+    db.execute(query_slave)
+    rows_slave = db.fetchall()
+    for rw in rows_slave:
+        record_slave.append(dict(zip(column_record_slave, rw)))
+    json_command = list()
+    for keys in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": keys['nm_zone'],
+                    "rtype": 'acl',
+                    "owner": 'master',
+                    "ttl":'',
+                    "data": keys['nm_master']
+                },
+                "receive": {
+                    "type": "command",
+                    "master": keys['nm_master'],
+                    "uri": keys['ip_master'],
+                    "port": keys['port'],
+                    "id_acl_master": keys['id_acl_master']
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
+
+
+def conf_set_acl_slave(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    record_master = list()
+    column_record_slave = model.get_columns("v_cs_acl_slave")
+    query_slave = "select * from v_cs_acl_slave where id_zone='"+fields+"'"
+    db.execute(query_slave)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record_slave, row)))
+
+    column_record_master = model.get_columns("v_cs_acl_master")
+    query_master = "select * from v_cs_acl_master where id_zone='"+fields+"'"
+    db.execute(query_master)
+    rows_master = db.fetchall()
+    for r_master in rows_master:
+        record_master.append(dict(zip(column_record_master, r_master)))
+
+    json_command = list()
+
+    for keys in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": keys['nm_zone'],
+                    "rtype": 'acl',
+                    "owner": 'slave',
+                    "ttl":"",
+                    "data": keys['nm_slave']
+                },
+                "receive": {
+                    "type": "command",
+                    "slave": keys['nm_slave'],
+                    "master": keys['nm_master'],
+                    "uri":keys['ip_slave'],
+                    "port": keys['port_slave'],
+                    "id_acl_slave": keys['id_acl_slave']
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
+
+
+def conf_set_file(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    column_record = model.get_columns("v_cs_acl_slave")
+    query = "select * from v_cs_acl_slave where id_zone='"+fields+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record, row)))
+    json_command = list()
+    for i in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": i['nm_zone'],
+                    "rtype": 'file',
+                    "owner": 'all',
+                    "ttl":'',
+                    "data": ""
+                },
+                "receive": {
+                    "type": "command",
+                    "slave_uri": i['ip_slave'],
+                    "master_uri": i['ip_master'],
+                    "master_port": i['port_master'],
+                    "slave_port": i['port_slave'],
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
+
+
+def conf_set_module(tags):
+    # Get Zone
+    fields = tags['id_zone']
+    record = list()
+    column_record = model.get_columns("v_cs_acl_slave")
+    query = "select * from v_cs_acl_slave where id_zone='"+fields+"'"
+    db.execute(query)
+    rows = db.fetchall()
+    for row in rows:
+        record.append(dict(zip(column_record, row)))
+    json_command = list()
+    for i in record:
+        json_data = {
+            "cluster-set": {
+                "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": i['nm_zone'],
+                    "rtype": 'module',
+                    "owner": 'all',
+                    "ttl":'',
+                    "data": ""
+                },
+                "receive": {
+                    "type": "command",
+                    "slave_uri": i['ip_slave'],
+                    "master_uri": i['ip_master'],
+                    "master_port": i['port_master'],
+                    "slave_port": i['port_slave'],
+                }
+            }
+        }
+        json_command.append(json_data)
+    return json_command
