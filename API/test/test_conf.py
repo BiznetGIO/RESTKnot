@@ -13,11 +13,16 @@ class Vars:
               "ip"   : "192.168.0.0",
               "port" : "50"}
 
+    zone_test = {"nm_zone" : "kalkun.com",
+                "id_zone" : "427820188203778049"}
+
+
+
 class TestConf:
 
     mock = Vars()
 
-    def post_data(self,client,endpoint,data,headers):
+    def post_data(self,client,endpoint,data,headers=None):
         url = 'api/'+endpoint
         res = client.post(url,data=json.dumps(data),
             content_type = 'application/json', headers=headers)
@@ -205,3 +210,46 @@ class TestConf:
         data = utils.get_model('remove',{"id_zone": id_zone})
         res  = self.post_data(client,'zone',data,head)
         assert res.status_code == 200
+
+    
+    @pytest.mark.run(order=5)
+    def test_notify_master(self,client):
+        """ Before running this test, see id_zone from cs_notify_master on database and use it in this test.
+        Otherwise, you can skip this test.
+        """
+        id_zone = self.mock.zone_test['id_zone']
+
+        data_notify = {"master-notify" : {"tags" : {"id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',data_notify)
+        assert res.status_code == 200
+
+
+        data_acl = {"master-acl" : {"tags" : { "id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',data_acl)
+        assert res.status_code == 200
+
+        data_notif_slave = {"slave-notify" : {"tags" : { "id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',data_notif_slave)
+        assert res.status_code == 200
+
+
+        data_slave_acl = {"slave-acl" : {"tags" : {"id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',data_slave_acl)
+        assert res.status_code == 200
+
+        data_file_set = {"file-set" : {"tags" : {"id_zone" : id_zone }}}
+        res = self.post_data(client,'sendcommand',data_file_set)
+        assert res.status_code == 200
+
+        data_module_set = {"module-set":{"tags":{"id_zone" : id_zone }}}
+        res = self.post_data(client,'sendcommand',data_module_set)
+        assert res.status_code == 200
+
+        cluster_zone = {"cluster-zone" : {"tags" : {"id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',cluster_zone)
+        assert res.status_code == 200
+
+        cluster_unset = {"cluster-unset" : {"tags" : {"id_zone" : id_zone}}}
+        res = self.post_data(client,'sendcommand',cluster_unset)
+        assert res.status_code == 200
+

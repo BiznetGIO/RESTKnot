@@ -46,7 +46,7 @@ example:
     }
 }
 ```
-See [rules](RULES_add_record.md) for other examples
+
 
 ### MASTER WHERE
 
