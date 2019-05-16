@@ -118,3 +118,31 @@ SRV:
         type: str
         desc: This is the hostname of the machine running the service. It should exist as an A record and may only contain A-Z, a-z, 0-9, _, -, and .. 
 ```
+
+
+
+
+## Note
+------------
+According to [rfc1035](https://tools.ietf.org/html/rfc1035), there several rules that should be noted when filling record's field.
+
+- An absolute url (FQDN) must end in dot (.)
+- A relative domain (hostnames) does not end in dot.
+- character '@' is used to denote current origin (root host), except in CNAME records
+
+
+Example :
+
+MX Record example
+
+```
+Domain/Content			    TTL   Priority      Host/Record Name
+example.com.		        1936	10            blackmail
+example.com.		        1936	10            whitemail
+```
+
+if value does not end in dot, it will be apppended to current zone.
+
+
+
+### [Further Example](https://help.dnsmadeeasy.com/managed-dns/dns-record-types/)
