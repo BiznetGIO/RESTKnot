@@ -1,13 +1,15 @@
 FROM alpine
 MAINTAINER Sofyan Saputra "sofyan@biznetgio.com"
 
-RUN apk update
-RUN apk --no-cache add build-base bash git openssl openssl-dev libxslt-dev linux-headers libffi-dev
-RUN apk --no-cache add python3 python3-dev 
-RUN pip3 install --upgrade pip
-COPY requirements.txt /
-RUN pip3 install -r /requirements.txt
-RUN pip3 install gunicorn
+RUN apk update && \
+    mkdir /app
 WORKDIR /app
-EXPOSE 6969
+COPY . /app
+
+RUN apk update && \
+    apk --no-cache add gcc linux-headers python3 python3-dev musl-dev libcap-dev libcap-ng-dev knot knot-libs knot-dev && \
+    pip3 install --upgrade pip && \
+    pip3 install -r requirements.txt
+
+EXPOSE 6967
 RUN apk del build-base

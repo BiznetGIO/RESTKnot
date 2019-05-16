@@ -1,0 +1,16 @@
+version: '0.8.0'
+services:
+  knot:
+      image: meongbego/knot
+      environment:
+        - APP_HOST=0.0.0.0
+        - APP_PORT=6967
+        - KNOT_LIB=libknot.so
+      volumes:
+        - /etc/knot/knot.conf:/etc/knot/knot.conf
+        - /var/lib/knot:/var/lib/knot
+        - /var/run/knot:/run/knot/
+        #- /lib64/libknot.so.7:/lib64/libknot.so.7
+      command: sh run.sh server production 2
+      ports:
+        - "6967:6967"
