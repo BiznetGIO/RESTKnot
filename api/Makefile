@@ -44,16 +44,16 @@ test:
 # DOCKER TASKS
 
 build:
-	docker build -f Dockerfile -t biznetgio/knot_api .
+	docker build Dockerfile -t biznetgio/knot_api .
 
 up:
-	docker-compose -f compose/docker-compose.yml up
+	docker-compose  up
 
 start:stop
-	docker-compose -f compose/docker-compose.yml start
+	docker-compose start
 
 stop:
-	docker-compose -f compose/docker-compose.yml stop
+	docker-compose  stop
 
 rm: stop
-	docker-compose -f compose/docker-compose.yml rm
+	docker-compose rm
