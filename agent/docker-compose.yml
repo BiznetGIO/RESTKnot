@@ -1,0 +1,15 @@
+version: '0.5.4'
+services:
+  knot:
+    image: registry.gitlab.com/biznetgio/knot_agent
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=6967
+      - KNOT_LIB=libknot.so
+    volumes:
+      - /etc/knot/knot.conf:/etc/knot/knot.conf
+      - /var/lib/knot:/var/lib/knot
+      - /var/run/knot:/run/knot/
+    command: sh run.sh server production 2
+    ports:
+      - "6967:6967"
