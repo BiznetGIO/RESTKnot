@@ -1,7 +1,7 @@
-version: '0.5.4'
+version: '0.5.6'
 services:
   knot:
-    image: registry.gitlab.com/biznetgio/knot_agent
+    image: biznetgio/knot_agent
     environment:
       - APP_HOST=0.0.0.0
       - APP_PORT=6967

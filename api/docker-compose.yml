@@ -1,7 +1,7 @@
-version: '0.5.4'
+version: '0.5.6'
 services:
     restknot:
-        image: registry.gitlab.com/biznetgio/restknot:1.1.0
+        image: biznetgio/knot_api
         ports:
           - "6968:5000"
         environment:
