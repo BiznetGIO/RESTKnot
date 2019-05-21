@@ -1,21 +1,21 @@
-# MASTER NOTIFY ENDPOINT
+# MASTER ACL ENDPOINT
 
 
-### GET MASTER NOTIFY
-- path: /api/notify_master
+### GET MASTER ACL
+- path: /api/acl_master
 - method: GET
 - response: application/json
 - body: no
 - roles: admin
-- usage: Get all available Master Notification
+- usage: Get all available Master ACL
 
-### INSERT MASTER NOTIFY
-- path: /api/notify_master
+### INSERT MASTER ACL
+- path: /api/acl_master
 - method: post
 - response: application/json
 - body: raw
 - roles: admin
-- usage: Add new Master Notification
+- usage: Add new Master ACL
 
 raw:
 ```
@@ -46,12 +46,12 @@ example:
 
 ### MASTER WHERE
 
-- path: /api/notify_master
+- path: /api/acl_master
 - method: post
 - response: application/json
 - body: raw
 - roles: admin
-- usage: Find master notification data by tag (id or name) for filtering. 
+- usage: Find master ACL data by tag (id or name) for filtering. 
 
 raw:
 ```
@@ -59,16 +59,16 @@ raw:
     "where": {
         "tags":{
             "id_master": master::id_master,
-            "id_notify_master": master_notify::id_notify_master,
+            "id_acl_master": master_acl::id_acl_master,
             "id_zone": zone::id_zone
 
         }
     }
 }
 ```
-- id_master: id master of the notification that you're searching
-- id_notify_master: id of the notification that you're searching
-- id_zone: id zone of the notification that you're searching
+- id_master: id master of the ACL that you're searching
+- id_acl_master: id of the ACL that you're searching
+- id_zone: id zone of the ACL that you're searching
 
 example:
 ```
@@ -84,7 +84,7 @@ example:
 
 
 ### MASTER REMOVE
-- path: /api/notify_master
+- path: /api/acl_master
 - method: post
 - response: application/json
 - body: raw
@@ -96,21 +96,21 @@ raw:
 {
    "remove": {
       "tags": {
-      	"id_notify_master": master_notify::id_notify_master
+      	"id_acl_master": master_acl::id_acl_master
       }
       	
    }
 }
 ```
 tags:
-- id_notify_master: id of master notification data that will be removed
+- id_acl_master: id of ACL master data that will be removed
 
 example:
 ```
 {
    "remove": {
       "tags": {
-      	"id_notify_master": "402329670102745089"
+      	"id_acl_master": "402329670102745089"
       }
       	
    }
