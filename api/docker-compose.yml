@@ -1,4 +1,4 @@
-version: '0.8.0'
+version: '0.5.4'
 services:
     restknot:
         image: registry.gitlab.com/biznetgio/restknot:1.1.0
