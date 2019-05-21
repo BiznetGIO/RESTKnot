@@ -39,41 +39,14 @@ agen:
 	cd AGENT_KNOT
 	sudo python manage.py server
 
-api_cockroach:
-	cd API_COCKROACHDB
-	python manage.py server
-
-api_influx:
-	cd API_COCKROACHDB
-	python manage.py server
-
 # Run Test
 test:
 	pytest --cov=app --cov-report=term-missing -vv
 
 # DOCKER TASKS
 
-# DEVEL
-# Build the container
-devel: ## Build the release and develoment container. The development
-	docker-compose build
-
-# Build and run the container
-updevel: ## Spin up the project
-	docker-compose up --build
-
-startdevel:stopdevel ## Start containers
-	docker-compose start
-
-stopdevel: ## Stop running containers
-	docker-compose stop
-
-rmdevel: stop ## Stop and remove running containers
-	docker-compose rm
-
-# PRODUCTION
 build:
-	docker build -f Dockerfile.prod -t biznetgio/neo-openstack:prod .
+	docker build -f Dockerfile -t biznetgio/knot_agent .
 
 up:
 	docker-compose -f compose/docker-compose.yml up
@@ -86,11 +59,3 @@ stop:
 
 rm: stop
 	docker-compose -f compose/docker-compose.yml rm
-
-# Celery
-celery:
-	docker-compose -f compose/docker-compose.yml.celery up
-
-# Flower
-flower:
-	docker-compose -f compose/docker-compose.yml.flower up
