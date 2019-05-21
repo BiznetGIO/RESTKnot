@@ -62,5 +62,13 @@ sudo env/bin/python manage.py server
 ```
 ----------------------------------
 ## Dockerize Development
-
+```
+docker build tag .
+```
+lingking your knot db, config and socket
+then
+set image tag in docker compose
+```
+docker-compose up
+```
 
