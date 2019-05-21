@@ -57,7 +57,9 @@ def signin():
             return util.generate_respons(False,respons["message"])
         data = respons["data"]
         send_todb(data['user_id'], data['project_id'])
-        create_env_file(usr,pwd, data["user_id"], data["project_id"], data["token"])
+        now = datetime.datetime.now()
+        timestamp = now.strftime("%Y%m%d%H%M%S%f")
+        create_env_file(usr,pwd, data["user_id"], data["project_id"], data["token"],timestamp)
         generate_session(data["user_id"], data["project_id"], data["token"] )
 
         return util.generate_respons(True,"success",data)
@@ -70,7 +72,7 @@ def generate_session(user_id, project_id, token):
     dump_session(sess)
     return sess   
 
-def create_env_file(username, password, user_id, project_id, token):
+def create_env_file(username, password, user_id, project_id, token, timestamp):
     if not os.path.isdir("{}/restknot".format(DUMP_FOLDER)):
         os.mkdir("{}/restknot".format(DUMP_FOLDER))    
     try :
@@ -80,6 +82,7 @@ def create_env_file(username, password, user_id, project_id, token):
         env_file.write("OS_USER_ID=%s\n" %user_id)        
         env_file.write("OS_PROJECT_ID=%s\n" %project_id)
         env_file.write("OS_TOKEN=%s\n" %token)
+        env_file.write("OS_TIMESTAMP=%s\n" %timestamp)
         env_file.close()
         return True
     except Exception as e:
@@ -95,6 +98,7 @@ def get_env_values():
         restknot_env['user_id']  = os.environ.get('OS_USER_ID')
         restknot_env['project_id'] = os.environ.get('OS_PROJECT_ID')
         restknot_env['token']   = os.environ.get('OS_TOKEN')
+        restknot_env['timestamp'] = os.environ.get('OS_TIMESTAMP')
         return restknot_env
     else:
         util.log_err("Can't find restknot.env")
@@ -199,13 +203,13 @@ def regenerate_session():
 
 
 def timestamp_check():
-    sess = load_dumped_session()
-    sess = sess['data']['timestamp']
+    sess = get_env_values()
+    sess = sess['timestamp']
     ts1 = datetime.datetime.strptime(sess,"%Y%m%d%H%M%S%f")
     ts2 = datetime.datetime.now()
     delta = (ts2-ts1)
-    sec = delta.seconds
-    if sec > 3600:
+
+    if delta.seconds > 3600 or delta.days > 0:
         return util.generate_respons(False,"Token expired")
     else :
         return util.generate_respons(True,"success")

@@ -3,7 +3,7 @@ default:
     # - ns1.biz.net.id.
     # - hostmaster.biz.net.id.
     - satu.neodns.id.
-    - hostmaster.neodns.id.
+    - dua.neodns.id.
   serial:
     - "10800"
     - "3600"

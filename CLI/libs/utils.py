@@ -3,8 +3,13 @@ import requests
 import datetime
 import tabulate
 import re
+import struct
+import sys
 import coloredlogs
 import logging
+import fcntl
+import termios
+import os
 import yaml
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit import prompt
@@ -25,11 +30,14 @@ def check_existence(endpoint,var):
     try :
         result = requests.get(url, headers=headers )
         result = result.json()
+        msg = result['message']
         result = result['data']
     except Exception as e:
         respons = generate_respons(False,str(e))
     if result is None:
-        respons = generate_respons(False,'Your token has expired')
+        if 'Invalid access token' in msg:
+            respons = generate_respons(False,'Your token has expired')
+        else : respons = generate_respons(False, "No DNS")
     else :   
         for i in result:
             if i[key] == var:
@@ -41,6 +49,7 @@ def check_existence(endpoint,var):
 
 def get_url(endpoint):
     url = "http://103.89.5.121:6968/api/"
+    #url = "http://127.0.0.1:6968/api/"
 
     url = url + var_json['endpoints'][endpoint]
 
@@ -58,24 +67,14 @@ def get_idkey(endpoint,headers):
 
 
 
-# def eleminator(obj):
-#     delkeys = list()
-#     for i in obj:
-#         if obj[i] is None or obj[i] is False :
-#             delkeys.append(i)
-    
-#     for i in delkeys:
-#         obj.pop(i)
-    
-#     return obj
-        
+
 def get_time():
     now = datetime.datetime.now()
     res = now.strftime("%Y%m%d%H")
     return res
 
 
-def log_err(stdin):
+def log_err(stdin): #pragma: no cover
     coloredlogs.install()
     logging.error(stdin)    
 
@@ -121,7 +120,8 @@ def check_availability(obj,length):
                 #print("invalid input")
                 pass
         except Exception as e:
-            print(str(e))
+            #print(str(e))
+            sys.stderr.write(str(e))
     return obj
 
 def table_cleanup(obj):
@@ -155,9 +155,7 @@ def get_filter(obj):
             result[var[key]] = obj[key]
     return result
 
-# def check_alphanumeric(str):
-#     print(str)
-#     return re.match('^[\w-]+$', str.strip('.com')) is None
+
 def convert(data):
   if isinstance(data, bytes):      return data.decode()
   if isinstance(data, (str, int)): return str(data)

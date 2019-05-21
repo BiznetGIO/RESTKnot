@@ -1,43 +1,10 @@
 from command.utility import utils
 from command.control.libknot import control
 from command.control import client
-import json, os
+import json, os, logging
 
 knot_lib = os.getenv("KNOT_LIB")
-
-
-def tes_conn():
-    
-    control.load_lib(knot_lib)
-    ctl = control.KnotCtl()
-    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
-    ctl.connect("/var/run/knot/knot.sock")
-    try:
-        # ctl.send_block(cmd="conf-begin")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-set", section="zone", item="domain", data="ianktesting.com")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-commit")
-        # resp = ctl.receive_block()
-
-        # ctl.send_block(cmd="conf-read", section="zone", item="domain")
-        # resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-begin", data="ianktesting.com")
-        resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-set", data="ianktesting.com. ianktesting.com. 800 A 10.10.10.10")
-        resp = ctl.receive_block()
-
-        ctl.send_block(cmd="zone-commit", data="ianktesting.com")
-        resp = ctl.receive_block()
-    except Exception as e:
-        raise e
-    finally:
-        ctl.send(control.KnotCtlType.END)
-        ctl.close()
+knot_socket = os.getenv("KNOT_SOCKET")
 
 def check_command(command):
     sdl_data = utils.repodata()
@@ -102,7 +69,6 @@ def parser_json(obj_data):
                 action_obj.append({
                     action: data_obj
                 })
-
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
             exec_cliss = utils.exec_shell(cli_shell)
@@ -117,7 +83,6 @@ def parser_json(obj_data):
             return projec_obj
 
 def parse_command_zone(json_data):
-
     cmd = json_data['cmd']
     zone = json_data['zone']
     own = json_data['owner']
@@ -127,18 +92,32 @@ def parse_command_zone(json_data):
     owner=''
     if own == zone:
         owner = zone
+        cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+    elif own == '@':
+        owner = own
+        cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
     else:
-        owner = json_data['owner']+"."+zone
-
-    cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
+        if rtype=='notify' and own=="slave":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].master' "+data
+        elif rtype=='notify' and own=="master":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].notify' "+data
+        elif rtype=='acl' and own=="master":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' "+data
+        elif rtype=='acl' and own=="slave":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].acl' "+data
+        elif rtype=='file' and own=="all":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].file' '"+zone+".zone'"
+        elif rtype=='module' and own=="all":
+            cli_shell = "knotc "+cmd+" 'zone["+zone+"].module' 'mod-stats/default'"
+        else:
+            owner = json_data['owner']+"."+zone
+            cli_shell = "knotc "+cmd+" "+zone+". "+owner+". "+ttl+" "+rtype+" "+data
     return cli_shell
 
 def execute_command(initialiaze):
-    # control.load_lib("libknot.so.7")
     control.load_lib(knot_lib)
     ctl = control.KnotCtl()
-    # ctl.connect(str(os.getenv('KNOT_SOCKET')))
-    ctl.connect("/var/run/knot/knot.sock")
+    ctl.connect(knot_socket)
     try:
         resp = None
         no = 0
@@ -150,7 +129,7 @@ def execute_command(initialiaze):
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
-    except Exception as e:
+    except Exception:
         resp = {}
         return json.dumps(resp, indent=4)
     ctl.send(control.KnotCtlType.END)

@@ -1,7 +1,7 @@
 ## CREATE DOMAIN
-enpoint : api/user/dnscreate
+endpoint : api/user/dnscreate
 
-form :
+Form :
 - domain : string
 
 method: post
@@ -22,16 +22,19 @@ response:
     "message": "Fine!"
 }
 ```
+### NOTE : 
+dnscreate endpoint will automatically synchronize your SOA, CNAME and NS to the knot server. However, if you insert dns [manually](zone.md) (with zone endpoint, you have to synchronize the default records first).
+
 
 ## SYNC DOMAIN TO KNOT
-After your upload domain i API Now Syncronize Your To Knot
+After inserting your domain in API, synchronize it to Knot server
 
 endpoint: api/sendcommand
 
 method: post
 
 raw : json
-```
+```json
 {
    "conf-insert": {
       "tags": {
@@ -42,7 +45,7 @@ raw : json
 ```
 
 response:
-```
+```json
 {
     "count": 1,
     "data": [
@@ -105,14 +108,16 @@ response:
 ```
 
 ## SYNC DEFAULT RECORD SOA TO KNOT
-After Sync Domain Now Sync Default Record SOA
+
+DNS came with three default records: SOA,NS and CNAME.
+You need to synchronize these records to knot server which will be explained in the following steps.
 
 endpoint: api/sendcommand
 
 method: post
 
 raw : json
-```
+```json
 {
    "zone-soa-insert": {
       "tags": {
@@ -123,7 +128,7 @@ raw : json
 ```
 
 response:
-```
+```json
 {
     "count": 3,
     "data": [
@@ -187,14 +192,14 @@ response:
 ```
 
 ## SYNC DEFAULT RECORD NS TO KNOT
-After Sync Domain Now Sync Default Record NS
+After Sync SOA records, synchronize the NS record to knot.
 
 endpoint: api/sendcommand
 
 method: post
 
 raw : json
-```
+```json
 {
    "zone-ns-insert": {
       "tags": {
@@ -205,7 +210,7 @@ raw : json
 ```
 
 response:
-```
+```json
 {
     "count": 2,
     "data": [
@@ -330,6 +335,27 @@ response:
 }
 ```
 
+## SYNC DEFAULT RECORD CNAME TO KNOT
+
+After Sync NOW check Your Config
+
+endpoint: api/sendcommand
+
+method: post
+
+raw : json
+
+```json
+{
+   "zone-insert": {
+      "tags": {
+      	"id_record" : "422446146700443649"
+      }
+   }
+}
+```
+
+
 
 ## CHECK YOUR DOMAIN AFTER SYNC TO KNOT
 
@@ -340,7 +366,7 @@ endpoint: api/sendcommand
 method: post
 
 raw : json
-```
+```json
 {
    "zone-read": {
       "tags": {
@@ -350,8 +376,90 @@ raw : json
 }
 ```
 
-response:
+respone:
+```json
+{
+    "count": 3,
+    "data": [
+        {
+            "data": {},
+            "status": "Command Execute",
+            "result": true,
+            "Description": [
+                {
+                    "zone-begin": [
+                        {
+                            "sendblock": {
+                                "cmd": "zone-begin",
+                                "zone": "mainburung.com"
+                            }
+                        },
+                        {
+                            "receive": {
+                                "type": "block"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "data": {},
+            "status": "Command Execute",
+            "result": true,
+            "Description": [
+                {
+                    "zone-set": [
+                        {
+                            "sendblock": {
+                                "rtype": "CNAME",
+                                "data": "mainburung.com.",
+                                "owner": "www",
+                                "ttl": "86400",
+                                "zone": "mainburung.com",
+                                "cmd": "zone-set"
+                            }
+                        },
+                        {
+                            "receive": {
+                                "type": "block"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "data": {},
+            "status": "Command Execute",
+            "result": true,
+            "Description": [
+                {
+                    "zone-commit": [
+                        {
+                            "sendblock": {
+                                "cmd": "zone-commit",
+                                "zone": "mainburung.com"
+                            }
+                        },
+                        {
+                            "receive": {
+                                "type": "block"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "code": 200,
+    "status": "success",
+    "message": "Operation succeeded"
+}
 ```
+
+response:
+```json
 {
     "count": 1,
     "data": [
@@ -376,6 +484,14 @@ response:
             ],
             "receive": {
                 "mainburung.com.": {
+                    "www.mainburung.com.": {
+                    "CNAME": {
+                        "data": [
+                            "mainburung.com."
+                        ],
+                        "ttl": "86400"
+                    }
+                },
                     "mainburung.com.": {
                         "NS": {
                             "ttl": "86400",

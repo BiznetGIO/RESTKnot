@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>USER ENDPOINT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="user-endpoint"><a class="header-link" href="#user-endpoint"></a>USER ENDPOINT</h1>
+<p>User credential is obtained after you create an account in <a href="https://portal.neo.id/">portal-neo</a></p>
+<h3 id="user-all"><a class="header-link" href="#user-all"></a>USER ALL</h3>
+<ul class="list">
+<li>path: /api/user</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: all</li>
+<li>usage: Get all userdata</li>
+</ul>
+<h3 id="create-userdata"><a class="header-link" href="#create-userdata"></a>CREATE USERDATA</h3>
+<ul class="list">
+<li>path: /api/user</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: all</li>
+<li>usage: Get all userdata</li>
+</ul>
+<h3 id="delete-userdata"><a class="header-link" href="#delete-userdata"></a>DELETE USERDATA</h3>
+<ul class="list">
+<li>path: /api/user/{userdata::userdata_id}</li>
+<li>method: delete</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: all</li>
+<li>usage: remove userdata</li>
+</ul>
+<h3 id="get-by-id-userdata"><a class="header-link" href="#get-by-id-userdata"></a>GET BY ID USERDATA</h3>
+<ul class="list">
+<li>path: /api/user/{userdata::userdata_id}</li>
+<li>method: get</li>
+<li>response: application/json</li>
+<li>body: no</li>
+<li>roles: all</li>
+<li>usage: Get userdata by ID</li>
+</ul>
+<h3 id="update-user-data"><a class="header-link" href="#update-user-data"></a>UPDATE USER DATA</h3>
+<ul class="list">
+<li>path: /api/user/{userdata::userdata_id}</li>
+<li>method: update</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: all</li>
+<li>usage: remove userdata</li>
+</ul>
+<p>raw</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"user_id"</span>: string,
+    <span class="hljs-attr">"project_id"</span>: string
+}</code></pre><ul class="list">
+<li>user_id: user id of your portal neo account</li>
+<li>project_id: project id of your portal neo account</li>
+</ul>
+    </article>
+  </body>
+</html>

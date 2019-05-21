@@ -11,13 +11,10 @@ class Login(Base):
     """
     usage:
         logout [-r]
+        logout -h | --help
 
     Options :
         -r          Delete Cache for Fresh Login
-
-
-    Commands:
-
     """
 
     def execute(self):

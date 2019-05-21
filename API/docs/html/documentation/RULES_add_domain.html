@@ -1,0 +1,466 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>CREATE DOMAIN</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="create-domain"><a class="header-link" href="#create-domain"></a>CREATE DOMAIN</h2>
+<p>endpoint : api/user/dnscreate</p>
+<p>Form :</p>
+<ul class="list">
+<li>domain : string</li>
+</ul>
+<p>method: post</p>
+<p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">"data"</span>: {
+        <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">"data"</span>: {
+            <span class="hljs-attr">"id_zone"</span>: <span class="hljs-string">"402468020781678593"</span>,
+            <span class="hljs-attr">"nm_zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+        }
+    },
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Fine!"</span>
+}</code></pre><h3 id="note-:"><a class="header-link" href="#note-:"></a>NOTE :</h3>
+<p>dnscreate endpoint will automatically synchronize your SOA, CNAME and NS to the knot server. However, if you insert dns <a href="./zone.html">manually</a> (with zone endpoint, you have to synchronize the default records first).</p>
+<h2 id="sync-domain-to-knot"><a class="header-link" href="#sync-domain-to-knot"></a>SYNC DOMAIN TO KNOT</h2>
+<p>After inserting your domain in API, synchronize it to Knot server</p>
+<p>endpoint: api/sendcommand</p>
+<p>method: post</p>
+<p>raw : json</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"conf-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : string
+      }
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"command"</span>: [
+                {
+                    <span class="hljs-attr">"conf-begin"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"conf-begin"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                },
+                {
+                    <span class="hljs-attr">"conf-set"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"conf-set"</span>,
+                                <span class="hljs-attr">"section"</span>: <span class="hljs-string">"zone"</span>,
+                                <span class="hljs-attr">"item"</span>: <span class="hljs-string">"domain"</span>,
+                                <span class="hljs-attr">"data"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                },
+                {
+                    <span class="hljs-attr">"conf-commit"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"conf-commit"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ],
+            <span class="hljs-attr">"receive"</span>: {}
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h2 id="sync-default-record-soa-to-knot"><a class="header-link" href="#sync-default-record-soa-to-knot"></a>SYNC DEFAULT RECORD SOA TO KNOT</h2>
+<p>DNS came with three default records: SOA,NS and CNAME.
+You need to synchronize these records to knot server which will be explained in the following steps.</p>
+<p>endpoint: api/sendcommand</p>
+<p>method: post</p>
+<p>raw : json</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-soa-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : string
+      }
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"data"</span>: [
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-begin"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ],
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"messages"</span>: <span class="hljs-string">"Block Type Command Execute"</span>
+            }
+        ],
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-read"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ]
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h2 id="sync-default-record-ns-to-knot"><a class="header-link" href="#sync-default-record-ns-to-knot"></a>SYNC DEFAULT RECORD NS TO KNOT</h2>
+<p>After Sync SOA records, synchronize the NS record to knot.</p>
+<p>endpoint: api/sendcommand</p>
+<p>method: post</p>
+<p>raw : json</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-ns-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : string
+      }
+   }
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">"data"</span>: [
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-begin"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        <span class="hljs-attr">"zone-set"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-set"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>,
+                                    <span class="hljs-attr">"owner"</span>: <span class="hljs-string">"@"</span>,
+                                    <span class="hljs-attr">"rtype"</span>: <span class="hljs-string">"NS"</span>,
+                                    <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                                    <span class="hljs-attr">"data"</span>: <span class="hljs-string">"ns1.biz.net.id."</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        <span class="hljs-attr">"zone-commit"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ],
+        [
+            {
+                <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-attr">"command"</span>: [
+                    {
+                        <span class="hljs-attr">"zone-begin"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        <span class="hljs-attr">"zone-set"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-set"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>,
+                                    <span class="hljs-attr">"owner"</span>: <span class="hljs-string">"@"</span>,
+                                    <span class="hljs-attr">"rtype"</span>: <span class="hljs-string">"NS"</span>,
+                                    <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                                    <span class="hljs-attr">"data"</span>: <span class="hljs-string">"hostmaster.biz.net.id."</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        <span class="hljs-attr">"zone-commit"</span>: [
+                            {
+                                <span class="hljs-attr">"sendblock"</span>: {
+                                    <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                    <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                                }
+                            },
+                            {
+                                <span class="hljs-attr">"receive"</span>: {
+                                    <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                                }
+                            }
+                        ]
+                    }
+                ],
+                <span class="hljs-attr">"receive"</span>: {}
+            }
+        ]
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><h2 id="sync-default-record-cname-to-knot"><a class="header-link" href="#sync-default-record-cname-to-knot"></a>SYNC DEFAULT RECORD CNAME TO KNOT</h2>
+<p>After Sync NOW check Your Config</p>
+<p>endpoint: api/sendcommand</p>
+<p>method: post</p>
+<p>raw : json</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-insert"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_record"</span> : <span class="hljs-string">"422446146700443649"</span>
+      }
+   }
+}</code></pre><h2 id="check-your-domain-after-sync-to-knot"><a class="header-link" href="#check-your-domain-after-sync-to-knot"></a>CHECK YOUR DOMAIN AFTER SYNC TO KNOT</h2>
+<p>After Sync NOW check Your Config</p>
+<p>endpoint: api/sendcommand</p>
+<p>method: post</p>
+<p>raw : json</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"zone-read"</span>: {
+      <span class="hljs-attr">"tags"</span>: {
+          <span class="hljs-attr">"id_zone"</span> : string
+      }
+   }
+}</code></pre><p>respone:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"data"</span>: {},
+            <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Command Execute"</span>,
+            <span class="hljs-attr">"result"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"Description"</span>: [
+                {
+                    <span class="hljs-attr">"zone-begin"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-begin"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            <span class="hljs-attr">"data"</span>: {},
+            <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Command Execute"</span>,
+            <span class="hljs-attr">"result"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"Description"</span>: [
+                {
+                    <span class="hljs-attr">"zone-set"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"rtype"</span>: <span class="hljs-string">"CNAME"</span>,
+                                <span class="hljs-attr">"data"</span>: <span class="hljs-string">"mainburung.com."</span>,
+                                <span class="hljs-attr">"owner"</span>: <span class="hljs-string">"www"</span>,
+                                <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>,
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-set"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            <span class="hljs-attr">"data"</span>: {},
+            <span class="hljs-attr">"status"</span>: <span class="hljs-string">"Command Execute"</span>,
+            <span class="hljs-attr">"result"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"Description"</span>: [
+                {
+                    <span class="hljs-attr">"zone-commit"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-commit"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre><p>response:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">"count"</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">"data"</span>: [
+        {
+            <span class="hljs-attr">"status"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"command"</span>: [
+                {
+                    <span class="hljs-attr">"zone-read"</span>: [
+                        {
+                            <span class="hljs-attr">"sendblock"</span>: {
+                                <span class="hljs-attr">"cmd"</span>: <span class="hljs-string">"zone-read"</span>,
+                                <span class="hljs-attr">"zone"</span>: <span class="hljs-string">"mainburung.com"</span>
+                            }
+                        },
+                        {
+                            <span class="hljs-attr">"receive"</span>: {
+                                <span class="hljs-attr">"type"</span>: <span class="hljs-string">"block"</span>
+                            }
+                        }
+                    ]
+                }
+            ],
+            <span class="hljs-attr">"receive"</span>: {
+                <span class="hljs-attr">"mainburung.com."</span>: {
+                    <span class="hljs-attr">"www.mainburung.com."</span>: {
+                    <span class="hljs-attr">"CNAME"</span>: {
+                        <span class="hljs-attr">"data"</span>: [
+                            <span class="hljs-string">"mainburung.com."</span>
+                        ],
+                        <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>
+                    }
+                },
+                    <span class="hljs-attr">"mainburung.com."</span>: {
+                        <span class="hljs-attr">"NS"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id."</span>,
+                                <span class="hljs-string">"hostmaster.biz.net.id."</span>
+                            ]
+                        },
+                        <span class="hljs-attr">"SOA"</span>: {
+                            <span class="hljs-attr">"ttl"</span>: <span class="hljs-string">"86400"</span>,
+                            <span class="hljs-attr">"data"</span>: [
+                                <span class="hljs-string">"ns1.biz.net.id. hostmaster.biz.net.id. 2018112222 10800 3600 604800 38400"</span>
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    <span class="hljs-attr">"code"</span>: <span class="hljs-number">200</span>,
+    <span class="hljs-attr">"status"</span>: <span class="hljs-string">"success"</span>,
+    <span class="hljs-attr">"message"</span>: <span class="hljs-string">"Operation succeeded"</span>
+}</code></pre>    </article>
+  </body>
+</html>

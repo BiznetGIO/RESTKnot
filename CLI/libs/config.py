@@ -2,6 +2,9 @@ import requests
 import json
 import os
 import yaml
+import sys
+import tqdm
+from tqdm import tqdm
 from libs.utils import generate_respons,get_url,get_time,get_idkey,dictcleanup
 from libs.auth import get_headers, get_user_id
 import copy
@@ -50,28 +53,17 @@ def searchId(endpoint,name):
     return generate_respons(True,'success',respons)
 
 def setDefaultDns(name):
-
     
     header = (get_headers())['data']
     header['user_id'] = (get_user_id())['data']
     res = requests.post("http://103.89.5.121:6968/api/user/dnscreate",
     data = {'domain' : str(name)}
     ,headers=header)
-    print(res)
     res = res.json()
     if 'code' not in res :
-        print(res['message'])
-        return False
-    
+        sys.stderr.write(res['message'])
+        return generate_respons(False,res['message'])
     tying_zone(header['user_id'],res['data']['data']['id_zone'])
-
-    tags = res['data']['data']['id_zone']
-    syncdat = {"command" : "conf-insert", "tags" : str(tags)}
-    res=sync(syncdat)
-    syncdat = {"command" : "zone-soa-insert", "tags" : str(tags)}
-    res=sync(syncdat)
-    syncdat = {"command" : "zone-ns-insert", "tags" : str(tags)}
-    res=sync(syncdat)
 
 def tying_zone(user_id,id_zone):
     header = (get_headers())['data']
@@ -81,11 +73,11 @@ def tying_zone(user_id,id_zone):
     res = requests.post(url = url, data = data, headers = header)
 
 def setRecord(obj):
-    from libs.list import check_zone_authorization
+    from libs.listing import check_zone_authorization
     with open('libs/templates/endpoints.json', 'r') as f :
         jsonmodel = json.load(f)
-
-
+        pbar = tqdm(total=100)
+        pbar.set_description("Preparing Data")
         temp = copy.deepcopy(obj)
         
         check = check_zone_authorization([obj['--nm-zn']])
@@ -102,7 +94,8 @@ def setRecord(obj):
         
         except Exception as e:
             return generate_respons(False,"Zone/Type/TTL doesn't exist\n" + str(e))
-        
+        pbar.update(20)
+        pbar.set_description("Sending Record")
         #insert Record
         json_data = copy.deepcopy(jsonmodel['create']['record']['data'])
         for i in json_data['insert']['fields']:
@@ -111,22 +104,24 @@ def setRecord(obj):
         res = send_request('record',json_data)
         temp['--id-record'] = res['message']['id']
 
-
+        pbar.update(20)
+        pbar.set_description("Sending TTL")
         #insert ttldata
         json_data = jsonmodel['create']['ttldata']['data']
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
         res = send_request('ttldata',json_data)
         temp['--id-ttldata'] = res['message']['id']
-        
+        pbar.update(20)
         #insert content
-        
+        pbar.set_description("Sending Content Data")
         json_data = jsonmodel['create']['content']['data']
         for i in json_data['insert']['fields']:
             json_data['insert']['fields'][i] = temp[json_data['insert']['fields'][i]]
         res = send_request('content',json_data)
         temp['--id-content'] = res['message']['id']
-
+        pbar.set_description("Sending Content Data")
+        pbar.update(20)
         #insert content serial
         record_type = obj['--type'].upper()
 
@@ -138,53 +133,23 @@ def setRecord(obj):
             temp['--id-content-serial'] = res['message']['id']
         f.close()
 
-    if record_type == 'MX':
-        cmd = 'zone-mx-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-zone']}
-    elif record_type == 'SRV':
-        cmd = 'zone-srv-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-zone']}
+    if record_type == 'SOA' or record_type == 'NS':
+        d_sync = {"sync" : record_type, "data" : {"id_zone" : temp['--id-zone']}}
     else :
-        cmd = 'zone-insert'
-        datasync = {"command" : cmd, "tags" : temp['--id-record']}
+        d_sync = {"sync" : "record", "data" : { "type": record_type, "id_record" : temp['--id-record']}}
+
 
     try:
-        sync(datasync)
-    except Exception as e:
-        print("Error \n",str(e))
-        return generate_respons(False,'Sync failure')
-
-    return generate_respons(True,'success',data)
-
-
-# def remove_data(name,endpoint):
-#     json_data = jsonmodel['rm'][endpoint]['data']
-#     url = get_url(endpoint)
-#     key = get_idkey(endpoint, headers=get_headers())
-#     delid = searchId(endpoint,name)
-#     json_data['remove']['tags'][key] = delid
-#     try :
-#         requests.post(url, data = json.dumps(json_data)
-#         , headers=get_headers())
-#     except Exception as e:
-#         respons = str(e)
-#         print(respons)
-#     return
-
-def sync(obj):
-    cmd = obj['command']
-    tags = obj['tags']
-    data_send = {cmd : {"tags" : ''}}
-    
-    if cmd != 'zone-insert':
-        data_send[cmd]['tags'] =  {"id_zone" : tags}
-    else :
-        data_send[cmd]['tags'] = {"id_record" : tags}
+        pbar.set_description("Sync Data")
+        res = syncdat(d_sync)
+        pbar.update(20)
+        pbar.close()
         
-    res=send_request('command', data_send)
-    
-    return res
-    
+    except Exception as e:
+        sys.stderr.write(str(e))
+        return generate_respons(False,'Sync failure')
+    return generate_respons(True,'success',data)
+  
 def check_yaml(filename):
     path = ("{}/restknot/"+filename).format(DUMP_FOLDER)
     return os.path.isfile(path)
@@ -197,9 +162,9 @@ def load_yaml(filename):
                 data = yaml.load(f)
             return generate_respons(True,'success',data)
         except Exception as e:
-            return generate_repons(False,str(e))
+            return generate_respons(False,str(e))
     else:
-        return util.generate_respons(False,"File doesn't exist")
+        return generate_respons(False,"File doesn't exist")
 
 def parse_yaml(data):
     data_list = list()
@@ -219,16 +184,55 @@ def parse_yaml(data):
                             if 'content-serial' in k[key]:
                                     data_dict['--nm-con-ser']=k[key]['content-serial']
                             data_list.append(data_dict)
-        for i in data_list:
-            if i['--type'] == 'SRV' or i['--type']=='MX':
-                    if not '--nm-con-ser' in i:
-                            data_list.remove(i)
+       
+        idx = len(data_list)-1
+        while idx >= 0:
+            if data_list[idx]['--type'] == 'SRV' or data_list[idx]['--type'] == 'MX':
+                if not '--nm-con-ser' in data_list[idx]:
+                    del data_list[idx]
+                    
+
             else :
-                    if '--nm-con-ser' in i:
-                            data_dict.remove(i)
-        
+                if '--nm-con-ser' in data_list[idx]:
+                    del data_list[idx]
+            idx = idx-1
+
         respon = generate_respons(True,'success',data_list)
     except Exception as e:
         respon = generate_respons(False,str(e))
     finally :
         return respon
+
+
+def syncdat(obj):
+    if obj['sync'] == 'dns':
+        d_json = {
+                    "conf-insert": {
+                        "tags": {
+                            "id_zone" : obj['data']['id_zone']
+                        }
+                    }
+                }
+    elif obj['sync'].upper() == 'SOA':
+        d_json = {"zone-soa-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+    elif obj['sync'].upper() == 'NS':
+        d_json = {"zone-ns-insert":{"tags":{"id_zone":obj['data']['id_zone']}}}
+    elif obj['sync'] == 'record' :    
+        r_type = obj['data']['type']
+        if r_type.upper() == 'SRV':
+            cmd = 'zone-srv-insert'
+        elif r_type.upper() == 'MX':
+            cmd = 'zone-mx-insert'
+        else :
+            cmd = 'zone-insert'
+        d_json = {cmd:{"tags":{"id_record":obj['data']['id_record']}}}
+
+    try : 
+        res = send_request('command',d_json)
+        if res["code"] == 200:
+            return generate_respons(True,"Success")
+        else :
+            return generate_respons(False, "Fail")
+    except Exception as e:
+        print(res)
+        return generate_respons(False,str(e))

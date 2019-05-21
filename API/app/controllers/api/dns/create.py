@@ -11,8 +11,8 @@ from app import redis_store
 import dill
 
 
-url_env = os.getenv("SOCKET_AGENT_HOST")
-port = os.getenv("SOCKET_AGENT_PORT")
+url_env = os.environ.get("SOCKET_AGENT_HOST", os.getenv('SOCKET_AGENT_HOST'))
+port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
 url_fix= url_env+":"+port
 url = url_fix+"/api/command_rest"
 
@@ -43,7 +43,6 @@ def sync_soa(id_zone):
         # state change
         state = change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
-
     cmd.z_commit(url, tags)
 
 def sync_ns(id_zone):
@@ -78,7 +77,7 @@ def addSOADefault(zone):
     type_data = db.get_by_id("zn_type","nm_type","SOA")
 
     record_soa = {
-        "nm_record": zone,
+        "nm_record": '@',
         "date_record": str(date),
         "id_zone":str(zone_data[0]['id_zone']),
         "id_type":str(type_data[0]['id_type'])

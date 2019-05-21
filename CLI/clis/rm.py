@@ -4,7 +4,7 @@ from .base import Base
 from libs import utils as util
 from libs import config as app
 from libs import remove as delete
-from libs import list as ls
+from libs import listing as ls
 from libs.auth import check_password
 from libs.wrapper import *
 from tabulate import tabulate
@@ -14,6 +14,7 @@ class Rm(Base):
     usage:
         rm dns (--nm NAME)
         rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
+        rm -h | --help
 
     Options :
         -h --help               Print usage
@@ -29,10 +30,15 @@ class Rm(Base):
     def execute(self):
         if self.args['dns']:
             zone = [self.args['--nm']]
-            util.log_warning('The following record will also be deleted\n')
-            listdns = ls.list_record(zone)
-            listdns = util.table_cleanup(listdns)
-            print(tabulate(listdns,headers="keys",tablefmt="rst"))
+            try :
+                listdns = ls.list_record(zone)
+                if 'data' in listdns:
+                    listdns = listdns['data']
+                    listdns = util.table_cleanup(listdns)
+                    util.log_warning('The following record will also be deleted\n')
+                    print(tabulate(listdns,headers="keys",tablefmt="rst"))
+            except TypeError :
+                print("DNS don't have record")
             if util.assurance() and check_password():
                 delete.remove_zone(zone[0])
             else:
@@ -46,10 +52,10 @@ class Rm(Base):
                 show = ls.list_record(zone,tags)
                 try :
                     show = show['data']
-                except Exception:
-                    print("Data doesn't exist")
+                except Exception as e:
+                    sys.stderr.write("Data doesn't exist")
+                    sys.stderr.write(str(e))
                     exit()
-
             else:
                 zone = ls.list_dns()
                 zone = zone['data']

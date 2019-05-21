@@ -8,6 +8,7 @@ from app.middlewares.auth import login_required
 
 
 class Type(Resource):
+    @login_required
     def get(self):
         command = utils.get_command(request.path)
         command = "zn_"+command

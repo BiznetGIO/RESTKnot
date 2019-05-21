@@ -96,7 +96,7 @@ function ajaxDor(link,json_data){
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
     var url_knot = 'http://103.89.5.121';
-    // var url_knot = 'http://127.0.0.1';
+    // var url_knot = 'http://10.10.3.32';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -123,6 +123,12 @@ $(document).ready(function(){
             "content": 1,
             "serial":0,
             "id" : "402393625286410241"
+        },
+        {
+            "name": "MX",
+            "content": 1,
+            "serial":1,
+            "id" : "402427545745850369"
         }
     ]
 
@@ -180,7 +186,6 @@ $(document).ready(function(){
                 $('#record_section').show()
                 $('#record_table').html("")
                 var data = table.row(this).data();
-                
                 json_data = {
                     "where": {
                        "tags": {
@@ -198,7 +203,6 @@ $(document).ready(function(){
                     data: JSON.stringify(json_data),
                     contentType:"application/json",
                     dataType:"json",
-                    
                     success: function(respon){
                         console.log(respon.data)
                         // $("record_table tbody").load(respon.data.data);
@@ -241,7 +245,7 @@ $(document).ready(function(){
                                             }
                                         }
                                     }
-                                    var content_data = ajaxDor("http://103.89.5.121:6968/api/content", json_data)
+                                    var content_data = ajaxDor(uri_fix+"/api/content", json_data)
                                     content_data.done(function(respon){
                                         var data = respon.data
                                         var dt = ""

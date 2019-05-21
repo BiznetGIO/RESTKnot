@@ -1,6 +1,14 @@
 """
 Usage:
   knot-cli <command> [<args>...]
+  knot-cli -h | --help
+
+Command :
+  create      Create new DNS or Record
+  rm          Remove owned DNS or Records
+  ls          List all owned dns or records
+  login       
+  logout    
 
 Run 'knot-cli <command> --help' for more information on a command.
 """

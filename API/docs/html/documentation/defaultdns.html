@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>USER SIDE</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="user-side"><a class="header-link" href="#user-side"></a>USER SIDE</h2>
+<h3 id="user"><a class="header-link" href="#user"></a>USER</h3>
+<ul class="list">
+<li>path: /api/user/dnscreate</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: user</li>
+<li>usage: Create default dns configuration</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: string
+      }
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_zone: Name of the zone that would be inserted</li>
+</ul>
+<h2 id="admin-side"><a class="header-link" href="#admin-side"></a>ADMIN SIDE</h2>
+<h3 id="admin"><a class="header-link" href="#admin"></a>ADMIN</h3>
+<ul class="list">
+<li>path: /api/admin/zone</li>
+<li>method: post</li>
+<li>response: application/json</li>
+<li>body: raw</li>
+<li>roles: admin</li>
+<li>usage: Add new zone</li>
+</ul>
+<p>raw:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">"insert"</span>: {
+      <span class="hljs-attr">"fields"</span>: {
+          <span class="hljs-attr">"nm_zone"</span>: string
+      }
+   }
+}</code></pre><p>fields:</p>
+<ul class="list">
+<li>nm_zone: Name of the zone that would be inserted</li>
+</ul>
+    </article>
+  </body>
+</html>

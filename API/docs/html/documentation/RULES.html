@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>RECORD CONTENT</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h1 id="record-content"><a class="header-link" href="#record-content"></a>RECORD CONTENT</h1>
+<h2 id="a"><a class="header-link" href="#a"></a>A</h2>
+<pre class="hljs"><code><span class="hljs-symbol">A:</span>
+<span class="hljs-symbol">  example:</span> <span class="hljs-number">192.168</span><span class="hljs-number">.123</span><span class="hljs-number">.10</span>
+<span class="hljs-symbol">  content:</span>
+<span class="hljs-symbol">    params:</span>
+<span class="hljs-symbol">      IPv4:</span>
+<span class="hljs-symbol">        type:</span> STR
+<span class="hljs-symbol">        desc:</span> An IPv4 address must be a decimal dotted quad string.</code></pre><h2 id="aaaa"><a class="header-link" href="#aaaa"></a>AAAA</h2>
+<pre class="hljs"><code><span class="hljs-attribute">AAAA</span>:
+  <span class="hljs-attribute">example</span>: <span class="hljs-number">2001</span>:<span class="hljs-attribute">db8</span>::<span class="hljs-attribute">c0ff</span>:<span class="hljs-attribute">e</span>:e
+  <span class="hljs-attribute">content</span>:
+    <span class="hljs-attribute">params</span>:
+      <span class="hljs-attribute">IPv6</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: An IPv6 address must a coloned hex IPv6 address string.</code></pre><h2 id="cname"><a class="header-link" href="#cname"></a>CNAME</h2>
+<pre class="hljs"><code>CNAME:
+  example: example.<span class="hljs-keyword">com</span>
+  conten<span class="hljs-variable">t:</span>
+    param<span class="hljs-variable">s:</span>
+      <span class="hljs-built_in">hostname</span>:
+        <span class="hljs-built_in">type</span>: STR
+        desc: A <span class="hljs-built_in">hostname</span> should <span class="hljs-keyword">be</span> valid <span class="hljs-built_in">and</span> may <span class="hljs-keyword">only</span> contain A-Z, <span class="hljs-keyword">a</span>-<span class="hljs-keyword">z</span>, <span class="hljs-number">0</span>-<span class="hljs-number">9</span>, _, -, <span class="hljs-built_in">and</span> .. An MX record may never <span class="hljs-keyword">be</span> <span class="hljs-keyword">an</span> ip/ipv6 address, <span class="hljs-built_in">and</span> must not point <span class="hljs-keyword">to</span> <span class="hljs-keyword">a</span> CNAME. Entering incorrect information here can negatively impact your ability <span class="hljs-keyword">to</span> receive <span class="hljs-built_in">and</span> in some cases send mail. A CNAME record must always point <span class="hljs-keyword">to</span> another domain name, never directly <span class="hljs-keyword">to</span> ip address</code></pre><h2 id="mx"><a class="header-link" href="#mx"></a>MX</h2>
+<pre class="hljs"><code>MX:
+  example: <span class="hljs-number">10</span> mail.example.com
+  content:
+    <span class="hljs-built_in">params</span>:
+      priority:
+        type: STR
+        desc: To differentiate them, <span class="hljs-keyword">each</span> MX record has <span class="hljs-keyword">a</span> priority (<span class="hljs-built_in">lower</span> <span class="hljs-keyword">the</span> <span class="hljs-built_in">number</span>, higher <span class="hljs-keyword">the</span> priority). The MX record <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> highest priority is <span class="hljs-keyword">the</span> actual target computer where mail boxes are located. <span class="hljs-string">'10'</span> is <span class="hljs-keyword">a</span> good default. 
+  serial:
+    <span class="hljs-built_in">params</span>:
+      hostname:
+        type: STR
+        desc: A hostname should be valid <span class="hljs-keyword">and</span> may only contain A-Z, <span class="hljs-keyword">a</span>-z, <span class="hljs-number">0</span><span class="hljs-number">-9</span>, _, -, <span class="hljs-keyword">and</span> .. An mx may never be <span class="hljs-keyword">an</span> ip/ipv6 address, <span class="hljs-keyword">and</span> must <span class="hljs-keyword">not</span> point <span class="hljs-built_in">to</span> <span class="hljs-keyword">a</span> cname. Entering incorrect information here can negatively impact your ability <span class="hljs-built_in">to</span> receive <span class="hljs-keyword">and</span> <span class="hljs-keyword">in</span> some cases <span class="hljs-built_in">send</span> mail. </code></pre><h2 id="txt"><a class="header-link" href="#txt"></a>TXT</h2>
+<pre class="hljs"><code><span class="hljs-symbol">TXT:</span>
+<span class="hljs-symbol">  example:</span> <span class="hljs-string">"this is an example of TXT record"</span>
+<span class="hljs-symbol">  content:</span>
+<span class="hljs-symbol">    params:</span>
+<span class="hljs-symbol">      txtdata:</span>
+<span class="hljs-symbol">        type:</span> STR
+<span class="hljs-symbol">        desc:</span> Text data may only contain printable ASCII characters. Very long lines will be automatically broken into multiple <span class="hljs-number">255</span> character segments. </code></pre><h2 id="ns"><a class="header-link" href="#ns"></a>NS</h2>
+<pre class="hljs"><code>NS:
+  example: ns1.rincewind.<span class="hljs-keyword">com</span>
+  conten<span class="hljs-variable">t:</span>
+    param<span class="hljs-variable">s:</span>
+      nameserver:
+        <span class="hljs-built_in">type</span>: STR
+        desc: A nameserver should <span class="hljs-keyword">be</span> valid <span class="hljs-built_in">and</span> may <span class="hljs-keyword">only</span> contain A-Z, <span class="hljs-keyword">a</span>-<span class="hljs-keyword">z</span>, <span class="hljs-number">0</span>-<span class="hljs-number">9</span>, _, -, <span class="hljs-built_in">and</span> .. </code></pre><h2 id="soa"><a class="header-link" href="#soa"></a>SOA</h2>
+<pre class="hljs"><code><span class="hljs-attribute">SOA</span>:
+  <span class="hljs-attribute">example</span>: example.com sam.vimes.com <span class="hljs-number">2018102107</span> <span class="hljs-number">86400</span> <span class="hljs-number">7200</span> <span class="hljs-number">3600000</span> <span class="hljs-number">86400</span>
+  <span class="hljs-attribute">content</span>:
+    <span class="hljs-attribute">params</span>:
+      <span class="hljs-attribute">nameserver</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: The primary name server for the domain and should match the nameserver on NS-record. e.g <span class="hljs-string">'example.com'</span>
+      <span class="hljs-attribute">email</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: The e-mail address of the responsible party for the zone. Typically an email address with <span class="hljs-string">'@'</span> character replaced with period. e.g <span class="hljs-string">'sam.vimes.com'</span>
+  <span class="hljs-attribute">serial</span>:
+    <span class="hljs-attribute">params</span>:
+      <span class="hljs-attribute">serial</span>: 
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: A timestamp that's updated whenever DNS zone changes. e.g <span class="hljs-number">2018102107</span>
+      <span class="hljs-attribute">refresh</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: A number of seconds before the zone should be refreshed. e.g <span class="hljs-number">86400</span>
+      <span class="hljs-attribute">retry</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: A number of seconds before a failed refresh should be retried. e.g <span class="hljs-number">7200</span>
+      <span class="hljs-attribute">expire</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: The upper limit in seconds before the zone is considered no longer authoritative. e.g <span class="hljs-number">3600000</span>
+      <span class="hljs-attribute">ttl</span>:
+        <span class="hljs-attribute">type</span>: STR
+        <span class="hljs-attribute">desc</span>: The negative result TTL (for example, how long a resolver should consider a negative result for a subdomain to be valid before retrying). e.g <span class="hljs-number">86400</span></code></pre><h2 id="srv"><a class="header-link" href="#srv"></a>SRV</h2>
+<pre class="hljs"><code>SRV:
+  example: <span class="hljs-number">0</span> <span class="hljs-number">60</span> <span class="hljs-number">5060</span> bigbox.example.<span class="hljs-keyword">com</span>.
+  conten<span class="hljs-variable">t:</span>
+    param<span class="hljs-variable">s:</span>
+      priority:
+        <span class="hljs-built_in">type</span>: str
+        desc: The priority must <span class="hljs-keyword">only</span> <span class="hljs-keyword">be</span> within the <span class="hljs-built_in">range</span> <span class="hljs-number">0</span>-<span class="hljs-number">65535</span> (lower <span class="hljs-keyword">is</span> better ). <span class="hljs-number">0</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> good default. 
+  seria<span class="hljs-variable">l:</span>
+    param<span class="hljs-variable">s:</span>
+      weigh<span class="hljs-variable">t:</span>
+        <span class="hljs-built_in">type</span>: str
+        desc: The weight must <span class="hljs-keyword">only</span> <span class="hljs-keyword">be</span> within the <span class="hljs-built_in">range</span> <span class="hljs-number">0</span>-<span class="hljs-number">65535</span> (higher <span class="hljs-keyword">is</span> better ). <span class="hljs-number">0</span> <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> good default. 
+      por<span class="hljs-variable">t:</span>
+        <span class="hljs-built_in">type</span>: str
+        desc: The port must <span class="hljs-keyword">only</span> <span class="hljs-keyword">be</span> within the <span class="hljs-built_in">range</span> <span class="hljs-number">0</span>-<span class="hljs-number">65535</span>. The port varies depending <span class="hljs-keyword">on</span> the service (ie <span class="hljs-number">80</span>, <span class="hljs-number">5222</span>, <span class="hljs-number">5069</span>, etc) 
+      targe<span class="hljs-variable">t:</span>
+        <span class="hljs-built_in">type</span>: str
+        desc: This <span class="hljs-keyword">is</span> the <span class="hljs-built_in">hostname</span> of the machine running the service. It should exist <span class="hljs-keyword">as</span> <span class="hljs-keyword">an</span> A record <span class="hljs-built_in">and</span> may <span class="hljs-keyword">only</span> contain A-Z, <span class="hljs-keyword">a</span>-<span class="hljs-keyword">z</span>, <span class="hljs-number">0</span>-<span class="hljs-number">9</span>, _, -, <span class="hljs-built_in">and</span> .. </code></pre>    </article>
+  </body>
+</html>
