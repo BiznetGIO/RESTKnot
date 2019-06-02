@@ -18,6 +18,7 @@ def cluster_zone(tags):
         record_cs.append(dict(zip(column_record, row)))
     for i_cs in record_cs:
         url_ip = "http://"+i_cs['ip_slave']+":"+i_cs['port_slave']+"/api/command_rest"
+        print(url_ip)
         conf_insert = cl_default.sync_conf_insert(url_ip, i_cs['id_zone'])
         json_command.append(conf_insert)
     return json_command

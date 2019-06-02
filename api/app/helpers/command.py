@@ -607,12 +607,12 @@ def conf_set_notify_master(tags):
     rows_slave = db.fetchall()
     for rw in rows_slave:
         record_slave.append(dict(zip(column_record_slave, rw)))
-    data = ""
-    for i in record_slave:
-        data = data+" '"+i['nm_slave']+"'"
+    # data = ""
+    # for i in record_slave:
+    #     data = data+" '"+i['nm_slave']+"'"
     json_command = list()
 
-    for keys in record:
+    for keys in record_slave:
         json_data = {
             "cluster-set": {
                 "sendblock": {
@@ -626,8 +626,8 @@ def conf_set_notify_master(tags):
                 "receive": {
                     "type": "command",
                     "master": keys['nm_master'],
-                    "uri": keys['ip_master'],
-                    "port": keys['port'],
+                    "uri": keys['ip_slave'],
+                    "port": keys['slave_port'],
                     "id_notify_master": keys['id_notify_master']
                 }
             }
@@ -666,7 +666,7 @@ def conf_set_notify_slave(tags):
                     "rtype": 'notify',
                     "owner": 'slave',
                     "ttl":"",
-                    "data": keys['nm_slave']
+                    "data": keys['nm_master']
                 },
                 "receive": {
                     "type": "command",
@@ -699,6 +699,11 @@ def conf_set_acl_master(tags):
     rows_slave = db.fetchall()
     for rw in rows_slave:
         record_slave.append(dict(zip(column_record_slave, rw)))
+
+    data = ""
+    for i in record_slave:
+        data = data+" '"+i['nm_slave']+"'"
+
     json_command = list()
     for keys in record:
         json_data = {
@@ -709,7 +714,7 @@ def conf_set_acl_master(tags):
                     "rtype": 'acl',
                     "owner": 'master',
                     "ttl":'',
-                    "data": keys['nm_master']
+                    "data": data
                 },
                 "receive": {
                     "type": "command",
@@ -736,6 +741,10 @@ def conf_set_acl_slave(tags):
     for row in rows:
         record.append(dict(zip(column_record_slave, row)))
 
+    data = ""
+    for i in record:
+        data = data+" '"+i['nm_slave']+"'"
+    print(record)
     column_record_master = model.get_columns("v_cs_acl_master")
     query_master = "select * from v_cs_acl_master where id_zone='"+fields+"'"
     db.execute(query_master)
@@ -745,24 +754,23 @@ def conf_set_acl_slave(tags):
 
     json_command = list()
 
-    for keys in record:
+    for keys in record_master:
         json_data = {
             "cluster-set": {
                 "sendblock": {
                     "cmd": "conf-set",
                     "zone": keys['nm_zone'],
-                    "rtype": 'acl',
-                    "owner": 'slave',
+                    "rtype": 'notify',
+                    "owner": 'master',
                     "ttl":"",
-                    "data": keys['nm_slave']
+                    "data": data
                 },
                 "receive": {
                     "type": "command",
-                    "slave": keys['nm_slave'],
                     "master": keys['nm_master'],
-                    "uri":keys['ip_slave'],
-                    "port": keys['port_slave'],
-                    "id_acl_slave": keys['id_acl_slave']
+                    "uri":keys['ip_master'],
+                    "port": keys['port'],
+                    "id_acl_master": keys['id_acl_master']
                 }
             }
         }

@@ -10,7 +10,7 @@ def timeset():
 def yaml_parser(file):
     with open(file, 'r') as stream:
         try:
-            data = yaml.load(stream)
+            data = yaml.load(stream, Loader=yaml.FullLoader)
             return data
         except yaml.YAMLError as exc:
             print(exc)
