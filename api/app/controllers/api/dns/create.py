@@ -16,7 +16,7 @@ port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
 url_fix= url_env+":"+port
 url = url_fix+"/api/command_rest"
 
-date = datetime.datetime.now().strftime("%Y%m%d%H")
+date = datetime.datetime.now().strftime("%Y%m%d")
 
 def sync_conf_insert(id_zone):
     tags = {

@@ -168,7 +168,8 @@ def zone_soa_insert_default(tags):
     
     serial_data = ""
     data = ""
-    date_t = record[0]['date_record']
+    counter = str(record[0]['counter'])
+    date_t = record[0]['date_record']+counter.zfill(2)
 
     for ns in content_data:
         data = data+" "+ns['nm_content']
