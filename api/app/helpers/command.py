@@ -1,7 +1,7 @@
 from app.libs import utils
 from app.models import model as model
 from app import db
-from app.libs import utils
+from app.libs import utils, counter
 
 
 def z_begin(url,tags):
@@ -310,6 +310,7 @@ def zone_insert(tags):
             }
         }
     }
+    counter.update_counter(record[0]['nm_zone'])
     return json_command
 
 def zone_ns_insert(tags):
@@ -358,6 +359,7 @@ def zone_ns_insert(tags):
             "id_record": record[0]['id_record'],
             "command": json_command
         })
+    counter.update_counter(record[0]['nm_zone'])
     return command_ns
 
 def zone_insert_srv(tags):
@@ -421,6 +423,7 @@ def zone_insert_srv(tags):
                         }
                     }
                 }
+    counter.update_counter(record[0]['nm_zone'])
     return json_command
 
 def zone_insert_mx(tags):
