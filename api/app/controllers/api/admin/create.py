@@ -98,7 +98,7 @@ def addSOADefault(zone):
          print(e)
 
     ttl_soa_data = db.get_by_id("zn_ttldata","id_record",record_soa_data[0]['id_record'])
-    content_soa_d = os.environ.get("DEFAULT_SOA_NS", os.getenv('DEFAULT_SOA_NS'))
+    content_soa_d = os.environ.get("DEFAULT_SOA_CONTENT", os.getenv('DEFAULT_SOA_CONTENT'))
     content_soa_d = content_soa_d.split(" ")
     for i in content_soa_d:
         content_soa = {
