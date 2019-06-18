@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, fields, request
 from app.helpers.rest import *
 from app.helpers.memcache import *
 from app.models import model as db
-from app.libs.utils import repodefault, send_http, change_state
+from app.libs.utils import send_http, change_state
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
@@ -72,7 +72,6 @@ def sync_cname_default(id_zone, id_record):
     cmd.zone_commit_http(url,tags)
 
 def addSOADefault(zone):
-    defaultdata = repodefault()
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","SOA")
 
@@ -99,7 +98,8 @@ def addSOADefault(zone):
          print(e)
 
     ttl_soa_data = db.get_by_id("zn_ttldata","id_record",record_soa_data[0]['id_record'])
-    content_soa_d = defaultdata['default']['ns']
+    content_soa_d = os.environ.get("DEFAULT_SOA_NS", os.getenv('DEFAULT_SOA_NS'))
+    content_soa_d = content_soa_d.split(" ")
     for i in content_soa_d:
         content_soa = {
             "id_ttldata": str(ttl_soa_data[0]['id_ttldata']),
@@ -110,7 +110,8 @@ def addSOADefault(zone):
         except Exception as e:
             print(e)
 
-    serial_content_soa = defaultdata['default']['serial']
+    serial_content_soa = os.environ.get("DEFAULT_SOA_SERIAL", os.getenv('DEFAULT_SOA_SERIAL'))
+    serial_content_soa = serial_content_soa.split(" ")
     for c in serial_content_soa:
         serial_content = {
             "nm_content_serial": c,
@@ -152,7 +153,9 @@ def addNSDefault(zone):
     except Exception as e:
         print(e)
     ttl_ns_data = db.get_by_id("zn_ttldata","id_record",str(record_ns_data['id_record']))
-    content = repodefault()['default']['ns']
+    # content = repodefault()['default']['ns']
+    content = os.environ.get("DEFAULT_NS", os.getenv('DEFAULT_NS'))
+    content = content.split(" ")
 
     for i in content:
         content_ns = {

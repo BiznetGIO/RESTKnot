@@ -1,6 +1,9 @@
 default:
   ns:
     - satu.neodns.id.
+    - dua.neodns.id.
+  soa:
+    - satu.neodns.id.
     - hostmaster.neodns.id.
   serial:
     - "10800"
