@@ -20,35 +20,15 @@ services:
           - WORKER=2
           - ENVIRONMENT=production
           - COMMAND=server
-          - DEFAULT_NS='x.x.id. x.x.id.'
-          - DEFAULT_SOA_CONTENT="x.x.id. x.neodns.id."
-          - DEFAULT_SOA_SERIAL="10800 3600 604800 38400"
+          - DEFAULT_NS='satu.neodns.id. dua.neodns.id.'
+          - DEFAULT_SOA_CONTENT='satu.neodns.id. hostmaster.neodns.id.'
+          - DEFAULT_SOA_SERIAL='10800 3600 604800 38400'
         command: ["sh","run.sh"]
         links:
           - "session"
-          # - "db"
-          # - "db2"
 
     session:
         image: redis
         command: ["redis-server", "--requirepass", "pass"]
         ports:
           - "6379:6379"
-
-    # db:
-    #   image: cockroachdb/cockroach
-    #   volumes:
-    #     - db:/cockroach/cockroach-data
-    #   command: start --insecure --advertise-addr=db --cache=.25 --max-sql-memory=.25
-    #   ports:
-    #     - "26257:26257"
-    #     - "26256:8080"
-    # db2:
-    #   image: cockroachdb/cockroach
-    #   command: start --advertise-host=db2 --join=db:26257 --cache=.25 --max-sql-memory=.25 --insecure
-    #   volumes:
-    #      - db2:/cockroach/cockroach-data
-    #   ports:
-    #     - "26258:26257"
-    #   links:
-    #       - "db"
