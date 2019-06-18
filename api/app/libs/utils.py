@@ -61,19 +61,46 @@ def get_tag():
 #     return measurement, tags
 
 def send_http(url, data, headers=None):
+    respons = None
+    send = None
     json_data = json.dumps(data)
-    send = requests.post(url, data=json_data, headers=headers)
-    respons = send.json()
+    data = None
     try:
-        data = json.loads(respons['data'])
-    except Exception as e:
-        print(e)
-        print(url)
-        print(respons)
-        raise
-    else:
-        respons['data'] = data
-    return respons
+        send = requests.post(url, data=json_data, headers=headers)
+        respons = send.json()
+        try:
+            data = json.loads(respons['data'])
+        except Exception as e:
+            raise
+        else:
+            data_error = None
+            respons['data'] = data
+            
+            try:
+                data_error = respons['description'][0]['cluster-set']
+            except Exception:
+                data_error = None
+            if data_error:
+                check_error = data_error.split(":")
+                if check_error[0] == 'error':
+                    respons['data'] = {
+                        "result": False,
+                        "description": data_error,
+                        "status": "Command Not Execute"
+                    }
+                    return respons['data']
+                else:
+                    return respons
+            else:
+                return respons
+    except requests.exceptions.RequestException as e:
+        respons = {
+            "result": False,
+            "Error": str(e),
+            "description": None
+        }
+        data = respons
+        return data
 
 def change_state(field, field_value, state):
     data_state = {
