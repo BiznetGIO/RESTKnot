@@ -295,21 +295,39 @@ def zone_insert(tags):
     rows = db.fetchall()
     for row in rows:
         ctdata.append(dict(zip(column_ctdata, row)))
-    json_command={
-        "zone-set": {
-            "sendblock": {
-                "cmd": "zone-set",
-                "zone": record[0]['nm_zone'],
-                "owner": record[0]['nm_record'],
-                "rtype": record[0]['nm_type'],
-                "ttl": ttldata[0]['nm_ttl'],
-                "data": ctdata[0]['nm_content']
-            },
-            "receive": {
-                "type": "block"
+
+    if record[0]['nm_type'] == "TXT":
+        json_command={
+            "zone-set": {
+                "sendblock": {
+                    "cmd": "zone-set",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "rtype": record[0]['nm_type'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "data": '"'+ctdata[0]['nm_content']+'"'
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
+    else:   
+        json_command={
+            "zone-set": {
+                "sendblock": {
+                    "cmd": "zone-set",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "rtype": record[0]['nm_type'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "data": ctdata[0]['nm_content']
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
     counter.update_counter(record[0]['nm_zone'])
     return json_command
 
