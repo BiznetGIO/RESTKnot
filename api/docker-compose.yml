@@ -20,6 +20,9 @@ services:
           - WORKER=2
           - ENVIRONMENT=production
           - COMMAND=server
+          - DEFAULT_NS='x.x.id. x.x.id.'
+          - DEFAULT_SOA_NS="x.x.id. x.neodns.id."
+          - DEFAULT_SOA_SERIAL="10800 3600 604800 38400"
         command: ["sh","run.sh"]
         links:
           - "session"
