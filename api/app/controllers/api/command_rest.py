@@ -346,7 +346,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.conf_set_notify_slave(tags)
-            result = list()
             for i in respons:
                 url = i['cluster-set']['receive']['uri']
                 url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
@@ -396,7 +395,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.conf_set_acl_slave(tags)
-            result = list()
             for i in respons:
                 url = i['cluster-set']['receive']['uri']
                 url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
@@ -445,7 +443,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = cmd.conf_set_file(tags)
-            result = list()
             for i in respons:
                 url_slave = i['cluster-set']['receive']['slave_uri']
                 url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
@@ -501,3 +498,246 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             respons = cl_command.unset_cluster(tags)
             return response(200, data=respons)
+
+        if init_data['action'] == 'cluster':
+            #CLUSTES INIT
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+        
+            # MASTER NOTIFY
+            respons = cl_command.cluster_zone(tags)
+            for i in respons:
+                server_port = i['cluster-set']['receive']['port']
+                server_uri = "http://"+i['cluster-set']['receive']['uri']+":"+server_port+"/api/command_rest"
+                cmd.conf_begin_http(server_uri)
+                http_response = utils.send_http(server_uri,i)
+                for a in http_response['description']:
+                    data_state = None
+                    log_data = None
+                    if a['cluster-set'] != "OK\n":
+                        data_state = {
+                            "where":{
+                                "id_notify_master" : str(i['cluster-set']['receive']['id_notify_master'])
+                            },
+                            "data":{
+                                "state" : "0"
+                            }
+                        }
+
+                        log_data = {
+                            "id_notify_master": str(i['cluster-set']['receive']['id_notify_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                        # db.insert("cs_notify_master_log", log_data)
+                        # db.update("cs_notify_master", data_state)
+                    else:
+                        data_state = {
+                            "where":{
+                                "id_notify_master" : str(i['cluster-set']['receive']['id_notify_master'])
+                            },
+                            "data":{
+                                "state" : "1"
+                            }
+                        }
+                        log_data = {
+                            "id_notify_master": str(i['cluster-set']['receive']['id_notify_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    db.insert("cs_notify_master_log", log_data)
+                    db.update("cs_notify_master", data_state)
+                cmd.conf_commit_http(server_uri)
+                result.append({
+                    "master-notify": http_response
+                })
+
+            # MASTER ACL
+            response = None
+            respons = cmd.conf_set_acl_master(tags)
+            for i in respons:
+                server_port = i['cluster-set']['receive']['port']
+                server_uri = "http://"+i['cluster-set']['receive']['uri']+":"+server_port+"/api/command_rest"
+                cmd.conf_begin_http(server_uri)
+                http_response = utils.send_http(server_uri,i)
+                for a in http_response['description']:
+                    data_state = None
+                    log_data = None
+                    if a['cluster-set'] != "OK\n":
+                        data_state = {
+                            "where":{
+                                "id_acl_master" : str(i['cluster-set']['receive']['id_acl_master'])
+                            },
+                            "data":{
+                                "state" : "0"
+                            }
+                        }
+
+                        log_data = {
+                            "id_acl_master": str(i['cluster-set']['receive']['id_acl_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    else:
+                        data_state = {
+                            "where":{
+                                "id_acl_master" : str(i['cluster-set']['receive']['id_acl_master'])
+                            },
+                            "data":{
+                                "state" : "1"
+                            }
+                        }
+
+                        log_data = {
+                            "id_acl_master": str(i['cluster-set']['receive']['id_acl_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    db.insert("cs_acl_master_log", log_data)
+                    db.update("cs_acl_master", data_state)
+                cmd.conf_commit_http(server_uri)
+                result.append({
+                    "master-acl": http_response
+                })
+
+            # SLAVE NOTIFY
+            response = None
+            respons = cmd.conf_set_notify_slave(tags)
+            for i in respons:
+                url = i['cluster-set']['receive']['uri']
+                url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
+                slave_server_url = url_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                for a in http_response['description']:
+                    data_state = None
+                    log_data = None
+                    if a['cluster-set'] != "OK\n":
+                        data_state = {
+                            "where":{
+                                "id_notify_slave" : str(i['cluster-set']['receive']['id_notify_slave'])
+                            },
+                            "data":{
+                                "state" : "0"
+                            }
+                        }
+
+                        log_data = {
+                            "id_notify_slave": str(i['cluster-set']['receive']['id_notify_slave']),
+                            "messages": a['cluster-set'],
+                            "command_type": "add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    else:
+                        data_state = {
+                            "where":{
+                                "id_notify_slave" : str(i['cluster-set']['receive']['id_notify_slave'])
+                            },
+                            "data":{
+                                "state" : "1"
+                            }
+                        }
+                        log_data = {
+                            "id_notify_slave": str(i['cluster-set']['receive']['id_notify_slave']),
+                            "messages": a['cluster-set'],
+                            "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    db.insert("cs_notify_slave_log", log_data)
+                    db.update("cs_notify_slave", data_state)
+                cmd.conf_commit_http(slave_server_url)
+                result.append({
+                    "slave-notify": http_response
+                })
+            
+            # SLAVE ACL
+            response = None
+            respons = cmd.conf_set_acl_slave(tags)
+            for i in respons:
+                url = i['cluster-set']['receive']['uri']
+                url_fix= "http://"+url+":"+i['cluster-set']['receive']['port']
+                slave_server_url = url_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response = utils.send_http(slave_server_url,i)
+                for a in http_response['description']:
+                    data_state = None
+                    log_data = None
+                    if a['cluster-set'] != "OK\n":
+                        data_state = {
+                            "where":{
+                                "id_acl_master" : str(i['cluster-set']['receive']['id_acl_master'])
+                            },
+                            "data":{
+                                "state" : "0"
+                            }
+                        }
+                        log_data = {
+                            "id_acl_master": str(i['cluster-set']['receive']['id_acl_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    else:
+                        data_state = {
+                            "where":{
+                                "id_acl_master" : str(i['cluster-set']['receive']['id_acl_master'])
+                            },
+                            "data":{
+                                "state" : "1"
+                            }
+                        }
+                        log_data = {
+                            "id_acl_master": str(i['cluster-set']['receive']['id_acl_master']),
+                            "messages": a['cluster-set'],
+                            "command_type": "Add: "+i['cluster-set']['sendblock']['rtype']
+                        }
+                    # db.insert("cs_acl_slave_log", log_data)
+                    # db.update("cs_acl_slave", data_state)
+                cmd.conf_commit_http(slave_server_url)
+                result.append({
+                    "slave-acl": http_response
+                })
+
+            # FILE SET
+            response = None
+            respons = cmd.conf_set_file(tags)
+            for i in respons:
+                url_slave = i['cluster-set']['receive']['slave_uri']
+                url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
+                slave_server_url = url_slave_fix+"/api/command_rest"
+                url_master = i['cluster-set']['receive']['master_uri']
+                url_master_fix= "http://"+url_master+":"+i['cluster-set']['receive']['master_port']
+                master_server_url = url_master_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response_slave = utils.send_http(slave_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
+                result.append(http_response_slave)
+
+                cmd.conf_begin_http(master_server_url)
+                http_response = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(master_server_url)
+                result.append({
+                    "file-set": http_response
+                })
+
+            # MODULE SET
+            response = None
+            respons = cmd.conf_set_module(tags)
+            for i in respons:
+                url_slave = i['cluster-set']['receive']['slave_uri']
+                url_slave_fix= "http://"+url_slave+":"+i['cluster-set']['receive']['slave_port']
+                slave_server_url = url_slave_fix+"/api/command_rest"
+                url_master = i['cluster-set']['receive']['master_uri']
+                url_master_fix= "http://"+url_master+":"+i['cluster-set']['receive']['master_port']
+                master_server_url = url_master_fix+"/api/command_rest"
+                cmd.conf_begin_http(slave_server_url)
+                http_response_slave = utils.send_http(slave_server_url,i)
+                cmd.conf_commit_http(slave_server_url)
+                result.append(http_response_slave)
+                
+                cmd.conf_begin_http(master_server_url)
+                http_response_master = utils.send_http(master_server_url,i)
+                cmd.conf_commit_http(master_server_url)
+                result.append({
+                    "module-set": http_response_master
+                })
+
+

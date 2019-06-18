@@ -399,7 +399,6 @@ def zone_insert_srv(tags):
     
     serial_data = ""
     data = ""
-    date_t = record[0]['date_record']
     for ns in content_data:
         data = data+" "+ns['nm_content']
     for serial in content_serial:
