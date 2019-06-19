@@ -124,12 +124,12 @@ def a_record_validation(a_content):
         a_cont = False
     else:
         a_cont = True
-    
-    if a_cont:
-        return True
-    else:
-        check_fqdn = FQDN(a_content)
-        if check_fqdn.is_valid:
-            return True
-        else:
-            return False
+    return a_cont
+    # if a_cont:
+    #     return True
+    # else:
+    #     check_fqdn = FQDN(a_content)
+    #     if check_fqdn.is_valid:
+    #         return True
+    #     else:
+    #         return False
