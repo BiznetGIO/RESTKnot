@@ -71,6 +71,7 @@ def send_http(url, data, headers=None):
     try:
         send = requests.post(url, data=json_data, headers=headers)
         respons = send.json()
+        
         try:
             data = json.loads(respons['data'])
         except Exception as e:
@@ -78,7 +79,6 @@ def send_http(url, data, headers=None):
         else:
             data_error = None
             respons['data'] = data
-            
             try:
                 data_error = respons['description'][0]['cluster-set']
             except Exception:
@@ -95,7 +95,23 @@ def send_http(url, data, headers=None):
                 else:
                     return respons
             else:
-                return respons
+                check_command_error = None
+                try:
+                    if respons['data']['status'] == False:
+                        check_command_error = True
+                except Exception as e:
+                    check_command_error = False
+
+                if check_command_error:
+                    respons['data'] = {
+                        "result": False,
+                        "description": respons['description'],
+                        "error": respons['data']['error'],
+                        "status": "Command Not Execute"
+                    }
+                    return respons['data']
+                else:
+                    return respons
     except requests.exceptions.RequestException as e:
         respons = {
             "result": False,
