@@ -2,6 +2,9 @@ import yaml, os,hashlib
 from app import root_dir
 from datetime import datetime
 import json, requests
+import re
+from ipaddress import ip_address
+from fqdn import FQDN
 
 def timeset():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -112,3 +115,21 @@ def change_state(field, field_value, state):
         }
     }
     return data_state
+
+def a_record_validation(a_content):
+    a_cont = None
+    try:
+        ip_address(a_content)
+    except ValueError:
+        a_cont = False
+    else:
+        a_cont = True
+    
+    if a_cont:
+        return True
+    else:
+        check_fqdn = FQDN(a_content)
+        if check_fqdn.is_valid:
+            return True
+        else:
+            return False

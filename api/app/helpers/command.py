@@ -312,6 +312,24 @@ def zone_insert(tags):
                 }
             }
         }
+    elif record[0]['nm_type'] == "A":
+        check_valid = utils.a_record_validation(ctdata[0]['nm_content'])
+        if check_valid:
+            json_command={
+                "zone-set": {
+                    "sendblock": {
+                        "cmd": "zone-set",
+                        "zone": record[0]['nm_zone'],
+                        "owner": record[0]['nm_record'],
+                        "rtype": record[0]['nm_type'],
+                        "ttl": ttldata[0]['nm_ttl'],
+                        "data": ctdata[0]['nm_content']
+                    },
+                    "receive": {
+                        "type": "block"
+                    }
+                }
+            }
     else:   
         json_command={
             "zone-set": {

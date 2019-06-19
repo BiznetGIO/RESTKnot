@@ -52,8 +52,20 @@ class Content(Resource):
                     "messages": "Fine!",
                     "id": result
                 }
-            finally:
+            content_validation = model.get_by_id("v_contentdata", field="id_content", value=str(result))
+            check_validation = False
+
+            if content_validation[0]['nm_type'] == 'A':
+                check_validation = utils.a_record_validation(content_validation[0]['nm_content'])
+            else:
+                check_validation = True
+
+            if not check_validation:
+                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                return response(401, message="Content Data Not Match in record | A record content : ipaddres or valid hostname")
+            else:
                 return response(200, data=fields , message=respons)
+
         if init_data['action'] == 'where':
             obj_userdata = list()
             table = ""

@@ -31,6 +31,7 @@ def create_app():
         "FLASK_REDIS_URL",os.getenv("FLASK_REDIS_URL"))
     app.config['PROPAGATE_EXCEPTIONS'] = True
     redis_store.init_app(app)
+    
     CORS(app, resources={r"/api/*": {"origins": "*"}})
     CORS(app, resources={r"/api/user/*": {"origins": "*"}})
     CORS(app, resources={r"/api/admin/*": {"origins": "*"}})
