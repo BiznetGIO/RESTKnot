@@ -69,8 +69,7 @@ def sendblock(ctl,params, treturn):
                         owner=owner, ttl=ttl, rtype=rtype, data=data1, flags=flags,
                         filter=filters)
     except Exception as e:
-        print("CLIENT ERROR: ", e)
-        raise e
+        return e
     if treturn == 'block':
         resp = ctl.receive_block()
     elif treturn == 'stats':

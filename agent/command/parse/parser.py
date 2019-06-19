@@ -1,5 +1,6 @@
 from command.utility import utils
 from command.control.libknot import control
+from command.control.libknot.control import KnotCtlError
 from command.control import client
 import json, os, logging
 
@@ -129,9 +130,13 @@ def execute_command(initialiaze):
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
-    except Exception:
-        resp = {}
+    except KnotCtlError as e:
+        resp = {
+            "status": False,
+            "error": str(e)
+        }
         return json.dumps(resp, indent=4)
-    ctl.send(control.KnotCtlType.END)
-    ctl.close()
-    return json.dumps(resp, indent=4)
+    else:
+        ctl.send(control.KnotCtlType.END)
+        ctl.close()
+        return json.dumps(resp, indent=4)
