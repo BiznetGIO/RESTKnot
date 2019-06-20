@@ -663,7 +663,6 @@ class SendCommandRest(Resource):
         #         })
             
         #     # SLAVE ACL
-        #     response = None
         #     respons = cmd.conf_set_acl_slave(tags)
         #     for i in respons:
         #         url = i['cluster-set']['receive']['uri']
@@ -710,7 +709,6 @@ class SendCommandRest(Resource):
         #         })
 
         #     # FILE SET
-        #     response = None
         #     respons = cmd.conf_set_file(tags)
         #     for i in respons:
         #         url_slave = i['cluster-set']['receive']['slave_uri']
@@ -732,7 +730,6 @@ class SendCommandRest(Resource):
         #         })
 
         #     # MODULE SET
-        #     response = None
         #     respons = cmd.conf_set_module(tags)
         #     for i in respons:
         #         url_slave = i['cluster-set']['receive']['slave_uri']
@@ -752,5 +749,7 @@ class SendCommandRest(Resource):
         #         result.append({
         #             "module-set": http_response_master
         #         })
+        #     return response(200, data=result)
+        
 
 

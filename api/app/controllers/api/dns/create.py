@@ -263,7 +263,7 @@ class CreateDNS(Resource):
                 "messages": str(e)
             }
             respon.append(data)
-            return response(200, message=data)
+            return response(401, message=data)
         else:
             for i in zone_data:
                 data = {
