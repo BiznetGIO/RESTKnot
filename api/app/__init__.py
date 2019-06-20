@@ -33,8 +33,6 @@ def create_app():
     redis_store.init_app(app)
     
     CORS(app, resources={r"/api/*": {"origins": "*"}})
-    CORS(app, resources={r"/api/user/*": {"origins": "*"}})
-    CORS(app, resources={r"/api/admin/*": {"origins": "*"}})
 
     from .controllers import api_blueprint
     from .controllers import swaggerui_blueprint
