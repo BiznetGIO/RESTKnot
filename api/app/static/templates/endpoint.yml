@@ -776,6 +776,17 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
+    cluster:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
   cs_slave:
     where:
       tags:
