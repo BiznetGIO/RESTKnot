@@ -40,8 +40,6 @@ class Record(Resource):
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
             if not utils.record_validation(fields['nm_record']):
-                print(fields['nm_record'])
-                print(utils.record_validation(fields['nm_record']))
                 return response(401, message="Record Name Not Valid")
             else:
                 try:

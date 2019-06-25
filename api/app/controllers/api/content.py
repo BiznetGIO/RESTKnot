@@ -39,8 +39,14 @@ class Content(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
+            ct_rep = fields['nm_content']
+            ct_replace = ct_rep.replace("'","''")
+            fields_fix = {
+                'id_ttldata': fields['id_ttldata'],
+                'nm_content': ct_replace
+            }
             try:
-                result = model.insert(table, fields)
+                result = model.insert(table, fields_fix)
             except Exception as e:
                 respons = {
                     "status": False,
@@ -61,8 +67,8 @@ class Content(Resource):
                 check_validation = utils.cname_validation(content_validation[0]['nm_content'])
             # elif content_validation[0]['nm_type'] == 'MX':
             #     pass
-            # elif content_validation[0]['nm_type'] == 'NS':
-            #     pass
+            elif content_validation[0]['nm_type'] == 'NS':
+                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
             # elif content_validation[0]['nm_type'] == 'TXT':
             #     pass
             # elif content_validation[0]['nm_type'] == 'SRV':

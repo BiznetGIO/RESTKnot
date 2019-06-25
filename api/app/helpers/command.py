@@ -4,6 +4,54 @@ from app import db
 from app.libs import utils, counter
 
 
+def cluster_command_new(tags, location, type):
+    domain_name = None
+    fields = tags['id_zone']
+    domain_data = model.get_by_id("zn_zone", "id_zone", fields)
+    for i in domain_data:
+        domain_name = i['nm_zone']
+
+    json_command={
+        "cluster-set": {
+            "sendblock": {
+                "cmd": "conf-set",
+                "zone": domain_name,
+                "owner": "master",
+                "rtype": "cluster",
+                "ttl": "",
+                "data": location
+            },
+            "receive": {
+                "type": "command"
+            }
+        }
+    }
+    return json_command
+
+
+def unset_cluster_command_new(tags):
+    domain_name = None
+    fields = tags['id_zone']
+    domain_data = model.get_by_id("zn_zone", "id_zone", fields)
+    for i in domain_data:
+        domain_name = i['nm_zone']
+
+    json_command={
+        "cluster-set": {
+            "sendblock": {
+                "cmd": "conf-unset",
+                "zone": domain_name,
+                "ttl": "",
+                "data": ""
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
+    
 def z_begin(url,tags):
     domain_name = None
     fields = tags['id_zone']
@@ -48,7 +96,6 @@ def config_insert(tags):
     fields = str(list(tags.keys())[0])
     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     domain_name = ""
-    domain_id = ""
     
     for i in domain_data:
         domain_name = i['nm_zone']
@@ -297,6 +344,9 @@ def zone_insert(tags):
         ctdata.append(dict(zip(column_ctdata, row)))
 
     if record[0]['nm_type'] == "TXT":
+        ct_data = ctdata[0]['nm_content']
+        ct_data_fix = ct_data.replace('"', '\\"')
+        print(ct_data_fix)
         json_command={
             "zone-set": {
                 "sendblock": {
@@ -305,7 +355,7 @@ def zone_insert(tags):
                     "owner": record[0]['nm_record'],
                     "rtype": record[0]['nm_type'],
                     "ttl": ttldata[0]['nm_ttl'],
-                    "data": '"'+ctdata[0]['nm_content']+'"'
+                    "data": '"'+ct_data_fix+'"'
                 },
                 "receive": {
                     "type": "block"
@@ -633,7 +683,7 @@ def conf_set_notify_master(tags):
     #     data = data+" '"+i['nm_slave']+"'"
     json_command = list()
 
-    for keys in record_slave:
+    for keys in record:
         json_data = {
             "cluster-set": {
                 "sendblock": {
@@ -647,8 +697,8 @@ def conf_set_notify_master(tags):
                 "receive": {
                     "type": "command",
                     "master": keys['nm_master'],
-                    "uri": keys['ip_slave'],
-                    "port": keys['slave_port'],
+                    "uri": keys['ip_master'],
+                    "port": keys['port'],
                     "id_notify_master": keys['id_notify_master']
                 }
             }
@@ -722,8 +772,8 @@ def conf_set_acl_master(tags):
         record_slave.append(dict(zip(column_record_slave, rw)))
 
     data = ""
-    for i in record_slave:
-        data = data+" '"+i['nm_slave']+"'"
+    for i in record:
+        data = data+" '"+i['nm_master']+"'"
 
     json_command = list()
     for keys in record:
