@@ -15,8 +15,8 @@ class ContentSerial(Resource):
         command = "zn_"+command
         try:
             results = model.get_all(command)
-        except Exception:
-            results = None
+        except Exception as e:
+            return response(401 ,message=str(e))
         else:
             obj_userdata = list()
             for i in results :
@@ -42,17 +42,13 @@ class ContentSerial(Resource):
             try:
                 result = model.insert(table, fields)
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "error": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 respons = {
                     "status": True,
                     "messages": "Fine!",
                     "id": result
                 }
-            finally:
                 return response(200, data=fields , message=respons)
         if init_data['action'] == 'where':
             obj_userdata = list()
@@ -68,10 +64,7 @@ class ContentSerial(Resource):
             try:
                 result = model.get_by_id(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -84,7 +77,6 @@ class ContentSerial(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
         if init_data['action'] == 'remove':
             table = ""
@@ -97,16 +89,12 @@ class ContentSerial(Resource):
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
-            finally:
                 return response(200, data=tags, message=respons)
 
         if init_data['action'] == 'view':
@@ -136,10 +124,7 @@ class ContentSerial(Resource):
                     for row in rows:
                         result.append(dict(zip(column, row)))
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -154,5 +139,4 @@ class ContentSerial(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)

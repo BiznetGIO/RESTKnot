@@ -15,8 +15,8 @@ class Content(Resource):
         command = "zn_"+command
         try:
             results = model.get_all(command)
-        except Exception:
-            results = None
+        except Exception as e:
+            return response(401 ,message=str(e))
         else:
             obj_userdata = list()
             for i in results :
@@ -96,10 +96,7 @@ class Content(Resource):
             try:
                 result = model.get_by_id(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -112,7 +109,6 @@ class Content(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
         if init_data['action'] == 'remove':
             table = ""
@@ -127,16 +123,12 @@ class Content(Resource):
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
-            finally:
                 return response(200, data=tags, message=respons)
 
         if init_data['action'] == 'view':
@@ -166,10 +158,7 @@ class Content(Resource):
                     for row in rows:
                         result.append(dict(zip(column, row)))
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -186,5 +175,4 @@ class Content(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
