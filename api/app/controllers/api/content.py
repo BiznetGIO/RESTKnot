@@ -57,12 +57,22 @@ class Content(Resource):
 
             if content_validation[0]['nm_type'] == 'A':
                 check_validation = utils.a_record_validation(content_validation[0]['nm_content'])
+            elif content_validation[0]['nm_type'] == 'CNAME':
+                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
+            # elif content_validation[0]['nm_type'] == 'MX':
+            #     pass
+            # elif content_validation[0]['nm_type'] == 'NS':
+            #     pass
+            # elif content_validation[0]['nm_type'] == 'TXT':
+            #     pass
+            # elif content_validation[0]['nm_type'] == 'SRV':
+            #     pass
             else:
                 check_validation = True
 
             if not check_validation:
                 model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
-                return response(401, message="Content Data Not Match in record | A record content : ipaddres or valid hostname")
+                return response(401, message="Content Data Not Match in record")
             else:
                 return response(200, data=fields , message=respons)
 

@@ -39,21 +39,26 @@ class Record(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
-            try:
-                result = model.insert(table, fields)
-            except Exception as e:
-                respons = {
-                    "status": False,
-                    "error": str(e)
-                }
+            if not utils.record_validation(fields['nm_record']):
+                print(fields['nm_record'])
+                print(utils.record_validation(fields['nm_record']))
+                return response(401, message="Record Name Not Valid")
             else:
-                respons = {
-                    "status": True,
-                    "messages": "Fine!",
-                    "id": result
-                }
-            finally:
-                return response(200, data=fields , message=respons)
+                try:
+                    result = model.insert(table, fields)
+                except Exception as e:
+                    respons = {
+                        "status": False,
+                        "error": str(e)
+                    }
+                else:
+                    respons = {
+                        "status": True,
+                        "messages": "Fine!",
+                        "id": result
+                    }
+                finally:
+                    return response(200, data=fields , message=respons)
 
         if init_data['action'] == 'where':
             obj_userdata = list()

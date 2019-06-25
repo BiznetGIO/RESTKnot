@@ -4,7 +4,6 @@ from datetime import datetime
 import json, requests
 import re
 from ipaddress import ip_address
-from fqdn import FQDN
 
 def timeset():
     return datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -63,6 +62,59 @@ def get_tag():
 #         tags = i['tags']
 #     return measurement, tags
 
+def send_http_cl(url, data, headers=None):
+    json_data = json.dumps(data)
+    try:
+        send = requests.post(url, data=json_data, headers=headers)
+        respons = send.json()
+        type_command = respons['data'][0]['type']
+        if type_command == "cluster":
+            report_cluster = None
+            data_cluster = respons['data'][0]['cluster-set']
+            data_cluster = data_cluster.split("\n")
+            reports = {
+                "begin": data_cluster[0],
+                "serial": data_cluster[1],
+                "file": data_cluster[2],
+                "module": data_cluster[3],
+                "acl": data_cluster[4],
+                "notify": data_cluster[5],
+                "master": data_cluster[6],
+                "commit": data_cluster[7],
+            }
+            report_cluster = {
+                "cluster_report": reports,
+                "description": respons['description']
+            }
+            return report_cluster
+    except requests.exceptions.RequestException as e:
+        respons = {
+            "result": False,
+            "Error": str(e),
+            "description": None
+        }
+        return respons
+
+
+def send_http_cmd(url, data, headers=None):
+    json_data = json.dumps(data)
+    try:
+        send = requests.post(url, data=json_data, headers=headers)
+        respons = send.json()
+        type_command = respons['data'][0]['type']
+        if type_command == "general":
+            return respons
+        else:
+            data = None
+    except requests.exceptions.RequestException as e:
+        respons = {
+            "result": False,
+            "Error": str(e),
+            "description": None
+        }
+        return respons
+    
+
 def send_http(url, data, headers=None):
     respons = None
     send = None
@@ -71,55 +123,36 @@ def send_http(url, data, headers=None):
     try:
         send = requests.post(url, data=json_data, headers=headers)
         respons = send.json()
-        
         try:
             data = json.loads(respons['data'])
         except Exception as e:
-            raise
+            data = None
         else:
-            data_error = None
             respons['data'] = data
+            check_command_error = None
             try:
-                data_error = respons['description'][0]['cluster-set']
-            except Exception:
-                data_error = None
-            if data_error:
-                check_error = data_error.split(":")
-                if check_error[0] == 'error':
-                    respons['data'] = {
-                        "result": False,
-                        "description": data_error,
-                        "status": "Command Not Execute"
-                    }
-                    return respons['data']
-                else:
-                    return respons
-            else:
-                check_command_error = None
-                try:
-                    if respons['data']['status'] == False:
-                        check_command_error = True
-                except Exception as e:
-                    check_command_error = False
+                if respons['data']['status'] == False:
+                    check_command_error = True
+            except Exception as e:
+                check_command_error = False
 
-                if check_command_error:
-                    respons['data'] = {
-                        "result": False,
-                        "description": respons['description'],
-                        "error": respons['data']['error'],
-                        "status": "Command Not Execute"
-                    }
-                    return respons['data']
-                else:
-                    return respons
+            if check_command_error:
+                respons['data'] = {
+                    "status": False,
+                    "description": respons['description'],
+                    "error": respons['data']['error'],
+                    "result": "Command Not Execute"
+                }
+                return respons['data']
+            else:
+                return respons
     except requests.exceptions.RequestException as e:
         respons = {
             "result": False,
             "Error": str(e),
             "description": None
         }
-        data = respons
-        return data
+        return respons
 
 def change_state(field, field_value, state):
     data_state = {
@@ -149,3 +182,24 @@ def a_record_validation(a_content):
     #         return True
     #     else:
     #         return False
+
+def domain_validation(domain):
+    pattern = re.compile("^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$")
+    if pattern.match(domain):
+        return True
+    else:
+        return False
+
+def cname_validation(cname):
+    pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
+    if pattern.match(cname):
+        return True
+    else:
+        return False
+
+def record_validation(record):
+    pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9_\-]*[A-Za-z0-9_])$")
+    if pattern.match(record):
+        return True
+    else:
+        return False

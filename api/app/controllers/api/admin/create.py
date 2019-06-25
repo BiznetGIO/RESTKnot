@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse, fields, request
 from app.helpers.rest import *
 from app.helpers.memcache import *
 from app.models import model as db
-from app.libs.utils import send_http, change_state
+from app.libs.utils import send_http, change_state, domain_validation
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
@@ -214,63 +214,67 @@ class CreateDNSAdminRole(Resource):
         args = parser.parse_args()
         project_id = args['project_id']
         zone = args['domain']
-        zone_domain = {
-            'nm_zone': zone
-        }
-        check = False
-        data_insert = None
-
-        try:
-            data_insert = db.insert("zn_zone", zone_domain)
-            check = True
-        except Exception as e:
-            msg = str(e)
-
-        if not check:
-            print(msg)
+        
+        if not domain_validation(zone):
+            return response(401, message="domain name not valid")
         else:
-            userdata = db.get_by_id("userdata", "project_id", str(project_id))
-            userdata_id = userdata[0]['userdata_id']
-            dt_user_zone = {
-                'id_zone': str(data_insert),
-                'userdata_id': str(userdata_id)
+            zone_domain = {
+                'nm_zone': zone
             }
-            db.insert("zn_user_zone", dt_user_zone)
+            check = False
+            data_insert = None
 
-            id_zone_soa = addSOADefault(zone)
-            id_zone_ns = addNSDefault(zone)
-            id_record = addCNAMEDefault(data_insert, zone)
+            try:
+                data_insert = db.insert("zn_zone", zone_domain)
+                check = True
+            except Exception as e:
+                msg = str(e)
 
-            # #UNCOMENT TO SYNC AUTO
-            sync_conf_insert(data_insert)
-            sync_soa(id_zone_soa)
-            sync_ns(id_zone_ns)
-            sync_cname_default(data_insert, id_record)
-            # #UNCOMENT TO SYNC AUTO
-
-        respon = list()
-
-        try:
-            zone_data = db.get_by_id("zn_zone","nm_zone", zone)
-        except Exception as e:
-            data = {
-                "status": False,
-                "messages": str(e)
-            }
-            respon.append(data)
-            return response(200, message=data)
-        else:
-            for i in zone_data:
-                data = {
-                    'id_zone': str(i['id_zone']),
-                    'nm_zone': i['nm_zone'],
-                    'state': i['state']
+            if not check:
+                print(msg)
+            else:
+                userdata = db.get_by_id("userdata", "project_id", str(project_id))
+                userdata_id = userdata[0]['userdata_id']
+                dt_user_zone = {
+                    'id_zone': str(data_insert),
+                    'userdata_id': str(userdata_id)
                 }
-            respon = {
-                "status": True,
-                "data": data
-            }
-            return response(200, data=respon,message="Fine!")
+                db.insert("zn_user_zone", dt_user_zone)
+
+                id_zone_soa = addSOADefault(zone)
+                id_zone_ns = addNSDefault(zone)
+                id_record = addCNAMEDefault(data_insert, zone)
+
+                # #UNCOMENT TO SYNC AUTO
+                sync_conf_insert(data_insert)
+                sync_soa(id_zone_soa)
+                sync_ns(id_zone_ns)
+                sync_cname_default(data_insert, id_record)
+                # #UNCOMENT TO SYNC AUTO
+
+            respon = list()
+
+            try:
+                zone_data = db.get_by_id("zn_zone","nm_zone", zone)
+            except Exception as e:
+                data = {
+                    "status": False,
+                    "messages": str(e)
+                }
+                respon.append(data)
+                return response(200, message=data)
+            else:
+                for i in zone_data:
+                    data = {
+                        'id_zone': str(i['id_zone']),
+                        'nm_zone': i['nm_zone'],
+                        'state': i['state']
+                    }
+                respon = {
+                    "status": True,
+                    "data": data
+                }
+                return response(200, data=respon,message="Fine!")
 
 
 
