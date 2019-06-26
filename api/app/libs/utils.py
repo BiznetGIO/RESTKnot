@@ -219,3 +219,13 @@ def mx_validation(mx):
             return True
         else:
             return False
+
+def txt_validation(txt):
+    if txt == '@':
+        return True
+    else:
+        pattern = re.compile("[^\x00-\x7F]")
+        if pattern.match(txt):
+            return True
+        else:
+            return False

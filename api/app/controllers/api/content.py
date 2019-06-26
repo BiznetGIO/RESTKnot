@@ -69,8 +69,8 @@ class Content(Resource):
                 check_validation = utils.mx_validation(content_validation[0]['nm_content'])
             elif content_validation[0]['nm_type'] == 'NS':
                 check_validation = utils.cname_validation(content_validation[0]['nm_content'])
-            # elif content_validation[0]['nm_type'] == 'TXT':
-            #     pass
+            elif content_validation[0]['nm_type'] == 'TXT':
+                check_validation = utils.txt_validation(content_validation[0]['nm_content'])
             # elif content_validation[0]['nm_type'] == 'SRV':
             #     pass
             else:
