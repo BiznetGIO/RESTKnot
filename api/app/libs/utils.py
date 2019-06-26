@@ -224,7 +224,7 @@ def txt_validation(txt):
     if txt == '@':
         return True
     else:
-        pattern = re.compile("[^\x00-\x7F]")
+        pattern = re.compile("^[\x20-\x7F]*$")
         if pattern.match(txt):
             return True
         else:
