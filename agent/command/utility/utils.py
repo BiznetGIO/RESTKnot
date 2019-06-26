@@ -1,4 +1,7 @@
 import yaml, os
+import subprocess
+
+
 def yaml_parser(file):
     with open(file, 'r') as stream:
         try:
@@ -31,3 +34,7 @@ def repodata():
 def exec_shell(command):
     cmd = os.popen(command).read()
     return cmd
+
+def exec_command_cluster(command):
+    cmd = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+    return str(cmd.decode("utf-8"))

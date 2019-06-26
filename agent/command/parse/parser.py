@@ -4,8 +4,10 @@ from command.control.libknot.control import KnotCtlError
 from command.control import client
 import json, os, logging
 
-knot_lib = os.getenv("KNOT_LIB")
-knot_socket = os.getenv("KNOT_SOCKET")
+knot_lib = os.environ.get("KNOT_LIB", os.getenv("KNOT_LIB"))
+knot_socket = os.environ.get("KNOT_SOCKET", os.getenv("KNOT_SOCKET"))
+root_dir = os.path.dirname(os.path.abspath(__file__))
+cluster_mount_point = os.environ.get("CLUSTER_MOUNT_POINT", root_dir+"/static/")
 
 def check_command(command):
     sdl_data = utils.repodata()
@@ -72,10 +74,18 @@ def parser_json(obj_data):
                 })
         if obj_data[project]['receive']['type'] == 'command':
             cli_shell = parse_command_zone(action_obj[0]['sendblock'])
-            exec_cliss = utils.exec_shell(cli_shell)
-            projec_obj.append({
-                project: exec_cliss
-            })
+            if obj_data[project]['sendblock']['rtype'] == "cluster":
+                exec_cliss = utils.exec_command_cluster(cluster_mount_point+cli_shell)
+                projec_obj.append({
+                    "type": "cluster",
+                    project: str(exec_cliss)
+                })
+            else:
+                exec_cliss = utils.exec_shell(cli_shell)
+                projec_obj.append({
+                    "type": "general",
+                    project: str(exec_cliss)
+                })
             return projec_obj
         else:
             projec_obj.append({
@@ -97,6 +107,10 @@ def parse_command_zone(json_data):
     elif own == '@':
         owner = own
         cli_shell = "knotc "+cmd+" "+zone+". "+owner+" "+ttl+" "+rtype+" "+data
+    elif rtype == 'cluster':
+        cli_shell = own+"_"+data+".sh "+zone
+    elif cmd == 'unset-cluster':
+        cli_shell = "unset_cluster.sh "+zone
     else:
         if rtype=='notify' and own=="slave":
             cli_shell = "knotc "+cmd+" 'zone["+zone+"].master' "+data
