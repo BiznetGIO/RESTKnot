@@ -42,20 +42,34 @@ class Record(Resource):
             if not utils.record_validation(fields['nm_record']):
                 return response(401, message="Record Name Not Valid")
             else:
+                l_name = fields['nm_record']
+                lower_name = l_name.lower()
+                total = 0
+                if lower_name.find("."):
+                    spl_name = lower_name.split(".")
+                    for i in spl_name:
+                        if len(i) >= 64:
+                            return response(401, message="Record name not valid | front of point 64 characters")
+                        else:
+                            total = total + len(i)
+                    if total >= 255:
+                        return response(401, message="Record name not valid | Total record char 255 characters")
+                field_fix = {
+                    "nm_record": lower_name,
+                    "date_record": fields['date_record'],
+                    "id_zone":fields['id_zone'],
+                    "id_type": fields['id_type']
+                }
                 try:
-                    result = model.insert(table, fields)
+                    result = model.insert(table, field_fix)
                 except Exception as e:
-                    respons = {
-                        "status": False,
-                        "error": str(e)
-                    }
+                    return response(401, message=str(e))
                 else:
                     respons = {
                         "status": True,
                         "messages": "Fine!",
                         "id": result
                     }
-                finally:
                     return response(200, data=fields , message=respons)
 
         if init_data['action'] == 'where':
@@ -72,10 +86,7 @@ class Record(Resource):
             try:
                 result = model.get_by_id(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401, message=str(e))
             else:
                 for i in result :
                     data = {
@@ -91,8 +102,8 @@ class Record(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
+
         if init_data['action'] == 'remove':
             table = ""
             tags = dict()
@@ -106,16 +117,12 @@ class Record(Resource):
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401, message=str(e))
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
-            finally:
                 return response(200, data=tags, message=respons)
 
         if init_data['action'] == 'view':
@@ -145,10 +152,7 @@ class Record(Resource):
                     for row in rows:
                         result.append(dict(zip(column, row)))
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401, message=str(e))
             else:
                 for i in result :
                     data = {
@@ -164,5 +168,4 @@ class Record(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
