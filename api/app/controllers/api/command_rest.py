@@ -164,7 +164,7 @@ class SendCommandRest(Resource):
                 }
                 return response(400, data=result, message=respons)
             else:
-                http_response = utils.send_http(url,respons)
+                http_response = utils.send_http_cmd(url,respons)
                 if http_response:
                     state = utils.change_state("id_record", tags['id_record'], "1")
                     try:
@@ -197,7 +197,7 @@ class SendCommandRest(Resource):
                 }
                 return response(400, data=result, message=respons)
             else :
-                http_response = utils.send_http(url,respons)
+                http_response = utils.send_http_cmd(url,respons)
                 # change state
                 if http_response:
                     state = utils.change_state("id_record", tags['id_record'], "1")
