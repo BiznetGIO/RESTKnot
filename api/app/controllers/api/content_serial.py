@@ -39,6 +39,7 @@ class ContentSerial(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
+            
             try:
                 result = model.insert(table, fields)
             except Exception as e:
@@ -49,7 +50,17 @@ class ContentSerial(Resource):
                     "messages": "Fine!",
                     "id": result
                 }
-                return response(200, data=fields , message=respons)
+                content_validation = model.get_by_id("v_content_serial", field="id_content_serial", value=str(result))
+                check_validation = False
+                if content_validation[0]['nm_type'] == 'MX':
+                    check_validation = utils.mx_validation(content_validation[0]['nm_content_serial'])
+                else:
+                    check_validation = True
+                if not check_validation:
+                    model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                    return response(401, message="Value Not Valid")
+                else:
+                    return response(200, data=fields , message=respons)
         if init_data['action'] == 'where':
             obj_userdata = list()
             table = ""
@@ -109,6 +120,7 @@ class ContentSerial(Resource):
                     if tags[a] is not None:
                         fields = a
             column = model.get_columns("v_content_serial")
+
             try:
                 result = list()
                 if fields is None:

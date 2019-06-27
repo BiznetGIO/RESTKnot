@@ -400,7 +400,7 @@ def zone_insert(tags):
         for ri in cs_data:
             data_ct = data_ct+" "+ri['nm_content_serial']
 
-        
+
         json_command={
             "zone-set": {
                 "sendblock": {
