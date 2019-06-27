@@ -387,6 +387,36 @@ def zone_insert(tags):
             }
         }
         return json_command
+    if record[0]['nm_type'] == "SRV":
+        ct_data = ctdata[0]['nm_content']
+        cs_data = []
+        cs_clm_data = model.get_columns("v_content_serial")
+        query_serial = "SELECT * FROM v_content_serial where id_record='"+str(record[0]['id_record'])+"'"
+        db.execute(query_serial)
+        rw_serial = db.fetchall()
+        for rw in rw_serial:
+            cs_data.append(dict(zip(cs_clm_data, rw)))
+        data_ct = ""
+        for ri in cs_data:
+            data_ct = data_ct+" "+ri['nm_content_serial']
+
+        
+        json_command={
+            "zone-set": {
+                "sendblock": {
+                    "cmd": "zone-set",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "rtype": record[0]['nm_type'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "data": ct_data+' '+data_ct
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
+        return json_command
     else:   
         json_command={
             "zone-set": {
