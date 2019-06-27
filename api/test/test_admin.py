@@ -19,16 +19,16 @@ class TestZone:
         return res
 
     @pytest.mark.run(order=1)
-    def test_admin_login(self,client):
+    def test_admin_login(self,client,get_creds):
       """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
         'ADMIN_USER' = your username, 'ADMIN_PASSWORD' = your password. """
 
     ### SUCCESS
 
       data = {
-              "username" : "test@biznetgio.com",
-              "password" : "BiznetGio2017",
-              "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"
+              "username" : get_creds['username'],
+              "password" : get_creds['password'],
+              "project_id": get_creds['project_id']
               }
       result = self.post_data(client,"admin/login",data)
       assert result.status_code == 200
@@ -36,9 +36,9 @@ class TestZone:
     ### FAIL, WRONG PASSWORD
 
       data = {
-              "username" : "test@biznetgio.com",
-              "password" : "password",
-              "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"
+              "username" : get_creds['username'],
+              "password" : get_fail_creds['password'],
+              "project_id": get_fail_creds['project_id']
               }
       result = self.post_data(client,"admin/login",data)
       assert result.status_code == 200
@@ -46,9 +46,9 @@ class TestZone:
     ### FAIL, PROJECT ID DOESNT EXIST
 
       data = {
-              "username" : "test@biznetgio.com",
-              "password" : "BiznetGio2017",
-              "project_id": "test"
+              "username" : get_creds['username'],
+              "password" : get_creds['password'],
+              "project_id": get_fail_creds['project_id']
               }
       result = self.post_data(client,"admin/login",data)
       assert result.status_code == 200
