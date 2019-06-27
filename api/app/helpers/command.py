@@ -346,7 +346,6 @@ def zone_insert(tags):
     if record[0]['nm_type'] == "TXT":
         ct_data = ctdata[0]['nm_content']
         ct_data_fix = ct_data.replace('"', '\\"')
-        print(ct_data_fix)
         json_command={
             "zone-set": {
                 "sendblock": {
@@ -362,6 +361,32 @@ def zone_insert(tags):
                 }
             }
         }
+    if record[0]['nm_type'] == "MX":
+        ct_data = ctdata[0]['nm_content']
+        cs_data = []
+        cs_clm_data = model.get_columns("v_content_serial")
+        query_serial = "SELECT * FROM v_content_serial where id_record='"+str(record[0]['id_record'])+"'"
+        db.execute(query_serial)
+        rw_serial = db.fetchall()
+        for rw in rw_serial:
+            cs_data.append(dict(zip(cs_clm_data, rw)))
+        
+        json_command={
+            "zone-set": {
+                "sendblock": {
+                    "cmd": "zone-set",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "rtype": record[0]['nm_type'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "data": ct_data+' '+cs_data[0]['nm_content_serial']
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
+        return json_command
     else:   
         json_command={
             "zone-set": {

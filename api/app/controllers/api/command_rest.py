@@ -104,6 +104,7 @@ class SendCommandRest(Resource):
             respons.append(json_begin)
             json_command = cmd.zone_insert(tags)
             http_response = utils.send_http(url,json_command)
+            print(json_command)
             # change state
             if http_response:
                 state = utils.change_state("id_record", tags['id_record'], "1")
