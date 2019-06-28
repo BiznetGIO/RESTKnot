@@ -30,23 +30,28 @@ class TestConf:
         return res
 
     @pytest.mark.run(order=1)
-    def test_slave_get(self,client,get_header):
-        print("START")
+    def test_1slave_get(self,client,get_header):
         head = get_header
         result = client.get('api/slave',headers=head)
         
         assert result.status_code == 200
 
     @pytest.mark.run(order=2)
-    def test_slave_create(self,client,get_header):
-        head = get_header
-        fields = {"nm_slave": self.mock.slave['name'], "ip_slave" : self.mock.slave['ip'], "port": self.mock.slave['port']}
-        data = utils.get_model('add',fields)
-        res = self.post_data(client,'slave',data,head)
-
-        assert res.status_code == 200
-        res = json.loads(res.data.decode('utf8'))
-        self.mock.slave["id_slave"] = res['message']['id']
+    def test_2slave_create(self,client,get_header):
+        
+        # REMOVE SLAVE IF EXIST       
+        try:
+            head = get_header
+            fields = {"nm_slave": self.mock.slave['name'], "ip_slave" : self.mock.slave['ip'], "port": self.mock.slave['port']}
+            data = utils.get_model('add',fields)
+            res = self.post_data(client,'slave',data,head)
+            assert res.status_code == 200
+            res = json.loads(res.data.decode('utf8'))
+            self.mock.slave["id_slave"] = res['message']['id']
+        except KeyError:
+            data = utils.get_model('where',{"nm_slave" : self.mock.slave['name']})
+            res = self.post_data(client,'slave',data,head)
+            self.mock.slave["id_slave"] = res['message']['id']
 
         ## Assert if data is True, search slave by name
 
@@ -58,16 +63,23 @@ class TestConf:
         assert res['data']
 
     @pytest.mark.run(order=3)
-    def test_create_master(self,client,get_header,get_mock):
+    def test_3create_master(self,client,get_header,get_mock):
         nm_zone = get_mock['nm_zone']
         head = get_header
 
-        data = utils.get_model('add',{"nm_zone": nm_zone})
-        result = self.post_data(client,'zone',data,head)
-        assert result.status_code == 200
-        result = json.loads(result.data.decode('utf8'))
-        self.mock.ids['id_zone'] = result['message']['id']
-        
+        try:
+            data = utils.get_model('add',{"nm_zone": nm_zone})
+            result = self.post_data(client,'zone',data,head)
+            assert result.status_code == 200
+            result = json.loads(result.data.decode('utf8'))
+            self.mock.ids['id_zone'] = result['message']['id']
+        except KeyError:
+            data = utils.get_model('where',{"nm_zone": nm_zone})
+            result = self.post_data(client,'zone',data,head)
+            assert result.status_code == 200
+            result = json.loads(result.data.decode('utf8'))
+            self.mock.ids['id_zone'] = result['data'][0]['id_zone']
+
         m_data = self.mock.master
         f_master = {"nm_master" : m_data['name'], "ip_master": m_data['ip'], "port" : m_data['port']}
         data = utils.get_model('add',f_master)
@@ -85,7 +97,7 @@ class TestConf:
         assert result['data']
 
     @pytest.mark.run(order=4)
-    def test_add_acl_notify_master(self,client,get_header):
+    def test_4add_acl_notify_master(self,client,get_header):
 
         head = get_header
         id_zone = self.mock.ids['id_zone']
@@ -132,7 +144,7 @@ class TestConf:
         ## REMOVE 
 
     @pytest.mark.run(order=5)
-    def test_add_acl_notify_slave(self,client,get_header):
+    def test_5add_acl_notify_slave(self,client,get_header):
 
         head = get_header
         id_acl_master = self.mock.ids['id_acl_master']
@@ -182,6 +194,11 @@ class TestConf:
 
         id_master = self.mock.master['id_master']
 
+        header = get_header
+        fields = {"nm_slave": self.mock.slave['name']}
+        data = utils.get_model('where',fields)
+        res = self.post_data(client,'slave',data,header)
+
 
         data = utils.get_model('remove',{"id_acl_slave": id_acl_slave})
         res = self.post_data(client, 'acl_slave', data, head)
@@ -213,7 +230,7 @@ class TestConf:
 
     
     @pytest.mark.run(order=5)
-    def test_notify_master(self,client):
+    def test_6notify_master(self,client):
         """ Before running this test, see id_zone from cs_notify_master on database and use it in this test.
         Otherwise, you can skip this test.
         """
