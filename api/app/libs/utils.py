@@ -174,14 +174,6 @@ def a_record_validation(a_content):
     else:
         a_cont = True
     return a_cont
-    # if a_cont:
-    #     return True
-    # else:
-    #     check_fqdn = FQDN(a_content)
-    #     if check_fqdn.is_valid:
-    #         return True
-    #     else:
-    #         return False
 
 def domain_validation(domain):
     pattern = re.compile("^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$")
@@ -191,37 +183,37 @@ def domain_validation(domain):
         return False
 
 def cname_validation(cname):
-    if cname == '@':
+    if cname == '@' or cname=='*':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\*\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(cname):
             return True
         else:
             return False
 
 def record_validation(record) :
-    if record == '@':
+    if record == '@' or record=='*':
         return True
     else:
-        pattern = re.compile("^(([\_\*a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
+        pattern = re.compile("^(([\*a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[_A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
         if pattern.match(record):
             return True
         else:
             return False
 
 def mx_validation(mx):
-    if mx == '@':
+    if mx == '@' or mx=='*':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_\*]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\*\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(mx):
             return True
         else:
             return False
 
 def txt_validation(txt):
-    if txt == '@':
+    if txt == '@' or txt=='*':
         return True
     else:
         pattern = re.compile("^[\x20-\x7F]*$")
