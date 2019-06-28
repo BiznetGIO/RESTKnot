@@ -61,6 +61,7 @@ class ContentSerial(Resource):
                     return response(401, message="Value Not Valid")
                 else:
                     return response(200, data=fields , message=respons)
+    
         if init_data['action'] == 'where':
             obj_userdata = list()
             table = ""
