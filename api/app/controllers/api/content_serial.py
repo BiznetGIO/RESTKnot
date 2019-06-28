@@ -36,26 +36,51 @@ class ContentSerial(Resource):
         command = "zn_"+command
         init_data = cmd.parser(json_req, command)
         respons = dict()
+
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
-            
+            l_content_serial = fields['nm_content_serial']
+            lowercase_cs_data = l_content_serial.lower()
+            data_inserted = {
+                "nm_content_serial": lowercase_cs_data,
+                "id_record": fields['id_record']
+            }
             try:
-                result = model.insert(table, fields)
+                result = model.insert(table, data_inserted)
             except Exception as e:
                 return response(401 ,message=str(e))
             else:
                 respons = {
                     "status": True,
-                    "messages": "Fine!",
+                    "messages": "Inserted",
                     "id": result
                 }
+                
                 content_validation = model.get_by_id("v_content_serial", field="id_content_serial", value=str(result))
+
                 check_validation = False
                 if content_validation[0]['nm_type'] == 'MX':
                     check_validation = utils.mx_validation(content_validation[0]['nm_content_serial'])
                 else:
                     check_validation = True
+                
+                cs_data_name = content_validation[0]['nm_content_serial']
+                check_validation_char = None
+                if cs_data_name.find("."):
+                    spl_name = lowercase_cs_data.split(".")
+                    for i in spl_name:                       
+                        if len(i) >= 64:
+                            check_validation_char = True
+                        else:
+                            total = total + len(i)
+                    if total >= 255:
+                        check_validation_char = True
+                    
+                if check_validation_char:
+                    model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                    return response(401, message="Value Not Valid")
+
                 if not check_validation:
                     model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
                     return response(401, message="Value Not Valid")

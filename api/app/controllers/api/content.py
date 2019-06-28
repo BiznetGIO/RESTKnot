@@ -60,13 +60,21 @@ class Content(Resource):
                 }
             content_validation = model.get_by_id("v_contentdata", field="id_content", value=str(result))
             check_validation = False
-
+            check_validation_char = None
             if content_validation[0]['nm_type'] == 'A':
                 check_validation = utils.a_record_validation(content_validation[0]['nm_content'])
             elif content_validation[0]['nm_type'] == 'CNAME':
                 check_validation = utils.cname_validation(content_validation[0]['nm_content'])
-            # elif content_validation[0]['nm_type'] == 'MX':
-            #     check_validation = utils.mx_validation(content_validation[0]['nm_content'])
+                cs_data_name = content_validation[0]['nm_content']
+                if cs_data_name.find("."):
+                    spl_name = cs_data_name.split(".")
+                    for i in spl_name:                       
+                        if len(i) >= 64:
+                            check_validation_char = True
+                        else:
+                            total = total + len(i)
+                    if total >= 255:
+                        check_validation_char = True
             elif content_validation[0]['nm_type'] == 'NS':
                 check_validation = utils.cname_validation(content_validation[0]['nm_content'])
             elif content_validation[0]['nm_type'] == 'TXT':
@@ -75,10 +83,12 @@ class Content(Resource):
             #     pass
             else:
                 check_validation = True
-
+            if check_validation_char:
+                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                return response(401, message="Value Not Valid")
             if not check_validation:
                 model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
-                return response(401, message="Content Data Not Match in record")
+                return response(401, message="Value Not Valid")
             else:
                 return response(200, data=fields , message=respons)
 
