@@ -19,3 +19,5 @@ deploy:
   on:
     tags: true
 skip_cleanup: true
+env:
+  - SOCKET_AGENT_HOST: '103.89.5.121'
