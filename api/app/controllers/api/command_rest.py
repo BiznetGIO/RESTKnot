@@ -478,6 +478,8 @@ class SendCommandRest(Resource):
 
             return response(200, data=result)
 
+
+
         if init_data['action'] == 'module-set':
             result = list()
             for i in init_data['data']:
@@ -587,6 +589,23 @@ class SendCommandRest(Resource):
             #     http_response_slave = utils.send_http(slave_server_url, slave_command)
                 
             return response(200, data=result)
+
+        if init_data['action'] == 'config-file':
+            respons = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            try:
+                json_begin = cmd.zone_begin_http(url,tags) 
+                respons.append(json_begin)
+                json_command = cmd.zone_conf_file(tags)
+                http_response = utils.send_http(url,json_command)
+                respons.append(http_response)
+                res_commit = cmd.zone_commit_http(url,tags)
+                respons.append(res_commit)
+            except Exception as identifier:
+                return response(401, message=str(e))
+            else:
+                return response(200, data=respons)
         
 
 

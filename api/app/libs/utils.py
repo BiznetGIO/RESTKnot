@@ -204,7 +204,7 @@ def record_validation(record) :
     if record == '@':
         return True
     else:
-        pattern = re.compile("^(([\_a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
+        pattern = re.compile("^(([\_\*a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$")
         if pattern.match(record):
             return True
         else:

@@ -939,6 +939,30 @@ def conf_set_file(tags):
     return json_command
 
 
+def zone_conf_file(tags):
+    fields = str(list(tags.keys())[0])
+    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
+    domain_name = ""
+    
+    for i in domain_data:
+        domain_name = i['nm_zone']
+
+    json_command = {
+        "zone-set": {
+            "sendblock": {
+                "cmd": "conf-set",
+                "zone": domain_name,
+                "item": "file",
+                "section":"zone",
+                "data": domain_name+".zone"
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
 def conf_set_module(tags):
     # Get Zone
     fields = tags['id_zone']
