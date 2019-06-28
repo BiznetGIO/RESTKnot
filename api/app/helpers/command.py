@@ -361,6 +361,8 @@ def zone_insert(tags):
                 }
             }
         }
+        return json_command
+        
     if record[0]['nm_type'] == "MX":
         ct_data = ctdata[0]['nm_content']
         cs_data = []
