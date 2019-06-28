@@ -870,7 +870,6 @@ def conf_set_acl_slave(tags):
     data = ""
     for i in record:
         data = data+" '"+i['nm_slave']+"'"
-    print(record)
     column_record_master = model.get_columns("v_cs_acl_master")
     query_master = "select * from v_cs_acl_master where id_zone='"+fields+"'"
     db.execute(query_master)

@@ -64,11 +64,7 @@ class SendCommandRest(Resource):
             try :
                 id_record, respons = cmd.zone_soa_insert_default(tags)
             except Exception as e :
-                respons = {
-                    "Status" : False,
-                    "Error" : str(e)
-                }
-                return response(400, message = respons)
+                return response(401, message=str(e))
             else:
                 http_respons = utils.send_http(url,respons)
                 # state change
@@ -104,7 +100,6 @@ class SendCommandRest(Resource):
             respons.append(json_begin)
             json_command = cmd.zone_insert(tags)
             http_response = utils.send_http(url,json_command)
-            print(json_command)
             # change state
             if http_response:
                 state = utils.change_state("id_record", tags['id_record'], "1")
@@ -126,11 +121,7 @@ class SendCommandRest(Resource):
             try :
                 result = cmd.zone_ns_insert(tags)
             except Exception as e:
-                respons = {
-                    "Status" : False,
-                    "Error" : str(e)
-                }
-                return response(400, message=respons )
+                return response(401, message=str(e) )
             else:
                 for i in result:
                     state = None
@@ -159,11 +150,7 @@ class SendCommandRest(Resource):
             try:
                 respons = cmd.zone_insert_srv(tags)
             except Exception as e:
-                respons = {
-                    "status" : False,
-                    "error": str(e)
-                }
-                return response(400, data=result, message=respons)
+                return response(401, message=str(e))
             else:
                 http_response = utils.send_http_cmd(url,respons)
                 if http_response:
@@ -192,11 +179,7 @@ class SendCommandRest(Resource):
                 respons = cmd.zone_insert_mx(tags)
 
             except Exception as e:
-                respons = {
-                    "status" : False,
-                    "error": str(e)
-                }
-                return response(400, data=result, message=respons)
+                return response(401, data=result, message=str(e))
             else :
                 http_response = utils.send_http_cmd(url,respons)
                 # change state
