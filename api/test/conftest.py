@@ -4,7 +4,8 @@ import os
 import pytest
 import sys
 
-sys.path.append('/home/mfriszky/worksworksworks/branch-sandbox/RESTKnot/API')
+cwd = os.getcwd()
+sys.path.append(cwd)
 from app import create_app,db
 
 class MockData:
@@ -24,8 +25,8 @@ class MockData:
     @property
     def creds(self):
         from dotenv import load_dotenv
-        env_path = os.path.join(os.getcwd(),'.test.env')
-        load_dotenv(env_path=env_path) 
+        env_path = os.path.join(os.getcwd(),'test/.test.env')
+        load_dotenv(dotenv_path=env_path) 
         creds = {
             "username" : os.getenv('CREDENTIAL_USERNAME'),
             "password"  : os.getenv('CREDENTIAL_PASSWORD'),
@@ -34,10 +35,10 @@ class MockData:
         return creds
 
     @property
-    def creds(self):
+    def fail(self):
         from dotenv import load_dotenv
         env_path = os.path.join(os.getcwd(),'.test.env')
-        load_dotenv(env_path=env_path) 
+        load_dotenv(dotenv_path=env_path) 
         creds = {
             "username" : "TEST",
             "password"  : "TEST",
@@ -55,9 +56,8 @@ def app():
 
 @pytest.fixture(scope = 'session', autouse=True)
 def request_headers():
-    
-    login_data = {"username" : "test@biznetgio.com",
-                "password" : "BiznetGio2017"}
+    login_data = {"username" : mock.creds['username'],
+                "password" : mock.creds['password']}
     url = base_url+'login'
 
     result = requests.post(url=url,data=login_data)

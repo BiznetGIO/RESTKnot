@@ -19,7 +19,7 @@ class TestZone:
         return res
 
     @pytest.mark.run(order=1)
-    def test_admin_login(self,client,get_creds):
+    def test_admin_login(self,client,get_creds,get_fail_creds):
       """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
         'ADMIN_USER' = your username, 'ADMIN_PASSWORD' = your password. """
 
