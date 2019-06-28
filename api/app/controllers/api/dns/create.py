@@ -218,12 +218,12 @@ class CreateDNS(Resource):
         parser.add_argument('domain', type=str, required=True)
         args = parser.parse_args()
         zone = args['domain']
-
+        lowercase_zone = zone.lower()
         if not domain_validation(zone):
             return response(401, message="domain name not valid")
         else:
             zone_domain = {
-                'nm_zone': zone
+                'nm_zone': lowercase_zone
             }
             data_insert = None
 

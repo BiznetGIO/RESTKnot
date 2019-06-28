@@ -39,6 +39,7 @@ class ZoneName(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
+            l_name = fields['nm_zone']
             try:
                 result = db.insert(table, fields)
             except Exception as e:

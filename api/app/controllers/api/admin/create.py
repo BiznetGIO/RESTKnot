@@ -214,12 +214,12 @@ class CreateDNSAdminRole(Resource):
         args = parser.parse_args()
         project_id = args['project_id']
         zone = args['domain']
-        
+        lowercase_zone = zone.lower()
         if not domain_validation(zone):
             return response(401, message="domain name not valid")
         else:
             zone_domain = {
-                'nm_zone': zone
+                'nm_zone': lowercase_zone
             }
             data_insert = None
 
