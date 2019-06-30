@@ -13,6 +13,8 @@ from .dns.create import *
 from .command_rest import *
 from .admin.auth import *
 from .admin.create import *
+from .cs_master import *
+from .cs_slave_node import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -44,4 +46,7 @@ api.add_resource(CreateDNS, '/user/dnscreate')
 api.add_resource(AdminAuth, '/admin/login')
 api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
 
+## CLUSTERING
+api.add_resource(Master,'/cs_master')
+api.add_resource(Slave,'/cs_slave_node')
 

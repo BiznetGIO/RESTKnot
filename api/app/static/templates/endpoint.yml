@@ -685,7 +685,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-  cs_slave:
+  cs_slave_node:
     where:
       tags:
         id_slave:
