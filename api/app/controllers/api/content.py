@@ -15,8 +15,8 @@ class Content(Resource):
         command = "zn_"+command
         try:
             results = model.get_all(command)
-        except Exception:
-            results = None
+        except Exception as e:
+            return response(401 ,message=str(e))
         else:
             obj_userdata = list()
             for i in results :
@@ -39,8 +39,14 @@ class Content(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
+            ct_rep = fields['nm_content']
+            ct_replace = ct_rep.replace("'","''")
+            fields_fix = {
+                'id_ttldata': fields['id_ttldata'],
+                'nm_content': ct_replace
+            }
             try:
-                result = model.insert(table, fields)
+                result = model.insert(table, fields_fix)
             except Exception as e:
                 respons = {
                     "status": False,
@@ -52,8 +58,41 @@ class Content(Resource):
                     "messages": "Fine!",
                     "id": result
                 }
-            finally:
+            content_validation = model.get_by_id("v_contentdata", field="id_content", value=str(result))
+            check_validation = False
+            check_validation_char = None
+            if content_validation[0]['nm_type'] == 'A':
+                check_validation = utils.a_record_validation(content_validation[0]['nm_content'])
+            elif content_validation[0]['nm_type'] == 'CNAME':
+                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
+                cs_data_name = content_validation[0]['nm_content']
+                if cs_data_name.find("."):
+                    spl_name = cs_data_name.split(".")
+                    for i in spl_name:                       
+                        if len(i) >= 64:
+                            check_validation_char = True
+                        else:
+                            total = total + len(i)
+                    if total >= 255:
+                        check_validation_char = True
+            elif content_validation[0]['nm_type'] == 'NS':
+                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
+            elif content_validation[0]['nm_type'] == 'TXT':
+                check_validation = utils.txt_validation(content_validation[0]['nm_content'])
+            # elif content_validation[0]['nm_type'] == 'SRV':
+            #     pass
+            else:
+                check_validation = True
+                
+            if check_validation_char:
+                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                return response(401, message="Value Not Valid")
+            if not check_validation:
+                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                return response(401, message="Value Not Valid")
+            else:
                 return response(200, data=fields , message=respons)
+
         if init_data['action'] == 'where':
             obj_userdata = list()
             table = ""
@@ -68,10 +107,7 @@ class Content(Resource):
             try:
                 result = model.get_by_id(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -84,7 +120,6 @@ class Content(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)
         if init_data['action'] == 'remove':
             table = ""
@@ -99,16 +134,12 @@ class Content(Resource):
             try:
                 result = model.delete(table,fields,tags[fields])
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
-            finally:
                 return response(200, data=tags, message=respons)
 
         if init_data['action'] == 'view':
@@ -138,10 +169,7 @@ class Content(Resource):
                     for row in rows:
                         result.append(dict(zip(column, row)))
             except Exception as e:
-                respons = {
-                    "status": False,
-                    "messages": str(e)
-                }
+                return response(401 ,message=str(e))
             else:
                 for i in result :
                     data = {
@@ -158,5 +186,4 @@ class Content(Resource):
                     "status": True,
                     "messages": "Fine!"
                 }
-            finally:
                 return response(200, data=obj_userdata , message=respons)

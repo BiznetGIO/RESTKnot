@@ -663,109 +663,18 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-    master-notify:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    master-acl:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    slave-notify:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    file-set:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    module-set:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    slave-acl:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    master-file:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    slave-file:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
-    cluster-zone:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-
     cluster-unset:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    cluster:
       tags:
         id_zone:
           name: name search for domain
@@ -855,138 +764,6 @@ endpoint:
           name: methode name
           desc: Domain Variabel To Search
 
-  cs_notify_slave:
-    where:
-      tags:
-        id_notify_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    insert:
-      fields:
-        id_notify_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_notify_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      fields:
-        id_notify_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_notify_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search
-          desc: Domain Variabel To Search
-    remove:
-      tags:
-        id_notify_slave:
-          name: ID search
-          desc: Domain Variabel To Search
-          type: tags
-      others:
-        method:
-          name: methode name
-          desc: Domain Variabel To Search
-
-  cs_acl_slave:
-    where:
-      tags:
-        id_acl_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    insert:
-      fields:
-        id_acl_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_acl_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      fields:
-        id_acl_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_acl_slave:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search
-          desc: Domain Variabel To Search
-    remove:
-      tags:
-        id_acl_slave:
-          name: ID search
-          desc: Domain Variabel To Search
-          type: tags
-      others:
-        method:
-          name: methode name
-          desc: Domain Variabel To Search
-
   cs_master:
     where:
       tags:
@@ -1005,6 +782,11 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
+        nm_config:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
       others:
         method:
           name: name search for domain
@@ -1058,148 +840,6 @@ endpoint:
     remove:
       tags:
         id_master:
-          name: ID search
-          desc: Domain Variabel To Search
-          type: tags
-      others:
-        method:
-          name: methode name
-          desc: Domain Variabel To Search
-
-  cs_notify_master:
-    where:
-      tags:
-        id_notify_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    insert:
-      fields:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_notify_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      fields:
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_notify_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search
-          desc: Domain Variabel To Search
-    remove:
-      tags:
-        id_notify_master:
-          name: ID search
-          desc: Domain Variabel To Search
-          type: tags
-      others:
-        method:
-          name: methode name
-          desc: Domain Variabel To Search
-
-  cs_acl_master:
-    where:
-      tags:
-        id_acl_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    insert:
-      fields:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_acl_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      fields:
-        id_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-      tags:
-        id_acl_master:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      others:
-        method:
-          name: name search
-          desc: Domain Variabel To Search
-    remove:
-      tags:
-        id_acl_master:
           name: ID search
           desc: Domain Variabel To Search
           type: tags

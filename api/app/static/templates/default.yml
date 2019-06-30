@@ -1,9 +1,10 @@
 default:
   ns:
-    # - ns1.biz.net.id.
-    # - hostmaster.biz.net.id.
     - satu.neodns.id.
     - dua.neodns.id.
+  soa:
+    - satu.neodns.id.
+    - hostmaster.neodns.id.
   serial:
     - "10800"
     - "3600"

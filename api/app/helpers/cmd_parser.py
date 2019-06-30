@@ -1,4 +1,5 @@
 from app.libs import utils
+from app.helpers.rest import response
 # from app.models import app_models as db
 
 def parser(json, command=None):
@@ -26,7 +27,10 @@ def parser(json, command=None):
                     if variabel_check:
                         data_variabel[variabel_key] = json[i][parameters_key][variabel_key]
                     else:
-                        data_variabel[variabel_key] = endpoint[i][parameters_key][variabel_key]['default']
+                        try:
+                            data_variabel[variabel_key] = endpoint[i][parameters_key][variabel_key]['default']
+                        except Exception as e:
+                            return response(401, message=str(e))
                     tagfields[parameters_key]=data_variabel
         parameter=dict()
         for key in tagfields:
