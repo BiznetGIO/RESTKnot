@@ -13,8 +13,6 @@ from .dns.create import *
 from .command_rest import *
 from .admin.auth import *
 from .admin.create import *
-from .conf.slave import *
-from .conf.master import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
