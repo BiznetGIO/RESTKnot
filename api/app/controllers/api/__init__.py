@@ -29,14 +29,6 @@ api.add_resource(Usersignin,"/login")
 api.add_resource(UserDataZoneInsert,"/userzone")
 api.add_resource(UserDataZoneResource,"/userzone")
 
-## CONF API
-api.add_resource(Slave,"/slave")
-api.add_resource(SlaveNotify,"/notify_slave")
-api.add_resource(SlaveACL,"/acl_slave")
-api.add_resource(MasterData,"/master")
-api.add_resource(MasterNotify,"/notify_master")
-api.add_resource(MasterACL,"/acl_master")
-
 ## DNS API
 api.add_resource(ZoneName, '/zone')
 api.add_resource(Type, '/type')
