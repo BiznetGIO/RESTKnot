@@ -183,10 +183,10 @@ def domain_validation(domain):
         return False
 
 def cname_validation(cname):
-    if cname == '@' or cname=='*':
+    if cname == '@':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\*\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(cname):
             return True
         else:
@@ -203,10 +203,10 @@ def record_validation(record) :
             return False
 
 def mx_validation(mx):
-    if mx == '@' or mx=='*':
+    if mx == '@':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_\*]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\*\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(mx):
             return True
         else:
