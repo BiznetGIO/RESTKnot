@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "c7b0c211-b19b-47af-b307-76d6f669531c",
-		"name": "REST_KNOT_COCKROACH_PUBLIC",
+		"_postman_id": "cba95845-dc48-4073-9756-4bf73e65b259",
+		"name": "REST_KNOT",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -10,28 +10,13 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "domain",
-							"value": "ayam.com",
-							"type": "text"
-						},
-						{
-							"key": "project_id",
-							"value": "c8b7b8ee391d40e0a8aef3b5b2860788",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "localhost:6968/api/type",
+					"raw": "127.0.0.1:6968/api/type",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -57,7 +42,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_type\": \"A\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/type",
+					"raw": "103.89.5.121:6968/api/type",
 					"host": [
 						"103",
 						"89",
@@ -88,7 +73,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_type\": \"402329670102745089\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/type",
+					"raw": "103.89.5.121:6968/api/type",
 					"host": [
 						"103",
 						"89",
@@ -114,7 +99,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_type\": \"402329670102745089\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/type",
+					"raw": "103.89.5.121:6968/api/type",
 					"host": [
 						"103",
 						"89",
@@ -135,17 +120,13 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_type\": \"402329670102745089\"\n      }\n      \t\n   }\n}"
-				},
 				"url": {
-					"raw": "localhost:6968/api/ttl",
+					"raw": "127.0.0.1:6968/api/ttl",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -166,7 +147,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_ttl\": \"43200\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttl",
+					"raw": "103.89.5.121:6968/api/ttl",
 					"host": [
 						"103",
 						"89",
@@ -192,7 +173,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_ttl\": \"402332261606883329\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttl",
+					"raw": "103.89.5.121:6968/api/ttl",
 					"host": [
 						"103",
 						"89",
@@ -223,7 +204,7 @@
 					"raw": "{\n   \"testing\": {\n      \"tags\": {\n      \t\"id_ttl\": \"402332261606883329\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttl",
+					"raw": "103.89.5.121:6968/api/ttl",
 					"host": [
 						"103",
 						"89",
@@ -243,18 +224,20 @@
 			"name": "ZONE_ALL",
 			"request": {
 				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_type\": \"A\"\n      }\n   }\n}"
-				},
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "445dabd39eedac3d2943f20c8d415ca70d4580b306d335842cf10dcc9c866807",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "localhost:6968/api/zone",
+					"raw": "10.10.3.29:6968/api/zone",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -275,7 +258,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_zone\": \"ocha.com\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/zone",
+					"raw": "103.89.5.121:6968/api/zone",
 					"host": [
 						"103",
 						"89",
@@ -301,7 +284,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_zone\": \"402212410013057025\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/zone",
+					"raw": "103.89.5.121:6968/api/zone",
 					"host": [
 						"103",
 						"89",
@@ -327,7 +310,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_zone\": \"402193318505840641\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/zone",
+					"raw": "103.89.5.121:6968/api/zone",
 					"host": [
 						"103",
 						"89",
@@ -348,12 +331,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_record\":\"www\",\n        \"date_record\":\"2018070410\",\n        \"id_zone\":\"420622599268663297\",\n        \"id_type\":\"402386688803307521\"\n      }\n      \t\n   }\n}"
-				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "103.89.5.121:6968/api/record",
 					"host": [
 						"103",
 						"89",
@@ -376,15 +355,15 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_record\":\"kalkun.com\",\n        \"date_record\":\"2018070410\",\n        \"id_zone\":\"427814546583945217\",\n        \"id_type\":\"402427545745850369\"\n      }\n      \t\n   }\n}"
+					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_record\":\"lagirecord2com.com\",\n        \"date_record\":\"2018070410\",\n        \"id_zone\":\"463219577534611457\",\n        \"id_type\":\"402427533112147969\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "127.0.0.1:6968/api/record",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -405,7 +384,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_zone\": \"403076482884698113\"\n        \n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "103.89.5.121:6968/api/record",
 					"host": [
 						"103",
 						"89",
@@ -431,7 +410,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_zone\": \"403076482884698113\"\n        \n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "103.89.5.121:6968/api/record",
 					"host": [
 						"103",
 						"89",
@@ -457,7 +436,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"record_data_id\": \"448f77074b4c5ed5b08c56384b276900\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "103.89.5.121:6968/api/record",
 					"host": [
 						"103",
 						"89",
@@ -483,7 +462,7 @@
 					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_record\": \"\"\n        \n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/record",
+					"raw": "103.89.5.121:6968/api/record",
 					"host": [
 						"103",
 						"89",
@@ -504,12 +483,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_record\": \"\"\n        \n      }\n      \t\n   }\n}"
-				},
 				"url": {
-					"raw": "localhost:6968/api/ttldata",
+					"raw": "103.89.5.121:6968/api/ttldata",
 					"host": [
 						"103",
 						"89",
@@ -535,7 +510,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n        \"id_record\": \"427815500239831041\",\n        \"id_ttl\": \"402427994557939713\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttldata",
+					"raw": "103.89.5.121:6968/api/ttldata",
 					"host": [
 						"103",
 						"89",
@@ -561,7 +536,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_ttldata\": \"402145755976826881\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttldata",
+					"raw": "103.89.5.121:6968/api/ttldata",
 					"host": [
 						"103",
 						"89",
@@ -587,7 +562,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_ttldata\": \"402145755976826881\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttldata",
+					"raw": "103.89.5.121:6968/api/ttldata",
 					"host": [
 						"103",
 						"89",
@@ -613,7 +588,7 @@
 					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_ttldata\": \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/ttldata",
+					"raw": "103.89.5.121:6968/api/ttldata",
 					"host": [
 						"103",
 						"89",
@@ -633,23 +608,14 @@
 			"name": "CONTENT_ALL",
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "bb767860949eff2580f078e6f5733916866f3b0eee8e09565b7e8b3df02eb18a"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_ttldata\": \"\"\n      }\n      \t\n   }\n}"
-				},
+				"header": [],
 				"url": {
-					"raw": "localhost:6968/api/content",
+					"raw": "127.0.0.1:6968/api/content",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -670,7 +636,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_ttldata\": \"427815533188644865\",\n        \"nm_content\": \"0\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content",
+					"raw": "103.89.5.121:6968/api/content",
 					"host": [
 						"103",
 						"89",
@@ -696,7 +662,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"content_id\": \"ibnu.com_soa_ctn\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content",
+					"raw": "103.89.5.121:6968/api/content",
 					"host": [
 						"103",
 						"89",
@@ -722,7 +688,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"content_id\": \"ns1.biz.net.id.\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content",
+					"raw": "103.89.5.121:6968/api/content",
 					"host": [
 						"103",
 						"89",
@@ -748,7 +714,7 @@
 					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_record\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content",
+					"raw": "103.89.5.121:6968/api/content",
 					"host": [
 						"103",
 						"89",
@@ -769,12 +735,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_content\" : \"\"\n      }\n      \t\n   }\n}"
-				},
 				"url": {
-					"raw": "localhost:6968/api/content_serial",
+					"raw": "103.89.5.121:6968/api/content_serial",
 					"host": [
 						"103",
 						"89",
@@ -800,7 +762,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_content_serial\": \"kerbau.com.\",\n        \"id_record\": \"427838394454933505\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content_serial",
+					"raw": "103.89.5.121:6968/api/content_serial",
 					"host": [
 						"103",
 						"89",
@@ -826,7 +788,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_content_serial\" : \"402146220480921601\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content_serial",
+					"raw": "103.89.5.121:6968/api/content_serial",
 					"host": [
 						"103",
 						"89",
@@ -852,7 +814,7 @@
 					"raw": "{\n   \"view\": {\n      \"tags\": {\n      \t\"id_content_serial\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content_serial",
+					"raw": "103.89.5.121:6968/api/content_serial",
 					"host": [
 						"103",
 						"89",
@@ -875,20 +837,21 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "5f8e5d18237641ec1b39dca266cbd461320afd3b394ed945e766b148e227eaad"
+						"value": "bf7215d65c7cfe91e1a793a954674edfe867966e99c546044c1c56c6408d3c35",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"conf-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"424320708690706433\"\n      }\n   }\n}"
+					"raw": "{\n   \"conf-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -909,12 +872,12 @@
 					"raw": "{\n   \"conf-read\": {\n      \"tags\": {\n      \t\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -929,18 +892,24 @@
 			"name": "ZONE_READ_COMMAND",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "f4aa17afd19d4f944e974a5fcf3eaac0c0a5ea4c5d61bf8c9574ec5273175ac9",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-read\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440099714981298177\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-read\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461864556911722497\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -961,7 +930,7 @@
 					"raw": "{\n   \"zone-begin\": {\n      \"tags\": {\n      \t\"id_zone\" : \"\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "103.89.5.121:6968/api/sendcommand",
 					"host": [
 						"103",
 						"89",
@@ -984,20 +953,20 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "5f8e5d18237641ec1b39dca266cbd461320afd3b394ed945e766b148e227eaad"
+						"value": "2775ab720a5edb3451221af7ba61bc4f21d6aa86ca3c5b56e5f8f5aceb757ae3"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-soa-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"424320708690706433\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-soa-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1018,7 +987,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_content_serial\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/content_serial",
+					"raw": "103.89.5.121:6968/api/content_serial",
 					"host": [
 						"103",
 						"89",
@@ -1044,7 +1013,7 @@
 					"raw": "{\n   \"zone-commit\": {\n      \"tags\": {\n      \t\"id_zone\" : \"403086715162165249\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "103.89.5.121:6968/api/sendcommand",
 					"host": [
 						"103",
 						"89",
@@ -1064,18 +1033,25 @@
 			"name": "ZONE_INSERT_COMMAND",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "26ef06189333969cb36e0dbb4e74d4269b613e341f393bacd3d1c884c29a5bd8",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"427845547936940033\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"463901071486058497\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1101,7 +1077,7 @@
 					"raw": "{\n   \"zone-srv-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"420636361958162433\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "103.89.5.121:6968/api/sendcommand",
 					"host": [
 						"103",
 						"89",
@@ -1124,20 +1100,20 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "b7dbba826413ac8dc1efbef96efc2608dd77f5cc05192aa53ec3a0fe35fa78f3"
+						"value": "81a33d58a6f0d631c6c7b3f589b8780cc362b2c20d63e5fb23ca9d7f56c8e0b4"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-ns-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"422037497822412801\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-ns-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1152,18 +1128,25 @@
 			"name": "ZONE_MX_INSERT_COMMAND",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "26ef06189333969cb36e0dbb4e74d4269b613e341f393bacd3d1c884c29a5bd8",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-read\": {\n      \"tags\": {\n      \t\"id_zone\" : \"427851532137725953\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-mx-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"463864396805668865\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1195,7 +1178,7 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/user/dnscreate",
+					"raw": "103.89.5.121:6968/api/user/dnscreate",
 					"host": [
 						"103",
 						"89",
@@ -1268,12 +1251,12 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/login",
+					"raw": "10.10.3.29:6968/api/login",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1289,23 +1272,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "username",
-							"value": "test@biznetgio.com",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "BiznetGio2017",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "localhost:6968/api/user/",
+					"raw": "103.89.5.121:6968/api/user/",
 					"host": [
 						"103",
 						"89",
@@ -1332,7 +1300,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "localhost:6968/api/user/397504393110355969",
+					"raw": "103.89.5.121:6968/api/user/397504393110355969",
 					"host": [
 						"103",
 						"89",
@@ -1354,12 +1322,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "localhost:6968/api/user/397466492273065985",
+					"raw": "103.89.5.121:6968/api/user/397466492273065985",
 					"host": [
 						"103",
 						"89",
@@ -1417,7 +1381,7 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/user/397479998132813825",
+					"raw": "103.89.5.121:6968/api/user/397479998132813825",
 					"host": [
 						"103",
 						"89",
@@ -1444,7 +1408,7 @@
 					"raw": "{\n   \"conf-unset\": {\n      \"tags\": {\n      \t\"id_zone\" : \"427819388483960833\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "103.89.5.121:6968/api/sendcommand",
 					"host": [
 						"103",
 						"89",
@@ -1464,18 +1428,24 @@
 			"name": "ZONE_RECORD_UNSET_ZONE",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "81a33d58a6f0d631c6c7b3f589b8780cc362b2c20d63e5fb23ca9d7f56c8e0b4",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-unset\": {\n      \"tags\": {\n        \"id_record\": \"427838394454933505\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-unset\": {\n      \"tags\": {\n        \"id_record\": \"461277421996769281\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1507,7 +1477,7 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/user",
+					"raw": "103.89.5.121:6968/api/user",
 					"host": [
 						"103",
 						"89",
@@ -1533,23 +1503,8 @@
 						"value": "e73a4e1598b6f19d1ec6ee40f093369a6c5a13e09a99ca95b3c4fb4323a9a2ca"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "username",
-							"value": "test@biznetgio.com",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "BiznetGio2017",
-							"type": "text"
-						}
-					]
-				},
 				"url": {
-					"raw": "localhost:6968/api/user/id/<user_id>",
+					"raw": "103.89.5.121:6968/api/user/id/<user_id>",
 					"host": [
 						"103",
 						"89",
@@ -1574,20 +1529,21 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
+						"value": "1eea6281eeae62c5c5b85f818387ede7af85cf4b12956fa62c4b93b949a08465",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"cluster-zone\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"cluster-zone\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1599,26 +1555,27 @@
 			"response": []
 		},
 		{
-			"name": "CONF_SET_MASTER_NOTIFY",
+			"name": "CONF_SET_MASTER_NOTIFY_IN_SLAVE",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
+						"value": "2c15c3561848a82dacde3235403cbe7b34e25975a4b38e844219fe311f023e9d",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"master-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"master-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1630,26 +1587,27 @@
 			"response": []
 		},
 		{
-			"name": "CONF_SET_SLAVE_NOTIFY",
+			"name": "CONF_SET_SLAVE_NOTIFY_IN_SLAVE",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
+						"value": "3e27927455332d7a2f5e66c2bd6b4612c9242a84423e9e6f5802a8fdc8b581ac",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"slave-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"slave-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461878328406081537\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1661,26 +1619,27 @@
 			"response": []
 		},
 		{
-			"name": "CONF_SET_MASTER_ACL",
+			"name": "CONF_SET_MASTER_ACL_IN_MASTER",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
+						"value": "129cb07d82453c0ebf7b881d656d674ae44de4d3093b40936116a3d18a5d3b39",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"master-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"master-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461240079068790785\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1692,26 +1651,27 @@
 			"response": []
 		},
 		{
-			"name": "CONF_SET_SLAVE_ACL",
+			"name": "CONF_SET_SLAVE_ACL_IN_MASTER",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
+						"value": "cfe494b987ad386f0599b8cf80405d4d44ffdd5042599a2834b4bb9f1a28d09c",
+						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"slave-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"slave-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461240079068790785\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "10.10.3.29:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"10",
+						"10",
+						"3",
+						"29"
 					],
 					"port": "6968",
 					"path": [
@@ -1726,23 +1686,18 @@
 			"name": "CONF_SET_FILE",
 			"request": {
 				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"file-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"file-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"441470070413950977\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1757,23 +1712,18 @@
 			"name": "CONF_SET_MODULE",
 			"request": {
 				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "7f2710053b1ded47894eff141f69d9e94dd2d9f27f07a25a590223ad5de9b575"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"module-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"440623793080958977\"\n      }\n   }\n}"
+					"raw": "{\n   \"module-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"441470070413950977\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1788,18 +1738,25 @@
 			"name": "CLUSTER_ZONE_TESTING",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"conf-set\": {\"sendblock\": {\"cmd\": \"conf-set\", \"section\": \"zone\", \"item\": \"domain\", \"data\": \"janda3.com\"}, \"receive\": {\"type\": \"block\"}}}\n"
+					"raw": "{\n  \"zone-set\": {\n    \"sendblock\": {\n      \"cmd\": \"conf-set\",\n      \"zone\": \"lagi2.id\",\n      \"item\": \"module\",\n      \"owner\": \"\",\n      \"rtype\": \"\",\n      \"ttl\": \"\",\n      \"flags\": \"\",\n      \"section\":\"zone\",\n      \"data\": \"mod-stats/default\"\n    },\n    \"receive\": {\n      \"type\": \"block\"\n    }\n  }\n}"
 				},
 				"url": {
-					"raw": "112.78.183.110:6967/api/command_rest",
+					"raw": "127.0.0.1:6967/api/command_rest",
 					"host": [
-						"112",
-						"78",
-						"183",
-						"110"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6967",
 					"path": [
@@ -1852,7 +1809,7 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/userzone",
+					"raw": "103.89.5.121:6968/api/userzone",
 					"host": [
 						"103",
 						"89",
@@ -1878,12 +1835,8 @@
 						"value": "a30180e9ff551c97c4a8fc03e2690dc58a1a9b20e62d470a449de7df3ed0e169"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "localhost:6968/api/user/project/c8b7b8ee391d40e0a8aef3b5b2860788",
+					"raw": "103.89.5.121:6968/api/user/project/c8b7b8ee391d40e0a8aef3b5b2860788",
 					"host": [
 						"103",
 						"89",
@@ -1906,10 +1859,6 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": ""
 				}
@@ -1921,12 +1870,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "localhost:6968/api/slave",
+					"raw": "103.89.5.121:6968/api/slave",
 					"host": [
 						"103",
 						"89",
@@ -1957,7 +1902,7 @@
 					"raw": "{\n\"insert\":{\n\t\t\"fields\": {\n\t\t\"nm_slave\" : \"budak\",\n\t\t\"ip_slave\" : \"localhost\",\n\t\t\"port\": \"8000\"\n\t\t}\n\t}\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/slave",
+					"raw": "103.89.5.121:6968/api/slave",
 					"host": [
 						"103",
 						"89",
@@ -1988,7 +1933,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_slave\" : 431564002942386177\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/slave",
+					"raw": "103.89.5.121:6968/api/slave",
 					"host": [
 						"103",
 						"89",
@@ -2019,7 +1964,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"nm_slave\" : \"slave2\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/slave",
+					"raw": "103.89.5.121:6968/api/slave",
 					"host": [
 						"103",
 						"89",
@@ -2036,421 +1981,6 @@
 			"response": []
 		},
 		{
-			"name": "GET_ALL_NOTIF_SLAVE",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "WHERE NOTIFY SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_notify_slave\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "INSERT NOTIF SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "63d1b1c0bbc340e7bce65aea71436bbe37e001ff3f748ceb0603e5b16c4e5c97"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_slave\" : \"402152759030939649\",\n      \t\"id_notify_master\": \"440627151318581249\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REMOVE NOTIF SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_notify_slave\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET_ALL_ACL_SLAVE",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "INSERT ACL_SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "63d1b1c0bbc340e7bce65aea71436bbe37e001ff3f748ceb0603e5b16c4e5c97"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_slave\" : \"402152759030939649\",\n      \t\"id_acl_master\": \"440628369708449793\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "WHERE ACL_SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_acl_slave\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REMOVE ACL_SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_acl_slave\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_slave",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_slave"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET_ALL_NOTIF_MASTER",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "63d1b1c0bbc340e7bce65aea71436bbe37e001ff3f748ceb0603e5b16c4e5c97"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "WHERE NOTIFY MASTER",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_notify_master\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "INSERT NOTIF MASTER",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "63d1b1c0bbc340e7bce65aea71436bbe37e001ff3f748ceb0603e5b16c4e5c97"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_master\" : \"402152439124393985\",\n      \t\"id_zone\": \"440623793080958977\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REMOVE NOTIF MASTER",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_notify_master\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/notify_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"notify_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET_ALL_ACL_MASTER",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "INSERT ACL MASTER",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "63d1b1c0bbc340e7bce65aea71436bbe37e001ff3f748ceb0603e5b16c4e5c97"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_master\" : \"402152439124393985\",\n      \t\"id_zone\": \"440623793080958977\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "WHERE ACL MASTER",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_acl_master\" : \"\"\n      }\n      \t\n   }\n}"
-				},
-				"url": {
-					"raw": "localhost:6968/api/acl_master",
-					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"acl_master"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "INSERT MASTER",
 			"request": {
 				"method": "POST",
@@ -2460,7 +1990,7 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_master\" : \"\",\n      \t\"ip_master\" : \"\",\n      \t\"port\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/master",
+					"raw": "103.89.5.121:6968/api/master",
 					"host": [
 						"103",
 						"89",
@@ -2486,7 +2016,7 @@
 					"raw": "{\n   \"where\": {\n      \"tags\": {\n      \t\"id_master\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/master",
+					"raw": "103.89.5.121:6968/api/master",
 					"host": [
 						"103",
 						"89",
@@ -2512,7 +2042,7 @@
 					"raw": "{\n   \"remove\": {\n      \"tags\": {\n      \t\"id_master\" : \"\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "localhost:6968/api/master",
+					"raw": "103.89.5.121:6968/api/master",
 					"host": [
 						"103",
 						"89",
@@ -2523,6 +2053,153 @@
 					"path": [
 						"api",
 						"master"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UNSET_CLUSTER_NEW",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"cluster-unset\": {\n      \"tags\": {\n      \t\"id_zone\" : \"462965901172572161\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/sendcommand",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CLUSTER_MASTER",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"cluster-master\": {\n      \"tags\": {\n      \t\"id_zone\" : \"462993102138834945\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/sendcommand",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CLUSTER_SLAVE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"cluster-slave\": {\n      \"tags\": {\n      \t\"id_zone\" : \"464941034173431809\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/sendcommand",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_MASTER_CLUSTER",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:6968/api/cluster/master/aad69df6-07fa-4c56-90a2-6fd66dda2f1f",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"cluster",
+						"master",
+						"aad69df6-07fa-4c56-90a2-6fd66dda2f1f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_SLAVE_CLUSTER",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:6968/api/cluster/slave/aad69df6-07fa-4c56-90a2-6fd66dda2f1f",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"cluster",
+						"slave",
+						"aad69df6-07fa-4c56-90a2-6fd66dda2f1f"
 					]
 				}
 			},
