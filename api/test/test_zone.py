@@ -405,7 +405,6 @@ class TestZone:
         data = {"id_zone" : self.var_mock.ids['id_zone']}
         res = self.post_data(client,'userzone',data=data,headers=header)
         assert res.status_code == 200
-        print(res)
         res = client.get('api/userzone',headers=header)
         assert res.status_code == 200
         

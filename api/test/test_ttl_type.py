@@ -41,7 +41,6 @@ class TestTypeTTL:
 			url = key.lstrip("id_")
 			send_data = { key : str(value)}
 			data = utils.get_model('remove',send_data)
-			print(data)
 			result = self.post_data(client,url,data,header)
 			assert result.status_code == 200
 		
