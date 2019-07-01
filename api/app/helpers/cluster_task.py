@@ -1,16 +1,29 @@
 from app import celery
+from celery.result import AsyncResult
 from app.libs import utils
 from app.helpers import command
 from app.models import model
 from app.helpers import cluster_master, cluster_slave
+
+
+@celery.task(bind=True)
+def get_cluster_data_master(self, id_master):
+    res_master = AsyncResult(id=id_master, app=cluster_task_master)
+    return res_master
+
+@celery.task(bind=True)
+def get_cluster_data_slave(self, id_slave):
+    res_slave = AsyncResult(id=id_slave, app=cluster_task_slave)
+    return res_slave
+
 
 @celery.task(bind=True)
 def cluster_task_master(self, tags):
     result = []
     id_zone = tags['id_zone']
     master_data = model.get_all("cs_master")
-
     for i in master_data:
+        print(i)
         urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
         command.conf_begin_http(urls)
         ffi_master = cluster_master.master_create_json_master(id_zone, i['nm_config'])

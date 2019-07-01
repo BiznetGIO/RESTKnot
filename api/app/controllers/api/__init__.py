@@ -15,6 +15,7 @@ from .admin.auth import *
 from .admin.create import *
 from .cs_master import *
 from .cs_slave_node import *
+from .cluster import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -49,4 +50,9 @@ api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
 ## CLUSTERING
 api.add_resource(CsMaster,'/master')
 api.add_resource(CsSlave,'/slave_node')
+
+## CLUSTER
+api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
+api.add_resource(ClusterCheckSlave, '/cluster/slave/<id_slave>')
+
 
