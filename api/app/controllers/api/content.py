@@ -41,9 +41,10 @@ class Content(Resource):
             fields = init_data['data'][0]['fields']
             ct_rep = fields['nm_content']
             ct_replace = ct_rep.replace("'","''")
+            lower_text_data = ct_replace.lower()
             fields_fix = {
                 'id_ttldata': fields['id_ttldata'],
-                'nm_content': ct_replace
+                'nm_content': lower_text_data
             }
             try:
                 result = model.insert(table, fields_fix)
@@ -66,6 +67,7 @@ class Content(Resource):
             elif content_validation[0]['nm_type'] == 'CNAME':
                 check_validation = utils.cname_validation(content_validation[0]['nm_content'])
                 cs_data_name = content_validation[0]['nm_content']
+                total = 0
                 if cs_data_name.find("."):
                     spl_name = cs_data_name.split(".")
                     for i in spl_name:                       

@@ -252,15 +252,9 @@ class CreateDNS(Resource):
             # #UNCOMENT TO SYNC AUTO
 
             respon = list()
-
             try:
                 zone_data = db.get_by_id("zn_zone","nm_zone", zone)
             except Exception as e:
-                # data = {
-                #     "status": False,
-                #     "messages": str(e)
-                # }
-                # respon.append(data)
                 return response(401, message=str(e))
             else:
                 for i in zone_data:
