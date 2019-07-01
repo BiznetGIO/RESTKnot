@@ -225,14 +225,53 @@ class SendCommandRest(Resource):
             return response(200, data=respons)
 
 
-        if init_data['action'] == 'cluster':
+        if init_data['action'] == 'cluster-master':
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
             
-            # a = cluster_task.cluster_task_master(tags)
-            # a = cluster_task.cluster_task_slave(tags)
-            # return response(200, data=a)
+            try:
+                # cluster_task.cluster_task_master.apply_async(args=[tags], 
+                #     retry=True,
+                #     retry_policy={
+                #         'max_retries': 3,
+                #         'interval_start': 0,
+                #         'interval_step': 0.2,
+                #         'interval_max': 0.2,
+                #     })
+                # cluster_task.cluster_task_slave.apply_async(args=[tags], 
+                #     retry=True,
+                #     retry_policy={
+                #         'max_retries': 3,
+                #         'interval_start': 0,
+                #         'interval_step': 0.2,
+                #         'interval_max': 0.2,
+                #     })
+                master = cluster_task.cluster_task_master.delay(tags)
+                result.append({
+                    "id": str(master),
+                    "state": master.state
+                })
+            except Exception as e:
+                return response(401, message="Master Cluster Not Complete")
+            else:
+                return response(200, data=result, message="Master Cluster Processing")
+
+        if init_data['action'] == 'cluster-slave':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            
+            try:
+                slave = cluster_task.cluster_task_slave.delay(tags)
+                result.append({
+                    "id": str(slave),
+                    "state": slave.state
+                })
+            except Exception as e:
+                return response(401, message="Slave Cluster Not Complete")
+            else:
+                return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset':
             result = list()
