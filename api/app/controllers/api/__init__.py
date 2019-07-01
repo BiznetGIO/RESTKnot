@@ -47,6 +47,6 @@ api.add_resource(AdminAuth, '/admin/login')
 api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
 
 ## CLUSTERING
-api.add_resource(Master,'/cs_master')
-api.add_resource(Slave,'/cs_slave_node')
+api.add_resource(CsMaster,'/master')
+api.add_resource(CsSlave,'/slave_node')
 

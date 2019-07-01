@@ -7,7 +7,7 @@ from app.models import model
 from app.middlewares.auth import login_required
 
 
-class Master(Resource):
+class CsMaster(Resource):
     def get(self):
         command = utils.get_command(request.path)
         command = "cs_"+command
@@ -19,7 +19,8 @@ class Master(Resource):
                     "id_master": str(i['id_master']),
                     "ip_master": i['ip_master'],
                     "nm_master": i['nm_master'],
-                    "nm_config" : i['nm_config']
+                    "nm_config" : i['nm_config'],
+                    "port": i['port']
                 }
                 obj_userdata.append(data)
         except Exception:
@@ -31,7 +32,7 @@ class Master(Resource):
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)
-        command = "zn_"+command
+        command = "cs_"+command
         init_data = cmd.parser(json_req, command)
         respons = dict()
         if init_data['action'] == 'insert':
@@ -70,7 +71,8 @@ class Master(Resource):
                     "id_master": str(i['id_master']),
                     "ip_master": i['ip_master'],
                     "nm_master": i['nm_master'],
-                    "nm_config" : i['nm_config']
+                    "nm_config" : i['nm_config'],
+                    "port": i['port']
                     }
                     obj_userdata.append(data)
                 respons = {

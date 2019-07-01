@@ -7,7 +7,7 @@ from app.models import model
 from app.middlewares.auth import login_required
 
 
-class Slave(Resource):
+class CsSlave(Resource):
     def get(self):
         command = utils.get_command(request.path)
         command = "cs_"+command
@@ -16,10 +16,11 @@ class Slave(Resource):
             obj_userdata = list()
             for i in results :
                 data = {
-                    "id_slave": str(i['id_slave']),
-                    "nm_slave": i['nm_slave'],
-                    "port": i['port'],
-                    "ip_slave" : i['ip_slave']
+                    "id_cs_slave_node": str(i['id_cs_slave_node']),
+                    "id_master": str(i['id_master']),
+                    "nm_slave_node": i['nm_slave_node'],
+                    "port_slave_node": i['port_slave_node'],
+                    "ip_slave_node" : i['ip_slave_node']
                 }
                 obj_userdata.append(data)
         except Exception:
@@ -31,7 +32,7 @@ class Slave(Resource):
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)
-        command = "zn_"+command
+        command = "cs_"+command
         init_data = cmd.parser(json_req, command)
         respons = dict()
         if init_data['action'] == 'insert':
@@ -67,10 +68,11 @@ class Slave(Resource):
             else:
                 for i in result :
                     data = {
-                    "id_slave": str(i['id_slave']),
-                    "nm_slave": i['nm_slave'],
-                    "port": i['port'],
-                    "ip_slave" : i['ip_slave']
+                    "id_cs_slave_node": str(i['id_cs_slave_node']),
+                    "id_master": str(i['id_master']),
+                    "nm_slave_node": i['nm_slave_node'],
+                    "port_slave_node": i['port_slave_node'],
+                    "ip_slave_node" : i['ip_slave_node']
                     }
                     obj_userdata.append(data)
                 respons = {

@@ -688,17 +688,17 @@ endpoint:
   cs_slave_node:
     where:
       tags:
-        id_slave:
+        id_cs_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
           default:
-        nm_slave:
+        nm_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
           default:
-        ip_slave:
+        ip_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -709,20 +709,20 @@ endpoint:
           desc: Domain Variabel To Search
     insert:
       fields:
-        nm_slave:
+        nm_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        ip_slave:
+        ip_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        port:
+        port_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        id_slave:
+        id_cs_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
@@ -732,20 +732,20 @@ endpoint:
           desc: Domain Variabel To Search
     edit:
       fields:
-        nm_slave:
+        nm_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        ip_slave:
+        ip_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        port:
+        port_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        id_slave:
+        id_cs_slave_node:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
@@ -755,7 +755,7 @@ endpoint:
           desc: Domain Variabel To Search
     remove:
       tags:
-        id_slave:
+        id_cs_slave_node:
           name: ID search
           desc: Domain Variabel To Search
           type: tags
