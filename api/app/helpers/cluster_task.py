@@ -19,6 +19,7 @@ def get_cluster_data_slave(self, id_slave):
 
 @celery.task(bind=True)
 def cluster_task_master(self, tags):
+    respons = []
     result = []
     id_zone = tags['id_zone']
     master_data = model.get_all("cs_master")
@@ -47,10 +48,15 @@ def cluster_task_master(self, tags):
         http_response = utils.send_http(urls, ffi_serial_policy)
         result.append(http_response)
         command.conf_commit_http(urls)
-    return result
+        respons.append({
+            "server": i['nm_config'],
+            "data": result
+        })
+    return respons
 
 @celery.task(bind=True)
 def cluster_task_slave(self, tags):
+    respons = []
     result = []
     id_zone = tags['id_zone']
     slave_data = model.get_all("v_cs_slave_node")
@@ -79,7 +85,11 @@ def cluster_task_slave(self, tags):
         http_response = utils.send_http(urls, ffi_serial_policy)
         result.append(http_response)
         command.conf_commit_http(urls)
-    return result
+        respons.append({
+            "server": i['nm_config'],
+            "data": result
+        })
+    return respons
         
 
 
