@@ -1,7 +1,8 @@
 language: python
 python:
-- '3.6'
+- "3.6"
 install:
+- cd api
 - pip install -r requirements.txt
 - pip install coverage pytest pytest-cov pytest-ordering testfixtures
 script:
