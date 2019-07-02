@@ -74,7 +74,10 @@ def master_create_json_notify(id_zone, nm_config):
         if nm_config == 'jkt':
             rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
             for a in rows:
-                data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
+                if data_slave_set_jkt == "":
+                    data_slave_set_jkt = a['nm_master']
+                else:    
+                    data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
             data_slave_set_jkt = data_slave_set_jkt+" "+i['nm_slave_node']
         else:
             if data_slave_set == "":
@@ -139,7 +142,10 @@ def master_create_json_acl(id_zone, nm_config):
         if nm_config == 'jkt':
             rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
             for a in rows:
-                data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
+                if data_slave_set_jkt == "":
+                    data_slave_set_jkt = a['nm_master']
+                else:    
+                    data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
             data_slave_set_jkt = data_slave_set_jkt+" "+i['nm_slave_node']
         else:
             if data_slave_set == "":
