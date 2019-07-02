@@ -67,6 +67,7 @@ class ContentSerial(Resource):
                 
                 cs_data_name = content_validation[0]['nm_content_serial']
                 check_validation_char = None
+                total = 0
                 if cs_data_name.find("."):
                     spl_name = lowercase_cs_data.split(".")
                     for i in spl_name:                       
