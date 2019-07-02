@@ -13,7 +13,7 @@ before_install:
 script:
 - pytest --cov=app -vv -s
 before_script:
-- mv .env.example .env
+- mv enirontment/travis/.env.example .env
 - python3 manage.py server
 deploy:
   provider: pypi
