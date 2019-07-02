@@ -1,6 +1,24 @@
 from app.models import model
 from app.libs import utils
 
+
+def insert_config_zone(id_zone, nm_config):
+    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    json_data = {
+        "command-set": {
+                "sendblock": {
+                "cmd": "conf-set",
+                "item": "domain", 
+                "section":"zone",
+                "data": data_zone['nm_domain']
+            },
+                "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_data
+
 def master_create_json_master(id_zone, nm_config):
     nm_config_set = None
     if nm_config == "jkt":

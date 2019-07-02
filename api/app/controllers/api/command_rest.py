@@ -231,22 +231,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # cluster_task.cluster_task_master.apply_async(args=[tags], 
-                #     retry=True,
-                #     retry_policy={
-                #         'max_retries': 3,
-                #         'interval_start': 0,
-                #         'interval_step': 0.2,
-                #         'interval_max': 0.2,
-                #     })
-                # cluster_task.cluster_task_slave.apply_async(args=[tags], 
-                #     retry=True,
-                #     retry_policy={
-                #         'max_retries': 3,
-                #         'interval_start': 0,
-                #         'interval_step': 0.2,
-                #         'interval_max': 0.2,
-                #     })
                 master = cluster_task.cluster_task_master.delay(tags)
                 result.append({
                     "id": str(master),

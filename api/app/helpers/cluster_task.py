@@ -23,9 +23,11 @@ def cluster_task_master(self, tags):
     id_zone = tags['id_zone']
     master_data = model.get_all("cs_master")
     for i in master_data:
-        print(i)
         urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
         command.conf_begin_http(urls)
+        ffi_insert_conf = cluster_master.insert_config_zone(id_zone, i['nm_config'])
+        http_response = utils.send_http(urls, ffi_insert_conf)
+        result.append(http_response)
         ffi_master = cluster_master.master_create_json_master(id_zone, i['nm_config'])
         http_response = utils.send_http(urls, ffi_master)
         result.append(http_response)
@@ -55,6 +57,9 @@ def cluster_task_slave(self, tags):
     for i in slave_data:
         urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
         command.conf_begin_http(urls)
+        ffi_insert_conf = cluster_slave.insert_config_zone(id_zone, i['nm_config'])
+        http_response = utils.send_http(urls, ffi_insert_conf)
+        result.append(http_response)
         ffi_slave_master = cluster_slave.master_create_json(id_zone, i['nm_config'])
         http_response = utils.send_http(urls, ffi_slave_master)
         result.append(http_response)
