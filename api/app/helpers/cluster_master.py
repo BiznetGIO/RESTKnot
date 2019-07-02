@@ -69,59 +69,36 @@ def master_create_json_notify(id_zone, nm_config):
     data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
     data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     data_slave_set = ""
-    data_slave_set_jkt = ""
+    # data_slave_set_jkt = ""
     for i in data_slave:
-        if nm_config == 'jkt':
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
-            for a in rows:
-                if data_slave_set_jkt == "":
-                    data_slave_set_jkt = a['nm_master']
-                else:    
-                    data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
-            data_slave_set_jkt = data_slave_set_jkt+" "+i['nm_slave_node']
-        else:
+        rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+        for a in rows:
             if data_slave_set == "":
-                data_slave_set = i['nm_slave_node']
-            else:
-                data_slave_set = data_slave_set+" "+i['nm_slave_node']
-    if nm_config == "jkt":
-        json_data = {
-            "master-set-notify": {
-                    "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "notify", 
-                    "owner": "",
-                    "rtype": "",
-                    "ttl": "",
-                    "flags": "",
-                    "section":"zone",
-                    "data": data_slave_set_jkt
-                },
-                    "receive": {
-                    "type": "block"
-                }
+                data_slave_set = a['nm_master']
+            else:    
+                data_slave_set = data_slave_set+" "+a['nm_master']
+        if data_slave_set == "":
+            data_slave_set = i['nm_slave_node']
+        else:    
+            data_slave_set = data_slave_set+" "+i['nm_slave_node']
+    json_data = {
+        "master-set-notify": {
+                "sendblock": {
+                "cmd": "conf-set",
+                "zone": data_zone['nm_zone'],
+                "item": "acl", 
+                "owner": "",
+                "rtype": "",
+                "ttl": "",
+                "flags": "",
+                "section":"zone",
+                "data": data_slave_set
+            },
+                "receive": {
+                "type": "block"
             }
         }
-    else:
-        json_data = {
-            "master-set-notify": {
-                    "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "notify", 
-                    "owner": "",
-                    "rtype": "",
-                    "ttl": "",
-                    "flags": "",
-                    "section":"zone",
-                    "data": data_slave_set
-                },
-                    "receive": {
-                    "type": "block"
-                }
-            }
-        }
+    }
     return json_data
 
 def master_create_json_acl(id_zone, nm_config):
@@ -136,60 +113,36 @@ def master_create_json_acl(id_zone, nm_config):
     data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
     data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     data_slave_set = ""
-    data_slave_set = ""
-    data_slave_set_jkt = ""
+    # data_slave_set_jkt = ""
     for i in data_slave:
-        if nm_config == 'jkt':
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
-            for a in rows:
-                if data_slave_set_jkt == "":
-                    data_slave_set_jkt = a['nm_master']
-                else:    
-                    data_slave_set_jkt = data_slave_set_jkt+" "+a['nm_master']
-            data_slave_set_jkt = data_slave_set_jkt+" "+i['nm_slave_node']
-        else:
+        rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+        for a in rows:
             if data_slave_set == "":
-                data_slave_set = i['nm_slave_node']
-            else:
-                data_slave_set = data_slave_set+" "+i['nm_slave_node']
-    if nm_config == "jkt":
-        json_data = {
-            "master-set-notify": {
-                    "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "acl", 
-                    "owner": "",
-                    "rtype": "",
-                    "ttl": "",
-                    "flags": "",
-                    "section":"zone",
-                    "data": data_slave_set_jkt
-                },
-                    "receive": {
-                    "type": "block"
-                }
+                data_slave_set = a['nm_master']
+            else:    
+                data_slave_set = data_slave_set+" "+a['nm_master']
+        if data_slave_set == "":
+            data_slave_set = i['nm_slave_node']
+        else:    
+            data_slave_set = data_slave_set+" "+i['nm_slave_node']
+    json_data = {
+        "master-set-notify": {
+                "sendblock": {
+                "cmd": "conf-set",
+                "zone": data_zone['nm_zone'],
+                "item": "acl", 
+                "owner": "",
+                "rtype": "",
+                "ttl": "",
+                "flags": "",
+                "section":"zone",
+                "data": data_slave_set
+            },
+                "receive": {
+                "type": "block"
             }
         }
-    else:
-        json_data = {
-            "master-set-notify": {
-                    "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "acl", 
-                    "owner": "",
-                    "rtype": "",
-                    "ttl": "",
-                    "flags": "",
-                    "section":"zone",
-                    "data": data_slave_set
-                },
-                    "receive": {
-                    "type": "block"
-                }
-            }
-        }
+    }
     return json_data
 
 def set_file_all(id_zone):
