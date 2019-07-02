@@ -10,7 +10,7 @@ def insert_config_zone(id_zone, nm_config):
                 "cmd": "conf-set",
                 "item": "domain", 
                 "section":"zone",
-                "data": data_zone['nm_domain']
+                "data": data_zone['nm_zone']
             },
                 "receive": {
                 "type": "block"
