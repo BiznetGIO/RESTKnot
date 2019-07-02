@@ -5,6 +5,7 @@ from app.helpers import cluster_task
 
 
 class ClusterCheckMaster(Resource):
+    @login_required
     def get(self, id_master):
         try:
             chain = cluster_task.get_cluster_data_master.s(id_master)            
@@ -27,6 +28,7 @@ class ClusterCheckMaster(Resource):
             return response(200, data=data)
 
 class ClusterCheckSlave(Resource):
+    @login_required
     def get(self, id_slave):
         try:
             chain = cluster_task.get_cluster_data_slave.s(id_slave)            
