@@ -3,7 +3,7 @@ python:
 - "3.6"
 before_install:
  - psql -c 'create database knotdb;' -U postgres
- - psql databasename < db.sql
+ - psql databasename < api/db.sql
  install:
 - cd api
 - virtualenv -p python3 env
