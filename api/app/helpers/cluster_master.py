@@ -156,7 +156,7 @@ def set_file_all(id_zone):
                 "owner": "",
                 "rtype": "",
                 "ttl": "",
-                "flags": "",
+                "identifier": data_zone['nm_zone'],
                 "section":"zone",
                 "data": data_zone['nm_zone']+".zone" 
             },
