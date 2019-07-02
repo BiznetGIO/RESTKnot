@@ -1,4 +1,5 @@
 from app.models import model
+from app import db
 from app.libs import utils
 
 
@@ -69,10 +70,16 @@ def master_create_json_notify(id_zone, nm_config):
     data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     data_slave_set = ""
     for i in data_slave:
-        if data_slave_set == "":
-            data_slave_set = i['nm_slave_node']
-        else:
+        if nm_config == 'jkt':
+            rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
+            for i in rows:
+                data_slave_set = data_slave_set+" "+i['nm_master']
             data_slave_set = data_slave_set+" "+i['nm_slave_node']
+        else:
+            if data_slave_set == "":
+                data_slave_set = i['nm_slave_node']
+            else:
+                data_slave_set = data_slave_set+" "+i['nm_slave_node']
     json_data = {
         "master-set-notify": {
                 "sendblock": {
@@ -106,10 +113,16 @@ def master_create_json_acl(id_zone, nm_config):
     data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     data_slave_set = ""
     for i in data_slave:
-        if data_slave_set == "":
-            data_slave_set = i['nm_slave_node']
-        else:
+        if nm_config == 'jkt':
+            rows = model.get_by_id("v_cs_slave_node", "not nm_config", "jkt")
+            for i in rows:
+                data_slave_set = data_slave_set+" "+i['nm_master']
             data_slave_set = data_slave_set+" "+i['nm_slave_node']
+        else:
+            if data_slave_set == "":
+                data_slave_set = i['nm_slave_node']
+            else:
+                data_slave_set = data_slave_set+" "+i['nm_slave_node']
     json_data = {
         "master-set-acl": {
                 "sendblock": {
