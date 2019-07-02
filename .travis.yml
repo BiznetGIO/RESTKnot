@@ -1,7 +1,7 @@
 --- 
 before_install: 
   - "psql -c 'create database knotdb;' -U postgres"
-  - "psql databasename < api/db.sql"
+  - "psql knotdb < api/db.sql"
 before_script: 
   - "mv environtment/travis/.env.example .env"
   - "python3 manage.py server"
