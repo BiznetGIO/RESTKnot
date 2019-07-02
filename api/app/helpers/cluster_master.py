@@ -86,7 +86,7 @@ def master_create_json_notify(id_zone, nm_config):
                 "sendblock": {
                 "cmd": "conf-set",
                 "zone": data_zone['nm_zone'],
-                "item": "acl", 
+                "item": "notify", 
                 "owner": "",
                 "rtype": "",
                 "ttl": "",
