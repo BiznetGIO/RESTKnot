@@ -3,14 +3,12 @@ python:
 - '3.6'
 install:
 - pip install -r requirements.txt
-- pip install -e .
 - pip install coverage pytest pytest-cov pytest-ordering testfixtures
-- pip freeze --local
 script:
 - pytest --cov=app -vv -s
 before_script:
 - mv .env.example .env
-- python manage.py server
+- python3 manage.py server
 deploy:
   provider: pypi
   user: Your username
@@ -19,5 +17,5 @@ deploy:
   on:
     tags: true
 skip_cleanup: true
-env:
-  - SOCKET_AGENT_HOST: '103.89.5.121'
+virtualenv:
+  system_site_packages: true
