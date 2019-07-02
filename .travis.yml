@@ -19,5 +19,3 @@ deploy:
   on:
     tags: true
 skip_cleanup: true
-virtualenv:
-  system_site_packages: true
