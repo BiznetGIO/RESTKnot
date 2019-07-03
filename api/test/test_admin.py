@@ -23,6 +23,13 @@ class TestZone:
       """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
         'ADMIN_USER' = your username, 'ADMIN_PASSWORD' = your password. """
 
+        data = {
+            "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
+            "user_id": os.getenv('CREDENTIAL_USER_ID')
+            }
+        url = base_url + 'user'
+        result = requests.post(url=url,data=json.dumps(data), headers=mock.headers)
+
     ### SUCCESS
 
       data = {
