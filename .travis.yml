@@ -1,9 +1,10 @@
 --- 
 before_install: 
-  - "psql -c 'create database knotdb;' -U postgres"
-  - "psql knotdb < api/db.sql"
+  - psql -c 'create database knotdb;' -U postgres
+  - psql knotdb < api/environtment/travis/db.sql
 before_script: 
-  - "mv environtment/travis/.env.example .env"
+  - redis-cli config set requirepass 'pass'
+  - mv enivirontment/travis/env.example .env
   - "python3 manage.py server"
 deploy: 
   password: 
@@ -25,4 +26,5 @@ script:
   - "pytest --cov=app -vv -s"
 services: 
   - postgresql
+  - redis
 skip_cleanup: true
