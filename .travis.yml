@@ -25,7 +25,7 @@ language: python
 python: 
   - "3.6"
 script: 
-  - "pytest --cov=app -vv -s"
+  - "pytest --cov=app test/ --ignore=test/ignore/ -vv -s"
 services: 
   - postgresql
   - redis
