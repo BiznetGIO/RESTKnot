@@ -156,9 +156,10 @@ class TestCreate:
 						assert row[key].lower() == value.lower()
 
 			if row['nm_type'].upper() == "SRV":
-				data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
-				res = self.post_data(client,'sendcommand',data,headers)
-				assert res.status_code == 200
+				pass
+				# data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
+				# res = self.post_data(client,'sendcommand',data,headers)
+				# assert res.status_code == 200
 			elif row['nm_type'].upper() == 'MX':
 				data = {"zone-mx-insert":{"tags":{"id_record": row['id_record'] }}}
 				res = self.post_data(client,'sendcommand',data,headers)
@@ -190,6 +191,7 @@ class TestCreate:
 	@pytest.mark.run(order = 4)
 	def test_search_data(self,client,get_header):
 		d_mock = self.var_mock.ids['result'][0]
+		print(d_mock)
 		v_end = ['ttldata','record','content','content_serial']
 		for key,value in d_mock.items():
 			if 'id_' in key:

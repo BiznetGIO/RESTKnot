@@ -32,7 +32,7 @@ class TestConf:
     @pytest.mark.run(order=1)
     def test_1slave_get(self,client,get_header):
         head = get_header
-        result = client.get('api/slave',headers=head)
+        result = client.get('api/slave_node',headers=head)
         
         assert result.status_code == 200
 
@@ -42,21 +42,21 @@ class TestConf:
         # REMOVE SLAVE IF EXIST       
         try:
             head = get_header
-            fields = {"nm_slave": self.mock.slave['name'], "ip_slave" : self.mock.slave['ip'], "port": self.mock.slave['port']}
+            fields = {"nm_slave_node": self.mock.slave['name'], "ip_slave_node" : self.mock.slave['ip'], "port": self.mock.slave['port']}
             data = utils.get_model('add',fields)
-            res = self.post_data(client,'slave',data,head)
+            res = self.post_data(client,'slave_node',data,head)
             assert res.status_code == 200
             res = json.loads(res.data.decode('utf8'))
             self.mock.slave["id_slave"] = res['message']['id']
         except KeyError:
             data = utils.get_model('where',{"nm_slave" : self.mock.slave['name']})
-            res = self.post_data(client,'slave',data,head)
+            res = self.post_data(client,api/slave_node,data,head)
             self.mock.slave["id_slave"] = res['message']['id']
 
         ## Assert if data is True, search slave by name
 
         data = utils.get_model('where',{"nm_slave" : self.mock.slave['name']})
-        res = self.post_data(client,'slave',data,head)
+        res = self.post_data(client,api/slave_node,data,head)
 
         assert res.status_code == 200
         res = json.loads(res.data.decode('utf8'))
@@ -197,7 +197,7 @@ class TestConf:
         header = get_header
         fields = {"nm_slave": self.mock.slave['name']}
         data = utils.get_model('where',fields)
-        res = self.post_data(client,'slave',data,header)
+        res = self.post_data(client,api/slave_node,data,header)
 
 
         data = utils.get_model('remove',{"id_acl_slave": id_acl_slave})
@@ -217,7 +217,7 @@ class TestConf:
         assert res.status_code == 200
 
         data = utils.get_model('remove',{"id_slave": id_slave})
-        res  = self.post_data(client,'slave',data,head)
+        res  = self.post_data(client,api/slave_node,data,head)
         assert res.status_code == 200       
         
         data = utils.get_model('remove',{"id_master": id_master})

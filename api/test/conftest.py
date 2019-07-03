@@ -17,7 +17,7 @@ class MockData:
         "requirements" :
         {
             "SRV" : {"nm_record": "SRVnm", "nm_type" : "SRV", "nm_ttl" : "1800", "nm_content" : "srv_content", "nm_content_serial" : "serial_example"},
-            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "mx_content", "nm_content_serial" : "serial_example"},
+            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "testdns.com."},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
     creds = {"user_id" : "9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91", "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"}
@@ -75,7 +75,7 @@ def send_userdata():
             "user_id": os.getenv('CREDENTIAL_USER_ID')
         }
     url = base_url + 'user'
-    result = requests.post(url=url,data=json.dumps(data), header=mock.headers)
+    result = requests.post(url=url,data=json.dumps(data), headers=mock.headers)
     
 
 @pytest.fixture
