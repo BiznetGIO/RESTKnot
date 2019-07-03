@@ -1,5 +1,29 @@
+CREATE SEQUENCE mytable_id_seq;
+
+CREATE OR REPLACE FUNCTION pseudo_encrypt(VALUE bigint) returns bigint AS $$
+DECLARE
+l1 bigint;
+l2 bigint;
+r1 bigint;
+r2 bigint;
+i int:=0;
+BEGIN
+    l1:= (VALUE >> 32) & 4294967295::bigint;
+    r1:= VALUE & 4294967295;
+    WHILE i < 3 LOOP
+        l2 := r1;
+        r2 := l1 # ((((1366.0 * r1 + 150889) % 714025) / 714025.0) * 32767*32767)::int;
+        l1 := l2;
+        r1 := r2;
+        i := i + 1;
+    END LOOP;
+RETURN ((l1::bigint << 32) + r1);
+END;
+$$ LANGUAGE plpgsql strict immutable;
+
+
 CREATE TABLE cs_master (
-	id_master bigint NOT NULL,
+	id_master bigint not null default pseudo_encrypt(nextval('mytable_id_seq')),
 	nm_master VARCHAR(200) NULL,
 	ip_master VARCHAR(200) NULL,
 	port VARCHAR(200) NULL DEFAULT '53',
@@ -9,7 +33,7 @@ CREATE TABLE cs_master (
 	);
 
 CREATE TABLE cs_slave_node (
-	id_cs_slave_node bigint NOT NULL,
+	id_cs_slave_node bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	id_master bigint NULL,
 	nm_slave_node VARCHAR NULL,
 	ip_slave_node VARCHAR NULL,
@@ -21,7 +45,7 @@ CREATE TABLE cs_slave_node (
 CREATE INDEX cs_slave_node_auto_index_cs_id_master_fk ON cs_slave_node(id_master ASC);
 
 CREATE TABLE userdata (
-	userdata_id bigint NOT NULL,
+	userdata_id bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	user_id VARCHAR NOT NULL,
 	project_id VARCHAR(100) NOT NULL,
 	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -30,14 +54,14 @@ CREATE TABLE userdata (
 );
 
 CREATE TABLE zn_type (
-	id_type bigint NOT NULL,
+	id_type bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	nm_type VARCHAR(100) NULL,
 	CONSTRAINT "type_pk" PRIMARY KEY (id_type),
 	UNIQUE (nm_type)
 );
 
 CREATE TABLE zn_zone (
-	id_zone bigint NOT NULL,
+	id_zone bigint not null default pseudo_encrypt(nextval('mytable_id_seq')),
 	nm_zone VARCHAR(200) NULL,
 	state INT NULL DEFAULT 0,
 	counter INT NOT NULL DEFAULT 0,
@@ -47,7 +71,7 @@ CREATE TABLE zn_zone (
 
 
 CREATE TABLE zn_record (
-	id_record bigint NOT NULL,
+	id_record bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	id_type bigint NULL,
 	id_zone bigint NULL,
 	date_record VARCHAR(200) NULL,
@@ -60,7 +84,7 @@ CREATE INDEX record_auto_index_fk_id_type_ref_type ON zn_record(id_type ASC);
 CREATE INDEX record_auto_index_fk_id_zone_ref_zone ON zn_record(id_zone ASC);
 
 CREATE TABLE zn_content_serial (
-	id_content_serial bigint NOT NULL,
+	id_content_serial bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	id_record bigint NULL,
 	nm_content_serial VARCHAR NULL,
 	CONSTRAINT zn_content_serial_pk PRIMARY KEY (id_content_serial)
@@ -71,7 +95,7 @@ CREATE INDEX zn_content_serial_auto_index_zn_content_serial_zn_record_fk ON zn_c
 CREATE VIEW v_content_serial (id_content_serial, id_zone, nm_zone, nm_record, id_record, nm_type, nm_content_serial) AS SELECT m1.id_content_serial, m3.id_zone, m3.nm_zone, m2.nm_record, m2.id_record, m4.nm_type, m1.nm_content_serial FROM public.zn_content_serial AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_zone AS m3 ON m2.id_zone = m3.id_zone JOIN public.zn_type AS m4 ON m2.id_type = m4.id_type;
 
 CREATE TABLE zn_ttl (
-	id_ttl bigint NOT NULL ,
+	id_ttl bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	nm_ttl VARCHAR(50) NULL,
 	CONSTRAINT zn_ttl_pk PRIMARY KEY (id_ttl)
 );
@@ -79,7 +103,7 @@ CREATE TABLE zn_ttl (
 CREATE INDEX zn_ttl_un ON zn_ttl(nm_ttl ASC);
 
 CREATE TABLE zn_ttldata (
-	id_ttldata bigint NOT NULL,
+	id_ttldata bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	id_record bigint NOT NULL,
 	id_ttl bigint NOT NULL,
 	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -90,7 +114,7 @@ CREATE INDEX ttldata_auto_index_fk_id_record_ref_record ON zn_ttldata(id_record 
 CREATE INDEX ttldata_auto_index_fk_id_ttl_ref_ttl ON zn_ttldata(id_ttl ASC);
 
 CREATE TABLE zn_content (
-	id_content bigint NOT NULL,
+	id_content bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	id_ttldata bigint NULL,
 	nm_content VARCHAR NULL,
 	CONSTRAINT zn_content_pk PRIMARY KEY (id_content)
@@ -106,7 +130,7 @@ CREATE VIEW v_record (id_record, id_zone, nm_zone, nm_record, date_record, nm_ty
 CREATE VIEW v_ttldata (id_ttldata, id_ttl, id_record, id_zone, nm_zone, nm_record, nm_ttl, nm_type) AS SELECT m1.id_ttldata, m1.id_ttl, m2.id_record, m4.id_zone, m4.nm_zone, m2.nm_record, m3.nm_ttl, m5.nm_type FROM public.zn_ttldata AS m1 JOIN public.zn_record AS m2 ON m1.id_record = m2.id_record JOIN public.zn_ttl AS m3 ON m1.id_ttl = m3.id_ttl JOIN public.zn_zone AS m4 ON m2.id_zone = m4.id_zone JOIN public.zn_type AS m5 ON m2.id_type = m5.id_type;
 
 CREATE TABLE zn_user_zone (
-	id_user_zone bigint NOT NULL,
+	id_user_zone bigint NOT NULL default pseudo_encrypt(nextval('mytable_id_seq')),
 	userdata_id bigint NOT NULL,
 	id_zone bigint NOT NULL,
 	CONSTRAINT zn_user_zone_pk PRIMARY KEY (id_user_zone)
