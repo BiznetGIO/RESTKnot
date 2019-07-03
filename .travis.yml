@@ -4,7 +4,7 @@ before_install:
   - psql knotdb < api/environtment/travis/db.sql
 before_script: 
   - redis-cli config set requirepass 'pass'
-  - mv enivirontment/travis/env.example .env
+  - mv environtment/travis/env.example .env
   - "python3 manage.py server"
 deploy: 
   password: 
