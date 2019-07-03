@@ -68,6 +68,16 @@ def request_headers():
         mock.headers = dict()
     mock.headers['Access-Token'] = token
 
+@pytest.fixture(scope = 'session', autouse=True)
+def send_userdata():
+    data = {
+            "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
+            "user_id": os.getenv('CREDENTIAL_USER_ID')
+        }
+    url = base_url + 'user'
+    result = requests.post(url=url,data=json.dumps(data), header=mock.headers)
+    
+
 @pytest.fixture
 def get_header():
     return mock.headers

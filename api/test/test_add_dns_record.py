@@ -27,6 +27,7 @@ class TestCreate:
 		result = self.post_data(client,'user/dnscreate',data=data,headers=header)
 		assert result.status_code == 200
 		result = json.loads(result.data.decode('utf8'))
+		print(result)
 		id_zone = result['data']['data']['id_zone']
 		self.var_mock.ids['id_zone'] = id_zone
 		
@@ -119,7 +120,10 @@ class TestCreate:
 			
 			for key,value in result.items():
 				if key in row:
-					assert row[key] == value
+					val_1 = row[key].lower()
+					val_2 = value.lower()
+					print(val_1,val_2)
+					assert val_1 == val_2
 			
 
 			#Checking Record Content
@@ -134,7 +138,7 @@ class TestCreate:
 
 			for key,value in result.items():
 				if key in row:
-					assert row[key] == value
+					assert row[key].lower() == value.lower()
 
 			if 'nm_content_serial' in row:
 				#Checking Record Content Serial if Exists
@@ -149,7 +153,7 @@ class TestCreate:
 				
 				for key,value in res.items():
 					if key in row:
-						assert row[key] == value
+						assert row[key].lower() == value.lower()
 
 			if row['nm_type'].upper() == "SRV":
 				data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
