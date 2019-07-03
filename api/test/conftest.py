@@ -20,7 +20,6 @@ class MockData:
             "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "testdns.com."},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
-    creds = {"user_id" : "9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91", "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"}
 
     @property
     def creds(self):
@@ -30,7 +29,8 @@ class MockData:
         creds = {
             "username" : os.getenv('CREDENTIAL_USERNAME'),
             "password"  : os.getenv('CREDENTIAL_PASSWORD'),
-            "project_id": os.getenv('CREDENTIAL_PROJECT_ID')
+            "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
+            "user_id": os.getenv('CREDENTIAL_USER_ID')
         }
         return creds
 
@@ -56,6 +56,11 @@ def app():
 
 @pytest.fixture(scope = 'session', autouse=True)
 def request_headers():
+    try:
+        send_userdata()
+    except Exception as e:
+        print(str(e))
+        
     login_data = {"username" : mock.creds['username'],
                 "password" : mock.creds['password']}
     url = base_url+'login'
@@ -68,7 +73,6 @@ def request_headers():
         mock.headers = dict()
     mock.headers['Access-Token'] = token
 
-@pytest.fixture(scope = 'session', autouse=True)
 def send_userdata():
     data = {
             "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
