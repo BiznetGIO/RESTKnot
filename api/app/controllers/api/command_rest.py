@@ -231,7 +231,7 @@ class SendCommandRest(Resource):
 
 
         if init_data['action'] == 'cluster-master':
-            sleep(0.05)
+            sleep(5)
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
@@ -248,7 +248,7 @@ class SendCommandRest(Resource):
                 return response(200, data=result, message="Master Cluster Processing")
 
         if init_data['action'] == 'cluster-slave':
-            sleep(0.05)
+            sleep(5)
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
