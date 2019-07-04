@@ -257,28 +257,26 @@ class SendCommandRest(Resource):
             else:
                 return response(200, data=result, message="Slave Cluster Processing")
 
-        if init_data['action'] == 'cluster-unset':
+        if init_data['action'] == 'cluster-unset-master':
+            for i in init_data['data']:
+                tags = i['tags']
+            try:
+                master_unset = cluster_task.unset_cluster_master.delay(tags)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:                
+                return response(200, data=master_unset)
+
+        if init_data['action'] == 'cluster-unset-slave':
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            
-            data_master = db.get_all("cs_master")
-            for i in data_master:
-                master_command = cmd.unset_cluster_command_new(tags)
-                url_fix= "http://"+i['ip_master']+":"+i['port']
-                master_server_url = url_fix+"/api/command_rest"
-                cmd.conf_begin_http(master_server_url)
-                http_response_master = utils.send_http(master_server_url, master_command)
-                cmd.conf_commit_http(master_server_url)
-                result.append(http_response_master)
-            # data_slave = db.get_all("v_cs_slave_node")
-            # for a in data_slave:
-            #     slave_command = cmd.cluster_command_new(tags, a['nm_config'], "slave")
-            #     url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
-            #     slave_server_url = url_fix+"/api/command_rest"
-            #     http_response_slave = utils.send_http(slave_server_url, slave_command)
-                
-            return response(200, data=result)
+            try:
+                slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:                
+                return response(200, data=slave_unset)
         
 
 

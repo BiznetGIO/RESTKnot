@@ -663,7 +663,18 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-    cluster-unset:
+    cluster-unset-master:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    
+    cluster-unset-slave:
       tags:
         id_zone:
           name: name search for domain

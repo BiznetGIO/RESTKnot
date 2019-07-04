@@ -88,10 +88,34 @@ def cluster_task_slave(self, tags):
             "data": result
         })
     return respons
-        
 
 
+@celery.task(bind=True)
+def unset_cluster_master(self, tags):
+    result = []
+    master_data = model.get_all("cs_master")
+    for i in master_data:
+        master_command = command.unset_cluster_command_new(tags)
+        url_fix= "http://"+i['ip_master']+":"+i['port']
+        master_server_url = url_fix+"/api/command_rest"
+        command.conf_begin_http(master_server_url)
+        http_response_master = utils.send_http(master_server_url, master_command)
+        command.conf_commit_http(master_server_url)
+        result.append(http_response_master)
+    return result
 
+@celery.task(bind=True)
+def unset_cluster_slave(self, tags):
+    data_slave = db.get_all("v_cs_slave_node")
+    for a in data_slave:
+        slave_command = cmd.cluster_command_new(tags, a['nm_config'], "slave")
+        url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
+        slave_server_url = url_fix+"/api/command_rest"
+        command.conf_begin_http(slave_server_url)
+        http_response_slave = utils.send_http(slave_server_url, slave_command)
+        command.conf_commit_http(slave_server_url)
+        result.append(http_response_slave)
+    return result
 
 
     
