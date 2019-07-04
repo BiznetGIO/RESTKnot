@@ -122,7 +122,7 @@ class TestZone:
                                 "id_zone" : str(id_zone), "id_type" : str(id_type)})
         
         result = self.post_data(client,'record',data=data, headers=header)
-        print(result.data)
+        print("CC : ",result.data)
         assert result.status_code == 200
 
         result = json.loads(result.data.decode('utf8'))
@@ -404,7 +404,8 @@ class TestZone:
         assert queer.status_code == 200
 
     @pytest.mark.run(order=16)
-    def test_userzone(self,client,get_header):
+    def test_userzone(self,client,get_header,generate_userdata,get_creds):
+        user_id = get_creds['user_id']
         header = get_header
         header['user-id'] = '9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91'
         data = {"id_zone" : self.var_mock.ids['id_zone']}

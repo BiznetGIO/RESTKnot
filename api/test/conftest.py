@@ -54,13 +54,17 @@ def app():
     app = create_app()
     return app
 
-@pytest.fixture(scope = 'session', autouse=True)
-def request_headers():
+@pytest.fixture(scope='session', autouse=True)
+def generate_userdata():
     try:
-        send_userdata()
+        res = send_userdata()
     except Exception as e:
         print(str(e))
-        
+    
+
+@pytest.fixture(scope = 'session', autouse=True)
+def request_headers():
+
     login_data = {"username" : mock.creds['username'],
                 "password" : mock.creds['password']}
     url = base_url+'login'
@@ -75,12 +79,23 @@ def request_headers():
 
 def send_userdata():
     data = {
-            "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
-            "user_id": os.getenv('CREDENTIAL_USER_ID')
+            "project_id": mock.creds['project_id'],
+            "user_id": mock.creds['user_id']
         }
+    header = {}
+    login_data = {"username" : mock.creds['username'],
+                "password" : mock.creds['password']}
+    url = base_url+'login'
+
+    result = requests.post(url=url,data=login_data)
+    result=result.json()
+    token = result['data']['token']
+    headers = dict()
+    headers['Access-Token'] = token
+    headers['Content-Type'] = 'application/json'
     url = base_url + 'user'
-    result = requests.post(url=url,data=json.dumps(data), headers=mock.headers)
-    
+    result = requests.post(url=url,data=json.dumps(data), headers=headers)
+    return result
 
 @pytest.fixture
 def get_header():
