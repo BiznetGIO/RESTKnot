@@ -262,25 +262,34 @@ class SendCommandRest(Resource):
                 return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset-master':
+            result = []
             for i in init_data['data']:
                 tags = i['tags']
             try:
                 master_unset = cluster_task.unset_cluster_master.delay(tags)
+                result.append({
+                    "id": str(master_unset),
+                    "state": master_unset.state
+                })
             except Exception as e:
                 return response(401, message=str(e))
             else:                
-                return response(200, data=master_unset)
+                return response(200, data=result)
 
         if init_data['action'] == 'cluster-unset-slave':
-            result = list()
+            result = []
             for i in init_data['data']:
                 tags = i['tags']
             try:
                 slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+                result.append({
+                    "id": str(slave_unset),
+                    "state": slave_unset.state
+                })
             except Exception as e:
                 return response(401, message=str(e))
             else:                
-                return response(200, data=slave_unset)
+                return response(200, data=result)
         
 
 
