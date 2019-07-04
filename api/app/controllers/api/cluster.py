@@ -55,7 +55,7 @@ class ClusterUnsetCheckMaster(Resource):
     @login_required
     def get(self, id_master):
         try:
-            chain = cluster_task.unset_cluster_master.s(id_master)            
+            chain = cluster_task.get_cluster_data_master_unset.s(id_master)            
         except Exception as e:
             print(e)
         else:
