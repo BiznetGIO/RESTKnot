@@ -122,6 +122,7 @@ class TestZone:
                                 "id_zone" : str(id_zone), "id_type" : str(id_type)})
         
         result = self.post_data(client,'record',data=data, headers=header)
+        print(result.data)
         assert result.status_code == 200
 
         result = json.loads(result.data.decode('utf8'))
