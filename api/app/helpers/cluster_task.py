@@ -18,23 +18,34 @@ def get_cluster_data_slave(self, id_slave):
 
 
 @celery.task(bind=True)
+def get_cluster_data_master_unset(self, id_master):
+    res_master = AsyncResult(id=id_master, app=unset_cluster_master)
+    return res_master
+
+@celery.task(bind=True)
+def get_cluster_data_slave_unset(self, id_slave):
+    res_slave = AsyncResult(id=id_slave, app=unset_cluster_slave)
+    return res_slave
+
+@celery.task(bind=True)
 def cluster_task_master(self, tags):
+    respons = []
     result = []
     id_zone = tags['id_zone']
     master_data = model.get_all("cs_master")
     for i in master_data:
-        print(i)
         urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
         command.conf_begin_http(urls)
+        ffi_insert_conf = cluster_master.insert_config_zone(id_zone, i['nm_config'])
+        http_response = utils.send_http(urls, ffi_insert_conf)
+        result.append(http_response)
         ffi_master = cluster_master.master_create_json_master(id_zone, i['nm_config'])
         http_response = utils.send_http(urls, ffi_master)
-        result.append(http_response)
-        ffi_notify = cluster_master.master_create_json_notify(id_zone, i['nm_config'])
-        http_response = utils.send_http(urls, ffi_notify)
-        result.append(http_response)
-        ffi_acl = cluster_master.master_create_json_acl(id_zone, i['nm_config'])
-        http_response = utils.send_http(urls, ffi_acl)
-        result.append(http_response)
+        result.append(ffi_master)
+        ffi_notify = cluster_master.master_create_json_notify(id_zone, i['nm_config'], urls)
+        result.append({'notify':ffi_notify})
+        ffi_acl = cluster_master.master_create_json_acl(id_zone, i['nm_config'], urls)
+        result.append({"acl": ffi_acl})
         ffi_set_files = cluster_master.set_file_all(id_zone)
         http_response = utils.send_http(urls, ffi_set_files)
         result.append(http_response)
@@ -45,16 +56,24 @@ def cluster_task_master(self, tags):
         http_response = utils.send_http(urls, ffi_serial_policy)
         result.append(http_response)
         command.conf_commit_http(urls)
-    return result
+        respons.append({
+            "server": i['nm_config'],
+            "data": result
+        })
+    return respons
 
 @celery.task(bind=True)
 def cluster_task_slave(self, tags):
+    respons = []
     result = []
     id_zone = tags['id_zone']
     slave_data = model.get_all("v_cs_slave_node")
     for i in slave_data:
         urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
         command.conf_begin_http(urls)
+        ffi_insert_conf = cluster_slave.insert_config_zone(id_zone, i['nm_config'])
+        http_response = utils.send_http(urls, ffi_insert_conf)
+        result.append(http_response)
         ffi_slave_master = cluster_slave.master_create_json(id_zone, i['nm_config'])
         http_response = utils.send_http(urls, ffi_slave_master)
         result.append(http_response)
@@ -74,11 +93,40 @@ def cluster_task_slave(self, tags):
         http_response = utils.send_http(urls, ffi_serial_policy)
         result.append(http_response)
         command.conf_commit_http(urls)
+        respons.append({
+            "server": i['nm_config'],
+            "data": result
+        })
+    return respons
+
+
+@celery.task(bind=True)
+def unset_cluster_master(self, tags):
+    result = []
+    master_data = model.get_all("cs_master")
+    for i in master_data:
+        master_command = command.unset_cluster_command_new(tags)
+        url_fix= "http://"+i['ip_master']+":"+i['port']
+        master_server_url = url_fix+"/api/command_rest"
+        command.conf_begin_http(master_server_url)
+        http_response_master = utils.send_http(master_server_url, master_command)
+        command.conf_commit_http(master_server_url)
+        result.append(http_response_master)
     return result
-        
 
-
-
+@celery.task(bind=True)
+def unset_cluster_slave(self, tags):
+    result = []
+    data_slave = model.get_all("v_cs_slave_node")
+    for a in data_slave:
+        slave_command = command.unset_cluster_command_new(tags)
+        url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
+        slave_server_url = url_fix+"/api/command_rest"
+        command.conf_begin_http(slave_server_url)
+        http_response_slave = utils.send_http(slave_server_url, slave_command)
+        command.conf_commit_http(slave_server_url)
+        result.append(http_response_slave)
+    return result
 
 
     

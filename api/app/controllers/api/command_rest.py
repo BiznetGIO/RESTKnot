@@ -215,14 +215,18 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = list()
-            res_begin = cmd.zone_begin_http(url,tags)
-            respons.append(res_begin)
-            json_command = cmd.zone_unset(tags)
-            http_response = utils.send_http(url,json_command)
-            respons.append(http_response)
-            res_commit = cmd.zone_commit_http(url, tags)
-            respons.append(res_commit)
-            return response(200, data=respons)
+            try:
+                res_begin = cmd.zone_begin_http(url,tags)
+                respons.append(res_begin)
+                json_command = cmd.zone_unset(tags)
+                http_response = utils.send_http(url,json_command)
+                respons.append(http_response)
+                res_commit = cmd.zone_commit_http(url, tags)
+                respons.append(res_commit)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
+                return response(200, data=respons)
 
 
         if init_data['action'] == 'cluster-master':
@@ -231,22 +235,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # cluster_task.cluster_task_master.apply_async(args=[tags], 
-                #     retry=True,
-                #     retry_policy={
-                #         'max_retries': 3,
-                #         'interval_start': 0,
-                #         'interval_step': 0.2,
-                #         'interval_max': 0.2,
-                #     })
-                # cluster_task.cluster_task_slave.apply_async(args=[tags], 
-                #     retry=True,
-                #     retry_policy={
-                #         'max_retries': 3,
-                #         'interval_start': 0,
-                #         'interval_step': 0.2,
-                #         'interval_max': 0.2,
-                #     })
                 master = cluster_task.cluster_task_master.delay(tags)
                 result.append({
                     "id": str(master),
@@ -273,28 +261,35 @@ class SendCommandRest(Resource):
             else:
                 return response(200, data=result, message="Slave Cluster Processing")
 
-        if init_data['action'] == 'cluster-unset':
-            result = list()
+        if init_data['action'] == 'cluster-unset-master':
+            result = []
             for i in init_data['data']:
                 tags = i['tags']
-            
-            data_master = db.get_all("cs_master")
-            for i in data_master:
-                master_command = cmd.unset_cluster_command_new(tags)
-                url_fix= "http://"+i['ip_master']+":"+i['port']
-                master_server_url = url_fix+"/api/command_rest"
-                cmd.conf_begin_http(master_server_url)
-                http_response_master = utils.send_http(master_server_url, master_command)
-                cmd.conf_commit_http(master_server_url)
-                result.append(http_response_master)
-            # data_slave = db.get_all("v_cs_slave_node")
-            # for a in data_slave:
-            #     slave_command = cmd.cluster_command_new(tags, a['nm_config'], "slave")
-            #     url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
-            #     slave_server_url = url_fix+"/api/command_rest"
-            #     http_response_slave = utils.send_http(slave_server_url, slave_command)
-                
-            return response(200, data=result)
+            try:
+                master_unset = cluster_task.unset_cluster_master.delay(tags)
+                result.append({
+                    "id": str(master_unset),
+                    "state": master_unset.state
+                })
+            except Exception as e:
+                return response(401, message=str(e))
+            else:                
+                return response(200, data=result)
+
+        if init_data['action'] == 'cluster-unset-slave':
+            result = []
+            for i in init_data['data']:
+                tags = i['tags']
+            try:
+                slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+                result.append({
+                    "id": str(slave_unset),
+                    "state": slave_unset.state
+                })
+            except Exception as e:
+                return response(401, message=str(e))
+            else:                
+                return response(200, data=result)
         
 
 
