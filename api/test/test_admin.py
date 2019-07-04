@@ -29,7 +29,7 @@ class TestZone:
             }
         url = base_url + 'user'
         result = requests.post(url=url,data=json.dumps(data), headers=mock.headers)
-
+        print(result.json())
     ### SUCCESS
 
       data = {
