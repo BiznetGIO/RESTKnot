@@ -16,7 +16,7 @@ class TestCreate:
 		res = client.post(url,data=json.dumps(data),
 					content_type='application/json', headers=headers)
 		return res
-	@pytes.mark.run(order=-1)
+	@pytest.mark.run(order=-1)
 	def test_set_default_dns(self,client,get_header,get_mock):
 
 		header = get_header
