@@ -18,6 +18,16 @@ def get_cluster_data_slave(self, id_slave):
 
 
 @celery.task(bind=True)
+def get_cluster_data_master_unset(self, id_master):
+    res_master = AsyncResult(id=id_master, app=unset_cluster_master)
+    return res_master
+
+@celery.task(bind=True)
+def get_cluster_data_slave_unset(self, id_slave):
+    res_slave = AsyncResult(id=id_slave, app=unset_cluster_slave)
+    return res_slave
+
+@celery.task(bind=True)
 def cluster_task_master(self, tags):
     respons = []
     result = []
@@ -106,9 +116,10 @@ def unset_cluster_master(self, tags):
 
 @celery.task(bind=True)
 def unset_cluster_slave(self, tags):
-    data_slave = db.get_all("v_cs_slave_node")
+    result = []
+    data_slave = model.get_all("v_cs_slave_node")
     for a in data_slave:
-        slave_command = cmd.cluster_command_new(tags, a['nm_config'], "slave")
+        slave_command = command.unset_cluster_command_new(tags)
         url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
         slave_server_url = url_fix+"/api/command_rest"
         command.conf_begin_http(slave_server_url)

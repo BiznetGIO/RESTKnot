@@ -49,3 +49,50 @@ class ClusterCheckSlave(Resource):
                     "state": res.state,
                 }
             return response(200, data=data)
+
+
+class ClusterUnsetCheckMaster(Resource):
+    @login_required
+    def get(self, id_master):
+        try:
+            chain = cluster_task.unset_cluster_master.s(id_master)            
+        except Exception as e:
+            print(e)
+        else:
+            data = dict()
+            res = chain()
+            if res.ready():
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.status,
+                    "result": res.result,
+                }
+            else:
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.state,
+                }
+            return response(200, data=data)
+
+class ClusterUnsetCheckSlave(Resource):
+    @login_required
+    def get(self, id_slave):
+        try:
+            chain = cluster_task.get_cluster_data_slave_unset.s(id_slave)            
+        except Exception as e:
+            print(e)
+        else:
+            data = dict()
+            res = chain()
+            if res.ready():
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.status,
+                    "result": res.result,
+                }
+            else:
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.state,
+                }
+            return response(200, data=data)

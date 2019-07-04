@@ -54,5 +54,7 @@ api.add_resource(CsSlave,'/slave_node')
 ## CLUSTER
 api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
 api.add_resource(ClusterCheckSlave, '/cluster/slave/<id_slave>')
+api.add_resource(ClusterUnsetCheckMaster, '/cluster/unset/master/<id_master>')
+api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
 
 

@@ -215,14 +215,18 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             respons = list()
-            res_begin = cmd.zone_begin_http(url,tags)
-            respons.append(res_begin)
-            json_command = cmd.zone_unset(tags)
-            http_response = utils.send_http(url,json_command)
-            respons.append(http_response)
-            res_commit = cmd.zone_commit_http(url, tags)
-            respons.append(res_commit)
-            return response(200, data=respons)
+            try:
+                res_begin = cmd.zone_begin_http(url,tags)
+                respons.append(res_begin)
+                json_command = cmd.zone_unset(tags)
+                http_response = utils.send_http(url,json_command)
+                respons.append(http_response)
+                res_commit = cmd.zone_commit_http(url, tags)
+                respons.append(res_commit)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
+                return response(200, data=respons)
 
 
         if init_data['action'] == 'cluster-master':
