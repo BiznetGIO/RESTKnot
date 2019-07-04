@@ -16,8 +16,7 @@ class TestCreate:
 		res = client.post(url,data=json.dumps(data),
 					content_type='application/json', headers=headers)
 		return res
-
-	@pytest.mark.run(order=1)
+	@pytes.mark.run(order=-1)
 	def test_set_default_dns(self,client,get_header,get_mock):
 
 		header = get_header
@@ -52,8 +51,7 @@ class TestCreate:
 		assert 'SOA'   in d_result
 
 
-	@pytest.mark.run(order=2)
-	def test_add_record(self,client,get_header,get_mock):
+		## ADD RECORD
 		headers = get_header
 		id_zone = self.var_mock.ids['id_zone']
 		d_list = list()
@@ -172,8 +170,7 @@ class TestCreate:
 		self.var_mock.ids.update({"result" : d_list})
 
 
-	@pytest.mark.run(order=3)
-	def test_knot_transaction(self,client,get_header):
+		## KNOT TRANSACTION
 		id_zone = self.var_mock.ids['id_zone']
 		data = {"zone-begin" : {"tags" : {"id_zone" : id_zone}}}
 		res = self.post_data(client,"sendcommand",data,get_header)
@@ -188,8 +185,6 @@ class TestCreate:
 		assert res.status_code == 200
 
 	### Testing Content Data Search and View
-	@pytest.mark.run(order = 4)
-	def test_search_data(self,client,get_header):
 		d_mock = self.var_mock.ids['result'][0]
 		print(d_mock)
 		v_end = ['ttldata','record','content','content_serial']

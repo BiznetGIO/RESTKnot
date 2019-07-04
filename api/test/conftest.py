@@ -17,7 +17,7 @@ class MockData:
         "requirements" :
         {
             "SRV" : {"nm_record": "SRVnm", "nm_type" : "SRV", "nm_ttl" : "1800", "nm_content" : "srv_content", "nm_content_serial" : "serial_example"},
-            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "testdns.com."},
+            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "@"},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
 
