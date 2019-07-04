@@ -224,6 +224,10 @@ class TestZone:
     ### Start record Removal, Unsync Record First
         id_record = self.var_mock.ids['id_record']
         data = {"zone-unset":{"tags":{"id_record" : id_record}}}
+        data_test = {"where":{"tags":{"id_record": id_record}}}
+        res_test = self.post_data(client,'record',data_test,headers)
+        res_json = json.loads(res_test.data.decode('utf8'))
+        print(res_json)
         res = self.post_data(client,'sendcommand',data,headers)
         
         assert res.status_code == 200
