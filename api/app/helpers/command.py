@@ -39,7 +39,7 @@ def unset_cluster_command_new(tags):
         "cluster-set": {
             "sendblock": {
                 "cmd": "conf-unset",
-                "item": "domain"
+                "item": "domain",
                 "section":"zone",
                 "data": domain_name
             },
