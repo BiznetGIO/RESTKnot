@@ -7,6 +7,7 @@ from app.libs import utils
 import json, os
 from app.middlewares.auth import login_required
 from app.helpers import cluster_task
+from time import sleep
 
 class SendCommandRest(Resource):
     def get(self):
@@ -230,6 +231,7 @@ class SendCommandRest(Resource):
 
 
         if init_data['action'] == 'cluster-master':
+            sleep(0.05)
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
@@ -246,6 +248,7 @@ class SendCommandRest(Resource):
                 return response(200, data=result, message="Master Cluster Processing")
 
         if init_data['action'] == 'cluster-slave':
+            sleep(0.05)
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
