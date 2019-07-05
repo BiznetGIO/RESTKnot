@@ -293,6 +293,21 @@ class SendCommandRest(Resource):
                 return response(401, message=str(e))
             else:                
                 return response(200, data=result)
+
+        if init_data['action'] == 'conf-command':
+            result = []
+            exec_data = init_data['data'][0]['tags']
+            try:
+                cmd.conf_begin_http(url)
+                http_res = utils.send_http(url, exec_data)
+                cmd.conf_commit_http(url)
+                result.append(http_res)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:                
+                return response(200, data=exec_data)
+
+        
         
 
 
