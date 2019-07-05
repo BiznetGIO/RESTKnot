@@ -154,10 +154,9 @@ class TestCreate:
 						assert row[key].lower() == value.lower()
 
 			if row['nm_type'].upper() == "SRV":
-				pass
-				# data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
-				# res = self.post_data(client,'sendcommand',data,headers)
-				# assert res.status_code == 200
+				data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
+				res = self.post_data(client,'sendcommand',data,headers)
+				assert res.status_code == 200
 			elif row['nm_type'].upper() == 'MX':
 				data = {"zone-mx-insert":{"tags":{"id_record": row['id_record'] }}}
 				res = self.post_data(client,'sendcommand',data,headers)
