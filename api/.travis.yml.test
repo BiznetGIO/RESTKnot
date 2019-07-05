@@ -1,16 +1,20 @@
 language: python
 python:
-- '3.6'
-install:
+- "3.6"
+before_install:
+ - psql -c 'create database knotdb;' -U postgres
+ - psql databasename < db.sql
+ install:
+- cd api
+- virtualenv -p python3 env
+- source env/bin/activate
 - pip install -r requirements.txt
-- pip install -e .
 - pip install coverage pytest pytest-cov pytest-ordering testfixtures
-- pip freeze --local
 script:
 - pytest --cov=app -vv -s
 before_script:
-- mv .env.example .env
-- python manage.py server
+- mv environtment/travis/.env.example .env
+- python3 manage.py server
 deploy:
   provider: pypi
   user: Your username
@@ -19,5 +23,5 @@ deploy:
   on:
     tags: true
 skip_cleanup: true
-env:
-  - SOCKET_AGENT_HOST: '103.89.5.121'
+services:
+  - postgresql
