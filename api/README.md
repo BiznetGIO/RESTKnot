@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/riszkymf/RESTKnot.svg?branch=testcase_travis)](https://travis-ci.org/riszkymf/RESTKnot)
+
 # REST KNOT API
 
 RESTKnot API is an API to manage DNS configuration on Knot Server. You can rest easy as RESTKnot will take care of your knot-dns configuration and manage your DNS the easy way.
