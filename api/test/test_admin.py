@@ -23,6 +23,10 @@ class TestZone:
     def test_admin_login(self,client,get_creds,get_fail_creds):
         """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
         'ADMIN_USER' = your username, 'ADMIN_PASSWORD' = your password. """
+        
+        os.environ['ADMIN_USER'] = get_creds['username']
+        os.environ['ADMIN_PASSWORD'] = get_creds['password']
+        
         datacreds = {
         "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
         "user_id": os.getenv('CREDENTIAL_USER_ID')
@@ -58,6 +62,9 @@ class TestZone:
         }
         result = self.post_data(client,"admin/login",data)
         assert result.status_code == 200
+        
+        os.environ.pop("ADMIN_USER")
+        os.environ.pop("ADMIN_PASSWORD")
 
     @pytest.mark.run(order=2)
     def test_get_zone(self,client,get_mock):
