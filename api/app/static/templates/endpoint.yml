@@ -705,6 +705,11 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+    conf-command:
+      tags:
+        exec:
+          name: exec command
+          desc: exec command from agent
 
   cs_slave_node:
     where:

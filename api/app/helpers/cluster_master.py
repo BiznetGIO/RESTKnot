@@ -28,34 +28,37 @@ def master_create_json_master(id_zone, nm_config):
         nm_config_set = "jkt"
     else:
         print("CONFIG NOT FOUND")
-    
-    data_master = model.get_by_id("cs_master", "nm_config", nm_config_set)
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
     data_master_set = ""
-    for i in data_master:
-        if data_master_set == "":
-            data_master_set = i['nm_master']
-        else:
-            data_master_set = data_master_set+" "+i['nm_master']
-    json_data = {
-        "master-set-master": {
-                "sendblock": {
-                "cmd": "conf-set",
-                "zone": data_zone['nm_zone'],
-                "item": "master", 
-                "owner": "",
-                "rtype": "",
-                "ttl": "",
-                "flags": "",
-                "section": "zone",
-                "data": data_master_set
-            },
-                "receive": {
-                "type": "block"
+    try:
+        data_master = model.get_by_id("cs_master", "nm_config", nm_config_set)
+        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        return str(e)
+    else:
+        for i in data_master:
+            if data_master_set == "":
+                data_master_set = i['nm_master']
+            else:
+                data_master_set = data_master_set+" "+i['nm_master']
+        json_data = {
+            "master-set-master": {
+                    "sendblock": {
+                    "cmd": "conf-set",
+                    "zone": data_zone['nm_zone'],
+                    "item": "master", 
+                    "owner": "",
+                    "rtype": "",
+                    "ttl": "",
+                    "flags": "",
+                    "section": "zone",
+                    "data": data_master_set
+                },
+                    "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
-    return json_data
+        return json_data
 
 def master_create_json_notify(id_zone, nm_config, urls):
     master_to_slave = None
@@ -65,34 +68,38 @@ def master_create_json_notify(id_zone, nm_config, urls):
         master_to_slave = "jkt"
     else:
         print("CONFIG NOT FOUND")
-    master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-    data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
-    data_slave_set = []
-    for i in data_slave:
-        rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
-        for a in rows:
-            data_slave_set.append(a['nm_master']) 
-        data_slave_set.append(i['nm_slave_node'])
-    result = []
-    for a in data_slave_set:
-        json_data = {
-            "master-set-notify": {
-                "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "notify",
-                    "section":"zone",
-                    "data": a
-                },
-                "receive": {
-                    "type": "block"
+    try:
+        master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
+        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+        data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
+    except Exception as e:
+        return str(e)
+    else:
+        data_slave_set = []
+        for i in data_slave:
+            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            for a in rows:
+                data_slave_set.append(a['nm_master']) 
+            data_slave_set.append(i['nm_slave_node'])
+        result = []
+        for a in data_slave_set:
+            json_data = {
+                "master-set-notify": {
+                    "sendblock": {
+                        "cmd": "conf-set",
+                        "zone": data_zone['nm_zone'],
+                        "item": "notify",
+                        "section":"zone",
+                        "data": a
+                    },
+                    "receive": {
+                        "type": "block"
+                    }
                 }
             }
-        }
-        http_response = utils.send_http(urls, json_data)
-        result.append(http_response)
-    return result
+            http_response = utils.send_http(urls, json_data)
+            result.append(http_response)
+        return result
 
 def master_create_json_acl(id_zone, nm_config, urls):
     master_to_slave = None
@@ -102,34 +109,39 @@ def master_create_json_acl(id_zone, nm_config, urls):
         master_to_slave = "jkt"
     else:
         print("CONFIG NOT FOUND")
-    master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-    data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
-    data_slave_set = []
-    for i in data_slave:
-        rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
-        for a in rows:
-            data_slave_set.append(a['nm_master']) 
-        data_slave_set.append(i['nm_slave_node'])
-    result = []
-    for a in data_slave_set:
-        json_data = {
-            "master-set-acl": {
-                "sendblock": {
-                    "cmd": "conf-set",
-                    "zone": data_zone['nm_zone'],
-                    "item": "acl",
-                    "section":"zone",
-                    "data": a
-                },
-                "receive": {
-                    "type": "block"
+
+    try:
+        master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
+        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+        data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
+    except Exception as e:
+        return str(e)
+    else:
+        data_slave_set = []
+        for i in data_slave:
+            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            for a in rows:
+                data_slave_set.append(a['nm_master']) 
+            data_slave_set.append(i['nm_slave_node'])
+        result = []
+        for a in data_slave_set:
+            json_data = {
+                "master-set-acl": {
+                    "sendblock": {
+                        "cmd": "conf-set",
+                        "zone": data_zone['nm_zone'],
+                        "item": "acl",
+                        "section":"zone",
+                        "data": a
+                    },
+                    "receive": {
+                        "type": "block"
+                    }
                 }
             }
-        }
-        http_response = utils.send_http(urls, json_data)
-        result.append(http_response)
-    return result
+            http_response = utils.send_http(urls, json_data)
+            result.append(http_response)
+        return result
 
 def set_file_all(id_zone):
     data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
