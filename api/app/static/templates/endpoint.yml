@@ -217,6 +217,35 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+    edit:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      fields: 
+        id_type:
+          name: Tags Zone Id
+          desc: Get One Data From Zone
+          type: fields
+        id_zone:
+          name: Tags Record ID
+          desc: Get One Data From Record Name
+          type: fields
+        nm_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        date_record:
+          name: Tags Zone Id
+          desc: Get One Data From Zone
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
     view:
       tags:
         id_record:
@@ -297,6 +326,26 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+    edit:
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      fields:
+        id_ttl:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        id_record:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
     view:
       tags:
         nm_zone:
@@ -323,29 +372,6 @@ endpoint:
           name: Tags Record Data ID
           desc: Get One Data From Record Name
           type: fields
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      fields:
-        # ttl_data_name:
-        #   name: name search for domain
-        #   desc: Domain Variabel To Search
-        #   type: fields
-        id_ttl:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        id_record:
-          name: Tags Record Data ID
-          desc: Get One Data From Record Name
-          type: fields
-      tags:
-        id_ttldata:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
       others:
         method:
           name: name search for domain
@@ -424,6 +450,12 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
     edit:
+      tags:
+        id_content:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
       fields:
         id_ttldata:
           name: name search for domain
@@ -433,10 +465,6 @@ endpoint:
           name: Tags TTL ID
           desc: Get One Data From Record Name
           type: fields
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
       others:
         method:
           name: name search for domain
@@ -514,6 +542,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
+          default:
       others:
         method:
           name: name search for domain
