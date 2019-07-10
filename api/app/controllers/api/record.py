@@ -61,10 +61,11 @@ class Record(Resource):
                     return response(401, message=str(e))
                 if typename['nm_type'] == 'CNAME':
                     try:
-                        query = "select * from v_record where (nm_type='"+typename+"' and nm_record='"+lower_name+"') and id_zone='"+str(fields['id_zone'])+"'"
+                        query = "select * from v_record where (nm_type='"+typename['nm_type']+"' and nm_record='"+lower_name+"') and id_zone='"+str(fields['id_zone'])+"'"
                         db.execute(query)
                         adata =db.fetchone()
                     except (Exception, psycopg2.DatabaseError) as e:
+                        print("DISINI")
                         return response(401, message=(str(e)))
                     else:
                         print(adata)
