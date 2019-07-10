@@ -59,7 +59,7 @@ class Record(Resource):
                     typename = model.get_by_id("zn_type", "id_type", fields['id_type'])[0]
                 except Exception as e:
                     return response(401, message=str(e))
-                if typename['nm_type'] == 'CNAME' or typename['nm_type'] == 'MX':
+                if typename['nm_type'] == 'CNAME':
                     try:
                         query = "select * from v_record where (nm_type='"+typename['nm_type']+"' and nm_record='"+lower_name+"') and id_zone='"+str(fields['id_zone'])+"'"
                         db.execute(query)
