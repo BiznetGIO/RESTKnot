@@ -457,10 +457,6 @@ endpoint:
           type: tags
           default:
       fields:
-        id_ttldata:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
         nm_content:
           name: Tags TTL ID
           desc: Get One Data From Record Name
@@ -532,10 +528,6 @@ endpoint:
         nm_content_serial:
           name: name search for domain
           desc: Domain Variabel To Search
-          type: fields
-        id_record:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
           type: fields
       tags:
         id_content_serial:

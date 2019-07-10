@@ -110,17 +110,13 @@ class Content(Resource):
             fields = init_data['data'][0]['fields']
             ct_rep = fields['nm_content']
             ct_replace = ct_rep.replace("'","''")
-            lower_text_data = ct_replace.lower()
-            fields_fix = {
-                'id_ttldata': fields['id_ttldata'],
-                'nm_content': lower_text_data
-            }
-            
+            lower_text_data = ct_replace.lower()            
             content_validation = model.get_by_id("v_contentdata", field="id_content", value=tags['id_content'])
             check_validation = False
             check_validation_char = None
             if content_validation[0]['nm_type'] == 'A':
                 check_validation = utils.a_record_validation(lower_text_data)
+                print(check_validation)
             elif content_validation[0]['nm_type'] == 'CNAME':
                 check_validation = utils.cname_validation(lower_text_data)
                 cs_data_name = lower_text_data
@@ -154,8 +150,7 @@ class Content(Resource):
                     "id_content": tags['id_content']
                 },
                 "data":{
-                    "nm_content": lower_text_data,
-                    "id_ttldata": fields['id_ttldata']
+                    "nm_content": lower_text_data
                 }
             }
 

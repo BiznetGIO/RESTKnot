@@ -127,7 +127,7 @@ class ContentSerial(Resource):
                 return response(401, message="Value Not Valid")
             
             tags_zone = {
-                "id_record": fields['id_record']
+                "id_record": str(content_validation[0]['id_record'])
             }
             syncron.zone_begin_http(url, tags_zone)
             try:
@@ -142,8 +142,7 @@ class ContentSerial(Resource):
                     "id_content_serial": tags['id_content_serial']
                 },
                 "data":{
-                    "nm_content_serial": lowercase_cs_data,
-                    "id_record": fields['id_record']
+                    "nm_content_serial": lowercase_cs_data
                 }
             }
             
