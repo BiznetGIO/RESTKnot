@@ -189,3 +189,48 @@ class Record(Resource):
                     "messages": "Fine!"
                 }
                 return response(200, data=obj_userdata , message=respons)
+
+        # if init_data['action'] == 'edit':
+        #     obj_userdata = list()
+        #     table = ""
+        #     fields = None
+        #     tags = dict()
+        #     for i in init_data['data']:
+        #         table = i['table']
+        #         tags = i['tags']
+        #         for a in tags:
+        #             if tags[a] is not None:
+        #                 fields = a
+        #     column = model.get_columns("v_contentdata")
+        #     try:
+        #         result = list()
+        #         if fields is None:
+        #             query = """select * from v_contentdata"""
+        #             db.execute(query)
+        #             rows = db.fetchall()
+        #             for row in rows:
+        #                 result.append(dict(zip(column, row)))
+        #         else:
+        #             query = """ select * from v_record where """+fields+"""='"""+tags[fields]+"""'"""
+        #             db.execute(query)
+        #             rows = db.fetchall()
+        #             for row in rows:
+        #                 result.append(dict(zip(column, row)))
+        #     except Exception as e:
+        #         return response(401, message=str(e))
+        #     else:
+        #         for i in result :
+        #             data = {
+        #                 "id_record": str(i['id_record']),
+        #                 "nm_zone": str(i['nm_zone']),
+        #                 "nm_type": str(i['nm_type']),
+        #                 "nm_record": str(i['nm_record']),
+        #                 "date_record" : i['date_record'],
+        #                 "state" : i['state'] 
+        #             }
+        #             obj_userdata.append(data)
+        #         respons = {
+        #             "status": True,
+        #             "messages": "Fine!"
+        #         }
+        #         return response(200, data=obj_userdata , message=respons)

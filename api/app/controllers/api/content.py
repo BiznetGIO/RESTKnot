@@ -72,6 +72,7 @@ class Content(Resource):
                     spl_name = cs_data_name.split(".")
                     for i in spl_name:                       
                         if len(i) >= 64:
+                            print(i)
                             check_validation_char = True
                         else:
                             total = total + len(i)
@@ -88,6 +89,7 @@ class Content(Resource):
                 check_validation = True
             if check_validation_char:
                 model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
+                return response(401, message="Value Not Valid")	
             if not check_validation:
                 model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
                 return response(401, message="Value Not Valid")
