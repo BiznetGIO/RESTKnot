@@ -697,7 +697,6 @@ def zone_unset(tags):
     if content_serial:
         for serial in content_serial:
             serial_data = serial_data+serial['nm_content_serial']
-
     json_command={
         "zone-unset": {
             "sendblock": {
@@ -706,7 +705,7 @@ def zone_unset(tags):
                 "owner": record[0]['nm_record'],
                 "ttl": ttldata[0]['nm_ttl'],
                 "rtype": record[0]['nm_type'],
-                "data": content_data+" "+serial_data
+                # "data": content_data+" "+serial_data
             },
             "receive": {
                 "type": "block"

@@ -148,7 +148,8 @@ class Record(Resource):
                 syncron.zone_begin_http(url, tags)
                 try:
                     data_unset = syncron.zone_unset(tags)
-                    utils.send_http(url, data_unset)
+                    a = utils.send_http(url, data_unset)
+                    print(a)
                 except Exception as e:
                     syncron.zone_commit_http(url, tags)
                     return response(401, message="Record Not Unset | "+str(e))
@@ -160,7 +161,8 @@ class Record(Resource):
                     "data":{
                         "nm_record": lower_name,
                         "date_record": fields['date_record'],
-                        "id_type": fields['id_type']
+                        "id_type": fields['id_type'],
+                        "id_zone": fields['id_zone']
                     }
                 }
             
