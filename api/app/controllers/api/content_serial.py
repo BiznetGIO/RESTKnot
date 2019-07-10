@@ -77,7 +77,6 @@ class ContentSerial(Resource):
                             total = total + len(i)
                     if total >= 255:
                         check_validation_char = True
-                    
                 if check_validation_char:
                     model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
                     return response(401, message="Value Not Valid")

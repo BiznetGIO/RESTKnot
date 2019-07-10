@@ -54,6 +54,26 @@ class Record(Resource):
                             total = total + len(i)
                     if total >= 255:
                         return response(401, message="Record name not valid | Total record char 255 characters")
+                record_checks = False
+                try:
+                    typename = model.get_by_id("zn_type", "id_type", fields['id_type'])[0]
+                except Exception as e:
+                    return response(401, message=str(e))
+                if typename['nm_type'] == 'CNAME' or typename['nm_type'] == 'MX':
+                    try:
+                        query = "select * from v_record where (nm_type='"+typename+"' and nm_record='"+lower_name+"') and id_zone='"+str(fields['id_zone'])+"'"
+                        db.execute(query)
+                        adata =db.fetchone()
+                    except (Exception, psycopg2.DatabaseError) as e:
+                        return response(401, message=(str(e)))
+                    else:
+                        print(adata)
+                        if adata is not None:
+                            record_checks = True
+
+                if record_checks:
+                    return response(401, message="Record name not valid")
+                
                 field_fix = {
                     "nm_record": lower_name,
                     "date_record": fields['date_record'],
