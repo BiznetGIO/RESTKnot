@@ -65,6 +65,7 @@ class Record(Resource):
                         db.execute(query)
                         adata =db.fetchone()
                     except (Exception, psycopg2.DatabaseError) as e:
+                        print("DISINI")
                         return response(401, message=(str(e)))
                     else:
                         print(adata)
