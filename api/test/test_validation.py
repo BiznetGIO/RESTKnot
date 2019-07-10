@@ -52,7 +52,10 @@ class DataTest(object):
         send_data = utils.get_model("add",data)
         res = self.post_data(client,url,send_data,headers)
         id_record = json.loads(res.data.decode('utf8'))
-        id_record = id_record['message']['id']
+        try:
+            id_record = id_record['message']['id']
+        except Exception:
+            print(json.loads(res.data.decode('utf8')))
         if not self.identity:
             self.identity['records'].append(id_record)        
         return res
@@ -144,6 +147,7 @@ class DataTest(object):
         json_send= utils.get_model("add",data)
         res = self.post_data(client,endpoint,json_send,headers)
         tmp = json.loads(res.data.decode('utf8'))
+        print(tmp)
         assert tmp['status'] == 'error'
 
 
@@ -155,13 +159,28 @@ class DataTest(object):
         tmp = json.loads(res.data.decode('utf8'))
         assert tmp['status'] == 'error'
 
+    def teardown_record(self,client,id_record,headers):
+        data = {"zone-unset":{"tags":{"id_record" : id_record}}}
+        self.post_data(client,'sendcommand',data,headers)
+        data = {"id_record": id_record}
+        data = utils.get_model("remove",data)
+        self.post_data(client,'record',data,headers)
+
 class TestValidation:
 
+
     testset = list()
+
+    def post_data(self,client,endpoint,data,headers):
+        url = 'api/'+endpoint
+        res = client.post(url,data=json.dumps(data),
+        content_type='application/json', headers=headers)
+        return res
 
     def assert_hostname(self,respons,expected,zone):
         result = json.loads(respons.data.decode('utf8'))
         result = result['data']['data']
+        print(result)
         zn_knot = zone+"."
         hostnames = list(result[zn_knot].keys())
         assert expected in hostnames
@@ -204,7 +223,8 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,'wetestzone.xyz.',nm_zone)
         self.assert_value(respons,'wetestzone.xyz.wetestzone.xyz.',record_type)
-        
+        test_data.teardown_record(client,id_record,headers)
+
         ############## hostname : wetestzone.xyz , content : wetestzone.xyz.    
         
         res = test_data.add_record(client,"wetestzone.xyz",record_type,headers)
@@ -222,29 +242,34 @@ class TestValidation:
         data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
         res = test_data.post_data(client,'sendcommand',data,headers)
         nm_zone = test_data.identity['zone']['nm_zone']
-        res=self.assert_hostname(res,'wetestzone.xyz.',nm_zone)
-        self.assert_value(res,'wetestzone.xyz.wetestzone.xyz.',record_type)
-        
-        
-        ##### hostname : www , content: @
-
-        res = test_data.add_record(client,"www",record_type,headers)
-        assert res.status_code == 200
-        res = json.loads(res.data.decode('utf8'))
-        id_record = res['message']['id']
-        res = test_data.add_content_data(client,'@',id_record,headers)
-
-        data = {"zone-insert": {"tags":{"id_record": id_record}}}
-        res = test_data.post_data(client,'sendcommand',data,headers)
-        res = json.loads(res.data.decode('utf8'))
-        
-        # ZONE READ
-        id_zone = test_data.identity['zone']['id_zone']
-        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
-        res = test_data.post_data(client,'sendcommand',data,headers)
-        nm_zone = test_data.identity['zone']['nm_zone']
-        res=self.assert_hostname(res,'www.wetestzone.xyz.',nm_zone)
+        res=self.assert_hostname(res,'wetestzone.xyz.wetestzone.xyz.',nm_zone)
         self.assert_value(res,'wetestzone.xyz.',record_type)
+        data = {"zone-unset":{"tags":{"id_record" : id_record}}}
+        self.post_data(client,'sendcommand',data,headers)
+        data = {"id_record": id_record}
+        data = utils.get_model("remove",data)
+        res=self.post_data(client,'record',data,headers)
+        print(json.loads(res.data.decode('utf8')))
+        # ##### hostname : www , content: @
+
+        # res = test_data.add_record(client,"www",record_type,headers)
+        # assert res.status_code == 200
+        # res = json.loads(res.data.decode('utf8'))
+        # id_record = res['message']['id']
+        # res = test_data.add_content_data(client,'@',id_record,headers)
+
+        # data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        # res = test_data.post_data(client,'sendcommand',data,headers)
+        # res = json.loads(res.data.decode('utf8'))
+        
+        # # ZONE READ
+        # id_zone = test_data.identity['zone']['id_zone']
+        # data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        # res = test_data.post_data(client,'sendcommand',data,headers)
+        # nm_zone = test_data.identity['zone']['nm_zone']
+        # res=self.assert_hostname(res,'www.wetestzone.xyz.',nm_zone)
+        # self.assert_value(res,'wetestzone.xyz.',record_type)
+        # test_data.teardown_record(client,id_record,headers)
 
         ##### hostname : a.b.c  content: mail.google.com
 
@@ -265,6 +290,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         res=self.assert_hostname(res,'a.b.c.wetestzone.xyz.',nm_zone)
         self.assert_value(res,'mail.google.com.wetestzone.xyz.',record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ##### hostname : a.b.c  content: mail.google.com
 
@@ -285,6 +311,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         res=self.assert_hostname(res,'a.b.c.wetestzone.xyz.',nm_zone)
         self.assert_value(res,'mail.google.com.wetestzone.xyz.',record_type)
+        test_data.teardown_record(client,id_record,headers)
 
 
         ##### hostname : A-0c  content: mail.google.com.
@@ -306,6 +333,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         res=self.assert_hostname(res,'a-0c.wetestzone.xyz.',nm_zone)
         self.assert_value(res,'mail.google.com.',record_type)
+        test_data.teardown_record(client,id_record,headers)
 
 
         ##### hostname : 0--0  content: mail.google.com.
@@ -327,6 +355,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         res=self.assert_hostname(res,'0--0.wetestzone.xyz.',nm_zone)
         self.assert_value(res,'store.cobadns08.xyz.wetestzone.xyz.',record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: store.cobadns08.xyz.
         res = test_data.add_record(client,"@",record_type,headers)
@@ -346,6 +375,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,'wetestzone.xyz.',nm_zone)
         self.assert_value(respons,'store.wetestzone.xyz.',record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: abc.wetestzone.xyz
         
@@ -371,6 +401,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
 
         ########## hostname : @ , content: a.b.c.wetestzone.xyz.
@@ -397,6 +428,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: a.b.c.wetestzone.xyz.
         
@@ -422,6 +454,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: mail
         
@@ -447,6 +480,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: A-0c
         
@@ -472,6 +506,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## hostname : @ , content: o12345670123456701234567012345670123456701234567012345670123456
         
@@ -497,6 +532,7 @@ class TestValidation:
         nm_zone = test_data.identity['zone']['nm_zone']
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
 
         ########## FAILURE hostname : @ , content: -A0c
         
@@ -606,7 +642,7 @@ class TestValidation:
         test_data.teardown(client,headers)
         self.testset.remove(test_data)
 
-    #@pytest.mark.skip()
+    @pytest.mark.skip()
     def test_mx(self,client,get_header):
         record_type = 'mx'
 
@@ -1079,10 +1115,10 @@ class TestValidation:
 
         test_data.teardown(client,headers)
 
-    # def test_validation_teardown(self,client,get_header):
-    #     headers = get_header
-    #     test_data = self.testset
-    #     if len(test_data) > 0:
-    #         for i in test_data:
-    #             i.teardown(client,headers)
+    def test_validation_teardown(self,client,get_header):
+        headers = get_header
+        test_data = self.testset
+        if len(test_data) > 0:
+            for i in test_data:
+                i.teardown(client,headers)
 
