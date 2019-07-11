@@ -249,7 +249,7 @@ class TestValidation:
         data = {"id_record": id_record}
         data = utils.get_model("remove",data)
         res=self.post_data(client,'record',data,headers)
-        print(json.loads(res.data.decode('utf8')))
+        test_data.teardown_record(client,id_record,headers)
         # ##### hostname : www , content: @
 
         # res = test_data.add_record(client,"www",record_type,headers)
@@ -642,7 +642,6 @@ class TestValidation:
         test_data.teardown(client,headers)
         self.testset.remove(test_data)
 
-    @pytest.mark.skip()
     def test_mx(self,client,get_header):
         record_type = 'mx'
 
@@ -1114,6 +1113,7 @@ class TestValidation:
         res = test_data.add_error_record(client,hostname_,record_type,headers)
 
         test_data.teardown(client,headers)
+        self.testset.remove(test_data)
 
     def test_validation_teardown(self,client,get_header):
         headers = get_header
