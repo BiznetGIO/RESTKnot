@@ -697,7 +697,8 @@ def zone_unset(tags):
     if content_serial:
         for serial in content_serial:
             serial_data = serial_data+serial['nm_content_serial']
-    if serial_data == "":
+    
+    if serial_data != "":
         json_command={
             "zone-unset": {
                 "sendblock": {
@@ -713,6 +714,7 @@ def zone_unset(tags):
                 }
             }
         }
+        print(json_command)
     else:
         if record[0]['nm_type'] == 'TXT':
             json_command={
