@@ -186,7 +186,7 @@ def cname_validation(cname):
     if cname == '@':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(cname):
             return True
         else:
