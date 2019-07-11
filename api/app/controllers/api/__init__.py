@@ -42,7 +42,6 @@ api.add_resource(Content, '/content')
 api.add_resource(ContentSerial, '/content_serial')
 api.add_resource(SendCommandRest, '/sendcommand')
 api.add_resource(CreateDNS, '/user/dnscreate')
-
 ## ADMIN AUTH
 api.add_resource(AdminAuth, '/admin/login')
 api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')

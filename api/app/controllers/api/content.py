@@ -80,6 +80,7 @@ class Content(Resource):
                     spl_name = cs_data_name.split(".")
                     for i in spl_name:                       
                         if len(i) >= 64:
+                            print(i)
                             check_validation_char = True
                         else:
                             total = total + len(i)
@@ -163,7 +164,7 @@ class Content(Resource):
                 return response(401, message="Record Not Unset | "+str(e))
             
             try:
-                if check_validation and check_validation_char
+                # if check_validation and check_validation_char
                 result = model.update(table, data_edits)
             except Exception as e:
                 syncron.zone_commit_http(url, tags_zone)
