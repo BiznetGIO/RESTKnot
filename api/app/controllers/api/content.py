@@ -80,6 +80,7 @@ class Content(Resource):
                     spl_name = cs_data_name.split(".")
                     for i in spl_name:                       
                         if len(i) >= 64:
+                            print(i)
                             check_validation_char = True
                         else:
                             total = total + len(i)
