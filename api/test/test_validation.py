@@ -31,6 +31,7 @@ class DataTest(object):
             "content": list(),
             "content_serial": list()
         }
+        
 
     def add_zone(self,client,nm_zone,headers):
         dataset = {}
@@ -38,8 +39,17 @@ class DataTest(object):
         data = {"domain": nm_zone}
         res = self.post_data(client,url,data,headers)
         tmp = json.loads(res.data.decode('utf8'))
-        dataset['id_zone'] = tmp['data']['data']['id_zone']
-        dataset['nm_zone'] = tmp['data']['data']['nm_zone']
+        if str(tmp['code']) == '200':
+            dataset['id_zone'] = tmp['data']['data']['id_zone']
+            dataset['nm_zone'] = tmp['data']['data']['nm_zone']
+        elif str(tmp['code']) == '401':
+            where = {"nm_zone": nm_zone}
+            where = utils.get_model('where',where)
+            res = self.post_data(client,'zone',where,headers)
+            data = json.loads(res.data.decode('utf8'))
+            data = data['data'][0]
+            dataset['id_zone'] = data['id_zone']
+            dataset['nm_zone'] = nm_zone
         if not self.identity:
             self.generate_empty_data()
         self.identity['zone'] = dataset
@@ -87,7 +97,7 @@ class DataTest(object):
             if not self.generate_empty_data:
                 self.generate_empty_data()
                 self.identity['content'].append(dataset)
-        return res
+        return dataset
 
     def add_content_serial(self,client,content_serial,id_record,headers):
         dataset = dict()
@@ -105,7 +115,7 @@ class DataTest(object):
             if not self.identity:
                 self.generate_empty_data()
                 self.identity['content_serial'].append(dataset)        
-        return res
+        return dataset
 
     def add_error_record(self,client,nm_record,type_,headers):
         url = 'record'
@@ -115,8 +125,49 @@ class DataTest(object):
         res = self.post_data(client,url,send_data,headers)
         return res
 
-    def sync_record(self,client,id_record,headers):
-        endpoint = 'sendcommand'
+    def edit_content_data(self,client,id_content,id_record,new_content,headers):
+        fields = {"fields": {"nm_content": new_content}}
+        tags = {"tags":{"id_content": id_content}}
+        send_data = {"edit": {**fields, **tags}}
+        res = self.post_data(client,'content',send_data,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = self.post_data(client,'sendcommand',data,headers)
+        return res
+
+    def edit_ttldata(self,client,id_ttldata,new_ttl,id_record,headers):
+        fields = {"fields": {"id_ttl": new_ttl,"id_record": id_record}}
+        tags = {"tags": {"id_ttldata": id_ttldata}}
+        send_data = {"edit": {**fields, **tags}}
+        res = self.post_data(client,'ttldata',send_data,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = self.post_data(client,'sendcommand',data,headers)
+        return res
+
+    def edit_record(self,client,id_record,new_data,headers):
+        fields = {
+            "nm_record": new_data["nm_record"],
+            "date_record": new_data["date_record"],
+            "id_zone": new_data["id_zone"],
+            "id_type": new_data["id_type"]
+        }
+        fields = {"fields" : fields}
+        tags = {"tags": {"id_record": id_record}}
+        send_data = {"edit": {**fields, **tags}}
+        res = self.post_data(client,'record',send_data,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = self.post_data(client,'sendcommand',data,headers)
+        return res
+
+    def edit_serial_data(self,client,headers,id_content_serial,id_record,new_content_serial):
+        fields = { "nm_content_serial": new_content_serial}
+        fields = {"fields" : fields}
+        tags = {"tags": {"id_content_serial": id_content_serial}}
+        send_data = {"edit": {**fields, **tags}}
+        res = self.post_data(client,'content_serial',send_data,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = self.post_data(client,'sendcommand',data,headers)
+        return res
+
 
 
     def teardown(self,client,headers):
@@ -637,7 +688,48 @@ class TestValidation:
         
         hostname_ = 'o123456701234567012345670123456701234567012345670123456701234567'        
         res = test_data.add_error_record(client,hostname_,record_type,headers)
-        ####################### mx ######################
+
+        ########## hostname : @ , content: a.b.c.wetestzone.xyz. EDITING RECORD
+        
+        hostname_ = '@'
+        expected_hostname = 'test.wetestzone.xyz.'
+        content_value = 'abc.wetestzone.xyz.'
+        expected_content_value = 'bvrtan.wetestzone.xyz.'
+        
+        res = test_data.add_record(client,hostname_,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content_value,id_record,headers)
+        id_content = res['id_content']
+        id_ttldata = res['id_ttldata']
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+
+        ## EDIT DATA
+        res = test_data.edit_ttldata(client,id_ttldata,'402428102489735169',id_record,headers)
+        assert res.status_code == 200
+        res = test_data.edit_content_data(client,id_content,id_record,'bvrtan.wetestzone.xyz.',headers)
+        assert res.status_code == 200
+        new_data = {
+            "nm_record" : "test",
+            "id_type" : "402427533112147969",
+            "id_zone": id_zone,
+            "date_record": "20190707"
+        }
+        res = test_data.edit_record(client,id_record,new_data,headers)
+
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content_value,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
 
         test_data.teardown(client,headers)
         self.testset.remove(test_data)
@@ -992,6 +1084,13 @@ class TestValidation:
         respons = self.assert_hostname(res,expected_hostname,nm_zone)
         self.assert_value(respons,expected_content_serial,record_type)
 
+        ### TEST VIEW_ALL
+        d = {"view_all":{"tags":{"id_record": ""}}}
+        res = test_data.post_data(client,'record',d,headers)
+
+        d = {"view_all":{"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'record',d,headers)
+
         # ########## FAILURE hostname : @ , content: -A0c
         
         hostname_ = '@'
@@ -1112,13 +1211,298 @@ class TestValidation:
         hostname_ = 'o123456701234567012345670123456701234567012345670123456701234567'        
         res = test_data.add_error_record(client,hostname_,record_type,headers)
 
+
+        ##### hostname : A-1c  content: mail.google.com.
+
+        hostname = 'A-1c'
+        expected_hostname = 'a-1c.wetestzone.xyz.'
+        content_serial = 'mail.google.com.'
+        expected_content_serial = priority + ' store.google.com.'
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,priority,id_record,headers)
+        res = test_data.add_content_serial(client,content_serial,id_record,headers)
+        id_content_serial = res['id_content_serial']
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+
+        ## EDIT
+        new_content = "store.google.com."
+        res = test_data.edit_serial_data(client,headers,id_content_serial,id_record,new_content)
+        assert res.status_code == 200
+
+
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        tmp = json.loads(res.data.decode('utf8')) 
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content_serial,record_type)
+
+
         test_data.teardown(client,headers)
         self.testset.remove(test_data)
+
+    def test_validation_txt(self,client,get_header):
+        record_type = 'txt'
+
+        headers = get_header
+        test_data = DataTest()
+        self.testset.append(test_data)
+        res = test_data.add_zone(client,"wetestzone.xyz",headers)
+        assert res.status_code == 200
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = "agus agus"
+        expected_content = '"agus agus"'
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = "agus'agus"
+        expected_content = '''"agus'agus"'''
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = """agus"agus"""
+        expected_content = '''"agus\\"agus"'''
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = '"'
+        expected_content = '''"\\""'''
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+        
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = "'"
+        expected_content = '"\'"'
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = 'Tripping off the beat kinda, dripping off the meat grinder Heat niner, pimping, stripping, soft sweet minor China was a neat signer, trouble with the script Digits double dipped, bubble lipped, subtle lisp midget Borderline schizo, sort of fine tits though'
+        expected_content = '"{}" "{}"'.format(content[:255].lower(),content[255:].lower())
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+        ## TEST FAIL
+
+        hostname_ = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content_value = '£'
+        
+        res = test_data.add_record(client,hostname_,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data_fail(client,content_value,id_record,headers)
+
+        test_data.teardown(client,headers)
+        self.testset.remove(test_data)
+
+
+    def test_validation_a(self,client,get_header):
+        
+        record_type = 'a'
+
+        headers = get_header
+        test_data = DataTest()
+        self.testset.append(test_data)
+        res = test_data.add_zone(client,"wetestzone.xyz",headers)
+        assert res.status_code == 200
+
+        ###### hostname : @, content : agus agus
+        hostname  = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content = "192.168.1.1"
+        expected_content = '192.168.1.1'
+
+        res = test_data.add_record(client,hostname,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data(client,content,id_record,headers)
+        data = {"zone-insert": {"tags":{"id_record": id_record}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        res = json.loads(res.data.decode('utf8'))
+        
+        # ZONE READ
+        id_zone = test_data.identity['zone']['id_zone']
+        data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
+        res = test_data.post_data(client,'sendcommand',data,headers)
+        nm_zone = test_data.identity['zone']['nm_zone']
+        respons = self.assert_hostname(res,expected_hostname,nm_zone)
+        self.assert_value(respons,expected_content,record_type)
+        test_data.teardown_record(client,id_record,headers)
+
+
+        ## TEST FAIL
+
+        hostname_ = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content_value = 'localhost'
+        
+        res = test_data.add_record(client,hostname_,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data_fail(client,content_value,id_record,headers)
+
+
+        ## TEST FAIL
+
+        hostname_ = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content_value = 'sembarangan'
+        
+        res = test_data.add_record(client,hostname_,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data_fail(client,content_value,id_record,headers)
+
+        ## TEST FAIL
+
+        hostname_ = '@'
+        expected_hostname = 'wetestzone.xyz.'
+        content_value = '270.0.0.2'
+        
+        res = test_data.add_record(client,hostname_,record_type,headers)
+        assert res.status_code == 200
+        res = json.loads(res.data.decode('utf8'))
+        id_record = res['message']['id']
+        res = test_data.add_content_data_fail(client,content_value,id_record,headers)
+
+        test_data.teardown(client,headers)
+        self.testset.remove(test_data)
+
 
     def test_validation_teardown(self,client,get_header):
         headers = get_header
         test_data = self.testset
         if len(test_data) > 0:
             for i in test_data:
-                i.teardown(client,headers)
+                try:
+                    i.teardown(client,headers)
+                except Exception :
+                    pass
 
