@@ -697,21 +697,57 @@ def zone_unset(tags):
     if content_serial:
         for serial in content_serial:
             serial_data = serial_data+serial['nm_content_serial']
-    json_command={
-        "zone-unset": {
-            "sendblock": {
-                "cmd": "zone-unset",
-                "zone": record[0]['nm_zone'],
-                "owner": record[0]['nm_record'],
-                "ttl": ttldata[0]['nm_ttl'],
-                "rtype": record[0]['nm_type'],
-                # "data": content_data+" "+serial_data
-            },
-            "receive": {
-                "type": "block"
+    
+    if serial_data != "":
+        json_command={
+            "zone-unset": {
+                "sendblock": {
+                    "cmd": "zone-unset",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "rtype": record[0]['nm_type'],
+                    "data": content_data+" "+serial_data
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
+        print(json_command)
+    else:
+        if record[0]['nm_type'] == 'TXT':
+            json_command={
+                "zone-unset": {
+                    "sendblock": {
+                        "cmd": "zone-unset",
+                        "zone": record[0]['nm_zone'],
+                        "owner": record[0]['nm_record'],
+                        "ttl": ttldata[0]['nm_ttl'],
+                        "rtype": record[0]['nm_type'],
+                        "data": '"'+content_data+'"'
+                    },
+                    "receive": {
+                        "type": "block"
+                    }
+                }
+            }
+        else:
+            json_command={
+            "zone-unset": {
+                "sendblock": {
+                    "cmd": "zone-unset",
+                    "zone": record[0]['nm_zone'],
+                    "owner": record[0]['nm_record'],
+                    "ttl": ttldata[0]['nm_ttl'],
+                    "rtype": record[0]['nm_type'],
+                    "data": content_data
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
     return json_command
 
     
