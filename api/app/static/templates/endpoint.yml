@@ -245,7 +245,22 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-
+    view_all:
+      tags:
+        id_record:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
     view:
       tags:
         id_record:
