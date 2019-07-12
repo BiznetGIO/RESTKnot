@@ -294,28 +294,6 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-<<<<<<< HEAD
-=======
-    # edit:
-    #   fields:
-    #     record_data_name:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
-    #       type: fields
-    #     zone_id:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
-    #       type: fields
-    #   tags:
-    #     id_record:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
-    #       type: tags
-    #   others:
-    #     method:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
->>>>>>> 2e20dd7a18551fd19f7720f29c0f20481e1f7e38
     remove:
       tags:
         id_record:
