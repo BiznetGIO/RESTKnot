@@ -29,12 +29,8 @@ def cluster_command_new(tags, location, type):
     return json_command
 
 
-def unset_cluster_command_new(tags):
+def unset_cluster_command_new(tags, domain_name):
     domain_name = None
-    fields = tags['id_zone']
-    domain_data = model.get_by_id("zn_zone", "id_zone", fields)
-    for i in domain_data:
-        domain_name = i['nm_zone']
     json_command={
         "cluster-set": {
             "sendblock": {

@@ -32,31 +32,37 @@ def cluster_task_master(self, tags):
     respons = []
     result = []
     id_zone = tags['id_zone']
+
     try:
         master_data = model.get_all("cs_master")
     except Exception as e:
         return str(e)
     else:
+        try:
+            data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+        except Exception as e:
+            print()
         for i in master_data:
+            print("Execute Master: "+i['nm_master'])
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
             command.conf_begin_http(urls)
-            ffi_insert_conf = cluster_master.insert_config_zone(id_zone, i['nm_config'])
+            ffi_insert_conf = cluster_master.insert_config_zone(data_zone, i['nm_config'])
             http_response = utils.send_http(urls, ffi_insert_conf)
             result.append(http_response)
-            ffi_master = cluster_master.master_create_json_master(id_zone, i['nm_config'])
+            ffi_master = cluster_master.master_create_json_master(data_zone, i['nm_config'])
             http_response = utils.send_http(urls, ffi_master)
             result.append(ffi_master)
-            ffi_notify = cluster_master.master_create_json_notify(id_zone, i['nm_config'], urls)
+            ffi_notify = cluster_master.master_create_json_notify(data_zone, i['nm_config'], urls)
             result.append({'notify':ffi_notify})
-            ffi_acl = cluster_master.master_create_json_acl(id_zone, i['nm_config'], urls)
+            ffi_acl = cluster_master.master_create_json_acl(data_zone, i['nm_config'], urls)
             result.append({"acl": ffi_acl})
-            ffi_set_files = cluster_master.set_file_all(id_zone)
+            ffi_set_files = cluster_master.set_file_all(data_zone)
             http_response = utils.send_http(urls, ffi_set_files)
             result.append(http_response)
-            ffi_set_module = cluster_master.set_mods_stats_all(id_zone, "mod-stats/default")
+            ffi_set_module = cluster_master.set_mods_stats_all(data_zone, "mod-stats/default")
             http_response = utils.send_http(urls, ffi_set_module)
             result.append(http_response)
-            ffi_serial_policy = cluster_master.set_serial_policy_all(id_zone, "dateserial")
+            ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
             http_response = utils.send_http(urls, ffi_serial_policy)
             result.append(http_response)
             command.conf_commit_http(urls)
@@ -74,30 +80,36 @@ def cluster_task_slave(self, tags):
     try:
         slave_data = model.get_all("v_cs_slave_node")
     except Exception as e:
+        print(e)
         return str(e)
     else:
+        try:
+            data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+        except Exception as e:
+            print()
         for i in slave_data:
+            print("Execute Slave: "+i['nm_slave_node'])
             urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
             command.conf_begin_http(urls)
-            ffi_insert_conf = cluster_slave.insert_config_zone(id_zone, i['nm_config'])
+            ffi_insert_conf = cluster_slave.insert_config_zone(data_zone)
             http_response = utils.send_http(urls, ffi_insert_conf)
             result.append(http_response)
-            ffi_slave_master = cluster_slave.master_create_json(id_zone, i['nm_config'])
+            ffi_slave_master = cluster_slave.master_create_json(data_zone, i['nm_master'])
             http_response = utils.send_http(urls, ffi_slave_master)
             result.append(http_response)
-            ffi_slave_notify = cluster_slave.create_json_notify(id_zone, i['nm_config'], i['nm_slave_node'])
+            ffi_slave_notify = cluster_slave.create_json_notify(data_zone,  i['nm_master'])
             http_response = utils.send_http(urls, ffi_slave_notify)
             result.append(http_response)
-            ffi_slave_acl = cluster_slave.create_json_acl(id_zone, i['nm_config'], i['nm_slave_node'])
+            ffi_slave_acl = cluster_slave.create_json_acl(data_zone, i['nm_master'])
             http_response = utils.send_http(urls, ffi_slave_acl)
             result.append(http_response)
-            ffi_set_files = cluster_master.set_file_all(id_zone)
+            ffi_set_files = cluster_master.set_file_all(data_zone)
             http_response = utils.send_http(urls, ffi_set_files)
             result.append(http_response)
-            ffi_set_module = cluster_master.set_mods_stats_all(id_zone, "mod-stats/default")
+            ffi_set_module = cluster_master.set_mods_stats_all(data_zone, "mod-stats/default")
             http_response = utils.send_http(urls, ffi_set_module)
             result.append(http_response)
-            ffi_serial_policy = cluster_master.set_serial_policy_all(id_zone, "dateserial")
+            ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
             http_response = utils.send_http(urls, ffi_serial_policy)
             result.append(http_response)
             command.conf_commit_http(urls)
@@ -111,9 +123,18 @@ def cluster_task_slave(self, tags):
 @celery.task(bind=True)
 def unset_cluster_master(self, tags):
     result = []
-    master_data = model.get_all("cs_master")
+    
+    id_zone = tags['id_zone']
+    try:
+        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        print(e)
+    try:
+        master_data = model.get_all("cs_master")
+    except Exception as e:
+        print(e)
     for i in master_data:
-        master_command = command.unset_cluster_command_new(tags)
+        master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
         url_fix= "http://"+i['ip_master']+":"+i['port']
         master_server_url = url_fix+"/api/command_rest"
         command.conf_begin_http(master_server_url)
@@ -125,9 +146,18 @@ def unset_cluster_master(self, tags):
 @celery.task(bind=True)
 def unset_cluster_slave(self, tags):
     result = []
-    data_slave = model.get_all("v_cs_slave_node")
+    
+    id_zone = tags['id_zone']
+    try:
+        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        print(e)
+    try:
+        data_slave = model.get_all("v_cs_slave_node")
+    except Exception as e:
+        print(e)
     for a in data_slave:
-        slave_command = command.unset_cluster_command_new(tags)
+        slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
         url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
         slave_server_url = url_fix+"/api/command_rest"
         command.conf_begin_http(slave_server_url)

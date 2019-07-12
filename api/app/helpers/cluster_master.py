@@ -3,8 +3,7 @@ from app import db
 from app.libs import utils
 
 
-def insert_config_zone(id_zone, nm_config):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def insert_config_zone(data_zone, nm_config):
     json_data = {
         "command-set": {
                 "sendblock": {
@@ -20,7 +19,7 @@ def insert_config_zone(id_zone, nm_config):
     }
     return json_data
 
-def master_create_json_master(id_zone, nm_config):
+def master_create_json_master(data_zone, nm_config):
     nm_config_set = None
     if nm_config == "jkt":
         nm_config_set = "cmg"
@@ -31,7 +30,6 @@ def master_create_json_master(id_zone, nm_config):
     data_master_set = ""
     try:
         data_master = model.get_by_id("cs_master", "nm_config", nm_config_set)
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
     except Exception as e:
         return str(e)
     else:
@@ -60,7 +58,7 @@ def master_create_json_master(id_zone, nm_config):
         }
         return json_data
 
-def master_create_json_notify(id_zone, nm_config, urls):
+def master_create_json_notify(data_zone, nm_config, urls):
     master_to_slave = None
     if nm_config == "jkt":
         master_to_slave = "cmg"
@@ -70,14 +68,16 @@ def master_create_json_notify(id_zone, nm_config, urls):
         print("CONFIG NOT FOUND")
     try:
         master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     except Exception as e:
         return str(e)
     else:
         data_slave_set = []
         for i in data_slave:
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            try:
+                rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            except Exception as e:
+                return str(e)
             for a in rows:
                 data_slave_set.append(a['nm_master']) 
             data_slave_set.append(i['nm_slave_node'])
@@ -101,7 +101,7 @@ def master_create_json_notify(id_zone, nm_config, urls):
             result.append(http_response)
         return result
 
-def master_create_json_acl(id_zone, nm_config, urls):
+def master_create_json_acl(data_zone, nm_config, urls):
     master_to_slave = None
     if nm_config == "jkt":
         master_to_slave = "cmg"
@@ -112,14 +112,16 @@ def master_create_json_acl(id_zone, nm_config, urls):
 
     try:
         master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     except Exception as e:
         return str(e)
     else:
         data_slave_set = []
         for i in data_slave:
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            try:
+                rows = model.get_by_id("cs_master", "not nm_config", nm_config)
+            except Exception as e:
+                return str(e)
             for a in rows:
                 data_slave_set.append(a['nm_master']) 
             data_slave_set.append(i['nm_slave_node'])
@@ -143,8 +145,7 @@ def master_create_json_acl(id_zone, nm_config, urls):
             result.append(http_response)
         return result
 
-def set_file_all(id_zone):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_file_all(data_zone):
     json_data = {
         "file-set": {
                 "sendblock": {
@@ -165,8 +166,7 @@ def set_file_all(id_zone):
     }
     return json_data
 
-def set_mods_stats_all(id_zone, value):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_mods_stats_all(data_zone, value):
     json_data = {
         "modstat-set": {
                 "sendblock": {
@@ -187,8 +187,7 @@ def set_mods_stats_all(id_zone, value):
     }
     return json_data
 
-def set_serial_policy_all(id_zone, value):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_serial_policy_all(data_zone, value):
     json_data = {
         "serial-set": {
                 "sendblock": {
