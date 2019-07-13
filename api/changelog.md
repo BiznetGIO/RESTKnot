@@ -14,4 +14,5 @@ All notable changes to this project will be documented in this file.
 - add validation for record serial (rfc standar)
 - cors agent fixing
 - support sendcommand for MX, SOA, SRV Record to libknot format
+- support edit record, ttl, content, content_serial
 

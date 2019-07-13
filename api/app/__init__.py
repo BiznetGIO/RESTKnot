@@ -1,7 +1,6 @@
 import os
 from . import configs
 from flask import Flask
-from werkzeug.contrib.cache import MemcachedCache
 from flask_cors import CORS
 from flask_redis import FlaskRedis
 import psycopg2
@@ -9,9 +8,6 @@ from celery import Celery
 
 redis_store = FlaskRedis()
 root_dir = os.path.dirname(os.path.abspath(__file__))
-cache = MemcachedCache(['{}:{}'.format(
-    os.environ.get("MEMCACHE_HOST", os.getenv('MEMCACHE_HOST')),
-    os.environ.get("MEMCACHE_PORT", os.getenv('MEMCACHE_PORT')))])
 
 conn = psycopg2.connect(
     database=os.environ.get("DB_NAME", os.getenv('DB_NAME')),
@@ -30,6 +26,8 @@ celery = Celery(__name__,
 
 conn.set_session(autocommit=True)
 db = conn.cursor()
+
+cs_storage = os.environ.get("CLUSTER_STORAGE", "database")
 
 def create_app():
     app = Flask(__name__)

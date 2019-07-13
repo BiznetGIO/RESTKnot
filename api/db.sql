@@ -100,18 +100,6 @@ CREATE TABLE zn_content (
 	FAMILY "primary" (id_content, id_ttldata, nm_content)
 );
 
-CREATE TABLE zn_temp_record(
-	id_temp_record INT8 NOT NULL DEFAULT unique_rowid(),
-	id_record INT8 NULL,
-	id_ttl INT8 NOT NULL,
-	nm_content STRING NULL,
-	CONSTRAINT zn_temp_record_pk PRIMARY KEY (id_temp_record ASC),
-	INDEX zn_temp_record_auto_index_zn_temp_record_record_fk (id_record ASC),
-	INDEX zn_temp_record_auto_index_zn_temp_record_ttl_fk (id_ttl),
-	FAMILY "primary" (id_temp_record,id_record,id_ttl)
-);
-
-
 
 CREATE VIEW v_contentdata (id_content, id_zone, nm_zone, id_record, nm_record, nm_type, nm_ttl, nm_content) AS SELECT m1.id_content, m5.id_zone, m5.nm_zone, m3.id_record, m3.nm_record, m6.nm_type, m4.nm_ttl, m1.nm_content FROM knotdb.public.zn_content AS m1 JOIN knotdb.public.zn_ttldata AS m2 ON m1.id_ttldata = m2.id_ttldata JOIN knotdb.public.zn_record AS m3 ON m2.id_record = m3.id_record JOIN knotdb.public.zn_ttl AS m4 ON m2.id_ttl = m4.id_ttl JOIN knotdb.public.zn_type AS m6 ON m3.id_type = m6.id_type JOIN knotdb.public.zn_zone AS m5 ON m3.id_zone = m5.id_zone;
 
@@ -172,7 +160,6 @@ ALTER TABLE zn_ttldata ADD CONSTRAINT fk_id_ttl_ref_ttl FOREIGN KEY (id_ttl) REF
 ALTER TABLE zn_content ADD CONSTRAINT zn_content_zn_ttldata_fk FOREIGN KEY (id_ttldata) REFERENCES zn_ttldata (id_ttldata) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_user_zone ADD CONSTRAINT fk_id_zone_ref_zone FOREIGN KEY (id_zone) REFERENCES zn_zone (id_zone) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_user_zone ADD CONSTRAINT fk_userdata_id_ref FOREIGN KEY (userdata_id) REFERENCES userdata (userdata_id) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE zn_temp_record ADD CONSTRAINT zn_temp_record_zn_record_fk FOREIGN KEY (id_record) REFERENCES zn_record ON DELETE CASCADE ON UPDATE CASCADE;
 -- Validate foreign key constraints. These can fail if there was unvalidated data during the dump.
 ALTER TABLE cs_slave_node VALIDATE CONSTRAINT cs_id_master_fk;
 ALTER TABLE zn_record VALIDATE CONSTRAINT fk_id_type_ref_type;

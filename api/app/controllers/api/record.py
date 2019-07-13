@@ -143,13 +143,32 @@ class Record(Resource):
 
                 if record_checks:
                     return response(401, message="duplicate error")
-                
-  
+                msg_plus = ""
+                if typename['nm_type'] != "MX" or typename['nm_type'] != 'SRV':
+                    try:
+                        model.delete("zn_content_serial", "id_record", value=tags['id_record'])
+                    except Exception as e:
+                        print(e)
+                    else:
+                        data_content = None
+                        try:
+                            data_content = model.get_by_id("v_contentdata", "id_record", tags['id_record'])[0]
+                        except Exception as e:
+                            print(e)
+                        if typename['nm_type'] == 'A':
+                            if not utils.a_record_validation(data_content['nm_content']):
+                                msg_plus = " | A: Change Your content record now before sync"
+                        if typename['nm_type'] == 'CNAME':
+                            if not utils.cname_validation(data_content['nm_content']):
+                                msg_plus = " | Cname: Change Your content record now before sync"
+                        if typename['nm_type'] == 'TXT':
+                            if not utils.txt_validation(data_content['nm_content']):
+                                msg_plus = " | Txt: Change Your content record now before sync"
+                        
                 syncron.zone_begin_http(url, tags)
                 try:
                     data_unset = syncron.zone_unset(tags)
                     a = utils.send_http(url, data_unset)
-                    print(a)
                 except Exception as e:
                     syncron.zone_commit_http(url, tags)
                     return response(401, message="Record Not Unset | "+str(e))
@@ -174,7 +193,7 @@ class Record(Resource):
                 else:
                     respons = {
                         "status": result,
-                        "messages": "Record Edited",
+                        "messages": "Record Edited"+msg_plus,
                         "id": tags['id_record'],
                     }
                     syncron.zone_commit_http(url, tags)

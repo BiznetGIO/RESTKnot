@@ -117,7 +117,6 @@ class Content(Resource):
             check_validation_char = None
             if content_validation[0]['nm_type'] == 'A':
                 check_validation = utils.a_record_validation(lower_text_data)
-                print(check_validation)
             elif content_validation[0]['nm_type'] == 'CNAME':
                 check_validation = utils.cname_validation(lower_text_data)
                 cs_data_name = lower_text_data
@@ -140,12 +139,10 @@ class Content(Resource):
             #     pass
             else:
                 check_validation = True
-
             if check_validation_char:
                 return response(401, message="Value Not Valid")
             if not check_validation:
                 return response(401, message="Value Not Valid")
-            
             data_edits = {
                 "where":{
                     "id_content": tags['id_content']
@@ -167,6 +164,7 @@ class Content(Resource):
                 return response(401, message="Record Not Unset | "+str(e))
             
             try:
+                # if check_validation and check_validation_char
                 result = model.update(table, data_edits)
             except Exception as e:
                 syncron.zone_commit_http(url, tags_zone)

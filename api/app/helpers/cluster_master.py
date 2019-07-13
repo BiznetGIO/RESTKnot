@@ -1,10 +1,9 @@
 from app.models import model
-from app import db
+from app import db, cs_storage
 from app.libs import utils
 
 
-def insert_config_zone(id_zone, nm_config):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def insert_config_zone(data_zone, nm_config):
     json_data = {
         "command-set": {
                 "sendblock": {
@@ -20,7 +19,7 @@ def insert_config_zone(id_zone, nm_config):
     }
     return json_data
 
-def master_create_json_master(id_zone, nm_config):
+def master_create_json_master(data_zone, nm_config):
     nm_config_set = None
     if nm_config == "jkt":
         nm_config_set = "cmg"
@@ -30,8 +29,13 @@ def master_create_json_master(id_zone, nm_config):
         print("CONFIG NOT FOUND")
     data_master_set = ""
     try:
-        data_master = model.get_by_id("cs_master", "nm_config", nm_config_set)
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+        if cs_storage == 'static':
+            data_master_yml = utils.repomaster()
+            for r_master in data_master_yml:
+                if r_master['nm_config'] == nm_config_set:
+                    data_master = [r_master]
+        else:
+            data_master = model.get_by_id("cs_master", "nm_config", nm_config_set)
     except Exception as e:
         return str(e)
     else:
@@ -60,24 +64,33 @@ def master_create_json_master(id_zone, nm_config):
         }
         return json_data
 
-def master_create_json_notify(id_zone, nm_config, urls):
-    master_to_slave = None
-    if nm_config == "jkt":
-        master_to_slave = "cmg"
-    elif nm_config == "cmg" :
-        master_to_slave = "jkt"
-    else:
-        print("CONFIG NOT FOUND")
+def master_create_json_notify(data_zone, nm_config, urls):
+    data_slave = list()
     try:
-        master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-        data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
+        if cs_storage == 'static':
+            data_slave_yml = utils.reposlave()
+            for r_slave in data_slave_yml:
+                if r_slave['nm_config'] == nm_config:
+                    data_slave.append(r_slave)
+        else:
+            data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     except Exception as e:
         return str(e)
     else:
         data_slave_set = []
+        rows = list()
         for i in data_slave:
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            try:
+                if cs_storage == 'static':
+                    rows_yml = utils.reposlave()
+                    for r_get_slave in rows_yml:
+                        if r_get_slave['nm_config'] != nm_config:
+                            rows.append(r_get_slave)
+                else:
+                    rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            except Exception as e:
+                return str(e)
+            
             for a in rows:
                 data_slave_set.append(a['nm_master']) 
             data_slave_set.append(i['nm_slave_node'])
@@ -101,25 +114,32 @@ def master_create_json_notify(id_zone, nm_config, urls):
             result.append(http_response)
         return result
 
-def master_create_json_acl(id_zone, nm_config, urls):
-    master_to_slave = None
-    if nm_config == "jkt":
-        master_to_slave = "cmg"
-    elif nm_config == "cmg" :
-        master_to_slave = "jkt"
-    else:
-        print("CONFIG NOT FOUND")
-
+def master_create_json_acl(data_zone, nm_config, urls):
+    data_slave = list()
     try:
-        master_to_slave = model.get_by_id("cs_master", "nm_config", master_to_slave)[0]['nm_master']
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-        data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
+        if cs_storage == 'static':
+            data_slave_yml = utils.reposlave()
+            for r_slave in data_slave_yml:
+                if r_slave['nm_config'] == nm_config:
+                    data_slave.append(r_slave)
+        else:
+            data_slave = model.get_by_id("v_cs_slave_node", "nm_config", nm_config)
     except Exception as e:
         return str(e)
     else:
         data_slave_set = []
+        rows = list()
         for i in data_slave:
-            rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            try:
+                if cs_storage == 'static':
+                    rows_yml = utils.reposlave()
+                    for r_get_slave in rows_yml:
+                        if r_get_slave['nm_config'] != nm_config:
+                            rows.append(r_get_slave)
+                else:
+                    rows = model.get_by_id("v_cs_slave_node", "not nm_config", nm_config)
+            except Exception as e:
+                return str(e)
             for a in rows:
                 data_slave_set.append(a['nm_master']) 
             data_slave_set.append(i['nm_slave_node'])
@@ -143,8 +163,7 @@ def master_create_json_acl(id_zone, nm_config, urls):
             result.append(http_response)
         return result
 
-def set_file_all(id_zone):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_file_all(data_zone):
     json_data = {
         "file-set": {
                 "sendblock": {
@@ -165,8 +184,7 @@ def set_file_all(id_zone):
     }
     return json_data
 
-def set_mods_stats_all(id_zone, value):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_mods_stats_all(data_zone, value):
     json_data = {
         "modstat-set": {
                 "sendblock": {
@@ -187,8 +205,7 @@ def set_mods_stats_all(id_zone, value):
     }
     return json_data
 
-def set_serial_policy_all(id_zone, value):
-    data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+def set_serial_policy_all(data_zone, value):
     json_data = {
         "serial-set": {
                 "sendblock": {
