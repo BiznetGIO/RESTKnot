@@ -59,7 +59,7 @@ def create_json_acl(data_zone, nm_master):
                 "sendblock": {
                 "cmd": "conf-set",
                 "zone": data_zone['nm_zone'],
-                "item": "notify", 
+                "item": "acl", 
                 "section":"zone",
                 "data": nm_master
             },

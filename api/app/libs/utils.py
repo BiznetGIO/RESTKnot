@@ -48,6 +48,16 @@ def repodefault():
     repo_file = "{}/static/templates/default.yml".format(abs_path)
     return yaml_parser(repo_file)
 
+def reposlave():
+    abs_path = root_dir
+    repo_file = "{}/static/cluster/slave.yml".format(abs_path)
+    return yaml_parser(repo_file)
+
+def repomaster():
+    abs_path = root_dir
+    repo_file = "{}/static/cluster/master.yml".format(abs_path)
+    return yaml_parser(repo_file)
+
 def get_command(req):
     command = req.split("/")
     command = command[2]

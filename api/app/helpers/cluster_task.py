@@ -4,6 +4,7 @@ from app.libs import utils
 from app.helpers import command
 from app.models import model
 from app.helpers import cluster_master, cluster_slave
+from app import cs_storage
 
 
 @celery.task(bind=True)
@@ -32,16 +33,20 @@ def cluster_task_master(self, tags):
     respons = []
     result = []
     id_zone = tags['id_zone']
-
+    master_data = None
     try:
-        master_data = model.get_all("cs_master")
+        if cs_storage == 'static':
+            master_data = utils.repomaster()
+        else:
+            master_data = model.get_all("cs_master")
     except Exception as e:
         return str(e)
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
-            print()
+            print(e)
+        
         for i in master_data:
             print("Execute Master: "+i['nm_master'])
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
@@ -67,7 +72,8 @@ def cluster_task_master(self, tags):
             result.append(http_response)
             command.conf_commit_http(urls)
             respons.append({
-                "server": i['nm_config'],
+                "config": i['nm_config'],
+                "nm_server": i['nm_master'],
                 "data": result
             })
         return respons
@@ -78,15 +84,17 @@ def cluster_task_slave(self, tags):
     result = []
     id_zone = tags['id_zone']
     try:
-        slave_data = model.get_all("v_cs_slave_node")
+        if cs_storage == 'static':
+            slave_data = utils.reposlave()
+        else:
+            slave_data = model.get_all("v_cs_slave_node")
     except Exception as e:
-        print(e)
         return str(e)
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
-            print()
+            print(e)
         for i in slave_data:
             print("Execute Slave: "+i['nm_slave_node'])
             urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
@@ -96,9 +104,6 @@ def cluster_task_slave(self, tags):
             result.append(http_response)
             ffi_slave_master = cluster_slave.master_create_json(data_zone, i['nm_master'])
             http_response = utils.send_http(urls, ffi_slave_master)
-            result.append(http_response)
-            ffi_slave_notify = cluster_slave.create_json_notify(data_zone,  i['nm_master'])
-            http_response = utils.send_http(urls, ffi_slave_notify)
             result.append(http_response)
             ffi_slave_acl = cluster_slave.create_json_acl(data_zone, i['nm_master'])
             http_response = utils.send_http(urls, ffi_slave_acl)
