@@ -51,11 +51,8 @@ class NotifyOnAgent(Resource):
                         "nm_config": url_data['nm_config']
                     }
                     master = check_on_sync.sync_task_master.delay(params)
-                    # result.append({
-                    #     "id": str(master),
-                    #     "state": master.state
-                    # })
-                    # print(result)
-
-
+                    result.append({
+                        "id": str(master),
+                        "state": master.state
+                    })
         return response(200, data=result, message="Syncronizning Process")

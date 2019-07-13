@@ -46,7 +46,6 @@ def sync_task_master(self, data):
     respons = []
     result = []
     data_zone = data['data_zone']
-    nm_master = data['nm_master']
     urls = data['urls'] 
     command.conf_begin_http(urls)
     ffi_insert_conf = cluster_master.insert_config_zone(data_zone, data['nm_config'])
