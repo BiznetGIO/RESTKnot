@@ -16,6 +16,7 @@ from .admin.create import *
 from .cs_master import *
 from .cs_slave_node import *
 from .cluster import *
+from .check_on import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -55,5 +56,8 @@ api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
 api.add_resource(ClusterCheckSlave, '/cluster/slave/<id_slave>')
 api.add_resource(ClusterUnsetCheckMaster, '/cluster/unset/master/<id_master>')
 api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
+
+# CHECK ON
+api.add_resource(NotifyOnAgent, "/agent/check")
 
 
