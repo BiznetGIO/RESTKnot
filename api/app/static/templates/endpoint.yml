@@ -564,49 +564,6 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
-  zn_temp_record:
-    insert:
-      tags:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      fields:
-        id_record:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        id_ttl:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        nm_content:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-    remove:
-      tags:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-    where:
-      tags:
-        id_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:    
-        nm_content:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:  
   sendcommand:
     conf-insert:
       tags:

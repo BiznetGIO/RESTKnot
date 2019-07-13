@@ -16,7 +16,6 @@ from .admin.create import *
 from .cs_master import *
 from .cs_slave_node import *
 from .cluster import *
-from .temp_record import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -43,7 +42,6 @@ api.add_resource(Content, '/content')
 api.add_resource(ContentSerial, '/content_serial')
 api.add_resource(SendCommandRest, '/sendcommand')
 api.add_resource(CreateDNS, '/user/dnscreate')
-api.add_resource(TempRecord,'/temp_record')
 ## ADMIN AUTH
 api.add_resource(AdminAuth, '/admin/login')
 api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
