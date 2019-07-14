@@ -16,7 +16,6 @@ def read_rest(data):
             "status": "Command Execute",
             "description": data
         }
-        # print(response)
         return response
     
     try:

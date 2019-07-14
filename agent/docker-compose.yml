@@ -1,19 +1,22 @@
-version: '0.5.6'
+version: '3'
 services:
   knot:
-    image: biznetgio/knot_agent
+    image: registry.gitlab.com/biznetgio/knot_agent:1.1.8
     environment:
       - APP_HOST=0.0.0.0
       - APP_PORT=6967
       - KNOT_LIB=libknot.so
-      - MASTER_HOST='' # ip master target
-      - MASTER_PORT='' # port master target
-      - NAME_HOST='' # knot host
-      - STATUS_AGENT='' # master or slave
+      - MASTER_HOST=10.10.3.29
+      - MASTER_PORT=6968
+      - NAME_HOST=cmg01z00knsl001
+      - STATUS_AGENT='slave'
+      - FLASK_DEBUG=True
     volumes:
+      - .:/app
       - /etc/knot/knot.conf:/etc/knot/knot.conf
       - /var/lib/knot:/var/lib/knot
       - /var/run/knot:/run/knot/
-    command: sh run.sh server production 2
+    # command: gunicorn production:app -b 0.0.0.0:6967 --reload --log-level debug
+    command: python3 manage.py server
     ports:
       - "6967:6967"

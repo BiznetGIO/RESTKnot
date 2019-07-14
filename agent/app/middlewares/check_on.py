@@ -9,12 +9,14 @@ master_port = os.environ.get("MASTER_PORT", os.getenv("MASTER_PORT"))
 status_agent = os.environ.get("STATUS_AGENT", os.getenv("STATUS_AGENT"))
 url = "http://"+str(master_ip)+":"+str(master_port)+"/api/agent/check"
 
+
 def check_on_server():
     json_read = {
         "zone-read": {
             "sendblock": {
-                "cmd": "zone-read",
-                "zone": ""
+                "cmd": "conf-read",
+                "section": "zone",
+                "item": "domain"
             },
             "receive": {
                 "type": "block"
@@ -26,14 +28,23 @@ def check_on_server():
         data_zone = read_rest(json_read)['data']
     except Exception as e:
         print(e)
-    data_zone = json.loads(data_zone)
-    zone_send = list()
-    for i in data_zone:
-        zone_send.append(i[:-1])
-    data = {
-        "nm_host": nm_host,
-        "status_agent": status_agent,
-        "data_zone": zone_send
-    }
-    response = utils.send_http(url, data)
-    print(response)
+    else:
+        zone_send = list()
+        try:
+            data_zone = json.loads(data_zone)['zone']
+        except Exception as e:
+            print("ERR: ", e)
+        for i in data_zone:
+            zone_send.append(i[:-1])
+        
+        data = {
+            "nm_host": nm_host,
+            "status_agent": status_agent,
+            "data_zone": zone_send
+        }
+        try:
+            response = utils.send_http(url, data)
+        except Exception as e:
+            print(e)
+        else:
+            print(response)
