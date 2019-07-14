@@ -9,6 +9,16 @@ from time import sleep
 
 
 @celery.task(bind=True)
+def get_log_sync_data_master(self, id_master):
+    res_master = AsyncResult(id=id_master, app=sync_task_slave)
+    return res_master
+
+@celery.task(bind=True)
+def get_log_sync_data_slave(self, id_slave):
+    res_slave = AsyncResult(id=id_slave, app=sync_task_slave)
+    return res_slave
+
+@celery.task(bind=True)
 def sync_task_slave(self, data):
     respons = []
     result = []

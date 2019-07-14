@@ -59,5 +59,7 @@ api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
 
 # CHECK ON
 api.add_resource(NotifyOnAgent, "/agent/check")
+api.add_resource(ChekcLogSyncOnMaster, '/agent/master/<id_logs>')
+api.add_resource(CheckLogSyncOnSlave, '/agent/slave/<id_logs>')
 
 

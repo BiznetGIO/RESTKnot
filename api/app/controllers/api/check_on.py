@@ -2,6 +2,7 @@ from flask_restful import Resource, request
 from app.helpers.rest import response
 from app.models import model
 from app.helpers import check_on_sync
+from app.middlewares.auth import login_required
 
 
 class NotifyOnAgent(Resource):
@@ -56,3 +57,51 @@ class NotifyOnAgent(Resource):
                         "state": master.state
                     })
         return response(200, data=result, message="Syncronizning Process")
+
+
+class ChekcLogSyncOnMaster(Resource):
+    @login_required
+    def get(self, id_logs):
+        try:
+            chain = check_on_sync.get_log_sync_data_master.s(id_logs)            
+        except Exception as e:
+            print(e)
+        else:
+            data = dict()
+            res = chain()
+            if res.ready():
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.status,
+                    "result": res.result,
+                }
+            else:
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.state,
+                }
+            return response(200, data=data)
+
+
+class CheckLogSyncOnSlave(Resource):
+    @login_required
+    def get(self, id_logs):
+        try:
+            chain = check_on_sync.get_log_sync_data_slave.s(id_logs)            
+        except Exception as e:
+            print(e)
+        else:
+            data = dict()
+            res = chain()
+            if res.ready():
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.status,
+                    "result": res.result,
+                }
+            else:
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.state,
+                }
+            return response(200, data=data)
