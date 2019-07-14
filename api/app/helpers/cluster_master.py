@@ -175,7 +175,7 @@ def set_file_all(data_zone):
                 "ttl": "",
                 "identifier": data_zone['nm_zone'],
                 "section":"zone",
-                "data": data_zone['nm_zone']+"_"+data_zone['id_zone']+".zone" 
+                "data": data_zone['nm_zone']+"_"+str(data_zone['id_zone'])+".zone" 
             },
                 "receive": {
                 "type": "block"
