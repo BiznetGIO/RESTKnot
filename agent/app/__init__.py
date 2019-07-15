@@ -5,18 +5,12 @@ import os
 from app.middlewares import check_on
 from app.controller import api_blueprint
 
-try:
-    check_on.check_on_server()
-except Exception as e:
-    print(e)
-
 app = Flask(__name__)
 app.config.from_object(configs.Config)
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.register_blueprint(api_blueprint)
-
 
 
 

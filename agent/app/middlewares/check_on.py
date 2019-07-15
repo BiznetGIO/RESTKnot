@@ -33,18 +33,37 @@ def check_on_server():
         try:
             data_zone = json.loads(data_zone)['zone']
         except Exception as e:
-            print("ERR: ", e)
-        for i in data_zone:
-            zone_send.append(i[:-1])
-        
-        data = {
-            "nm_host": nm_host,
-            "status_agent": status_agent,
-            "data_zone": zone_send
-        }
-        try:
-            response = utils.send_http(url, data)
-        except Exception as e:
-            print(e)
+            data_zone = {}
         else:
-            print(response)
+            for i in data_zone:
+                zone_send.append(i[:-1])
+            
+            data = {
+                "nm_host": nm_host,
+                "status_agent": status_agent,
+                "data_zone": zone_send
+            }
+            try:
+                response = utils.send_http(url, data)
+            except Exception as e:
+                print(e)
+            else:
+                print(response)
+
+def refreshZone():
+    json_read = {
+        "zone-read": {
+            "sendblock": {
+                "cmd": "zone-refresh"
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    try:
+        data = read_rest(json_read)
+    except Exception as e:
+        print(e)
+    else:
+        print("Zone Refresh")

@@ -13,4 +13,4 @@ RUN apk update && \
     pip3 install -r requirements.txt
 
 EXPOSE 6967
-# RUN apk del build-base
+RUN apk del build-base

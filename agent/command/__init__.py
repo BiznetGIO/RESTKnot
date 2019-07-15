@@ -17,10 +17,10 @@ def read_rest(data):
             "description": data
         }
         return response
-    
     try:
         data = parser.execute_command(initialiaze_command)
     except Exception as e:
+        print("ERROR READ REST: ", e)
         response={
             "result": False,
             "error": str(e),

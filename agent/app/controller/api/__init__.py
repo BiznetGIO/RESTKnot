@@ -6,4 +6,5 @@ from .command_rest import *
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 api = Api(api_blueprint)
 api.add_resource(CommandRest, '/command_rest')
+api.add_resource(CheckOnServer, '/bootstrap')
 

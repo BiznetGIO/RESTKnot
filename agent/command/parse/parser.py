@@ -1,6 +1,7 @@
 from command.utility import utils
 from command.control import client
 from command.control.libknot.control import *
+# from libknot.control import *
 import json, os, logging
 
 knot_lib = os.environ.get("KNOT_LIB", os.getenv("KNOT_LIB"))
@@ -131,8 +132,10 @@ def parse_command_zone(json_data):
 def execute_command(initialiaze):
     load_lib(knot_lib)
     ctl = KnotCtl()
-    ctl.connect(knot_socket)
-    
+    try:
+        ctl.connect(knot_socket)
+    except KnotCtlError as e:
+        print("EXC 2: ",e)
     try:
         resp = None
         no = 0
@@ -143,8 +146,10 @@ def execute_command(initialiaze):
             for project in data:
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
+                print("FROM : ", parameter_block)
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
     except KnotCtlError as e:
+        print("ERROR EXC: ", e)
         resp = {
             "status": False,
             "error": str(e)
