@@ -96,7 +96,9 @@ function ajaxDor(link,json_data){
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
     var url_knot = 'http://127.0.0.1';
-    // var url_knot = 'http://10.10.3.32';
+    // var url_knot = 'http://10.10.3.29';
+    // var url_knot = 'http://103.89.5.121';
+    // var url_knot = 'http://103.93.54.55';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -111,6 +113,12 @@ $(document).ready(function(){
             "content":1,
             "serial": 0,
             "id": "402386688803307521"
+        },
+        {
+            "name": "TXT",
+            "content":1,
+            "serial": 0,
+            "id": "402427759247851521"
         },
         {
             "name": "CNAME",
@@ -381,7 +389,62 @@ $(document).ready(function(){
             });
 
             req.done(function(data){
-                document.location.reload();
+                // document.location.reload();
+                // activate for test cluster
+                var id_zone = data.data.data.id_zone
+                var json_cluster = {
+                    "cluster-master": {
+                       "tags": {
+                           "id_zone" : id_zone
+                       }
+                    }
+                 }
+                var req =  $.ajax({
+                    url:uri_fix+"/api/sendcommand",
+                    type: "post",
+                    headers:{
+                        "Access-Token": check_login
+                    },
+                    data: JSON.stringify(json_cluster),
+                    contentType:"application/json",
+                    dataType:"json"
+                });
+                req.done(function(data){
+                    console.log("Clustered Master Success")
+                    console.log(data)
+                    var json_cluster_slave = {
+                        "cluster-slave": {
+                           "tags": {
+                               "id_zone" : id_zone
+                           }
+                        }
+                    }
+    
+                    var req2 =  $.ajax({
+                        url:uri_fix+"/api/sendcommand",
+                        type: "post",
+                        headers:{
+                            "Access-Token": check_login
+                        },
+                        data: JSON.stringify(json_cluster_slave),
+                        contentType:"application/json",
+                        dataType:"json"
+                    });
+                    req2.done(function(data){
+                        console.log("Clustered Slave Success")
+                        console.log(data)
+                        // document.location.reload();
+                    });
+                    req2.fail(function(data){
+                        console.log("Check Your Request")
+                    })
+                });
+                req.fail(function(data){
+                    console.log("Check Your Request")
+                })
+            });
+            req.fail(function(){
+                console.log("Check Your Server")
             });
 
             event.preventDefault();
