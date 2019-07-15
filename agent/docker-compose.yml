@@ -6,6 +6,10 @@ services:
       - APP_HOST=0.0.0.0
       - APP_PORT=6967
       - KNOT_LIB=libknot.so
+      - MASTER_HOST='' # ip master target
+      - MASTER_PORT='' # port master target
+      - NAME_HOST='' # knot host
+      - STATUS_AGENT='' # master or slave
     volumes:
       - /etc/knot/knot.conf:/etc/knot/knot.conf
       - /var/lib/knot:/var/lib/knot
