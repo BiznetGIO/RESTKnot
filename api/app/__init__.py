@@ -1,13 +1,16 @@
 import os
 from . import configs
 from flask import Flask
+from werkzeug.contrib.cache import MemcachedCache
 from flask_cors import CORS
 from flask_redis import FlaskRedis
 import psycopg2
-from celery import Celery
 
 redis_store = FlaskRedis()
 root_dir = os.path.dirname(os.path.abspath(__file__))
+cache = MemcachedCache(['{}:{}'.format(
+    os.environ.get("MEMCACHE_HOST", os.getenv('MEMCACHE_HOST')),
+    os.environ.get("MEMCACHE_PORT", os.getenv('MEMCACHE_PORT')))])
 
 conn = psycopg2.connect(
     database=os.environ.get("DB_NAME", os.getenv('DB_NAME')),
@@ -18,16 +21,8 @@ conn = psycopg2.connect(
     host=os.environ.get("DB_HOST", os.getenv('DB_HOST'))
 )
 
-celery = Celery(__name__,
-                broker=os.environ.get("CELERY_BROKER_URL",
-                                        os.getenv("CELERY_BROKER_URL")),
-                backend=os.environ.get("CELERY_RESULT_BACKEND",
-                                        os.getenv("CELERY_BROKER_URL")))
-
 conn.set_session(autocommit=True)
 db = conn.cursor()
-
-cs_storage = os.environ.get("CLUSTER_STORAGE", "database")
 
 def create_app():
     app = Flask(__name__)
@@ -36,7 +31,6 @@ def create_app():
         "FLASK_REDIS_URL",os.getenv("FLASK_REDIS_URL"))
     app.config['PROPAGATE_EXCEPTIONS'] = True
     redis_store.init_app(app)
-    
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     from .controllers import api_blueprint

@@ -31,7 +31,8 @@ class TestZone:
         result = client.get('api/zone',headers=header)
         assert result.status_code == 200
 
-        ## INSERT ZONE
+    @pytest.mark.run(order=2)
+    def test_insert_zone(self,client,get_header,get_mock):
 
         nm_zone = get_mock['nm_zone']
         header = get_header
@@ -47,7 +48,8 @@ class TestZone:
         assert result.status_code == 200
 
 
-        ## Search Zone
+    @pytest.mark.run(order=3)
+    def test_search_zone(self,client,get_header,get_mock):
 
         nm_zone = get_mock['nm_zone']
         header = get_header
@@ -64,8 +66,8 @@ class TestZone:
 
         assert result.status_code == 200
 
-        ## SYNC_ZONE
-
+    @pytest.mark.run(order=4)
+    def test_sync_zone(self,client,get_header,get_mock):
         headers = get_header
         id_zone = self.var_mock.ids['id_zone']
         data = {'conf-insert': {'tags': {'id_zone': id_zone}}}
@@ -78,7 +80,8 @@ class TestZone:
         result = self.post_data(client,'sendcommand',data=data, headers=headers)
         assert result.status_code == 200
 
-        # GET TTL
+    @pytest.mark.run(order=5)
+    def test_where_ttl(self,client,get_header,get_mock):
         headers = get_header
         nm_ttl = get_mock['nm_ttl']
         data = utils.get_model('where',{"nm_ttl" : nm_ttl})
@@ -89,8 +92,8 @@ class TestZone:
         id_ttl = result['data'][0]['id_ttl']
         self.var_mock.ids['id_ttl'] = id_ttl
 
-        # GET TYPE
-
+    @pytest.mark.run(order=6)
+    def test_where_type(self,client,get_header,get_mock):
         header = get_header
         nm_type = get_mock['nm_type']
         data = utils.get_model('where',{"nm_type" : nm_type})
@@ -110,7 +113,8 @@ class TestZone:
 
 
 
-        ## ADD RECORD
+    @pytest.mark.run(order=7)
+    def test_add_record(self,client,get_header):
         header = get_header
         id_zone = self.var_mock.ids['id_zone']
         id_type = self.var_mock.ids['id_type']
@@ -118,7 +122,6 @@ class TestZone:
                                 "id_zone" : str(id_zone), "id_type" : str(id_type)})
         
         result = self.post_data(client,'record',data=data, headers=header)
-        print("CC : ",result.data)
         assert result.status_code == 200
 
         result = json.loads(result.data.decode('utf8'))
@@ -141,7 +144,8 @@ class TestZone:
 
 
 
-        ## ADD TTL_DATA
+    @pytest.mark.run(order=8)
+    def test_add_ttldata(self,client,get_header):
         header = get_header
         id_record = self.var_mock.ids['id_record']
         id_ttl = self.var_mock.ids['id_ttl']
@@ -163,7 +167,8 @@ class TestZone:
 
 
 
-        # ADD CONTENT
+    @pytest.mark.run(order=9)
+    def test_add_content(self,client,get_header):
         id_ttldata = self.var_mock.ids['id_ttldata']
         header = get_header
 
@@ -184,7 +189,8 @@ class TestZone:
         id_content = result['message']['id']
         self.var_mock.ids['id_content_ns']=id_content
 
-        ## ADD CONTENT SERIAL
+    @pytest.mark.run(order=10)
+    def test_add_content_serial(self,client,get_header):
         id_record = self.var_mock.ids['id_record']
         header = get_header
         content_serial = 'test_content_serial'
@@ -200,7 +206,8 @@ class TestZone:
 
 
      ##SYNCHRONIZATION
-
+    @pytest.mark.run(order=11)
+    def test_sync(self,client,get_header):
 
     ## SOA
         headers = get_header
@@ -217,10 +224,6 @@ class TestZone:
     ### Start record Removal, Unsync Record First
         id_record = self.var_mock.ids['id_record']
         data = {"zone-unset":{"tags":{"id_record" : id_record}}}
-        data_test = {"where":{"tags":{"id_record": id_record}}}
-        res_test = self.post_data(client,'record',data_test,headers)
-        res_json = json.loads(res_test.data.decode('utf8'))
-        print(res_json)
         res = self.post_data(client,'sendcommand',data,headers)
         
         assert res.status_code == 200
@@ -229,42 +232,34 @@ class TestZone:
         data = {"zone-unset":{"tags":{"id_record" : id_record}}}
         res = self.post_data(client,'sendcommand',data,headers)
 
-        ## REMOVE CONTENT SERIAL
-
+    @pytest.mark.run(order=12)
+    def test_remove_content_serial(self,client,get_header):
         id_content_serial = self.var_mock.ids['id_content_serial']
         data = utils.get_model("remove",{"id_content_serial" : id_content_serial})
         res = self.post_data(client,'content_serial',data,get_header)
         assert res.status_code == 200
 
-        ## REMOVE CONTENT
+    @pytest.mark.run(order=13)
+    def test_remove_content(self,client,get_header):
         id_content = self.var_mock.ids['id_content']
         data = utils.get_model("remove",{"id_content" : id_content})
         res = self.post_data(client,'content',data,get_header)
         assert res.status_code == 200
 
-        ## REMOVE TTL DATA
+    @pytest.mark.run(order=14)
+    def test_remove_ttldata(self,client,get_header):
         id_ttldata = self.var_mock.ids['id_ttldata']
         data = utils.get_model("remove",{"id_ttldata" : id_ttldata})
         res = self.post_data(client,'ttldata',data,get_header)
         assert res.status_code == 200
-        
-        ## REMOVE RECORD
+
+    @pytest.mark.run(order=15)
+    def test_remove_record(self,client,get_header):
         id_record = self.var_mock.ids['id_record']
         data = utils.get_model("remove",{"id_record" : id_record})
         res = self.post_data(client,'record',data,get_header)
         assert res.status_code == 200
 
-        ## REMOVE ZONE
-        id_zone = self.var_mock.ids['id_zone']
-        header = get_header
-
-        data = {"conf-unset":{"tags":{"id_zone" : id_zone}}}
-        result = self.post_data(client,'sendcommand',data,header)
-        assert result.status_code == 200
-
-        data = utils.get_model('remove', {"id_zone" : id_zone})
-        result = self.post_data(client,'zone',data=data, headers=header)
-        assert result.status_code == 200
 
 
 
@@ -404,14 +399,26 @@ class TestZone:
         assert queer.status_code == 200
 
     @pytest.mark.run(order=16)
-    def test_userzone(self,client,get_header,generate_userdata,get_creds):
-        user_id = get_creds['user_id']
+    def test_userzone(self,client,get_header):
         header = get_header
         header['user-id'] = '9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91'
         data = {"id_zone" : self.var_mock.ids['id_zone']}
         res = self.post_data(client,'userzone',data=data,headers=header)
         assert res.status_code == 200
+        print(res)
         res = client.get('api/userzone',headers=header)
         assert res.status_code == 200
         
         
+    @pytest.mark.run(order=17)
+    def test_add_remove_zone(self,client,get_header):
+        id_zone = self.var_mock.ids['id_zone']
+        header = get_header
+
+        data = {"conf-unset":{"tags":{"id_zone" : id_zone}}}
+        result = self.post_data(client,'sendcommand',data,header)
+        assert result.status_code == 200
+
+        data = utils.get_model('remove', {"id_zone" : id_zone})
+        result = self.post_data(client,'zone',data=data, headers=header)
+        assert result.status_code == 200
