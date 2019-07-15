@@ -16,7 +16,8 @@ class TestCreate:
 		res = client.post(url,data=json.dumps(data),
 					content_type='application/json', headers=headers)
 		return res
-	@pytest.mark.run(order=-1)
+
+	@pytest.mark.run(order=1)
 	def test_set_default_dns(self,client,get_header,get_mock):
 
 		header = get_header
@@ -26,7 +27,6 @@ class TestCreate:
 		result = self.post_data(client,'user/dnscreate',data=data,headers=header)
 		assert result.status_code == 200
 		result = json.loads(result.data.decode('utf8'))
-		print(result)
 		id_zone = result['data']['data']['id_zone']
 		self.var_mock.ids['id_zone'] = id_zone
 		
@@ -51,7 +51,8 @@ class TestCreate:
 		assert 'SOA'   in d_result
 
 
-		## ADD RECORD
+	@pytest.mark.run(order=2)
+	def test_add_record(self,client,get_header,get_mock):
 		headers = get_header
 		id_zone = self.var_mock.ids['id_zone']
 		d_list = list()
@@ -118,10 +119,7 @@ class TestCreate:
 			
 			for key,value in result.items():
 				if key in row:
-					val_1 = row[key].lower()
-					val_2 = value.lower()
-					print(val_1,val_2)
-					assert val_1 == val_2
+					assert row[key] == value
 			
 
 			#Checking Record Content
@@ -136,8 +134,8 @@ class TestCreate:
 
 			for key,value in result.items():
 				if key in row:
-					assert row[key].lower() == value.lower()
-			print("ROW : ",row)
+					assert row[key] == value
+
 			if 'nm_content_serial' in row:
 				#Checking Record Content Serial if Exists
 				data = utils.get_model('view',{"id_content_serial" : str(row['id_content_serial'])})
@@ -151,7 +149,7 @@ class TestCreate:
 				
 				for key,value in res.items():
 					if key in row:
-						assert row[key].lower() == value.lower()
+						assert row[key] == value
 
 			if row['nm_type'].upper() == "SRV":
 				data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
@@ -169,7 +167,8 @@ class TestCreate:
 		self.var_mock.ids.update({"result" : d_list})
 
 
-		## KNOT TRANSACTION
+	@pytest.mark.run(order=3)
+	def test_knot_transaction(self,client,get_header):
 		id_zone = self.var_mock.ids['id_zone']
 		data = {"zone-begin" : {"tags" : {"id_zone" : id_zone}}}
 		res = self.post_data(client,"sendcommand",data,get_header)
@@ -184,8 +183,9 @@ class TestCreate:
 		assert res.status_code == 200
 
 	### Testing Content Data Search and View
+	@pytest.mark.run(order = 4)
+	def test_search_data(self,client,get_header):
 		d_mock = self.var_mock.ids['result'][0]
-		print(d_mock)
 		v_end = ['ttldata','record','content','content_serial']
 		for key,value in d_mock.items():
 			if 'id_' in key:

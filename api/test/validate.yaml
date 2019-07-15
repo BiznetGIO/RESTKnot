@@ -1,0 +1,3 @@
+- hostname:
+  - input: '@'
+    expected: this::domain
