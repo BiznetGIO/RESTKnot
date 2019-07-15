@@ -42,6 +42,7 @@ if [ $command = 'server' ]
     then
     if [ $env = 'production' ]
         then
+        rep_ok 'STARTING | UPDATE HEAT CONFIGURATION'
         rep_ok 'STARTING | SERVER'
         run_gunicorn $APP_HOST $APP_PORT $worker
 
