@@ -2,7 +2,6 @@ import pytest
 import json
 import utils
 from utils import post_data
-import os
 
 class Vars:
     ids = dict()
@@ -20,51 +19,39 @@ class TestZone:
         return res
 
     @pytest.mark.run(order=1)
-    def test_admin_login(self,client,get_creds,get_fail_creds):
-        """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
+    def test_admin_login(self,client):
+      """ Before you begin this test, Set the environment on app/controllers/api/admin/auth.py as follows:
         'ADMIN_USER' = your username, 'ADMIN_PASSWORD' = your password. """
-        
-        os.environ['ADMIN_USER'] = get_creds['username']
-        os.environ['ADMIN_PASSWORD'] = get_creds['password']
-        
-        datacreds = {
-        "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
-        "user_id": os.getenv('CREDENTIAL_USER_ID')
-        }
-        json_data = json.dumps(datacreds)
-        result = client.post('api/user',data=json_data,content_type='application/json')
-        ### SUCCESS
 
-        data = {
-        "username" : get_creds['username'],
-        "password" : get_creds['password'],
-        "project_id": get_creds['project_id']
-        }
-        result = self.post_data(client,"admin/login",data)
-        assert result.status_code == 200
+    ### SUCCESS
 
-        ### FAIL, WRONG PASSWORD
+      data = {
+              "username" : "test@biznetgio.com",
+              "password" : "BiznetGio2017",
+              "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"
+              }
+      result = self.post_data(client,"admin/login",data)
+      assert result.status_code == 200
 
-        data = {
-        "username" : get_creds['username'],
-        "password" : get_fail_creds['password'],
-        "project_id": get_fail_creds['project_id']
-        }
-        result = self.post_data(client,"admin/login",data)
-        assert result.status_code == 200
+    ### FAIL, WRONG PASSWORD
 
-        ### FAIL, PROJECT ID DOESNT EXIST
+      data = {
+              "username" : "test@biznetgio.com",
+              "password" : "password",
+              "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"
+              }
+      result = self.post_data(client,"admin/login",data)
+      assert result.status_code == 200
 
-        data = {
-        "username" : get_creds['username'],
-        "password" : get_creds['password'],
-        "project_id": get_fail_creds['project_id']
-        }
-        result = self.post_data(client,"admin/login",data)
-        assert result.status_code == 200
-        
-        os.environ.pop("ADMIN_USER")
-        os.environ.pop("ADMIN_PASSWORD")
+    ### FAIL, PROJECT ID DOESNT EXIST
+
+      data = {
+              "username" : "test@biznetgio.com",
+              "password" : "BiznetGio2017",
+              "project_id": "test"
+              }
+      result = self.post_data(client,"admin/login",data)
+      assert result.status_code == 200
 
     @pytest.mark.run(order=2)
     def test_get_zone(self,client,get_mock):

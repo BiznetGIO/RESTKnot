@@ -18,12 +18,12 @@ class TestAuth:
         return res
 
     @pytest.mark.run(order=1)
-    def test_get_user_data(self,client,get_header,get_creds):
+    def test_get_user_data(self,client,get_header):
         res = client.get('api/user', headers = get_header)
         assert res.status_code == 200
         result = json.loads(res.data.decode('utf8'))
         for row in result['data']:
-            if row['user_id'] == get_creds['project_id']:
+            if row['user_id'] == '9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91':
                 self.var_mock.ids['user_id'] = row['user_id']
                 self.var_mock.ids['userdata_id'] = row['userdata_id']
                 self.var_mock.ids['project_id'] = row['project_id']
@@ -55,8 +55,8 @@ class TestAuth:
         assert res.status_code == 200
 
     @pytest.mark.run(order=5)
-    def test_get_userdata_project_id(self,client,get_header,get_creds):
-        url = 'api/user/project/' + get_creds['project_id']
+    def test_get_userdata_project_id(self,client,get_header):
+        url = 'api/user/project/' + self.var_mock.ids['project_id']
         res = client.get(url,headers=get_header)
         assert res.status_code == 200
 
@@ -68,10 +68,10 @@ class TestAuth:
         assert res.status_code == 200
 
 
-    def test_login(self,client,get_creds):
+    def test_login(self,client):
         """ Log In using your portal neo account """
         url = 'api/login'
-        data = {"username" : get_creds['username'], "password": get_creds['password'] }
+        data = {"username" : "test@biznetgio.com", "password": "BiznetGio2017"}
         res = client.post(url,data=json.dumps(data),content_type="application/json")
         assert res.status_code == 200
 
@@ -85,11 +85,11 @@ class TestAuth:
         res = client.get(url)
         assert res.status_code == 200
 
-    def test_admin_login(self,client,get_creds):
+    def test_admin_login(self,client):
         endpoint = 'admin/login'
-        data = {	"username" : get_creds['username'],
-                    "password" : get_creds['password'],
-                    "project_id" : get_creds['project_id']
+        data = {	"username" : "test@biznetgio.com",
+                    "password" : "BiznetGio2017",
+                    "project_id" : "c8b7b8ee391d40e0a8aef3b5b2860788"
                     }
         res = self.post_data(client,endpoint,data,None)
         assert res.status_code == 200
