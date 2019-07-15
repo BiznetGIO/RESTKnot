@@ -4,7 +4,8 @@ import os
 import pytest
 import sys
 
-sys.path.append('/home/mfriszky/worksworksworks/branch-sandbox/RESTKnot/API')
+cwd = os.getcwd()
+sys.path.append(cwd)
 from app import create_app,db
 
 class MockData:
@@ -15,11 +16,35 @@ class MockData:
         "nm_type"   : "SOA",
         "requirements" :
         {
-            "SRV" : {"nm_record": "SRVnm", "nm_type" : "SRV", "nm_ttl" : "1800", "nm_content" : "srv_content", "nm_content_serial" : "serial_example"},
-            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "mx_content", "nm_content_serial" : "serial_example"},
+            "SRV" : {"nm_record": "SRVnm", "nm_type" : "SRV", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "0 50 @"},
+            "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "@"},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
-    creds = {"user_id" : "9c2ebe8a3664b8cc847b3c61c78c30ba471d87c9110dfb25bbe9250b9aa46e91", "project_id": "c8b7b8ee391d40e0a8aef3b5b2860788"}
+
+    @property
+    def creds(self):
+        from dotenv import load_dotenv
+        env_path = os.path.join(os.getcwd(),'test/.test.env')
+        load_dotenv(dotenv_path=env_path) 
+        creds = {
+            "username" : os.getenv('CREDENTIAL_USERNAME'),
+            "password"  : os.getenv('CREDENTIAL_PASSWORD'),
+            "project_id": os.getenv('CREDENTIAL_PROJECT_ID'),
+            "user_id": os.getenv('CREDENTIAL_USER_ID')
+        }
+        return creds
+
+    @property
+    def fail(self):
+        from dotenv import load_dotenv
+        env_path = os.path.join(os.getcwd(),'.test.env')
+        load_dotenv(dotenv_path=env_path) 
+        creds = {
+            "username" : "TEST",
+            "password"  : "TEST",
+            "project_id": "TEST"
+        }
+        return creds
 
 mock = MockData()
 base_url = "http://127.0.0.1:6968/api/"
@@ -29,11 +54,19 @@ def app():
     app = create_app()
     return app
 
+@pytest.fixture(scope='session', autouse=True)
+def generate_userdata():
+    try:
+        res = send_userdata()
+    except Exception as e:
+        print(str(e))
+    
+
 @pytest.fixture(scope = 'session', autouse=True)
 def request_headers():
-    
-    login_data = {"username" : "test@biznetgio.com",
-                "password" : "BiznetGio2017"}
+
+    login_data = {"username" : mock.creds['username'],
+                "password" : mock.creds['password']}
     url = base_url+'login'
 
     result = requests.post(url=url,data=login_data)
@@ -43,6 +76,26 @@ def request_headers():
     if not mock.headers:
         mock.headers = dict()
     mock.headers['Access-Token'] = token
+
+def send_userdata():
+    data = {
+            "project_id": mock.creds['project_id'],
+            "user_id": mock.creds['user_id']
+        }
+    header = {}
+    login_data = {"username" : mock.creds['username'],
+                "password" : mock.creds['password']}
+    url = base_url+'login'
+
+    result = requests.post(url=url,data=login_data)
+    result=result.json()
+    token = result['data']['token']
+    headers = dict()
+    headers['Access-Token'] = token
+    headers['Content-Type'] = 'application/json'
+    url = base_url + 'user'
+    result = requests.post(url=url,data=json.dumps(data), headers=headers)
+    return result
 
 @pytest.fixture
 def get_header():
@@ -56,4 +109,8 @@ def get_mock():
 @pytest.fixture
 def get_creds():
     return mock.creds
+
+@pytest.fixture
+def get_fail_creds():
+    return mock.fail
 

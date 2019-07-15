@@ -189,7 +189,6 @@ class KnotCtl(object):
 
         @type path: str
         """
-
         ret = CTL_CONNECT(self.obj, path.encode())
         if ret != 0:
             err = CTL_ERROR(ret)

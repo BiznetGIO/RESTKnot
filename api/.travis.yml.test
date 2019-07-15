@@ -1,0 +1,27 @@
+language: python
+python:
+- "3.6"
+before_install:
+ - psql -c 'create database knotdb;' -U postgres
+ - psql databasename < db.sql
+ install:
+- cd api
+- virtualenv -p python3 env
+- source env/bin/activate
+- pip install -r requirements.txt
+- pip install coverage pytest pytest-cov pytest-ordering testfixtures
+script:
+- pytest --cov=app -vv -s
+before_script:
+- mv environtment/travis/.env.example .env
+- python3 manage.py server
+deploy:
+  provider: pypi
+  user: Your username
+  password:
+    secure: cUaEr36zcHWrpM5VB77DYVCa7mH8y1dFDmeUTONWj71hbotg+OVEnYP6lu+qLuuDA169e4PFhYn3I85QBPiC+QyPIyUbOYLeJyM0ONWq8+Uogr3GcGmC6oHsSmwH8IrhmljWZW0nkl1Vl8w/m0s3lJ7xYeLc44TRldn0fXsshLbsV4OyBokep8hLfVDzu0nBq+7c2rf34DtgqCHvZK6Wk15tDEMZaaKFvIhAT7NjsqngurDNCSsNsowUOiViNA9ivHwD3fCCnssgiqFmpkf0MBL84iGcsFzIyGPl4VuLoIOmEO0vA0l1Ms1NRr84FvdBoEAqG1tq0A50Lt5tH0+d82D6sm17LPLFjrh093+RPJ8ier3vuSHkT88yn6uHzsHH30LZTCnyLFz/qKyQlhsyMnAyFy7HrBlc/xHjEWgouLtrUIQHrHjwuczyjFgn1n8U+5AAMPt78N2elts5wfv2nBlVLqe7+8nhPMl7JnL/1u+FSPO4lbCc9EOf5A9kvGxVSfTrZ3mO3SyqwKK54QGxr/SXoMeEAGN30uF0MPJbjuus0B3Rwi1vpz8VnjldYFmA4zFPumdqvA6+X82KJ7PEZFII/B2Fltdgx6JRL4NPHreWOFcMH5t7kAEqtY5CBWu47CqdxaLrlDlOiB7AanHF0QmL1wn/e3LDF4Mmbcva/PM=
+  on:
+    tags: true
+skip_cleanup: true
+services:
+  - postgresql
