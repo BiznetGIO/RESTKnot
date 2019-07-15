@@ -1,0 +1,6 @@
+env/
+.env
+environtment/
+.dockerignore
+celery_devel.sh
+celerybeat-schedule

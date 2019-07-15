@@ -3,7 +3,7 @@ from app.helpers.rest import *
 from app.helpers.memcache import *
 import datetime
 from app.models import model as db
-from app.libs.utils import repodefault, send_http, change_state
+from app.libs.utils import send_http, change_state, domain_validation
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
@@ -16,7 +16,7 @@ port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
 url_fix= url_env+":"+port
 url = url_fix+"/api/command_rest"
 
-date = datetime.datetime.now().strftime("%Y%m%d%H")
+date = datetime.datetime.now().strftime("%Y%m%d")
 
 def sync_conf_insert(id_zone):
     tags = {
@@ -29,7 +29,6 @@ def sync_conf_insert(id_zone):
         # state change
         state = change_state("id_zone", id_zone, "1")
         check = db.update("zn_zone", data = state)
-        print(check)
     cmd.conf_commit_http(url)
 
 def sync_soa(id_zone):
@@ -72,7 +71,6 @@ def sync_cname_default(id_zone, id_record):
     cmd.zone_commit_http(url,tags)
 
 def addSOADefault(zone):
-    defaultdata = repodefault()
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","SOA")
 
@@ -85,7 +83,7 @@ def addSOADefault(zone):
     try:
         db.insert("zn_record", record_soa)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
 
     record_soa_data = db.get_by_id("zn_record","id_zone",zone_data[0]['id_zone'])
     ttldata_soa = {
@@ -96,10 +94,12 @@ def addSOADefault(zone):
     try:
         db.insert("zn_ttldata", ttldata_soa)
     except Exception as e:
-         print(e)
+         return response(401, message=str(e))
 
     ttl_soa_data = db.get_by_id("zn_ttldata","id_record",record_soa_data[0]['id_record'])
-    content_soa_d = defaultdata['default']['ns']
+    # content_soa_d = defaultdata['default']['soa']
+    content_soa_d = os.environ.get("DEFAULT_SOA_CONTENT", os.getenv('DEFAULT_SOA_CONTENT'))
+    content_soa_d = content_soa_d.split(" ")
     for i in content_soa_d:
         content_soa = {
             "id_ttldata": str(ttl_soa_data[0]['id_ttldata']),
@@ -108,9 +108,11 @@ def addSOADefault(zone):
         try:
             db.insert("zn_content", content_soa)
         except Exception as e:
-            print(e)
+            return response(401, message=str(e))
 
-    serial_content_soa = defaultdata['default']['serial']
+    # serial_content_soa = defaultdata['default']['serial']
+    serial_content_soa = os.environ.get("DEFAULT_SOA_SERIAL", os.getenv('DEFAULT_SOA_SERIAL'))
+    serial_content_soa = serial_content_soa.split(" ")
     for c in serial_content_soa:
         serial_content = {
             "nm_content_serial": c,
@@ -119,7 +121,7 @@ def addSOADefault(zone):
         try:
             db.insert("zn_content_serial", serial_content)
         except Exception as e:
-            print(e)
+            return response(401, message=str(e))
     return str(zone_data[0]['id_zone'])
 
 def addNSDefault(zone):
@@ -136,7 +138,7 @@ def addNSDefault(zone):
     try:
         db.insert("zn_record", record_ns)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
 
     record_ns_data = db.get_by_id("zn_record","id_zone",zone_data[0]['id_zone'])
     for i in record_ns_data:
@@ -150,9 +152,11 @@ def addNSDefault(zone):
     try:
         db.insert("zn_ttldata", ttldata_ns)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
     ttl_ns_data = db.get_by_id("zn_ttldata","id_record",str(record_ns_data['id_record']))
-    content = repodefault()['default']['ns']
+    # content = repodefault()['default']['ns']
+    content = os.environ.get("DEFAULT_NS", os.getenv('DEFAULT_NS'))
+    content = content.split(" ")
 
     for i in content:
         content_ns = {
@@ -162,7 +166,7 @@ def addNSDefault(zone):
         try:
             db.insert("zn_content", content_ns)
         except Exception as e:
-            print(e)
+            return response(401, message=str(e))
     return str(zone_data[0]['id_zone'])
 
 def addCNAMEDefault(id_zone, nm_zone):
@@ -177,7 +181,7 @@ def addCNAMEDefault(id_zone, nm_zone):
     try:
         id_record = db.insert("zn_record", data=data_record)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
 
     data_ttl = {
         "id_record": id_record,
@@ -187,7 +191,7 @@ def addCNAMEDefault(id_zone, nm_zone):
     try:
         id_ttl_data = db.insert("zn_ttldata", data=data_ttl)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
 
     data_content = {
         "id_ttldata": id_ttl_data,
@@ -197,7 +201,7 @@ def addCNAMEDefault(id_zone, nm_zone):
     try:
         db.insert("zn_content", data=data_content)
     except Exception as e:
-        print(e)
+        return response(401, message=str(e))
 
     return id_record
 
@@ -214,21 +218,20 @@ class CreateDNS(Resource):
         parser.add_argument('domain', type=str, required=True)
         args = parser.parse_args()
         zone = args['domain']
-        zone_domain = {
-            'nm_zone': zone
-        }
-        check = False
-        data_insert = None
-
-        try:
-            data_insert = db.insert("zn_zone", zone_domain)
-            check = True
-        except Exception as e:
-            msg = str(e)
-
-        if not check:
-            print(msg)
+        lowercase_zone = zone.lower()
+        if not domain_validation(zone):
+            return response(401, message="domain name not valid")
         else:
+            zone_domain = {
+                'nm_zone': lowercase_zone
+            }
+            data_insert = None
+
+            try:
+                data_insert = db.insert("zn_zone", zone_domain)
+            except Exception as e:
+                return response(401, message=str(e))
+
             userdata = db.get_by_id("userdata", "project_id", str(project_id))
             userdata_id = userdata[0]['userdata_id']
             dt_user_zone = {
@@ -248,29 +251,23 @@ class CreateDNS(Resource):
             sync_cname_default(data_insert, id_record)
             # #UNCOMENT TO SYNC AUTO
 
-        respon = list()
-
-        try:
-            zone_data = db.get_by_id("zn_zone","nm_zone", zone)
-        except Exception as e:
-            data = {
-                "status": False,
-                "messages": str(e)
-            }
-            respon.append(data)
-            return response(200, message=data)
-        else:
-            for i in zone_data:
-                data = {
-                    'id_zone': str(i['id_zone']),
-                    'nm_zone': i['nm_zone'],
-                    'state': i['state']
+            respon = list()
+            try:
+                zone_data = db.get_by_id("zn_zone","nm_zone", zone)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
+                for i in zone_data:
+                    data = {
+                        'id_zone': str(i['id_zone']),
+                        'nm_zone': i['nm_zone'],
+                        'state': i['state']
+                    }
+                respon = {
+                    "status": True,
+                    "data": data
                 }
-            respon = {
-                "status": True,
-                "data": data
-            }
-            return response(200, data=respon,message="Fine!")
+                return response(200, data=respon, message="Domain Created")
 
 
 
