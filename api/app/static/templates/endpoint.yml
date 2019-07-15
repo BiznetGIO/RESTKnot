@@ -217,50 +217,6 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-    edit:
-      tags:
-        id_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      fields: 
-        id_type:
-          name: Tags Zone Id
-          desc: Get One Data From Zone
-          type: fields
-        id_zone:
-          name: Tags Record ID
-          desc: Get One Data From Record Name
-          type: fields
-        nm_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        date_record:
-          name: Tags Zone Id
-          desc: Get One Data From Zone
-          type: fields
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    view_all:
-      tags:
-        id_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
     view:
       tags:
         id_record:
@@ -294,6 +250,25 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
+    # edit:
+    #   fields:
+    #     record_data_name:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: fields
+    #     zone_id:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: fields
+    #   tags:
+    #     record_data_id:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
+    #       type: tags
+    #   others:
+    #     method:
+    #       name: name search for domain
+    #       desc: Domain Variabel To Search
     remove:
       tags:
         id_record:
@@ -318,26 +293,6 @@ endpoint:
           desc: Filter ttldata by id_record
           type: tags
           default:
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    edit:
-      tags:
-        id_ttldata:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-      fields:
-        id_ttl:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        id_record:
-          name: Tags Record Data ID
-          desc: Get One Data From Record Name
-          type: fields
       others:
         method:
           name: name search for domain
@@ -368,6 +323,29 @@ endpoint:
           name: Tags Record Data ID
           desc: Get One Data From Record Name
           type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        # ttl_data_name:
+        #   name: name search for domain
+        #   desc: Domain Variabel To Search
+        #   type: fields
+        id_ttl:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
+        id_record:
+          name: Tags Record Data ID
+          desc: Get One Data From Record Name
+          type: fields
+      tags:
+        id_ttldata:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
       others:
         method:
           name: name search for domain
@@ -446,17 +424,19 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
     edit:
-      tags:
-        id_content:
+      fields:
+        id_ttldata:
           name: name search for domain
           desc: Domain Variabel To Search
-          type: tags
-          default:
-      fields:
+          type: fields
         nm_content:
           name: Tags TTL ID
           desc: Get One Data From Record Name
           type: fields
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
       others:
         method:
           name: name search for domain
@@ -525,12 +505,15 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
+        id_record:
+          name: Tags TTL ID
+          desc: Get One Data From Record Name
+          type: fields
       tags:
         id_content_serial:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
-          default:
       others:
         method:
           name: name search for domain
@@ -545,49 +528,7 @@ endpoint:
         method:
           name: methode name
           desc: Domain Variabel To Search
-  zn_temp_record:
-    insert:
-      tags:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          default: func:get_tag
-      fields:
-        id_record:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        id_ttl:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-        nm_content:
-          name: Tags TTL ID
-          desc: Get One Data From Record Name
-          type: fields
-    remove:
-      tags:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-    where:
-      tags:
-        id_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:    
-        nm_content:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
-        id_temp_record:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:  
+
   sendcommand:
     conf-insert:
       tags:
@@ -722,18 +663,31 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-    cluster-unset-master:
+    master-notify:
       tags:
         id_zone:
           name: name search for domain
           desc: Domain Variable To Search
           type: tags
+          default:
       others:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-    
-    cluster-unset-slave:
+
+    master-acl:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-notify:
       tags:
         id_zone:
           name: name search for domain
@@ -744,7 +698,7 @@ endpoint:
           name: name search for domain
           desc: Domain Variabel To Search
 
-    cluster-master:
+    file-set:
       tags:
         id_zone:
           name: name search for domain
@@ -754,36 +708,88 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-    cluster-slave:
-      tags:
-        id_zone:
-          name: name search for domain
-          desc: Domain Variable To Search
-          type: tags
-      others:
-        method:
-          name: name search for domain
-          desc: Domain Variabel To Search
-    conf-command:
-      tags:
-        exec:
-          name: exec command
-          desc: exec command from agent
 
-  cs_slave_node:
+    module-set:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-acl:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    master-file:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    slave-file:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    cluster-zone:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+    cluster-unset:
+      tags:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variable To Search
+          type: tags
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+
+  cs_slave:
     where:
       tags:
-        id_cs_slave_node:
+        id_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
           default:
-        nm_slave_node:
+        nm_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
           default:
-        ip_slave_node:
+        ip_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: tags
@@ -794,24 +800,20 @@ endpoint:
           desc: Domain Variabel To Search
     insert:
       fields:
-        nm_slave_node:
+        nm_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        ip_slave_node:
+        ip_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        port_slave_node:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        id_master:
+        port:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        id_cs_slave_node:
+        id_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
@@ -821,20 +823,20 @@ endpoint:
           desc: Domain Variabel To Search
     edit:
       fields:
-        nm_slave_node:
+        nm_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        ip_slave_node:
+        ip_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
-        port_slave_node:
+        port:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
       tags:
-        id_cs_slave_node:
+        id_slave:
           name: name search for domain
           desc: Domain Variabel To Search
           default: func:get_tag
@@ -844,7 +846,139 @@ endpoint:
           desc: Domain Variabel To Search
     remove:
       tags:
-        id_cs_slave_node:
+        id_slave:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  cs_notify_slave:
+    where:
+      tags:
+        id_notify_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_notify_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_notify_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        id_notify_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_notify_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_notify_slave:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  cs_acl_slave:
+    where:
+      tags:
+        id_acl_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_acl_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_acl_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        id_acl_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_acl_slave:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_acl_slave:
           name: ID search
           desc: Domain Variabel To Search
           type: tags
@@ -871,11 +1005,6 @@ endpoint:
           desc: Domain Variabel To Search
           type: tags
           default:
-        nm_config:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: tags
-          default:
       others:
         method:
           name: name search for domain
@@ -891,10 +1020,6 @@ endpoint:
           desc: Domain Variabel To Search
           type: fields
         port:
-          name: name search for domain
-          desc: Domain Variabel To Search
-          type: fields
-        nm_config:
           name: name search for domain
           desc: Domain Variabel To Search
           type: fields
@@ -933,6 +1058,148 @@ endpoint:
     remove:
       tags:
         id_master:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  cs_notify_master:
+    where:
+      tags:
+        id_notify_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_notify_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_notify_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_notify_master:
+          name: ID search
+          desc: Domain Variabel To Search
+          type: tags
+      others:
+        method:
+          name: methode name
+          desc: Domain Variabel To Search
+
+  cs_acl_master:
+    where:
+      tags:
+        id_acl_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: tags
+          default:
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    insert:
+      fields:
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_acl_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search for domain
+          desc: Domain Variabel To Search
+    edit:
+      fields:
+        id_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+        id_zone:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          type: fields
+      tags:
+        id_acl_master:
+          name: name search for domain
+          desc: Domain Variabel To Search
+          default: func:get_tag
+      others:
+        method:
+          name: name search
+          desc: Domain Variabel To Search
+    remove:
+      tags:
+        id_acl_master:
           name: ID search
           desc: Domain Variabel To Search
           type: tags

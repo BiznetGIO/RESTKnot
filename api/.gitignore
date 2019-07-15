@@ -130,8 +130,3 @@ testing.py
 
 coverage_html_report/
 .coveragerc
-
-celery_devel.sh
-
-app/static/cluster/slave.yml
-app/static/cluster/master.yml

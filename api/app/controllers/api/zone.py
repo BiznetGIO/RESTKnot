@@ -23,8 +23,8 @@ class ZoneName(Resource):
                     "state" : i['state']
                 }
                 obj_userdata.append(data)
-        except Exception as e:
-            return response(401 ,message=str(e))
+        except Exception:
+            results = None
         else:
             return response(200, data=obj_userdata)
 
@@ -39,17 +39,20 @@ class ZoneName(Resource):
         if init_data['action'] == 'insert':
             table = init_data['data'][0]['table']
             fields = init_data['data'][0]['fields']
-            l_name = fields['nm_zone']
             try:
                 result = db.insert(table, fields)
             except Exception as e:
-                return response(401 ,message=str(e))
+                respons = {
+                    "status": False,
+                    "error": str(e)
+                }
             else:
                 respons = {
                     "status": True,
                     "messages": "Fine!",
                     "id": result
                 }
+            finally:
                 return response(200, data=fields , message=respons)
         if init_data['action'] == 'where':
             obj_userdata = list()
@@ -65,7 +68,10 @@ class ZoneName(Resource):
             try:
                 result = db.get_by_id(table,fields,tags[fields])
             except Exception as e:
-                return response(401 ,message=str(e))
+                respons = {
+                    "status": False,
+                    "messages": str(e)
+                }
             else:
                 for i in result :
                     data = {
@@ -78,6 +84,7 @@ class ZoneName(Resource):
                     "status": True,
                     "messages": False
                 }
+            finally:
                 return response(200, data=obj_userdata , message=respons)
         if init_data['action'] == 'remove':
             table = ""
@@ -90,12 +97,16 @@ class ZoneName(Resource):
             try:
                 result = db.delete(table,fields,tags[fields])
             except Exception as e:
-                return response(401 ,message=str(e))
+                respons = {
+                    "status": False,
+                    "messages": str(e)
+                }
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
+            finally:
                 return response(200, data=tags, message=respons)
 
         if init_data['action'] == 'query':
