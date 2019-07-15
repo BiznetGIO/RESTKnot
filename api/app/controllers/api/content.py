@@ -132,9 +132,9 @@ class Content(Resource):
                         check_validation_char = True
 
             elif content_validation[0]['nm_type'] == 'NS':
-                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
+                check_validation = utils.cname_validation(lower_text_data)
             elif content_validation[0]['nm_type'] == 'TXT':
-                check_validation = utils.txt_validation(content_validation[0]['nm_content'])
+                check_validation = utils.txt_validation(lower_text_data)
             # elif content_validation[0]['nm_type'] == 'SRV':
             #     pass
             else:

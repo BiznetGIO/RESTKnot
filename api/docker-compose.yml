@@ -13,7 +13,7 @@ services:
           - DB_USER=root
           - DB_PASSWORD=
           - DB_SSL=disable
-          - SOCKET_AGENT_HOST='http://127.0.0.1
+          - SOCKET_AGENT_HOST='http://127.0.0.1'
           - SOCKET_AGENT_PORT=6967
           - ACL='127.0.0.1/24, 127.0.0.1/24'
           - FLASK_REDIS_URL=redis://:pass@localhost:6379/0
@@ -43,7 +43,7 @@ services:
           - DB_USER=root
           - DB_PASSWORD=
           - DB_SSL=disable
-          - SOCKET_AGENT_HOST='http://127.0.0.1
+          - SOCKET_AGENT_HOST=http://127.0.0.1
           - SOCKET_AGENT_PORT=6967
           - ACL='127.0.0.1/24, 127.0.0.1/24'
           - FLASK_REDIS_URL=redis://:pass@localhost:6379/0

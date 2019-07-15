@@ -56,7 +56,12 @@ class NotifyOnAgent(Resource):
                         "id": str(master),
                         "state": master.state
                     })
-        return response(200, data=result, message="Syncronizning Process")
+                    print(result)
+        if not result:
+            return response(200, message="Domain Updates")
+        else:
+            return response(200, data=result, message="Syncronizning Process")
+            
 
 
 class ChekcLogSyncOnMaster(Resource):

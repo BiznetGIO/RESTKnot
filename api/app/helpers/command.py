@@ -709,9 +709,10 @@ def zone_unset(tags):
                 }
             }
         }
-        print(json_command)
     else:
         if record[0]['nm_type'] == 'TXT':
+            # content_data_t = content_data.replace("\\",'\\')
+            content_data_fix = content_data.replace('"','\\\"')
             json_command={
                 "zone-unset": {
                     "sendblock": {
@@ -720,7 +721,7 @@ def zone_unset(tags):
                         "owner": record[0]['nm_record'],
                         "ttl": ttldata[0]['nm_ttl'],
                         "rtype": record[0]['nm_type'],
-                        "data": '"'+content_data+'"'
+                        "data": '"'+content_data_fix+'"'
                     },
                     "receive": {
                         "type": "block"

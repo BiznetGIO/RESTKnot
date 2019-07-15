@@ -26,25 +26,33 @@ def sync_task_slave(self, data):
     nm_master = data['nm_master']
     urls = data['urls'] 
     command.conf_begin_http(urls)
+    print("BEGIN")
     ffi_insert_conf = cluster_slave.insert_config_zone(data['data_zone'])
     http_response = utils.send_http(urls, ffi_insert_conf)
     result.append(http_response)
+
     ffi_slave_master = cluster_slave.master_create_json(data_zone, nm_master)
     http_response = utils.send_http(urls, ffi_slave_master)
     result.append(http_response)
+
     ffi_slave_acl = cluster_slave.create_json_acl(data_zone, nm_master)
     http_response = utils.send_http(urls, ffi_slave_acl)
     result.append(http_response)
+
     ffi_set_files = cluster_master.set_file_all(data_zone)
     http_response = utils.send_http(urls, ffi_set_files)
     result.append(http_response)
+
     ffi_set_module = cluster_master.set_mods_stats_all(data_zone, "mod-stats/default")
     http_response = utils.send_http(urls, ffi_set_module)
     result.append(http_response)
+
     ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
     http_response = utils.send_http(urls, ffi_serial_policy)
     result.append(http_response)
+    print("COMMIT")
     command.conf_commit_http(urls)
+
     respons.append({
         "data": result
     })
@@ -57,6 +65,7 @@ def sync_task_master(self, data):
     result = []
     data_zone = data['data_zone']
     urls = data['urls'] 
+    sleep(20)
     command.conf_begin_http(urls)
     ffi_insert_conf = cluster_master.insert_config_zone(data_zone, data['nm_config'])
     http_response = utils.send_http(urls, ffi_insert_conf)

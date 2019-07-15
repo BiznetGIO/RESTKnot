@@ -389,6 +389,7 @@ $(document).ready(function(){
             });
 
             req.done(function(data){
+                // document.location.reload();
                 // activate for test cluster
                 var id_zone = data.data.data.id_zone
                 var json_cluster = {
@@ -410,6 +411,7 @@ $(document).ready(function(){
                 });
                 req.done(function(data){
                     console.log("Clustered Master Success")
+                    console.log(data)
                     var json_cluster_slave = {
                         "cluster-slave": {
                            "tags": {
@@ -430,7 +432,8 @@ $(document).ready(function(){
                     });
                     req2.done(function(data){
                         console.log("Clustered Slave Success")
-                        document.location.reload();
+                        console.log(data)
+                        // document.location.reload();
                     });
                     req2.fail(function(data){
                         console.log("Check Your Request")

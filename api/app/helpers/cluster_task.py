@@ -46,7 +46,6 @@ def cluster_task_master(self, tags):
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
             print(e)
-        
         for i in master_data:
             print("Execute Master: "+i['nm_master'])
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
