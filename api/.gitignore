@@ -130,3 +130,4 @@ testing.py
 
 coverage_html_report/
 .coveragerc
+.test.env
