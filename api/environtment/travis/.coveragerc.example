@@ -16,7 +16,3 @@ ignore_errors = True
 
 [html]
 directory = htmlcov
-<<<<<<< HEAD
-
-=======
->>>>>>> efe4a9ce92414ba0a16c84f179b49336aaa56fba
