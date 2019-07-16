@@ -28,7 +28,6 @@ class setupData:
 
 def get_id(endpoint,data,headers):
     url = get_url(endpoint)
-    print(url)
     send = get_model("where",data)
     send = json.dumps(send)
     result = requests.post(url=url,data=send,headers=headers)
