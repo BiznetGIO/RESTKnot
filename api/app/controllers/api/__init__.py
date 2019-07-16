@@ -16,6 +16,7 @@ from .admin.create import *
 from .cs_master import *
 from .cs_slave_node import *
 from .cluster import *
+from .check_on import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -42,7 +43,6 @@ api.add_resource(Content, '/content')
 api.add_resource(ContentSerial, '/content_serial')
 api.add_resource(SendCommandRest, '/sendcommand')
 api.add_resource(CreateDNS, '/user/dnscreate')
-
 ## ADMIN AUTH
 api.add_resource(AdminAuth, '/admin/login')
 api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
@@ -54,5 +54,12 @@ api.add_resource(CsSlave,'/slave_node')
 ## CLUSTER
 api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
 api.add_resource(ClusterCheckSlave, '/cluster/slave/<id_slave>')
+api.add_resource(ClusterUnsetCheckMaster, '/cluster/unset/master/<id_master>')
+api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
+
+# CHECK ON
+api.add_resource(NotifyOnAgent, "/agent/check")
+api.add_resource(ChekcLogSyncOnMaster, '/agent/master/<id_logs>')
+api.add_resource(CheckLogSyncOnSlave, '/agent/slave/<id_logs>')
 
 

@@ -1,5 +1,6 @@
-concurent=$1
 #!/bin/bash
+
+concurent=$1
 
 function rep_ok(){
     echo -e '\e[32mSUCCESS | '$1'\e[m'

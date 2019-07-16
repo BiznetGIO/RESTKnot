@@ -48,6 +48,16 @@ def repodefault():
     repo_file = "{}/static/templates/default.yml".format(abs_path)
     return yaml_parser(repo_file)
 
+def reposlave():
+    abs_path = root_dir
+    repo_file = "{}/static/cluster/slave.yml".format(abs_path)
+    return yaml_parser(repo_file)
+
+def repomaster():
+    abs_path = root_dir
+    repo_file = "{}/static/cluster/master.yml".format(abs_path)
+    return yaml_parser(repo_file)
+
 def get_command(req):
     command = req.split("/")
     command = command[2]
@@ -186,7 +196,7 @@ def cname_validation(cname):
     if cname == '@':
         return True
     else:
-        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
+        pattern = re.compile("^(([a-zA-Z0-9_]|[a-zA-Z_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z_\*][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$")
         if pattern.match(cname):
             return True
         else:

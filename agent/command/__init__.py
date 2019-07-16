@@ -16,12 +16,11 @@ def read_rest(data):
             "status": "Command Execute",
             "description": data
         }
-        # print(response)
         return response
-    
     try:
         data = parser.execute_command(initialiaze_command)
     except Exception as e:
+        print("ERROR READ REST: ", e)
         response={
             "result": False,
             "error": str(e),

@@ -28,7 +28,7 @@ class CsMaster(Resource):
         else:
             return response(200, data=obj_userdata)
 
-
+    @login_required
     def post(self):
         json_req = request.get_json(force=True)
         command = utils.get_command(request.path)

@@ -130,5 +130,4 @@ testing.py
 
 coverage_html_report/
 .coveragerc
-
-celery_devel.sh
+.test.env
