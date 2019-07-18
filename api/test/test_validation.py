@@ -229,9 +229,11 @@ class TestValidation:
         return res
 
     def assert_hostname(self,respons,expected,zone):
-        result = json.loads(respons.data.decode('utf8'))
-        result = result['data']['data']
-        print(result)
+        result_ = json.loads(respons.data.decode('utf8'))
+        try:
+            result = result_['data']['data']
+        except Exception:
+            print(result_)
         zn_knot = zone+"."
         hostnames = list(result[zn_knot].keys())
         assert expected in hostnames
