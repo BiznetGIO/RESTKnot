@@ -112,4 +112,5 @@ srv/helpers/command_experiment.yml
 srv/helpers/knot.yml
 
 test/templates/example.py
-
+agent/command/parse/static/*
+agent_error

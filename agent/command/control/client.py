@@ -65,12 +65,12 @@ def sendblock(ctl,params, treturn):
     resp = None
 
     try:
-        ctl.send_block(cmd, section=section, item=item, identifier=identifier, zone=zone,
+        ctl.send_block(cmd=cmd, section=section, item=item, identifier=identifier, zone=zone,
                         owner=owner, ttl=ttl, rtype=rtype, data=data1, flags=flags,
                         filter=filters)
     except Exception as e:
-        print("CLIENT ERROR: ", e)
-        raise e
+        print("CTL CLIENT: ",e)
+        raise
     if treturn == 'block':
         resp = ctl.receive_block()
     elif treturn == 'stats':
