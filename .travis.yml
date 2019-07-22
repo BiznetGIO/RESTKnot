@@ -37,3 +37,10 @@ skip_cleanup: true
 after_script:
   - kill -9 `cat save_pid.txt`
   - rm save_pid.txt
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GH_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep_history: true
+  on:
+    branch: test_feature
