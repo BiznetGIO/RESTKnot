@@ -18,10 +18,10 @@ jobs:
   include:
     - stage: preinstall
       script: bash api/environtment/travis/preinstall.sh
-    - stage: setup
-      script: bash api/environtment/travis/setup.sh
     - stage: install
       script: bash api/environtment/travis/install.sh
+    - stage: setup
+      script: bash api/environtment/travis/setup.sh
     - stage: unittest
       script: bash api/environtment/travis/unittest.sh
     - stage: cleanup
