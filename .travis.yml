@@ -21,11 +21,11 @@ jobs:
     - stage: install
       script: bash api/environtment/travis/install.sh
     - stage: setup
-      script: bash api/environtment/travis/setup.sh
+      script: bash environtment/travis/setup.sh
     - stage: unittest
-      script: bash api/environtment/travis/unittest.sh
+      script: bash environtment/travis/unittest.sh
     - stage: cleanup
-      script: bash api/environtment/travis/cleanup.sh
+      script: bash environtment/travis/cleanup.sh
 
 stage:
   - preinstall
