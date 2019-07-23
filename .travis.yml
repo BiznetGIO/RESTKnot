@@ -37,7 +37,6 @@ deploy:
   provider: script
   skip_cleanup: true
   script: bash push
-  github_token: $GH_TOKEN  # Set in the settings page of your repository, as a secure variable
   on:
     branch: test_feature 
     tags: true
