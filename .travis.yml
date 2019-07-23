@@ -16,23 +16,9 @@ deploy:
     tags: true
 jobs:
   include:
-    - stage: preinstall
-      script: bash api/environtment/travis/preinstall.sh
-    - stage: install
-      script: bash api/environtment/travis/install.sh
-    - stage: setup
-      script: bash environtment/travis/setup.sh
     - stage: unittest
       script: bash environtment/travis/unittest.sh
-    - stage: cleanup
-      script: bash environtment/travis/cleanup.sh
-
 stage:
-  - preinstall
-  - setup
-  - install
   - name: unittest
-    if: branch = devel
-  - name: cleanup
     if: branch = devel
   
