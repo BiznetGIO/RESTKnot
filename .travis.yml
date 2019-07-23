@@ -1,6 +1,4 @@
 --- 
-services:
-  - docker
 before_install: 
   - psql -c 'create database knotdb;' -U postgres
   - psql knotdb < api/environtment/travis/db.sql
@@ -29,6 +27,7 @@ script:
 services: 
   - postgresql
   - redis
+  - docker
 skip_cleanup: true
 after_script:
   - kill -9 `cat save_pid.txt`
