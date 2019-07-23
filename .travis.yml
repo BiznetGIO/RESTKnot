@@ -10,10 +10,6 @@ before_script:
   - mv environtment/travis/push.sh push.sh
   - chmod +x run_travis.sh
   - ./run_travis.sh
-branches:
-  only:
-  - test_feature
-  - test_2
 install: 
   - "cd api"
   - "virtualenv -p python3 env"
