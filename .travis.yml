@@ -17,15 +17,15 @@ deploy:
 jobs:
   include:
     - stage: preinstall
-      script: bash api/environtment/travis/preinstall
+      script: bash api/environtment/travis/preinstall.sh
     - stage: setup
-      script: bash api/environtment/travis/setup
+      script: bash api/environtment/travis/setup.sh
     - stage: install
-      script: bash api/environtment/travis/install
+      script: bash api/environtment/travis/install.sh
     - stage: unittest
-      script: bash api/environtment/travis/unittest
+      script: bash api/environtment/travis/unittest.sh
     - stage: cleanup
-      script: bash api/environtment/travis/cleanup
+      script: bash api/environtment/travis/cleanup.sh
 
 stage:
   - preinstall
