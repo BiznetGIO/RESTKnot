@@ -13,6 +13,7 @@ before_script:
 branches:
   only:
   - test_feature
+  - test_2
 install: 
   - "cd api"
   - "virtualenv -p python3 env"
