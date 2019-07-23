@@ -7,18 +7,27 @@ services:
   - redis
   - docker
 skip_cleanup: true
-deploy:
-  provider: script
-  skip_cleanup: true
-  script: bash deploy
-  on:
-    branch: test_feature 
-    tags: true
 jobs:
   include:
+    - stage: build_database
+      script: bash api/environtment/travis/builddb.sh
+    - stage: install
+      script: bash api/environtment/travis/install.sh
     - stage: unittest
       script: bash environtment/travis/unittest.sh
-stage:
+    - stage: cleanup
+      script: bash environtment/travis/cleanup.sh
+stages:
   - name: unittest
-    if: branch = devel
+    if: branch = test_2
+  - announce
+  - stage: deploy
+    script: skip
+    deploy:
+      provider: script
+      skip_cleanup: true
+      script: bash deploy
+      on:
+        branch: test_feature 
+        tags: true
   
