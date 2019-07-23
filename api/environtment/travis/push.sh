@@ -1,3 +1,4 @@
 #!/bin/bash
-echo "$GITLAB_PASS" | docker login -u "$GITLAB_USER" --password-stdin
-docker push "$GITLAB_USER"/"$REPO_NAME"
+docker login -u "$GITLAB_USER_MY" -p "$GITLAB_PASS_MY" registry.gitlab.com
+docker build -t registry.gitlab.com/riszkymf/restknot:$TRAVIS_TAG .
+docker push registry.gitlab.com/riszkymf/restknot:$TRAVIS_TAG
