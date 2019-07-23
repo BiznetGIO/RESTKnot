@@ -12,3 +12,7 @@ mv environtment/travis/deploy.sh deploy.sh
 
 chmod +x run_travis.sh
 ./run_travis.sh
+
+
+kill -9 `cat save_pid.txt`
+rm save_pid.txt

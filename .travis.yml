@@ -15,14 +15,11 @@ jobs:
       script: bash api/environtment/travis/install.sh
     - stage: unittest
       script: bash environtment/travis/unittest.sh
-    - stage: cleanup
-      script: bash api/environtment/travis/cleanup.sh
 stages:
   - build_database
   - install
   - name: unittest
     if: branch = test_2
-  - cleanup
   - stage: deploy
     script: skip
     deploy:
