@@ -157,6 +157,20 @@ def conf_begin_http(url):
     utils.send_http(url, json_command)
 
 
+def conf_begin_http_cl(url):
+    json_command={
+        "conf-begin": {
+            "sendblock": {
+                "cmd": "conf-begin"
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
+
 def conf_commit_http(url):
     json_command={
         "conf-begin": {
@@ -169,6 +183,19 @@ def conf_commit_http(url):
         }
     }
     utils.send_http(url, json_command)
+
+def conf_commit_http_cl(url):
+    json_command={
+        "conf-commit": {
+            "sendblock": {
+                "cmd": "conf-commit"
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
 
 
 def zone_soa_insert_default(tags):
