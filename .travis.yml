@@ -20,13 +20,12 @@ stages:
   - install
   - name: unittest
     if: branch = test_2
-  - stage: deploy
-    script: skip
-    deploy:
-      provider: script
-      skip_cleanup: true
-      script: bash deploy
-      on:
-        branch: test_feature 
-        tags: true
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash deploy
+  on:
+    branch: test_feature 
+    tags: true
+
   
