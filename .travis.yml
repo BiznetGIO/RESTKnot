@@ -16,8 +16,10 @@ jobs:
     - stage: unittest
       script: bash environtment/travis/unittest.sh
 stages:
-  - build_database
-  - install
+  - name: build_database
+    if: branch = test_2
+  - name: install
+    if: branch = test_2
   - name: unittest
     if: branch = test_2
 deploy:
