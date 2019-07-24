@@ -16,7 +16,7 @@ jobs:
     - stage: unittest
       script: bash environtment/travis/unittest.sh
     - stage: announce
-      script: Start Test/Deploy
+      script: echo Start Test/Deploy
 stages:
   - announce
   - name: build_database
@@ -31,3 +31,4 @@ deploy:
   script: bash api/environtment/travis/deploy.sh
   on:
     branch: test_feature 
+    tags: true
