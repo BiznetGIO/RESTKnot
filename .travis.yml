@@ -23,9 +23,6 @@ stages:
 deploy:
   provider: script
   skip_cleanup: true
-  script: bash api/environtment/deploy.sh
+  script: bash api/environtment/travis/deploy.sh
   on:
     branch: test_feature 
-    tags: true
-
-  
