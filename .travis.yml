@@ -23,7 +23,7 @@ stages:
 deploy:
   provider: script
   skip_cleanup: true
-  script: bash deploy
+  script: bash api/environtment/deploy.sh
   on:
     branch: test_feature 
     tags: true
