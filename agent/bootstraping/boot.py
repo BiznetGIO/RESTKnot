@@ -70,6 +70,7 @@ if __name__ == "__main__":
                 log_rep("Knot Response: "+ str(True))
                 log_rep("Synronizing: "+ response['status'])
                 log_rep("Messages: "+ response['message'])
+                exit()
             exit()
         else:
             response = get_http(urls)
