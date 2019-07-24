@@ -227,9 +227,14 @@ class CreateDNSAdminRole(Resource):
                 data_insert = db.insert("zn_zone", zone_domain)
             except Exception as e:
                 return response(401, message=str(e))
-            
-            userdata = db.get_by_id("userdata", "project_id", str(project_id))
-            userdata_id = userdata[0]['userdata_id']
+            userdata_id = None
+            try:
+                userdata = db.get_by_id("userdata", "project_id", str(project_id))[0]
+            except Exception as e:
+                return response(401, message="Porject Id Not Found in Userdata | "+str(e))
+            else:
+                userdata_id = userdata['userdata_id']
+
             dt_user_zone = {
                 'id_zone': str(data_insert),
                 'userdata_id': str(userdata_id)
@@ -252,12 +257,6 @@ class CreateDNSAdminRole(Resource):
             try:
                 zone_data = db.get_by_id("zn_zone","nm_zone", zone)
             except Exception as e:
-                # data = {
-                #     "status": False,
-                #     "messages": str(e)
-                # }
-                # respon.append(data)
-                # return response(200, message=data)
                 return response(401, message=str(e))
             else:
                 for i in zone_data:
