@@ -114,3 +114,4 @@ srv/helpers/knot.yml
 test/templates/example.py
 agent/command/parse/static/*
 agent_error
+.test.env

@@ -16,4 +16,3 @@ ignore_errors = True
 
 [html]
 directory = htmlcov
-
