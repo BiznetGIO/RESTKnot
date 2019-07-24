@@ -9,20 +9,12 @@ services:
 skip_cleanup: true
 jobs:
   include:
-    - stage: build_database
-      script: bash api/environtment/travis/builddb.sh
-    - stage: install
-      script: bash api/environtment/travis/install.sh
     - stage: unittest
-      script: bash environtment/travis/unittest.sh
+      script: bash api/environtment/travis/unittest.sh
     - stage: announce
       script: echo Start Test/Deploy
 stages:
   - announce
-  - name: build_database
-    if: branch = devel
-  - name: install
-    if: branch = devel
   - name: unittest
     if: branch = devel
 deploy:
