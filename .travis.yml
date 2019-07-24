@@ -20,15 +20,14 @@ jobs:
 stages:
   - announce
   - name: build_database
-    if: branch = test_2
+    if: branch = devel
   - name: install
-    if: branch = test_2
+    if: branch = devel
   - name: unittest
-    if: branch = test_2
+    if: branch = devel
 deploy:
   provider: script
   skip_cleanup: true
   script: bash api/environtment/travis/deploy.sh
   on:
-    branch: test_feature 
     tags: true
