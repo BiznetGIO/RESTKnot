@@ -15,7 +15,10 @@ jobs:
       script: bash api/environtment/travis/install.sh
     - stage: unittest
       script: bash environtment/travis/unittest.sh
+    - stage: announce
+      script: Start Test/Deploy
 stages:
+  - announce
   - name: build_database
     if: branch = test_2
   - name: install
