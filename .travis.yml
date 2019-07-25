@@ -10,7 +10,7 @@ skip_cleanup: true
 jobs:
   include:
     - stage: unittest
-      script: bash api/environtment/travis/unittest.sh
+      script: bash .travis/unittest.sh
     - stage: announce
       script: echo Start Test/Deploy
 stages:
@@ -20,6 +20,6 @@ stages:
 deploy:
   provider: script
   skip_cleanup: true
-  script: bash api/environtment/travis/deploy.sh
+  script: bash .travis/deploy.sh
   on:
     tags: true
