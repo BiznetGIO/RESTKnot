@@ -66,7 +66,7 @@ if [ $command = 'server' ]
         rep_ok "EXPORTING VARIABLE ENVIRONMENT"
         echo ""
         rep_ok 'STARTING | SERVER'
-        python3 manage.py server
+        env/bin/python3 manage.py server
     else
         rep_die '[env] : production | development'
     fi
