@@ -63,8 +63,8 @@ def z_begin(url,tags):
             }
         }
     }
-    return utils.send_http(url,json_command)
-    # return json_command
+    # return utils.send_http(url,json_command)
+    return json_command
 
 def z_commit(url,tags):
     domain_name = None
@@ -84,7 +84,8 @@ def z_commit(url,tags):
             }
         }
     }
-    return utils.send_http(url,json_command)
+    return json_command
+    # return utils.send_http(url,json_command)
 
 def config_insert(tags):
     fields = str(list(tags.keys())[0])
@@ -142,8 +143,7 @@ def conf_read():
     }
     return json_command
 
-
-def conf_begin_http(url):
+def conf_begin_http_cl():
     json_command={
         "conf-begin": {
             "sendblock": {
@@ -154,12 +154,12 @@ def conf_begin_http(url):
             }
         }
     }
-    utils.send_http(url, json_command)
+    return json_command
 
 
-def conf_commit_http(url):
+def conf_commit_http_cl():
     json_command={
-        "conf-begin": {
+        "conf-commit": {
             "sendblock": {
                 "cmd": "conf-commit"
             },
@@ -168,7 +168,7 @@ def conf_commit_http(url):
             }
         }
     }
-    utils.send_http(url, json_command)
+    return json_command
 
 
 def zone_soa_insert_default(tags):
@@ -229,23 +229,32 @@ def zone_soa_insert_default(tags):
                 "data": data_ns_soa+" "+date_t+" "+data_ns_serial
             },
             "receive": {
-                "type": "command"
+                "type": "block"
             }
         }
     }
     return record[0]['id_record'], json_command
 
-def zone_begin(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
+def zone_begin(record):
     json_command={
         "zone-begin": {
             "sendblock": {
                 "cmd": "zone-begin",
-                "zone": domain_name
+                "zone": record
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
+def zone_commit(record):
+    json_command={
+        "zone-commit": {
+            "sendblock": {
+                "cmd": "zone-commit",
+                "zone": record
             },
             "receive": {
                 "type": "block"
@@ -289,25 +298,7 @@ def zone_commit_http(url, tags):
     res = utils.send_http(url, json_command)
     return res
 
-def zone_commit(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
 
-    json_command={
-        "zone-commit": {
-            "sendblock": {
-                "cmd": "zone-commit",
-                "zone": domain_name
-            },
-            "receive": {
-                "type": "block"
-            }
-        }
-    }
-    return json_command
 
 def zone_insert(tags):
     # Get Record Data
@@ -473,11 +464,10 @@ def zone_ns_insert(tags):
                 }
             }
         }
-        command_ns.append({
-            "id_record": record[0]['id_record'],
-            "command": json_command
-        })
+        command_ns.append(json_command)
     counter.update_counter(record[0]['nm_zone'])
+    state = utils.change_state("id_record", record[0]['id_record'], "1")
+    model.update("zn_record", data = state)
     return command_ns
 
 def zone_insert_srv(tags):

@@ -1,11 +1,10 @@
---- 
 language: python
-python: 
-  - "3.6"
-services: 
-  - postgresql
-  - redis
-  - docker
+python:
+- '3.6'
+services:
+- postgresql
+- redis
+- docker
 skip_cleanup: true
 jobs:
   include:
@@ -14,9 +13,9 @@ jobs:
     - stage: announce
       script: echo Start Test/Deploy
 stages:
-  - announce
-  - name: unittest
-    if: branch = devel
+- announce
+- name: unittest
+  if: branch = devel
 deploy:
   provider: script
   skip_cleanup: true

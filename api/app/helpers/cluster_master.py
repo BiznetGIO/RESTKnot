@@ -110,8 +110,7 @@ def master_create_json_notify(data_zone, nm_config, urls):
                     }
                 }
             }
-            http_response = utils.send_http(urls, json_data)
-            result.append(http_response)
+            result.append(json_data)
         return result
 
 def master_create_json_acl(data_zone, nm_config, urls):
@@ -159,8 +158,8 @@ def master_create_json_acl(data_zone, nm_config, urls):
                     }
                 }
             }
-            http_response = utils.send_http(urls, json_data)
-            result.append(http_response)
+            # http_response = utils.send_http(urls, json_data)
+            result.append(json_data)
         return result
 
 def set_file_all(data_zone):
