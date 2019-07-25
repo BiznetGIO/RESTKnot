@@ -1,0 +1,10 @@
+- id_master: 402152439124394000
+  nm_master: cmg01z00knms001
+  ip_master: 10.10.3.42
+  port: '6967'
+  nm_config: cmg
+- id_master: 461914324975517700
+  nm_master: jkt01z00knms001
+  ip_master: 10.30.3.34
+  port: '6967'
+  nm_config: jkt

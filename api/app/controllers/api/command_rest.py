@@ -32,15 +32,16 @@ class SendCommandRest(Resource):
             tags = dict()
             for i in init_data['data']:
                 tags = i['tags']
+            data = list()
+            data.append(cmd.conf_begin_http_cl())
             respons = cmd.config_insert(tags)
-            cmd.conf_begin_http(url)
-            http_respons = utils.send_http(url,respons)
+            data.append(respons)
+            data.append(cmd.conf_commit_http_cl())
+            http_respons = utils.send_http(url, data)
             if http_respons:
                 # state change
                 state = utils.change_state("id_zone", tags['id_zone'], "1")
-                db.update("zn_zone", data = state)
-
-            cmd.conf_commit_http(url)
+                db.update("zn_zone", data = state)            
             return response(200, data=http_respons)
 
         if init_data['action'] == 'zone-read':
@@ -94,20 +95,19 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            json_begin = cmd.zone_begin_http(url,tags) 
-            respons.append(json_begin)
+            record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]    
+            data = list()
+            data.append(cmd.zone_begin(record['nm_zone']))
             json_command = cmd.zone_insert(tags)
-            http_response = utils.send_http(url,json_command)
-            # change state
-            if http_response:
+            data.append(json_command)
+            data.append(cmd.zone_commit(record['nm_zone']))
+            respons = utils.send_http(url,data)
+            if respons:
                 state = utils.change_state("id_record", tags['id_record'], "1")
                 try:
                     db.update("zn_record", data = state)
                 except Exception as e:
                     print(e)
-            respons.append(http_response)
-            res_commit = cmd.zone_commit_http(url,tags)
-            respons.append(res_commit)
             return response(200, data=respons)
 
         if init_data['action'] == 'zone-ns-insert':
@@ -198,17 +198,16 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
+            data_send = list()
+
+            data_send.append(cmd.conf_begin_http_cl())
             data = cmd.conf_unset(tags)
             data_purge = cmd.conf_purge(tags)
-            cmd.conf_begin_http(url)
-            http_respons_purge = utils.send_http(url,data_purge)
-            http_respons = utils.send_http(url,data)
-            resp = {
-                "zone-purge": http_respons_purge,
-                "zone-unset": http_respons
-            }
-            cmd.conf_commit_http(url)
-            return response(200, data=resp)
+            data_send.append(data)
+            data_send.append(data_purge)            
+            data_send.append(cmd.conf_commit_http_cl())
+            http_respons = utils.send_http(url,data_send)
+            return response(200, data=http_respons)
         
         if init_data['action'] == 'zone-unset':
             result = list()
@@ -216,17 +215,17 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             respons = list()
             try:
-                res_begin = cmd.zone_begin_http(url,tags)
-                respons.append(res_begin)
+                record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]
+                # res_begin = cmd.zone_begin_http(url,tags)
+                respons.append(cmd.zone_begin(record['nm_zone']))
                 json_command = cmd.zone_unset(tags)
-                http_response = utils.send_http(url,json_command)
-                respons.append(http_response)
-                res_commit = cmd.zone_commit_http(url, tags)
-                respons.append(res_commit)
+                respons.append(json_command)
+                respons.append(cmd.zone_commit(record['nm_zone']))
+                http_response = utils.send_http(url, respons)
             except Exception as e:
                 return response(401, message=str(e))
             else:
-                return response(200, data=respons)
+                return response(200, data=http_response)
 
 
         if init_data['action'] == 'cluster-master':
@@ -291,18 +290,18 @@ class SendCommandRest(Resource):
             else:                
                 return response(200, data=result)
 
-        if init_data['action'] == 'conf-command':
-            result = []
-            exec_data = init_data['data'][0]['tags']
-            try:
-                cmd.conf_begin_http(url)
-                http_res = utils.send_http(url, exec_data)
-                cmd.conf_commit_http(url)
-                result.append(http_res)
-            except Exception as e:
-                return response(401, message=str(e))
-            else:                
-                return response(200, data=exec_data)
+        # if init_data['action'] == 'conf-command':
+        #     result = []
+        #     exec_data = init_data['data'][0]['tags']
+        #     try:
+        #         cmd.conf_begin_http(url)
+        #         http_res = utils.send_http(url, exec_data)
+        #         cmd.conf_commit_http(url)
+        #         result.append(http_res)
+        #     except Exception as e:
+        #         return response(401, message=str(e))
+        #     else:                
+        #         return response(200, data=exec_data)
 
         
         

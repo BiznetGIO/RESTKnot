@@ -51,7 +51,7 @@ def cluster_task_master(self, tags):
             print("Execute Master: "+i['nm_master'])
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
             data_commands = list()
-            data_commands.append(command.conf_begin_http_cl(urls))
+            data_commands.append(command.conf_begin_http_cl())
             ffi_insert_conf = cluster_master.insert_config_zone(data_zone, i['nm_config'])
             data_commands.append(ffi_insert_conf)
             ffi_master = cluster_master.master_create_json_master(data_zone, i['nm_config'])
@@ -70,7 +70,7 @@ def cluster_task_master(self, tags):
             data_commands.append(ffi_set_module)
             ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
             data_commands.append(ffi_serial_policy)
-            data_commands.append(command.conf_commit_http_cl(urls))
+            data_commands.append(command.conf_commit_http_cl())
             result = utils.send_http_clusters(urls, data_commands)
             respons.append({
                 "config": i['nm_config'],
@@ -101,7 +101,7 @@ def cluster_task_slave(self, tags):
         for i in slave_data:
             print("Execute Slave: "+i['nm_slave_node'])
             urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
-            cf_begin = command.conf_begin_http_cl(urls)
+            cf_begin = command.conf_begin_http_cl()
             data_test.append(cf_begin)
             ffi_insert_conf = cluster_slave.insert_config_zone(data_zone)
             data_test.append(ffi_insert_conf)
@@ -115,7 +115,7 @@ def cluster_task_slave(self, tags):
             data_test.append(ffi_set_module)
             ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
             data_test.append(ffi_serial_policy)
-            cf_commit = command.conf_commit_http_cl(urls)
+            cf_commit = command.conf_commit_http_cl()
             data_test.append(cf_commit)
             result = utils.send_http_clusters(urls, data_test)
             respons.append({
@@ -140,13 +140,15 @@ def unset_cluster_master(self, tags):
     except Exception as e:
         print(e)
     for i in master_data:
-        master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        data = list()
         url_fix= "http://"+i['ip_master']+":"+i['port']
         master_server_url = url_fix+"/api/command_rest"
-        command.conf_begin_http(master_server_url)
-        http_response_master = utils.send_http(master_server_url, master_command)
-        command.conf_commit_http(master_server_url)
-        result.append(http_response_master)
+        data.append(command.conf_begin_http_cl())
+        master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        data.append(master_command)
+        command.conf_commit_http_cl()
+        response = utils.send_http(master_server_url, data)
+        result.append(response)
     return result
 
 @celery.task(bind=True)
@@ -163,12 +165,15 @@ def unset_cluster_slave(self, tags):
     except Exception as e:
         print(e)
     for a in data_slave:
-        slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        data_slave = list()
         url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
         slave_server_url = url_fix+"/api/command_rest"
-        command.conf_begin_http(slave_server_url)
-        http_response_slave = utils.send_http(slave_server_url, slave_command)
-        command.conf_commit_http(slave_server_url)
+        data_slave.append(command.conf_begin_http_cl())
+        slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        data_slave.append(slave_command)
+        command.conf_commit_http_cl()
+        data_slave.append(command)
+        http_response_slave = utils.send_http(slave_server_url, data_slave)
         result.append(http_response_slave)
     return result
 
