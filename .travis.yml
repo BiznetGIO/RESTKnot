@@ -1,36 +1,29 @@
---- 
-before_install: 
-  - psql -c 'create database knotdb;' -U postgres
-  - psql knotdb < api/environtment/travis/db.sql
-before_script: 
-  - redis-cli config set requirepass 'pass'
-  - mv environtment/travis/env.example .env
-  - mv environtment/travis/.coveragerc.example .coveragerc
-  - mv environtment/travis/run_travis.sh run_travis.sh
-  - chmod +x run_travis.sh
-  - ./run_travis.sh
-deploy: 
-  password: 
-    secure: cUaEr36zcHWrpM5VB77DYVCa7mH8y1dFDmeUTONWj71hbotg+OVEnYP6lu+qLuuDA169e4PFhYn3I85QBPiC+QyPIyUbOYLeJyM0ONWq8+Uogr3GcGmC6oHsSmwH8IrhmljWZW0nkl1Vl8w/m0s3lJ7xYeLc44TRldn0fXsshLbsV4OyBokep8hLfVDzu0nBq+7c2rf34DtgqCHvZK6Wk15tDEMZaaKFvIhAT7NjsqngurDNCSsNsowUOiViNA9ivHwD3fCCnssgiqFmpkf0MBL84iGcsFzIyGPl4VuLoIOmEO0vA0l1Ms1NRr84FvdBoEAqG1tq0A50Lt5tH0+d82D6sm17LPLFjrh093+RPJ8ier3vuSHkT88yn6uHzsHH30LZTCnyLFz/qKyQlhsyMnAyFy7HrBlc/xHjEWgouLtrUIQHrHjwuczyjFgn1n8U+5AAMPt78N2elts5wfv2nBlVLqe7+8nhPMl7JnL/1u+FSPO4lbCc9EOf5A9kvGxVSfTrZ3mO3SyqwKK54QGxr/SXoMeEAGN30uF0MPJbjuus0B3Rwi1vpz8VnjldYFmA4zFPumdqvA6+X82KJ7PEZFII/B2Fltdgx6JRL4NPHreWOFcMH5t7kAEqtY5CBWu47CqdxaLrlDlOiB7AanHF0QmL1wn/e3LDF4Mmbcva/PM=
-  provider: pypi
-  true: 
-    tags: true
-  user: "Your username"
-install: 
-  - "cd api"
-  - "virtualenv -p python3 env"
-  - "source env/bin/activate"
-  - "pip install -r requirements.txt"
-  - "pip install coverage pytest pytest-cov pytest-ordering testfixtures"
 language: python
-python: 
-  - "3.6"
-script: 
-  - "pytest --cov=app test/ --ignore=test/ignore/ -vv -s"
-services: 
-  - postgresql
-  - redis
+python:
+- '3.6'
+services:
+- postgresql
+- redis
+- docker
 skip_cleanup: true
-after_script:
-  - kill -9 `cat save_pid.txt`
-  - rm save_pid.txt
+jobs:
+  include:
+  - stage: unittest
+    script: bash .travis/unittest.sh
+  - stage: announce
+    script: echo Start Test/Deploy
+stages:
+- announce
+- name: unittest
+  if: branch = test_2
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: bash .travis/deploy.sh
+  on:
+    tags: true
+env:
+  global:
+  - secure: kvSvL63AYN6gqlb5m8dT06HUqt4j+d1+ptq+XYEOUHJJdZaIP7Y9fR0szKn+6x7YY4Ot54/FvgL7wkmSHE4dsSUGGY6r2gh4/j98bpRwoYxfQpKsulnp0TcLnz/SQdmQkRd2NQmXxia2RvM5fcSrFdkDsmlIGwmFWqkdmOY3m+3b6LGhzDtBEjI1rV9EVWza71XtIbEnAHVvWz8VWfelqYLdrFWT8S6S8WXnpkldkLCfZRwWgv3lRbT0/PwGBfWaLIqpbe3qUtyR+wjloiTX+fMmfi/y+cSm7KxZg7c4lqw2Vn482F7FzLaEu+2V2pHfHM0e84S1Mu47JPi/S3dHzPZIvlBkt0DAUV4jnH0AsQNzJ9yFQq2qTy7iIuBclrX6ZUxfHK2WVk2SkpI0WIX5Y5Rbb69y7d5rn4gEozGQb3h0G9A3lHrSBbet/5frBEv/NWrx1j1PSBTLncgqtJ1qPrLcI1k4razJh6XzrsP+Rg8b8SKb8fcRo4lJqfyLkvPcR2YWZ1AUL27T+o0KmKHiODPCYfPtMKNhUbJL5DKsP8soHOSNimD0LlIAE8kK4F10y9BWFszQlj5aHwq9UMntOZiVG9k8lKZgmCJR42ei2Q+AREFiII2JnUNkuyl6ExWEt8yFYv8FPHWSP82XZpfHbVa+/ih4/EMp/AG/c01mMVI=
+  - secure: jgX6xex87lg5mFkrrQKbrBNYf4q8xXIpu+7R+A+0Lr8WOK3nTBEUGoGRVNlLu00o5jfedHGOAYiJYLsgyfV9uoNXjVOZCLF4tupd0guPe8IRiawHqPPCmray8PQVV6Vs4SS7ivrtbKEmpJwE+TI9D4aVBHpTJ37c2iOhCeyL+uxew9bI3GoTvO8OJKcEEHVHgeuctiuPKzYYsE7O79Hfyx23pJqx9QBxDazZwR+CksVUp6xWY0oh194cp0u07XmmWPSfbA3gxyPce9x1X6a5Ed+cAAUJp4KAvYVhiuVuW9RGo8mOo+H+RgGx2ww6krgCstXkn82d3Q6/YnuDj0RqIKUoCbax07iw2FU2MgOM7X/U2Pv/i6cNUfnLWWQCiUe1rO0Wllqwpn9AyTFxwAV6ccLPE2OtfPxUaAx9faX5GFPlmoLsrEDWhbPW2j/7GDBe+5ML6ksQSrRBER2d0f6uIUw/d2jVKU1CE5K2WglptX3o9tTNhzIIWdFdwg9IZGnYv1iEaruYkWKQ5Wc/AGl+tRTQW4dWxaAlcb5eVVHKg6B366y4Y0rK8g/8wA3FaAjg7zlLorkygtpW5rebr0ssnihmvHoLMxDrWvzCWxNQgpVAHPHO7zTKHLMoWCP3i80unR4hfm7SOn46snyu4mmEXtHeapIIXhoiD4Vsi2kBlo8=
+  - secure: aBeiaVtyG+0C7cb4+J3U89ka3pRZQnSS8pU6Pazkofi5JJdcvBBmlIcvAHcrakAFsWCdvfh7nPZmTGJU/SX6CG0B4JuyKohRre2GeUJaY350vitPAMx9ygT33WcpF/O+yBfi/tSiEaVA5cDMn9vD5GJ4nWURVmDxbv+/ff691HVysESRCh0yVoryigQJQL3h1Y3XVLLvTNtA+Bx+QiAPJZ8vXF8TTq8bKgeuywBHdfR1HrRK8MjyKn3G892hcVweTTHeNs52AmjXxkjpa5B+M3FRMtTs065hIDner6ygENxxuOHK8Ba/cAbqM98MazvIUrDjyMlGFN2ne6zJ+G4NV8BMzAl/MIPK6RsoinHr2X2Q3KhVdOPxQ1IzZ4pqlg4hwFFqdzBlnlvodhk0EpJzUZNnHqhysCJyXUmEk3deAv5/m5xT8akMpyyq0qmlfn9Q27uodsVc5fYRx4xPDMzP5DDUR4uHv2vayKkNxIuCbN8hj7Y5Of+6J6JHCRs3ClHgGQcx2QGUedZlxITLNq2XMipyZZruKEjY8DQsTmb2B/xZsBrvAnA3P4RLyUghlhOfQntP5ZF7ow5N+uKuUHNsNyXtvVET9UcoTanR2Ti7i/SGqn5OWVrpYuAp78jlynsjBBiH+7/SARlA2l2uxdh1R0l1FV1BykFNHMVLY8gQxA4=
