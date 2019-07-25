@@ -46,7 +46,6 @@ def cluster_task_master(self, tags):
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
             print(e)
-        
         for i in master_data:
             print("Execute Master: "+i['nm_master'])
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
@@ -146,8 +145,8 @@ def unset_cluster_master(self, tags):
         data.append(command.conf_begin_http_cl())
         master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
         data.append(master_command)
-        command.conf_commit_http_cl()
-        response = utils.send_http(master_server_url, data)
+        data.append(command.conf_commit_http_cl())
+        response = utils.send_http_clusters(master_server_url, data)
         result.append(response)
     return result
 
@@ -171,9 +170,9 @@ def unset_cluster_slave(self, tags):
         data_slave.append(command.conf_begin_http_cl())
         slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
         data_slave.append(slave_command)
-        command.conf_commit_http_cl()
-        data_slave.append(command)
-        http_response_slave = utils.send_http(slave_server_url, data_slave)
+        data_slave.append(command.conf_commit_http_cl())
+        http_response_slave = utils.send_http_clusters(slave_server_url, data_slave)
+        
         result.append(http_response_slave)
     return result
 
