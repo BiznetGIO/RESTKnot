@@ -50,7 +50,13 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             respons = cmd.zone_read(tags)
             http_respons = utils.send_http(url, respons)
-            return response(200, data=http_respons)
+            result = {
+                "result": http_respons['data']['result'],
+                "description": http_respons['data']['description'],
+                "data": json.loads(http_respons['data']['data']),
+            }
+            print(result)
+            return response(200, data=result)
 
         if init_data['action'] == 'zone-soa-insert':
             result= list()
