@@ -7,6 +7,7 @@ from app.libs import utils
 import json, os
 from app.middlewares.auth import login_required
 from app.helpers import cluster_task
+from app.helpers import refresh_zone
 
 class SendCommandRest(Resource):
     def get(self):
@@ -86,16 +87,26 @@ class SendCommandRest(Resource):
         if init_data['action'] == 'zone-begin':
             for i in init_data['data']:
                 tags = i['tags']
-            respons = cmd.zone_begin(tags)
-            http_response = utils.send_http(url,respons)
-            return response(200, data=http_response)
+            try:
+                record = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
+                json_command = cmd.zone_begin(record['nm_zone'])
+                http_response = utils.send_http(url, json_command)
+                return response(200, data=http_response)
 
         if init_data['action'] == 'zone-commit':
             for i in init_data['data']:
                 tags = i['tags']
-            respons = cmd.zone_commit(tags)
-            http_response = utils.send_http(url,respons)
-            return response(200, data=http_response)
+            try:
+                record = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
+                json_command = cmd.zone_commit(record['nm_zone'])
+                http_response = utils.send_http(url, json_command)
+                return response(200, data=http_response)
 
         if init_data['action'] == 'zone-insert':
             respons = list()
@@ -115,33 +126,6 @@ class SendCommandRest(Resource):
                 except Exception as e:
                     print(e)
             return response(200, data=respons)
-
-        if init_data['action'] == 'zone-ns-insert':
-            respons = list()
-            for i in init_data['data']:
-                tags = i['tags']
-            res_begin = cmd.z_begin(url, tags)
-            respons.append(res_begin)
-            try :
-                result = cmd.zone_ns_insert(tags)
-            except Exception as e:
-                return response(401, message=str(e) )
-            else:
-                for i in result:
-                    state = None
-                    http_response = utils.send_http(url,i['command'])
-                    # state change
-                    if http_response:
-                        state = utils.change_state("id_record", i['id_record'], "1")
-                        try:
-                            db.update("zn_record", data = state)
-                        except Exception as e:
-                            print(e)
-                    respons.append(http_response)
-
-                res_commit = cmd.z_commit(url,tags)
-                respons.append(res_commit)
-                return response(200, data=respons)
 
         if init_data['action'] == 'zone-srv-insert':
             result = list()
@@ -222,15 +206,14 @@ class SendCommandRest(Resource):
             respons = list()
             try:
                 record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]
-                # res_begin = cmd.zone_begin_http(url,tags)
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
                 respons.append(cmd.zone_begin(record['nm_zone']))
                 json_command = cmd.zone_unset(tags)
                 respons.append(json_command)
                 respons.append(cmd.zone_commit(record['nm_zone']))
                 http_response = utils.send_http(url, respons)
-            except Exception as e:
-                return response(401, message=str(e))
-            else:
                 return response(200, data=http_response)
 
 
@@ -241,13 +224,13 @@ class SendCommandRest(Resource):
             
             try:
                 master = cluster_task.cluster_task_master.delay(tags)
+            except Exception as e:
+                return response(401, message="Master Cluster Not Complete")
+            else:
                 result.append({
                     "id": str(master),
                     "state": master.state
                 })
-            except Exception as e:
-                return response(401, message="Master Cluster Not Complete")
-            else:
                 return response(200, data=result, message="Master Cluster Processing")
 
         if init_data['action'] == 'cluster-slave':
@@ -257,13 +240,13 @@ class SendCommandRest(Resource):
             
             try:
                 slave = cluster_task.cluster_task_slave.delay(tags)
+            except Exception as e:
+                return response(401, message="Slave Cluster Not Complete")
+            else:
                 result.append({
                     "id": str(slave),
                     "state": slave.state
                 })
-            except Exception as e:
-                return response(401, message="Slave Cluster Not Complete")
-            else:
                 return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset-master':
@@ -271,14 +254,14 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                master_unset = cluster_task.unset_cluster_master.delay(tags)
+                master_unset = cluster_task.unset_cluster_master.delay(tags) 
+            except Exception as e:
+                return response(401, message=str(e))
+            else:
                 result.append({
                     "id": str(master_unset),
                     "state": master_unset.state
-                })
-            except Exception as e:
-                return response(401, message=str(e))
-            else:                
+                })                
                 return response(200, data=result)
 
         if init_data['action'] == 'cluster-unset-slave':
@@ -287,27 +270,47 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             try:
                 slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+                
+            except Exception as e:
+                return response(401, message=str(e))
+            else:  
                 result.append({
                     "id": str(slave_unset),
                     "state": slave_unset.state
-                })
-            except Exception as e:
-                return response(401, message=str(e))
-            else:                
+                })              
                 return response(200, data=result)
 
-        # if init_data['action'] == 'conf-command':
-        #     result = []
-        #     exec_data = init_data['data'][0]['tags']
-        #     try:
-        #         cmd.conf_begin_http(url)
-        #         http_res = utils.send_http(url, exec_data)
-        #         cmd.conf_commit_http(url)
-        #         result.append(http_res)
-        #     except Exception as e:
-        #         return response(401, message=str(e))
-        #     else:                
-        #         return response(200, data=exec_data)
+        if init_data['action'] == 'refresh-master':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            
+            try:
+                master = refresh_zone.refresh_zone_master.delay(tags['id_master'])
+            except Exception as e:
+                return response(401, message="Master Refresh Not Complete")
+            else:
+                result.append({
+                    "id": str(master),
+                    "state": master.state
+                })
+                return response(200, data=result, message="Master Refresh Processing")
+
+        if init_data['action'] == 'refresh-slave':
+            result = list()
+            for i in init_data['data']:
+                tags = i['tags']
+            
+            try:
+                slave = refresh_zone.refresh_zone_slave.delay(tags)
+            except Exception as e:
+                return response(401, message="Slave Refresh Not Complete")
+            else:
+                result.append({
+                    "id": str(slave),
+                    "state": slave.state
+                })
+                return response(200, data=result, message="Slave Refresh Processing")
 
         
         

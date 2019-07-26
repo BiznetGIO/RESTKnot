@@ -49,7 +49,9 @@ api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
 
 ## CLUSTERING
 api.add_resource(CsMaster,'/master')
+api.add_resource(RefreshZoneMaster, '/master/refresh/<id_refresh>')
 api.add_resource(CsSlave,'/slave_node')
+api.add_resource(RefreshZoneSlave, "/slave_node/refresh/<id_refresh>")
 
 ## CLUSTER
 api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')

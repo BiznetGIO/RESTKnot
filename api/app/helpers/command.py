@@ -347,7 +347,7 @@ def zone_insert(tags):
         }
         return json_command
         
-    if record[0]['nm_type'] == "MX":
+    elif record[0]['nm_type'] == "MX":
         ct_data = ctdata[0]['nm_content']
         cs_data = []
         cs_clm_data = model.get_columns("v_content_serial")
@@ -373,7 +373,8 @@ def zone_insert(tags):
             }
         }
         return json_command
-    if record[0]['nm_type'] == "SRV":
+    
+    elif record[0]['nm_type'] == "SRV":
         ct_data = ctdata[0]['nm_content']
         cs_data = []
         cs_clm_data = model.get_columns("v_content_serial")
@@ -385,8 +386,6 @@ def zone_insert(tags):
         data_ct = ""
         for ri in cs_data:
             data_ct = data_ct+" "+ri['nm_content_serial']
-
-
         json_command={
             "zone-set": {
                 "sendblock": {
@@ -403,6 +402,7 @@ def zone_insert(tags):
             }
         }
         return json_command
+
     else:   
         json_command={
             "zone-set": {
@@ -734,6 +734,20 @@ def zone_unset(tags):
                 }
             }
         }
+    return json_command
+
+
+def syncronize_zone():
+    json_command={
+        "zone-unset": {
+            "sendblock": {
+                "cmd": "zone-refresh",
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
     return json_command
 
     
