@@ -5,6 +5,7 @@ services:
 - postgresql
 - redis
 - docker
+- rabbitmq
 skip_cleanup: true
 jobs:
   include:
