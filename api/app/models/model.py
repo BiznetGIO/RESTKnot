@@ -34,13 +34,15 @@ def get_by_id(table, field= None, value= None):
     results = list()
 
     try:
-        query = "SELECT * FROM "+table+" WHERE "+field+"=%s",(value,)
+        query = "SELECT * FROM "+table+" WHERE "+field+"='"+str(value)+"'"
+        print(query)
         db.execute(query)
         rows = db.fetchall()
         retry_counter = 0
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        print(error)
         return retry_execute(query, column, retry_counter, error)
     else:
         return results
