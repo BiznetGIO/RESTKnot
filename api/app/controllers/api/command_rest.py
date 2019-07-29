@@ -223,7 +223,15 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                master = cluster_task.cluster_task_master.delay(tags)
+                # master = cluster_task.cluster_task_master.delay(tags)
+                master = cluster_task.cluster_task_master.apply_async(args=[tags], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message="Master Cluster Not Complete")
             else:
@@ -239,7 +247,15 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                slave = cluster_task.cluster_task_slave.delay(tags)
+                # slave = cluster_task.cluster_task_slave.delay(tags)
+                slave = cluster_task.cluster_task_slave.apply_async(args=[tags], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message="Slave Cluster Not Complete")
             else:
@@ -254,7 +270,15 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                master_unset = cluster_task.unset_cluster_master.delay(tags) 
+                # master_unset = cluster_task.unset_cluster_master.delay(tags) 
+                master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message=str(e))
             else:
@@ -269,8 +293,15 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                slave_unset = cluster_task.unset_cluster_slave.delay(tags)
-                
+                # slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+                slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message=str(e))
             else:  
@@ -286,7 +317,15 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                master = refresh_zone.refresh_zone_master.delay(tags['id_master'])
+                # master = refresh_zone.refresh_zone_master.delay(tags['id_master'])
+                master = refresh_zone.refresh_zone_master.apply_async(args=[tags['id_master']], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message="Master Refresh Not Complete")
             else:
@@ -302,7 +341,15 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                slave = refresh_zone.refresh_zone_slave.delay(tags)
+                # slave = refresh_zone.refresh_zone_slave.delay(tags)
+                slave = refresh_zone.refresh_zone_slave.apply_async(args=[tags], 
+                    retry=True,
+                    retry_policy={
+                        'max_retries': 3,
+                        'interval_start': 0,
+                        'interval_step': 0.2,
+                        'interval_max': 0.2,
+                    })
             except Exception as e:
                 return response(401, message="Slave Refresh Not Complete")
             else:
