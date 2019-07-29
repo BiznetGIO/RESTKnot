@@ -35,7 +35,6 @@ def get_by_id(table, field= None, value= None):
 
     try:
         query = "SELECT * FROM "+table+" WHERE "+field+"='"+str(value)+"'"
-        print(query)
         db.execute(query)
         rows = db.fetchall()
         retry_counter = 0
