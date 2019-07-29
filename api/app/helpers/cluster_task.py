@@ -96,10 +96,11 @@ def cluster_task_slave(self, tags):
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
             raise e
-        data_test = list()
+        
         for i in slave_data:
             print("Execute Slave: "+i['nm_slave_node'])
             urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
+            data_test = list()
             cf_begin = command.conf_begin_http_cl()
             data_test.append(cf_begin)
             ffi_insert_conf = cluster_slave.insert_config_zone(data_zone)
