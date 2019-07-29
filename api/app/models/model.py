@@ -1,6 +1,7 @@
 from app import  db, psycopg2
 import json
 
+LIMIT_RETRIES = 5
 
 def get_columns(table):
     column = None
@@ -19,23 +20,28 @@ def get_all(table):
     try:
         db.execute("SELECT * FROM "+table)
         rows = db.fetchall()
+        retry_counter = 0
         for row in rows:
             results.append(dict(zip(column, row)))
+    except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        print(error)
+        return retry_execute("SELECT * FROM "+table, column, retry_counter, error)
+    else:
         return results
-    except (Exception, psycopg2.DatabaseError) as e:
-        return column + str(e)
-
 
 def get_by_id(table, field= None, value= None):
     column = get_columns(table)
     results = list()
+
     try:
-        db.execute("SELECT * FROM "+table+" WHERE "+field+"=%s",(value,))
+        query = "SELECT * FROM "+table+" WHERE "+field+"=%s",(value,)
+        db.execute(query)
         rows = db.fetchall()
+        retry_counter = 0
         for row in rows:
             results.append(dict(zip(column, row)))
-    except (Exception, psycopg2.DatabaseError) as e:
-        raise e
+    except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        return retry_execute(query, column, retry_counter, error)
     else:
         return results
 
@@ -83,3 +89,15 @@ def delete(table, field = None, value = None):
     else:
         return rows_deleted
 
+def retry_execute(query, column, retry_counter, error):
+    results = list()
+    if retry_counter >= LIMIT_RETRIES:
+        raise error
+    else:
+        retry_counter += 1
+        print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
+        db.execute(query)
+        rows = db.fetchall()
+        for row in rows:
+            results.append(dict(zip(column, row)))
+        return results

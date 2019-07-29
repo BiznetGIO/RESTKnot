@@ -40,7 +40,7 @@ def cluster_task_master(self, tags):
         else:
             master_data = model.get_all("cs_master")
     except Exception as e:
-        return str(e)
+        raise e
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
@@ -90,7 +90,7 @@ def cluster_task_slave(self, tags):
         else:
             slave_data = model.get_all("v_cs_slave_node")
     except Exception as e:
-        return str(e)
+        raise e
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
