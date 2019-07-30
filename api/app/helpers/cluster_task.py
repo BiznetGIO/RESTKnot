@@ -35,19 +35,16 @@ def cluster_task_master(self, tags):
     id_zone = tags['id_zone']
     master_data = None
     try:
-        if cs_storage == 'static':
-            master_data = utils.repomaster()
-        else:
-            master_data = model.get_all("cs_master")
+        master_data = model.get_all("cs_master")
     except Exception as e:
-        return str(e)
+        raise e
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
-            print(e)
+            raise e
         for i in master_data:
-            print("Execute Master: "+i['nm_master'])
+            print("Execute Master: "+str(i['nm_master']))
             urls = "http://"+i['ip_master']+":"+i['port']+"/api/command_rest"
             data_commands = list()
             data_commands.append(command.conf_begin_http_cl())
@@ -85,21 +82,19 @@ def cluster_task_slave(self, tags):
     result = []
     id_zone = tags['id_zone']
     try:
-        if cs_storage == 'static':
-            slave_data = utils.reposlave()
-        else:
-            slave_data = model.get_all("v_cs_slave_node")
+        slave_data = model.get_all("v_cs_slave_node")
     except Exception as e:
-        return str(e)
+        raise e
     else:
         try:
             data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
         except Exception as e:
             raise e
-        data_test = list()
+        
         for i in slave_data:
-            print("Execute Slave: "+i['nm_slave_node'])
+            print("Execute Slave: "+str(i['nm_slave_node']))
             urls = "http://"+i['ip_slave_node']+":"+i['port_slave_node']+"/api/command_rest"
+            data_test = list()
             cf_begin = command.conf_begin_http_cl()
             data_test.append(cf_begin)
             ffi_insert_conf = cluster_slave.insert_config_zone(data_zone)
