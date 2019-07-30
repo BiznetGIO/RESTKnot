@@ -41,7 +41,6 @@ class PreparingCursor(ext.cursor):
                 return idx
 
         pgstmt = self._re_replargs.sub(repl, stmt)
-        print(pgstmt)
         if parlist and parmap:
             raise psycopg2.ProgrammingError(
                 "you can't mix positional and named placeholders")
