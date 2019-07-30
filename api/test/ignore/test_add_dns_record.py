@@ -185,7 +185,6 @@ class TestCreate:
 
 	### Testing Content Data Search and View
 		d_mock = self.var_mock.ids['result'][0]
-		print(d_mock)
 		v_end = ['ttldata','record','content','content_serial']
 		for key,value in d_mock.items():
 			if 'id_' in key:
@@ -207,3 +206,10 @@ class TestCreate:
 					assert res.status_code == 200
 
 
+		id_zone = self.var_mock.ids['id_zone']
+		data = {"conf-unset":{"tags":{"id_zone":str(id_zone)}}}
+		res = self.post_data(client,'sendcommand',data,get_header)
+
+		# REMOVE
+		data = utils.get_model('remove',{"id_zone": id_zone})
+		res = self.post_data(client,'zone',data,get_header)
