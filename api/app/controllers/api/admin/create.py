@@ -74,7 +74,6 @@ def sync_cname_default(id_record, record):
     data.append(json_command)
     data.append(cmd.zone_commit(record))
     check_res = utils.send_http(url, data)
-    print(check_res)
     if check_res:
         state = utils.change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
@@ -252,12 +251,13 @@ class CreateDNSAdminRole(Resource):
 
             id_zone_soa = addSOADefault(zone)
             id_zone_ns = addNSDefault(zone)
-            addCNAMEDefault(data_insert, zone)
+            
 
             # #UNCOMENT TO SYNC AUTO
             sync_conf_insert(data_insert)
             sync_soa(id_zone_soa)
             sync_ns(id_zone_ns)
+            addCNAMEDefault(data_insert, zone)
             # #UNCOMENT TO SYNC AUTO
 
             respon = list()
