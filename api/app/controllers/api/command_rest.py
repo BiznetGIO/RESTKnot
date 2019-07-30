@@ -296,6 +296,7 @@ class SendCommandRest(Resource):
             try:
                 # slave_unset = cluster_task.unset_cluster_slave.delay(tags)
                 slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
+                    countdown=5,
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
