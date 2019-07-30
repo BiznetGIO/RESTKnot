@@ -142,7 +142,6 @@ def unset_cluster_master(self, tags):
         data.append(command.conf_commit_http_cl())
         response = utils.send_http_clusters(master_server_url, data)
         result.append(response)
-    print(result)
     return result
 
 @celery.task(bind=True)
@@ -167,7 +166,6 @@ def unset_cluster_slave(self, tags):
         data_slave.append(command.conf_commit_http_cl())
         http_response_slave = utils.send_http_clusters(slave_server_url, data_slave)
         result.append(http_response_slave)
-    print(result)
     return result
 
 
