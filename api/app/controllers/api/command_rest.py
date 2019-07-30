@@ -150,7 +150,6 @@ class SendCommandRest(Resource):
 
                 result.append(http_response)
                 commit_json = cmd.zone_commit_http(url, tags)
-                # commit_response = utils.send_http(url,commit_json)
                 result.append(commit_json)
                 return response(200, data=result)
 
@@ -160,7 +159,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
 
             begin_json = cmd.zone_begin_http(url, tags)
-            # begin_respon = utils.send_http(url,begin_json)
             result.append(begin_json)
 
             try :
@@ -223,7 +221,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # master = cluster_task.cluster_task_master.delay(tags)
                 master = cluster_task.cluster_task_master.apply_async(args=[tags],
                     retry=True,
                     retry_policy={
@@ -247,7 +244,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # slave = cluster_task.cluster_task_slave.delay(tags)
                 slave = cluster_task.cluster_task_slave.apply_async(args=[tags],
                     countdown=5,
                     retry=True,
@@ -271,7 +267,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                # master_unset = cluster_task.unset_cluster_master.delay(tags) 
                 master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
                     retry=True,
                     retry_policy={
@@ -294,7 +289,6 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                # slave_unset = cluster_task.unset_cluster_slave.delay(tags)
                 slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
                     countdown=5,
                     retry=True,
@@ -319,7 +313,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # master = refresh_zone.refresh_zone_master.delay(tags['id_master'])
                 master = refresh_zone.refresh_zone_master.apply_async(args=[tags['id_master']], 
                     retry=True,
                     retry_policy={
