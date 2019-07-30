@@ -198,7 +198,6 @@ class DataTest(object):
         json_send= utils.get_model("add",data)
         res = self.post_data(client,endpoint,json_send,headers)
         tmp = json.loads(res.data.decode('utf8'))
-        print(tmp)
         assert tmp['status'] == 'error'
 
 
@@ -271,7 +270,6 @@ class TestValidation:
         data = {"zone-insert": {"tags":{"id_record": id_record}}}
         res = test_data.post_data(client,'sendcommand',data,headers)
         res = json.loads(res.data.decode('utf8'))
-        print(res)
         # ZONE READ
         id_zone = test_data.identity['zone']['id_zone']
         data = {"zone-read" : {"tags":{"id_zone": id_zone}}}
