@@ -3,7 +3,8 @@
 branch = True
 omit = 
   app/libs/utils.py
-
+  app/helpers/cluster_task.py
+  app/helpers/check_on_sync.py
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =

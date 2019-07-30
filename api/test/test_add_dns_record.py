@@ -153,18 +153,9 @@ class TestCreate:
 					if key in row:
 						assert row[key].lower() == value.lower()
 
-			if row['nm_type'].upper() == "SRV":
-				data = {"zone-srv-insert":{"tags":{"id_record": row['id_record']}}}
-				res = self.post_data(client,'sendcommand',data,headers)
-				assert res.status_code == 200
-			elif row['nm_type'].upper() == 'MX':
-				data = {"zone-mx-insert":{"tags":{"id_record": row['id_record'] }}}
-				res = self.post_data(client,'sendcommand',data,headers)
-				assert res.status_code == 200
-			else :
-				data = {"zone-insert":{"tags":{"id_record": row['id_record'] }}}
-				res = self.post_data(client,'sendcommand',data,headers)
-				assert res.status_code == 200	
+			data = {"zone-insert":{"tags":{"id_record": row['id_record'] }}}
+			res = self.post_data(client,'sendcommand',data,headers)
+			assert res.status_code == 200	
 		
 		self.var_mock.ids.update({"result" : d_list})
 
@@ -185,7 +176,6 @@ class TestCreate:
 
 	### Testing Content Data Search and View
 		d_mock = self.var_mock.ids['result'][0]
-		print(d_mock)
 		v_end = ['ttldata','record','content','content_serial']
 		for key,value in d_mock.items():
 			if 'id_' in key:
@@ -207,3 +197,12 @@ class TestCreate:
 					assert res.status_code == 200
 
 
+		id_zone = self.var_mock.ids['id_zone']
+		data = {"cluster-unset-master": {"tags": {"id_zone" : str(id_zone)}}}
+		res = self.post_data(client,'sendcommand',data,get_header)
+		data = {"cluster-unset-slave": {"tags": {"id_zone" : str(id_zone)}}}
+		res = self.post_data(client,'sendcommand',data,get_header)
+
+		# REMOVE
+		data = utils.get_model('remove',{"id_zone": id_zone})
+		res = self.post_data(client,'zone',data,get_header)

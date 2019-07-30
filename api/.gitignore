@@ -10,8 +10,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/				print('\n\n==============')
-				print(data)
+dist/
 downloads/
 eggs/
 .eggs/
@@ -131,3 +130,8 @@ testing.py
 coverage_html_report/
 .coveragerc
 .test.env
+
+test_beruntun.py
+
+app/libs/pubsub.py
+app/api/testing.py

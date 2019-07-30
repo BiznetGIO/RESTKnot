@@ -113,6 +113,19 @@ def config_insert(tags):
 def zone_read(tags):
     domain_name = None
     fields = str(list(tags.keys())[0])
+    if tags[fields] is None:
+        json_command={
+            "zone-read": {
+                "sendblock": {
+                    "cmd": "zone-read",
+                    "zone": ""
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
+        return json_command
     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     for i in domain_data:
         domain_name = i['nm_zone']

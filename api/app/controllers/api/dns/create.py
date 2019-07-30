@@ -250,12 +250,13 @@ class CreateDNS(Resource):
 
             id_zone_soa = addSOADefault(zone)
             id_zone_ns = addNSDefault(zone)
-            addCNAMEDefault(data_insert, zone)
+            
 
             # #UNCOMENT TO SYNC AUTO
             sync_conf_insert(data_insert)
             sync_soa(id_zone_soa)
             sync_ns(id_zone_ns)
+            addCNAMEDefault(data_insert, zone)
             # #UNCOMENT TO SYNC AUTO
 
             respon = list()
