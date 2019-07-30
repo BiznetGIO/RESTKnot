@@ -18,7 +18,7 @@ def get_all(table):
     column = get_columns(table)
     results = list()
     try:
-        query = "SELECT * FROM {}".format(table)
+        query = "SELECT * FROM %s" % (table)
         db.execute(query)
         rows = db.fetchall()
         retry_counter = 0
@@ -35,7 +35,7 @@ def get_by_id(table, field= None, value= None):
     results = list()
     retry_counter = 0
     try:
-        query = "SELECT * FROM "+table+" WHERE "+field+"='%s'" % str(value)
+        query = "SELECT * FROM %s WHERE %s='%s'" % (table, field, str(value))
         db.execute(query)
         rows = db.fetchall()
         for row in rows:
@@ -56,7 +56,7 @@ def insert(table, data = None):
     column = "("+column[:-1]+")"
     value = "("+value[:-1]+")"
     try:
-        query = "INSERT INTO "+table+" "+column+" VALUES "+value+" RETURNING *"
+        query = "INSERT INTO %s %s VALUES %s RETURNING *" % (table, column, value)
         db.execute(query)
     except (Exception, psycopg2.DatabaseError) as e:
         raise e
@@ -73,7 +73,8 @@ def update(table, data = None):
     field = list(data['where'].keys())[0]
     status = None
     try:
-        db.execute("UPDATE "+table+" SET "+set+" WHERE "+field+"="+data['where'][field]+"")
+        query = "UPDATE %s SET %s WHERE %s='%s'" % (table, set, field, data['where'][field])
+        db.execute(query)
         status = True
     except (Exception, psycopg2.DatabaseError) as e:
         status = e
