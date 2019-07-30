@@ -224,7 +224,7 @@ class SendCommandRest(Resource):
             
             try:
                 # master = cluster_task.cluster_task_master.delay(tags)
-                master = cluster_task.cluster_task_master.apply_async(args=[tags], 
+                master = cluster_task.cluster_task_master.apply_async(args=[tags],
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
@@ -248,7 +248,8 @@ class SendCommandRest(Resource):
             
             try:
                 # slave = cluster_task.cluster_task_slave.delay(tags)
-                slave = cluster_task.cluster_task_slave.apply_async(args=[tags], 
+                slave = cluster_task.cluster_task_slave.apply_async(args=[tags],
+                    countdown=5,
                     retry=True,
                     retry_policy={
                         'max_retries': 3,

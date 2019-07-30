@@ -6,8 +6,9 @@ LIMIT_RETRIES = 5
 def get_columns(table):
     column = None
     try:
-        # db.execute("SHOW columns FROM "+table)
-        db.execute("SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='"+table+"'")
+        query = "SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='"+table+"'"
+        db.prepare(query)
+        db.execute(query)
         column = [row[0] for row in db.fetchall()]
     except (Exception, psycopg2.DatabaseError) as e:
         column = str(e)
@@ -18,26 +19,29 @@ def get_all(table):
     column = get_columns(table)
     results = list()
     try:
-        db.execute("SELECT * FROM "+table)
+        query = "SELECT * FROM {}".format(table)
+        db.prepare(query)
+        db.execute(query)
         rows = db.fetchall()
         retry_counter = 0
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         print(error)
-        return retry_execute("SELECT * FROM "+table, column, retry_counter, error)
+        return retry_execute(query, column, retry_counter, error)
     else:
         return results
 
 def get_by_id(table, field= None, value= None):
     column = get_columns(table)
     results = list()
-
+    retry_counter = 0
     try:
-        query = "SELECT * FROM "+table+" WHERE "+field+"='"+str(value)+"'"
+        query = "SELECT * FROM "+table+" WHERE "+field+"='{}'".format(str(value))
+        db.prepare(query)
         db.execute(query)
         rows = db.fetchall()
-        retry_counter = 0
+        
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
@@ -52,11 +56,14 @@ def insert(table, data = None):
     column = ''
     for row in data:
         column += row+","
-        value += "'"+str(data[row]+"',")
+        # value += "'"+str(data[row])+"',"
+        value += "'{}',".format(str(data[row]))
     column = "("+column[:-1]+")"
     value = "("+value[:-1]+")"
     try:
-        db.execute("INSERT INTO "+table+" "+column+" VALUES "+value+" RETURNING *")
+        query = "INSERT INTO "+table+" "+column+" VALUES "+value+" RETURNING *"
+        db.prepare(query)
+        db.execute(query)
     except (Exception, psycopg2.DatabaseError) as e:
         raise e
     else:
@@ -97,6 +104,7 @@ def retry_execute(query, column, retry_counter, error):
     else:
         retry_counter += 1
         print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
+        db.prepare(query)
         db.execute(query)
         rows = db.fetchall()
         for row in rows:
