@@ -24,7 +24,8 @@ conn = psycopg2.connect(
     port=os.environ.get("DB_PORT", os.getenv('DB_PORT')),
     host=os.environ.get("DB_HOST", os.getenv('DB_HOST'))
 )
-conn.set_session(autocommit=True)
+# conn.set_session(autocommit=True)
+conn.autocommit = False
 db = conn.cursor()
 
 cs_storage = os.environ.get("CLUSTER_STORAGE", "database")

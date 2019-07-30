@@ -1,4 +1,4 @@
-from app import  db, psycopg2
+from app import  db, conn, psycopg2
 import json
 
 LIMIT_RETRIES = 5
@@ -25,9 +25,10 @@ def get_all(table):
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
-        print(error)
+        conn.rollback()
         return retry_execute(query, column, retry_counter, error)
     else:
+        conn.commit()
         return results
 
 def get_by_id(table, field= None, value= None):
@@ -41,9 +42,10 @@ def get_by_id(table, field= None, value= None):
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
-        print(error)
+        conn.rollback()
         return retry_execute(query, column, retry_counter, error)
     else:
+        conn.commit()
         return results
 
 
@@ -59,8 +61,10 @@ def insert(table, data = None):
         query = "INSERT INTO %s %s VALUES %s RETURNING *" % (table, column, value)
         db.execute(query)
     except (Exception, psycopg2.DatabaseError) as e:
+        conn.rollback()
         raise e
     else:
+        conn.commit()
         id_of_new_row = db.fetchone()[0]
         return str(id_of_new_row)
 
@@ -75,21 +79,25 @@ def update(table, data = None):
     try:
         query = "UPDATE %s SET %s WHERE %s='%s'" % (table, set, field, data['where'][field])
         db.execute(query)
-        status = True
     except (Exception, psycopg2.DatabaseError) as e:
-        status = e
-    finally:
+        conn.rollback()
+        raise e
+    else:
+        conn.commit()
+        status = True
         return status
 
 
 def delete(table, field = None, value = None):
     rows_deleted = 0
     try:
-        db.execute("DELETE FROM "+table+" WHERE "+field+" ="+value)
-        rows_deleted = db.rowcount
+        db.execute("DELETE FROM %s WHERE %s=%s" % (table, field, value))
     except (Exception, psycopg2.DatabaseError) as error:
+        conn.rollback()
         raise error
     else:
+        conn.commit()
+        rows_deleted = db.rowcount
         return rows_deleted
 
 def retry_execute(query, column, retry_counter, error):
@@ -99,8 +107,13 @@ def retry_execute(query, column, retry_counter, error):
     else:
         retry_counter += 1
         print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
-        db.execute(query)
-        rows = db.fetchall()
-        for row in rows:
-            results.append(dict(zip(column, row)))
-        return results
+        try:
+            db.execute(query)
+        except (Exception, psycopg2.DatabaseError) as error:
+            conn.rollback()
+        else:
+            conn.commit()
+            rows = db.fetchall()
+            for row in rows:
+                results.append(dict(zip(column, row)))
+            return results
