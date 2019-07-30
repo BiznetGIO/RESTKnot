@@ -174,7 +174,9 @@ class DataTest(object):
         id_zone = self.identity['zone']['id_zone']
         id_records = self.identity['records']
         for i in id_records:
-            data = {"zone-unset":{"tags":{"id_record" : id_record}}}
+            data = {"cluster-unset-master": {"tags": {"id_zone" : str(id_zone)}}}
+            self.post_data(client,'sendcommand',data,headers)
+            data = {"cluster-unset-slave": {"tags": {"id_zone" : str(id_zone)}}}
             self.post_data(client,'sendcommand',data,headers)
 
         data = {"conf-unset":{"tags":{"id_zone" : id_zone}}}
