@@ -3,7 +3,13 @@ import re
 from threading import Lock
 import psycopg2
 import psycopg2.extensions as ext
-import uuid
+import random
+import string
+
+
+def randomString(stringLength=5):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
 
 class PreparingCursor(ext.cursor):
     _lock = Lock()
@@ -11,7 +17,7 @@ class PreparingCursor(ext.cursor):
     def __init__(self, *args, **kwargs):
         super(PreparingCursor, self).__init__(*args, **kwargs)
         self._lock.acquire()
-        random_string = uuid.uuid4()
+        random_string = randomString()
         self._prepname = "psyco{}_{}".format(str(random_string), self._ncur)
         PreparingCursor._ncur += 1
         self._lock.release()
