@@ -7,7 +7,6 @@ def get_columns(table):
     column = None
     try:
         query = "SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='"+table+"'"
-        db.prepare(query)
         db.execute(query)
         column = [row[0] for row in db.fetchall()]
     except (Exception, psycopg2.DatabaseError) as e:
@@ -20,7 +19,6 @@ def get_all(table):
     results = list()
     try:
         query = "SELECT * FROM {}".format(table)
-        db.prepare(query)
         db.execute(query)
         rows = db.fetchall()
         retry_counter = 0
@@ -37,11 +35,9 @@ def get_by_id(table, field= None, value= None):
     results = list()
     retry_counter = 0
     try:
-        query = "SELECT * FROM "+table+" WHERE "+field+"='{}'".format(str(value))
-        db.prepare(query)
+        query = "SELECT * FROM "+table+" WHERE "+field+"='%s'" % str(value)
         db.execute(query)
         rows = db.fetchall()
-        
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
@@ -56,13 +52,11 @@ def insert(table, data = None):
     column = ''
     for row in data:
         column += row+","
-        # value += "'"+str(data[row])+"',"
-        value += "'{}',".format(str(data[row]))
+        value += "'%s'," % str(data[row])
     column = "("+column[:-1]+")"
     value = "("+value[:-1]+")"
     try:
         query = "INSERT INTO "+table+" "+column+" VALUES "+value+" RETURNING *"
-        db.prepare(query)
         db.execute(query)
     except (Exception, psycopg2.DatabaseError) as e:
         raise e
@@ -74,7 +68,7 @@ def update(table, data = None):
     value = ''
     rows = data['data']
     for row in rows:
-        value += row+"='"+str(rows[row]+"',")
+        value += row+"='%s'," % str(rows[row])
     set = value[:-1]
     field = list(data['where'].keys())[0]
     status = None
@@ -104,7 +98,6 @@ def retry_execute(query, column, retry_counter, error):
     else:
         retry_counter += 1
         print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
-        db.prepare(query)
         db.execute(query)
         rows = db.fetchall()
         for row in rows:

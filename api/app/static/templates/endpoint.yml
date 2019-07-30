@@ -148,16 +148,6 @@ endpoint:
         method:
           name: name search for domain
           desc: Domain Variabel To Search
-    # edit:
-    #   fields:
-    #     zone_name:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
-    #       type: fields
-    #   others:
-    #     method:
-    #       name: name search for domain
-    #       desc: Domain Variabel To Search
     remove:
       tags:
         id_zone:

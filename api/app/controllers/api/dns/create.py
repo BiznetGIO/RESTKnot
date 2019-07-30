@@ -73,7 +73,6 @@ def sync_cname_default(id_record, record):
     data.append(json_command)
     data.append(cmd.zone_commit(record))
     check_res = utils.send_http(url, data)
-    print(check_res)
     if check_res:
         state = utils.change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
