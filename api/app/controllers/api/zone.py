@@ -79,6 +79,7 @@ class ZoneName(Resource):
                     "messages": False
                 }
                 return response(200, data=obj_userdata , message=respons)
+        
         if init_data['action'] == 'remove':
             table = ""
             tags = dict()
@@ -90,7 +91,11 @@ class ZoneName(Resource):
             try:
                 result = db.delete(table,fields,tags[fields])
             except Exception as e:
-                return response(401 ,message=str(e))
+                respons = {
+                    "status": 1,
+                    "messages": str(e)
+                }
+                return response(401, message=respons)
             else:
                 respons = {
                     "status": result,

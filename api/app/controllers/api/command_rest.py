@@ -8,6 +8,7 @@ import json, os
 from app.middlewares.auth import login_required
 from app.helpers import cluster_task
 from app.helpers import refresh_zone
+import uuid
 
 class SendCommandRest(Resource):
     def get(self):
@@ -267,6 +268,13 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                random_string = uuid.uuid4()
+                data = {'id': str(random_string), 'state': 'SUCCESS'}
+                return response(200, data=data, message="Zone Has been Deleted")
+
+            try:
                 master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
                     retry=True,
                     retry_policy={
@@ -288,6 +296,13 @@ class SendCommandRest(Resource):
             result = []
             for i in init_data['data']:
                 tags = i['tags']
+            try:
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                random_string = uuid.uuid4()
+                data = {'id': str(random_string), 'state': 'SUCCESS'}
+                return response(200, data=data, message="Zone Has been Deleted")
+            
             try:
                 slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
                     countdown=5,
