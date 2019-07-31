@@ -24,4 +24,4 @@ if [[ -z $2 ]]; then
     rep_warn "Using Default Autoscale | $autoscale"
 fi
 
-celery worker -A celery_worker.celery --loglevel=info --concurrency=$concurent --autoscale=$autoscale
+celery worker -A celery_worker.celery --loglevel=info --concurrency=$concurent
