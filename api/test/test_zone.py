@@ -118,7 +118,6 @@ class TestZone:
                                 "id_zone" : str(id_zone), "id_type" : str(id_type)})
         
         result = self.post_data(client,'record',data=data, headers=header)
-        print("CC : ",result.data)
         assert result.status_code == 200
 
         result = json.loads(result.data.decode('utf8'))
@@ -199,37 +198,7 @@ class TestZone:
         self.var_mock.ids['id_content_serial'] = id_content_serial
 
 
-     ##SYNCHRONIZATION
-
-
-    ## SOA
-        headers = get_header
-        id_zone = self.var_mock.ids['id_zone']
-        data = {'zone-soa-insert': {'tags': {'id_zone': id_zone}}}
-        res = self.post_data(client,'sendcommand',data,headers)
-        assert res.status_code == 200
-
-    ## NS
-        data = {'zone-ns-insert': {'tags': {'id_zone': id_zone}}}
-        res = self.post_data(client,'sendcommand',data,headers)
-        assert res.status_code == 200
-
-    ### Start record Removal, Unsync Record First
-        id_record = self.var_mock.ids['id_record']
-        data = {"zone-unset":{"tags":{"id_record" : id_record}}}
-        data_test = {"where":{"tags":{"id_record": id_record}}}
-        res_test = self.post_data(client,'record',data_test,headers)
-        res_json = json.loads(res_test.data.decode('utf8'))
-        print(res_json)
-        res = self.post_data(client,'sendcommand',data,headers)
-        
-        assert res.status_code == 200
-
-        id_record = self.var_mock.ids['id_record_ns']
-        data = {"zone-unset":{"tags":{"id_record" : id_record}}}
-        res = self.post_data(client,'sendcommand',data,headers)
-
-        ## REMOVE CONTENT SERIAL
+        # REMOVE CONTENT SERIAL
 
         id_content_serial = self.var_mock.ids['id_content_serial']
         data = utils.get_model("remove",{"id_content_serial" : id_content_serial})

@@ -16,7 +16,6 @@ class MockData:
         "nm_type"   : "SOA",
         "requirements" :
         {
-            "SRV" : {"nm_record": "SRVnm", "nm_type" : "SRV", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "0 50 @"},
             "MX"  : {"nm_record": "MXnm", "nm_type" : "MX", "nm_ttl" : "1800", "nm_content" : "1", "nm_content_serial" : "@"},
             "TXT" : {"nm_record": "TXTnm", "nm_type" : "TXT", "nm_ttl" : "1800", "nm_content" : "txt_content"}
     }}
