@@ -89,10 +89,19 @@ class ZoneName(Resource):
                 tags = i['tags']
             fields = str(list(tags.keys())[0])
             try:
-                result = db.delete(table,fields,tags[fields])
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
                 respons = {
                     "status": 1,
+                    "messages": "Record Not Found"
+                }
+                return response(401, message=respons)
+
+            try:
+                result = db.delete(table,fields,tags[fields])
+            except Exception as e:
+                respons = {
+                    "status": 0,
                     "messages": str(e)
                 }
                 return response(401, message=respons)
