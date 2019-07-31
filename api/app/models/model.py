@@ -21,11 +21,11 @@ def get_all(table):
         query = "SELECT * FROM %s" % (table)
         db.execute(query)
         rows = db.fetchall()
-        retry_counter = 0
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         conn.rollback()
+        retry_counter = 0
         return retry_execute(query, column, retry_counter, error)
     else:
         conn.commit()
@@ -34,7 +34,6 @@ def get_all(table):
 def get_by_id(table, field= None, value= None):
     column = get_columns(table)
     results = list()
-    retry_counter = 0
     try:
         query = "SELECT * FROM %s WHERE %s='%s'" % (table, field, str(value))
         db.execute(query)
@@ -43,6 +42,7 @@ def get_by_id(table, field= None, value= None):
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         conn.rollback()
+        retry_counter = 0
         return retry_execute(query, column, retry_counter, error)
     else:
         conn.commit()
