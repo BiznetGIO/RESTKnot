@@ -9,6 +9,7 @@ port_boot = os.environ.get("PORT", "6967")
 
 urls = "http://"+url_boot+":"+port_boot+"/api/bootstrap"
 urls_knot = "http://"+url_boot+":"+port_boot+"/api/command_rest"
+print(urls_knot)
 
 def log_rep(stdin):
     coloredlogs.install()
@@ -54,7 +55,7 @@ if __name__ == "__main__":
         if response:
             knots = send_http(urls_knot, data)
             if knots['result']:
-                data = json.loads(knots['data'])
+                data = json.loads(knots['data']['data'])
                 try:
                     data['status']
                 except Exception:
