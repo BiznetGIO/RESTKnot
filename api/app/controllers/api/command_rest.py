@@ -8,6 +8,7 @@ import json, os
 from app.middlewares.auth import login_required
 from app.helpers import cluster_task
 from app.helpers import refresh_zone
+import uuid
 
 class SendCommandRest(Resource):
     def get(self):
@@ -150,7 +151,6 @@ class SendCommandRest(Resource):
 
                 result.append(http_response)
                 commit_json = cmd.zone_commit_http(url, tags)
-                # commit_response = utils.send_http(url,commit_json)
                 result.append(commit_json)
                 return response(200, data=result)
 
@@ -160,7 +160,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
 
             begin_json = cmd.zone_begin_http(url, tags)
-            # begin_respon = utils.send_http(url,begin_json)
             result.append(begin_json)
 
             try :
@@ -223,7 +222,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # master = cluster_task.cluster_task_master.delay(tags)
                 master = cluster_task.cluster_task_master.apply_async(args=[tags],
                     retry=True,
                     retry_policy={
@@ -247,7 +245,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # slave = cluster_task.cluster_task_slave.delay(tags)
                 slave = cluster_task.cluster_task_slave.apply_async(args=[tags],
                     countdown=5,
                     retry=True,
@@ -271,7 +268,13 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                # master_unset = cluster_task.unset_cluster_master.delay(tags) 
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                random_string = uuid.uuid4()
+                data = {'id': str(random_string), 'state': 'SUCCESS'}
+                return response(401, data=data, message="Zone Has been Deleted")
+
+            try:
                 master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
                     retry=True,
                     retry_policy={
@@ -294,8 +297,15 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                # slave_unset = cluster_task.unset_cluster_slave.delay(tags)
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                random_string = uuid.uuid4()
+                data = {'id': str(random_string), 'state': 'SUCCESS'}
+                return response(401, data=data, message="Zone Has been Deleted")
+            
+            try:
                 slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
+                    countdown=5,
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
@@ -318,7 +328,6 @@ class SendCommandRest(Resource):
                 tags = i['tags']
             
             try:
-                # master = refresh_zone.refresh_zone_master.delay(tags['id_master'])
                 master = refresh_zone.refresh_zone_master.apply_async(args=[tags['id_master']], 
                     retry=True,
                     retry_policy={

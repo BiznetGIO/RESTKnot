@@ -135,6 +135,7 @@ def unset_cluster_master(self, tags):
     for i in master_data:
         data = list()
         url_fix= "http://"+i['ip_master']+":"+i['port']
+        print("Execute Unset Master: "+str(i['nm_master']))
         master_server_url = url_fix+"/api/command_rest"
         data.append(command.conf_begin_http_cl())
         master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
@@ -147,7 +148,6 @@ def unset_cluster_master(self, tags):
 @celery.task(bind=True)
 def unset_cluster_slave(self, tags):
     result = []
-    
     id_zone = tags['id_zone']
     try:
         data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
@@ -160,6 +160,7 @@ def unset_cluster_slave(self, tags):
     for a in data_slave:
         data_slave = list()
         url_fix= "http://"+a['ip_slave_node']+":"+a['port_slave_node']
+        print("Execute Unset Slave: "+str(a['nm_slave_node']))
         slave_server_url = url_fix+"/api/command_rest"
         data_slave.append(command.conf_begin_http_cl())
         slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])

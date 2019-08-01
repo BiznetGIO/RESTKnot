@@ -5,7 +5,6 @@ from flask_cors import CORS
 from flask_redis import FlaskRedis
 import psycopg2
 from celery import Celery
-from app.models.prepare import PreparingCursor
 
 
 redis_store = FlaskRedis()
@@ -25,8 +24,9 @@ conn = psycopg2.connect(
     port=os.environ.get("DB_PORT", os.getenv('DB_PORT')),
     host=os.environ.get("DB_HOST", os.getenv('DB_HOST'))
 )
-conn.set_session(autocommit=True)
-db = conn.cursor(cursor_factory=PreparingCursor)
+# conn.set_session(autocommit=True)
+conn.autocommit = False
+db = conn.cursor()
 
 cs_storage = os.environ.get("CLUSTER_STORAGE", "database")
 

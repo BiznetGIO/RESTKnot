@@ -25,36 +25,24 @@ def sync_task_slave(self, data):
     data_zone = data['data_zone']
     nm_master = data['nm_master']
     urls = data['urls'] 
-    command.conf_begin_http(urls)
-    print("BEGIN")
+    
+    result.append(command.conf_begin_http_cl())
     ffi_insert_conf = cluster_slave.insert_config_zone(data['data_zone'])
-    http_response = utils.send_http(urls, ffi_insert_conf)
-    result.append(http_response)
-
+    result.append(ffi_insert_conf)
     ffi_slave_master = cluster_slave.master_create_json(data_zone, nm_master)
-    http_response = utils.send_http(urls, ffi_slave_master)
-    result.append(http_response)
-
+    result.append(ffi_slave_master)
     ffi_slave_acl = cluster_slave.create_json_acl(data_zone, nm_master)
-    http_response = utils.send_http(urls, ffi_slave_acl)
-    result.append(http_response)
-
+    result.append(ffi_slave_acl)
     ffi_set_files = cluster_master.set_file_all(data_zone)
-    http_response = utils.send_http(urls, ffi_set_files)
-    result.append(http_response)
-
+    result.append(ffi_set_files)
     ffi_set_module = cluster_master.set_mods_stats_all(data_zone, "mod-stats/default")
-    http_response = utils.send_http(urls, ffi_set_module)
-    result.append(http_response)
-
+    result.append(ffi_set_module)
     ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
-    http_response = utils.send_http(urls, ffi_serial_policy)
-    result.append(http_response)
-    print("COMMIT")
-    command.conf_commit_http(urls)
-
+    result.append(ffi_serial_policy)
+    result.append(command.conf_commit_http_cl())
+    data_res = utils.send_http_clusters(urls, result)
     respons.append({
-        "data": result
+        "data": data_res
     })
     return respons
 
@@ -66,30 +54,30 @@ def sync_task_master(self, data):
     data_zone = data['data_zone']
     urls = data['urls'] 
     sleep(20)
-    command.conf_begin_http(urls)
+    result.append(command.conf_begin_http_cl())
     ffi_insert_conf = cluster_master.insert_config_zone(data_zone, data['nm_config'])
-    http_response = utils.send_http(urls, ffi_insert_conf)
-    result.append(http_response)
+    result.append(ffi_insert_conf)
     ffi_master = cluster_master.master_create_json_master(data_zone, data['nm_config'])
-    http_response = utils.send_http(urls, ffi_master)
     result.append(ffi_master)
+    ffi_notify = None
     ffi_notify = cluster_master.master_create_json_notify(data_zone, data['nm_config'], urls)
-    result.append({'notify':ffi_notify})
+    for i_not in ffi_notify:
+        result.append(i_not)
+    ffi_acl = None
     ffi_acl = cluster_master.master_create_json_acl(data_zone, data['nm_config'], urls)
-    result.append({"acl": ffi_acl})
+    for i_ac in ffi_acl:
+        result.append(i_ac)
     ffi_set_files = cluster_master.set_file_all(data_zone)
-    http_response = utils.send_http(urls, ffi_set_files)
-    result.append(http_response)
+    result.append(ffi_set_files)
     ffi_set_module = cluster_master.set_mods_stats_all(data_zone, "mod-stats/default")
-    http_response = utils.send_http(urls, ffi_set_module)
-    result.append(http_response)
+    result.append(ffi_set_module)
     ffi_serial_policy = cluster_master.set_serial_policy_all(data_zone, "dateserial")
-    http_response = utils.send_http(urls, ffi_serial_policy)
-    result.append(http_response)
-    command.conf_commit_http(urls)
+    result.append(ffi_serial_policy)
+    result.append(command.conf_commit_http_cl())
+    data_res = utils.send_http_clusters(urls, result)
     respons.append({
         "config": data['nm_config'],
         "nm_server": data['nm_master'],
-        "data": result
+        "data": data_res
     })
     return respons
