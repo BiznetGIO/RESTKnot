@@ -270,10 +270,8 @@ class SendCommandRest(Resource):
                         'interval_max': 0.2,
                 })
                 result.append({
-                    "priority":{
-                        "id": str(slave),
-                        "state": slave.state
-                    }
+                    "id": str(slave),
+                    "state": slave.state
                 })
                 try:
                     data_non_priority = db.get_by_id("v_cs_slave_node", "priority", "0")
