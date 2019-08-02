@@ -220,47 +220,85 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            
             try:
-                master = cluster_task.cluster_task_master.apply_async(args=[tags],
-                    retry=True,
-                    retry_policy={
-                        'max_retries': 3,
-                        'interval_start': 0,
-                        'interval_step': 0.2,
-                        'interval_max': 0.2,
-                    })
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
-                return response(401, message="Master Cluster Not Complete")
+                return response(401, message="Zone Not Found")
+            try:
+                master_data = db.get_all("cs_master")
+            except Exception as e:
+                return response(401, message="Master Data Not Found")
             else:
-                result.append({
-                    "id": str(master),
-                    "state": master.state
-                })
-                return response(200, data=result, message="Master Cluster Processing")
+                try:
+                    master = cluster_task.cluster_task_master.apply_async(args=[master_data, data_zone],
+                        retry=True,
+                        retry_policy={
+                            'max_retries': 3,
+                            'interval_start': 0,
+                            'interval_step': 0.2,
+                            'interval_max': 0.2,
+                        })
+                except Exception as e:
+                    return response(401, message="Master Cluster Not Complete")
+                else:
+                    result.append({
+                        "id": str(master),
+                        "state": master.state
+                    })
+                    return response(200, data=result, message="Master Cluster Processing")
 
         if init_data['action'] == 'cluster-slave':
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            
             try:
-                slave = cluster_task.cluster_task_slave.apply_async(args=[tags],
-                    countdown=5,
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                return response(401, message="Zone Not Found")
+            try:
+                data_by_priority = db.get_by_id("v_cs_slave_node", "priority", "1")
+            except Exception as e:
+                return response(401, message="Slave Priority Cluster Not Complete")
+            else:
+                slave = cluster_task.cluster_task_slave_priority.apply_async(args=[data_by_priority, data_zone],
+                    countdown=2,
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
                         'interval_start': 0,
                         'interval_step': 0.2,
                         'interval_max': 0.2,
-                    })
-            except Exception as e:
-                return response(401, message="Slave Cluster Not Complete")
-            else:
-                result.append({
-                    "id": str(slave),
-                    "state": slave.state
                 })
+                result.append({
+                    "priority":{
+                        "id": str(slave),
+                        "state": slave.state
+                    }
+                })
+                try:
+                    data_non_priority = db.get_by_id("v_cs_slave_node", "priority", "0")
+                except Exception:
+                    return response(401, message="Slave Non Priority Not Found")
+                else:
+                    try:
+                        slave_non_priority = cluster_task.cluster_task_slave.apply_async(args=[data_non_priority, data_zone],
+                        countdown=5,
+                        retry=True,
+                        retry_policy={
+                            'max_retries': 3,
+                            'interval_start': 0,
+                            'interval_step': 0.2,
+                            'interval_max': 0.2,
+                    })
+                    except Exception as e:
+                        return response(401, message="Slave Non Priority Not Complete")
+                    else:
+                        result.append({
+                            "non_priority":{
+                                "id": str(slave_non_priority),
+                                "state": slave_non_priority.state
+                            }
+                        })
                 return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset-master':
