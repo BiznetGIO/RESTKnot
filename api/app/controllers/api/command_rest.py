@@ -278,7 +278,7 @@ class SendCommandRest(Resource):
                 try:
                     data_non_priority = db.get_by_id("v_cs_slave_node", "priority", "0")
                 except Exception:
-                    return response(401, message="Slave Non Priority Not Found")
+                    return response(200, data=result, message="Slave Cluster Processing | Non Priority Slave Not Found")
                 else:
                     try:
                         slave_non_priority = cluster_task.cluster_task_slave.apply_async(args=[data_non_priority, data_zone],
@@ -293,12 +293,11 @@ class SendCommandRest(Resource):
                     except Exception as e:
                         return response(401, message="Slave Non Priority Not Complete")
                     else:
-                        result.append({
-                            "non_priority":{
-                                "id": str(slave_non_priority),
-                                "state": slave_non_priority.state
-                            }
-                        })
+                        data_non_priority_res = {
+                            "id": str(slave_non_priority),
+                            "state": slave_non_priority.state
+                        }
+                        print(data_non_priority_res)
                 return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset-master':
