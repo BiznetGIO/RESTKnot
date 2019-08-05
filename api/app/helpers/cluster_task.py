@@ -149,12 +149,6 @@ def cluster_task_slave(self, data, data_zone):
 @celery.task(bind=True)
 def unset_cluster_master(self, data_zone, master_data):
     result = []
-    # id_zone = tags['id_zone']
-    # try:
-    #     data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-    # except Exception as e:
-    #     raise e
-
     for i in master_data:
         data = list()
         url_fix= "http://"+i['ip_master']+":"+i['port']
@@ -172,7 +166,6 @@ def unset_cluster_master(self, data_zone, master_data):
 def unset_cluster_slave(self, data_zone, data_slave):
     result = []
     try:
-        # data_slave = model.get_all("v_cs_slave_node")
         data_slave = data_slave
     except Exception as e:
         raise e
@@ -188,6 +181,5 @@ def unset_cluster_slave(self, data_zone, data_slave):
         http_response_slave = utils.send_http_clusters(slave_server_url, data_slave)
         result.append(http_response_slave)
     return result
-
 
     

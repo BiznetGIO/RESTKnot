@@ -111,8 +111,3 @@ class ZoneName(Resource):
                     "messages": "Fine Deleted!"
                 }
                 return response(200, data=tags, message=respons)
-
-        if init_data['action'] == 'query':
-            data = init_data['data']
-            query = cmd.query_parser(data)
-            return response(200, message=query)

@@ -327,7 +327,8 @@ class SendCommandRest(Resource):
                 result.append({
                     "id": str(master_unset),
                     "state": master_unset.state
-                })                
+                }) 
+                print(result)               
                 return response(200, data=result)
 
         if init_data['action'] == 'cluster-unset-slave':
@@ -343,7 +344,7 @@ class SendCommandRest(Resource):
             try:
                 data_slave = db.get_all("v_cs_slave_node")
             except Exception as e:
-                raise e
+                return response(401, message="Slave Data Not Found")
             try:
                 slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[data_zone, data_slave], 
                     countdown=5,
@@ -360,7 +361,8 @@ class SendCommandRest(Resource):
                 result.append({
                     "id": str(slave_unset),
                     "state": slave_unset.state
-                })              
+                })  
+                print(result)            
                 return response(200, data=result)
 
         if init_data['action'] == 'refresh-master':
