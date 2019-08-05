@@ -158,28 +158,6 @@ class SendCommandRest(Resource):
                 result.append(commit_json)
                 return response(200, data=result)
 
-        if init_data['action'] == 'zone-mx-insert':
-            for i in init_data['data']:
-                tags = i['tags']
-            try :
-                record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]  
-            except Exception as e:
-                return response(401, message=str(e))
-            else :
-                data = list()
-                data.append(cmd.zone_begin(record['nm_zone']))
-                json_command = cmd.zone_insert(tags)
-                data.append(json_command)
-                data.append(cmd.zone_commit(record['nm_zone']))
-                respons = utils.send_http(url,data)
-                if respons:
-                    state = utils.change_state("id_record", tags['id_record'], "1")
-                    try:
-                        db.update("zn_record", data = state)
-                    except Exception as e:
-                        print(e)
-                return response(200, data=respons)
-
         # delete all zone
         if init_data['action'] == 'conf-unset':
             result = list()
