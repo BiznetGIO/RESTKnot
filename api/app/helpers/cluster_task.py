@@ -147,24 +147,21 @@ def cluster_task_slave(self, data, data_zone):
 
 
 @celery.task(bind=True)
-def unset_cluster_master(self, tags):
+def unset_cluster_master(self, data_zone, master_data):
     result = []
-    id_zone = tags['id_zone']
-    try:
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-    except Exception as e:
-        raise e
-    try:
-        master_data = model.get_all("cs_master")
-    except Exception as e:
-        raise e
+    # id_zone = tags['id_zone']
+    # try:
+    #     data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    # except Exception as e:
+    #     raise e
+
     for i in master_data:
         data = list()
         url_fix= "http://"+i['ip_master']+":"+i['port']
         print("Execute Unset Master: "+str(i['nm_master']))
         master_server_url = url_fix+"/api/command_rest"
         data.append(command.conf_begin_http_cl())
-        master_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        master_command = command.unset_cluster_command_new(data_zone['nm_zone'])
         data.append(master_command)
         data.append(command.conf_commit_http_cl())
         response = utils.send_http_clusters(master_server_url, data)
@@ -172,15 +169,11 @@ def unset_cluster_master(self, tags):
     return result
 
 @celery.task(bind=True)
-def unset_cluster_slave(self, tags):
+def unset_cluster_slave(self, data_zone, data_slave):
     result = []
-    id_zone = tags['id_zone']
     try:
-        data_zone = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
-    except Exception as e:
-        raise e
-    try:
-        data_slave = model.get_all("v_cs_slave_node")
+        # data_slave = model.get_all("v_cs_slave_node")
+        data_slave = data_slave
     except Exception as e:
         raise e
     for a in data_slave:
@@ -189,7 +182,7 @@ def unset_cluster_slave(self, tags):
         print("Execute Unset Slave: "+str(a['nm_slave_node']))
         slave_server_url = url_fix+"/api/command_rest"
         data_slave.append(command.conf_begin_http_cl())
-        slave_command = command.unset_cluster_command_new(tags, data_zone['nm_zone'])
+        slave_command = command.unset_cluster_command_new(data_zone['nm_zone'])
         data_slave.append(slave_command)
         data_slave.append(command.conf_commit_http_cl())
         http_response_slave = utils.send_http_clusters(slave_server_url, data_slave)

@@ -29,7 +29,7 @@ def cluster_command_new(tags, location, type):
     return json_command
 
 
-def unset_cluster_command_new(tags, domain_name):
+def unset_cluster_command_new(domain_name):
     json_command={
         "cluster-set": {
             "sendblock": {

@@ -303,14 +303,17 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
                 random_string = uuid.uuid4()
                 data = {'id': str(random_string), 'state': 'SUCCESS'}
                 return response(401, data=data, message="Zone Has been Deleted")
-
             try:
-                master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
+                master_data = db.get_all("cs_master")
+            except Exception as e:
+                return response(401, message="Master Data Not Found")
+            try:
+                master_unset = cluster_task.unset_cluster_master.apply_async(args=[data_zone, master_data], 
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
@@ -332,14 +335,17 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
                 random_string = uuid.uuid4()
                 data = {'id': str(random_string), 'state': 'SUCCESS'}
                 return response(401, data=data, message="Zone Has been Deleted")
-            
             try:
-                slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
+                data_slave = db.get_all("v_cs_slave_node")
+            except Exception as e:
+                raise e
+            try:
+                slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[data_zone, data_slave], 
                     countdown=5,
                     retry=True,
                     retry_policy={
