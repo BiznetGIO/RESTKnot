@@ -188,15 +188,18 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             data_send = list()
-
-            data_send.append(cmd.conf_begin_http_cl())
-            data = cmd.conf_unset(tags)
-            data_purge = cmd.conf_purge(tags)
-            data_send.append(data)
-            data_send.append(data_purge)            
-            data_send.append(cmd.conf_commit_http_cl())
-            http_respons = utils.send_http(url,data_send)
-            return response(200, data=http_respons)
+            try:
+                data = cmd.conf_unset(tags)
+                data_purge = cmd.conf_purge(tags)
+            except Exception as e:
+                return response(401, message="Data Not Found | "+str(e))
+            else:
+                data_send.append(cmd.conf_begin_http_cl())
+                data_send.append(data)
+                data_send.append(data_purge)            
+                data_send.append(cmd.conf_commit_http_cl())
+                http_respons = utils.send_http(url,data_send)
+                return response(200, data=http_respons)
         
         if init_data['action'] == 'zone-unset':
             result = list()
@@ -329,7 +332,7 @@ class SendCommandRest(Resource):
                     "state": master_unset.state
                 }) 
                 print(result)               
-                return response(200, data=result)
+                return response(200, data=result, message="Zone Unset Master Processing")
 
         if init_data['action'] == 'cluster-unset-slave':
             result = []
@@ -361,9 +364,8 @@ class SendCommandRest(Resource):
                 result.append({
                     "id": str(slave_unset),
                     "state": slave_unset.state
-                })  
-                print(result)            
-                return response(200, data=result)
+                })             
+                return response(200, data=result, message="Zone Unset Slave Processing")
 
         if init_data['action'] == 'refresh-master':
             result = list()

@@ -610,49 +610,49 @@ def zone_insert_mx(tags):
 def conf_unset(tags):
     id_zone = tags['id_zone']
     record = list()
-    column_record = model.get_columns("zn_zone")
-    query = "select * from zn_zone where id_zone='"+id_zone+"'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        record.append(dict(zip(column_record, row)))
-    json_command={
-        "conf-unset": {
-            "sendblock": {
-                "cmd": "conf-unset",
-                "section": "zone",
-                "item": "domain",
-                "data":record[0]['nm_zone']
-            },
-            "receive": {
-                "type": "block"
+    try:
+        record = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        raise e
+    else:
+        json_command={
+            "conf-unset": {
+                "sendblock": {
+                    "cmd": "conf-unset",
+                    "section": "zone",
+                    "item": "domain",
+                    "data":record['nm_zone']
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
     return json_command
+
 
 def conf_purge(tags):
     id_zone = tags['id_zone']
     record = list()
-    column_record = model.get_columns("zn_zone")
-    query = "select * from zn_zone where id_zone='"+id_zone+"'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        record.append(dict(zip(column_record, row)))
-    json_command={
-        "zone-purge": {
-            "sendblock": {
-                "cmd": "zone-purge",
-                "zone": record[0]['nm_zone'],
-                "owner": record[0]['nm_zone']
-            },
-            "receive": {
-                "type": "block"
+    try:
+        record = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        raise e
+    else:
+        json_command={
+            "zone-purge": {
+                "sendblock": {
+                    "cmd": "zone-purge",
+                    "zone": record['nm_zone'],
+                    "owner": record['nm_zone']
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
-    return json_command
+        return json_command
+
 
 def zone_unset(tags):
     json_command = None
