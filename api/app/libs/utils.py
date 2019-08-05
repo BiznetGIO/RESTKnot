@@ -152,11 +152,10 @@ def send_http(url, data, headers=None):
                     check_command_error = True
             except Exception as e:
                 check_command_error = False
-
+            print(respons)
             if check_command_error:
                 respons['data'] = {
                     "status": False,
-                    "description": respons['description'],
                     "error": respons['data']['error'],
                     "result": "Command Not Execute",
                     "time": response_time

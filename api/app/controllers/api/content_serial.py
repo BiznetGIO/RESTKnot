@@ -100,8 +100,9 @@ class ContentSerial(Resource):
             tags = init_data['data'][0]['tags']
             l_content_serial = fields['nm_content_serial']
             lowercase_cs_data = l_content_serial.lower()
+            
             content_validation = model.get_by_id("v_content_serial", field="id_content_serial", value=tags['id_content_serial'])
-
+            
             check_validation = False
             if content_validation[0]['nm_type'] == 'MX':
                 check_validation = utils.mx_validation(lowercase_cs_data)
@@ -135,7 +136,6 @@ class ContentSerial(Resource):
                 utils.send_http(url, data_unset)
             except Exception as e:
                 syncron.zone_commit_http(url, tags_zone)
-                return response(401, message="Record Not Unset | "+str(e))
 
             data_edits = {
                 "where":{

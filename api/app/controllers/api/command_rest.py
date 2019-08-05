@@ -113,20 +113,24 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]    
-            data = list()
-            data.append(cmd.zone_begin(record['nm_zone']))
-            json_command = cmd.zone_insert(tags)
-            data.append(json_command)
-            data.append(cmd.zone_commit(record['nm_zone']))
-            respons = utils.send_http(url,data)
-            if respons:
-                state = utils.change_state("id_record", tags['id_record'], "1")
-                try:
-                    db.update("zn_record", data = state)
-                except Exception as e:
-                    print(e)
-            return response(200, data=respons)
+            try:
+                record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]  
+            except Exception as e:
+                return response(401, message=str(e))
+            else: 
+                data = list()
+                data.append(cmd.zone_begin(record['nm_zone']))
+                json_command = cmd.zone_insert(tags)
+                data.append(json_command)
+                data.append(cmd.zone_commit(record['nm_zone']))
+                respons = utils.send_http(url,data)
+                if respons:
+                    state = utils.change_state("id_record", tags['id_record'], "1")
+                    try:
+                        db.update("zn_record", data = state)
+                    except Exception as e:
+                        print(e)
+                return response(200, data=respons)
 
         if init_data['action'] == 'zone-srv-insert':
             result = list()
@@ -155,32 +159,26 @@ class SendCommandRest(Resource):
                 return response(200, data=result)
 
         if init_data['action'] == 'zone-mx-insert':
-            result = list()
             for i in init_data['data']:
                 tags = i['tags']
-
-            begin_json = cmd.zone_begin_http(url, tags)
-            result.append(begin_json)
-
             try :
-                respons = cmd.zone_insert_mx(tags)
-
+                record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]  
             except Exception as e:
-                return response(401, data=result, message=str(e))
+                return response(401, message=str(e))
             else :
-                http_response = utils.send_http_cmd(url,respons)
-                # change state
-                if http_response:
+                data = list()
+                data.append(cmd.zone_begin(record['nm_zone']))
+                json_command = cmd.zone_insert(tags)
+                data.append(json_command)
+                data.append(cmd.zone_commit(record['nm_zone']))
+                respons = utils.send_http(url,data)
+                if respons:
                     state = utils.change_state("id_record", tags['id_record'], "1")
                     try:
                         db.update("zn_record", data = state)
                     except Exception as e:
                         print(e)
-
-                result.append(http_response)
-                commit_json = cmd.zone_commit_http(url, tags)
-                result.append(commit_json)
-                return response(200, data=result)
+                return response(200, data=respons)
 
         # delete all zone
         if init_data['action'] == 'conf-unset':
