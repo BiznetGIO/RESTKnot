@@ -25,3 +25,9 @@ All notable changes to this project will be documented in this file.
 - cors agent fixing
 - support sendcommand for MX, SOA, SRV Record to libknot format
 
+## [0.6.10]
+- Split task slave by priority
+- Model Transaction Isolate
+- Optimizing Queue Task in List Command
+- Removing api mx-insert-zone
+

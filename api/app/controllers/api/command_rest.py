@@ -113,20 +113,24 @@ class SendCommandRest(Resource):
             respons = list()
             for i in init_data['data']:
                 tags = i['tags']
-            record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]    
-            data = list()
-            data.append(cmd.zone_begin(record['nm_zone']))
-            json_command = cmd.zone_insert(tags)
-            data.append(json_command)
-            data.append(cmd.zone_commit(record['nm_zone']))
-            respons = utils.send_http(url,data)
-            if respons:
-                state = utils.change_state("id_record", tags['id_record'], "1")
-                try:
-                    db.update("zn_record", data = state)
-                except Exception as e:
-                    print(e)
-            return response(200, data=respons)
+            try:
+                record = db.get_by_id("v_record", "id_record", tags['id_record'])[0]  
+            except Exception as e:
+                return response(401, message=str(e))
+            else: 
+                data = list()
+                data.append(cmd.zone_begin(record['nm_zone']))
+                json_command = cmd.zone_insert(tags)
+                data.append(json_command)
+                data.append(cmd.zone_commit(record['nm_zone']))
+                respons = utils.send_http(url,data)
+                if respons:
+                    state = utils.change_state("id_record", tags['id_record'], "1")
+                    try:
+                        db.update("zn_record", data = state)
+                    except Exception as e:
+                        print(e)
+                return response(200, data=respons)
 
         if init_data['action'] == 'zone-srv-insert':
             result = list()
@@ -154,49 +158,24 @@ class SendCommandRest(Resource):
                 result.append(commit_json)
                 return response(200, data=result)
 
-        if init_data['action'] == 'zone-mx-insert':
-            result = list()
-            for i in init_data['data']:
-                tags = i['tags']
-
-            begin_json = cmd.zone_begin_http(url, tags)
-            result.append(begin_json)
-
-            try :
-                respons = cmd.zone_insert_mx(tags)
-
-            except Exception as e:
-                return response(401, data=result, message=str(e))
-            else :
-                http_response = utils.send_http_cmd(url,respons)
-                # change state
-                if http_response:
-                    state = utils.change_state("id_record", tags['id_record'], "1")
-                    try:
-                        db.update("zn_record", data = state)
-                    except Exception as e:
-                        print(e)
-
-                result.append(http_response)
-                commit_json = cmd.zone_commit_http(url, tags)
-                result.append(commit_json)
-                return response(200, data=result)
-
         # delete all zone
         if init_data['action'] == 'conf-unset':
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
             data_send = list()
-
-            data_send.append(cmd.conf_begin_http_cl())
-            data = cmd.conf_unset(tags)
-            data_purge = cmd.conf_purge(tags)
-            data_send.append(data)
-            data_send.append(data_purge)            
-            data_send.append(cmd.conf_commit_http_cl())
-            http_respons = utils.send_http(url,data_send)
-            return response(200, data=http_respons)
+            try:
+                data = cmd.conf_unset(tags)
+                data_purge = cmd.conf_purge(tags)
+            except Exception as e:
+                return response(401, message="Data Not Found | "+str(e))
+            else:
+                data_send.append(cmd.conf_begin_http_cl())
+                data_send.append(data)
+                data_send.append(data_purge)            
+                data_send.append(cmd.conf_commit_http_cl())
+                http_respons = utils.send_http(url,data_send)
+                return response(200, data=http_respons)
         
         if init_data['action'] == 'zone-unset':
             result = list()
@@ -220,47 +199,82 @@ class SendCommandRest(Resource):
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            
             try:
-                master = cluster_task.cluster_task_master.apply_async(args=[tags],
-                    retry=True,
-                    retry_policy={
-                        'max_retries': 3,
-                        'interval_start': 0,
-                        'interval_step': 0.2,
-                        'interval_max': 0.2,
-                    })
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
-                return response(401, message="Master Cluster Not Complete")
+                return response(401, message="Zone Not Found")
+            try:
+                master_data = db.get_all("cs_master")
+            except Exception as e:
+                return response(401, message="Master Data Not Found")
             else:
-                result.append({
-                    "id": str(master),
-                    "state": master.state
-                })
-                return response(200, data=result, message="Master Cluster Processing")
+                try:
+                    master = cluster_task.cluster_task_master.apply_async(args=[master_data, data_zone],
+                        retry=True,
+                        retry_policy={
+                            'max_retries': 3,
+                            'interval_start': 0,
+                            'interval_step': 0.2,
+                            'interval_max': 0.2,
+                        })
+                except Exception as e:
+                    return response(401, message="Master Cluster Not Complete")
+                else:
+                    result.append({
+                        "id": str(master),
+                        "state": master.state
+                    })
+                    return response(200, data=result, message="Master Cluster Processing")
 
         if init_data['action'] == 'cluster-slave':
             result = list()
             for i in init_data['data']:
                 tags = i['tags']
-            
             try:
-                slave = cluster_task.cluster_task_slave.apply_async(args=[tags],
-                    countdown=5,
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                return response(401, message="Zone Not Found")
+            try:
+                data_by_priority = db.get_by_id("v_cs_slave_node", "priority", "1")
+            except Exception as e:
+                return response(401, message="Slave Priority Cluster Not Complete")
+            else:
+                slave = cluster_task.cluster_task_slave_priority.apply_async(args=[data_by_priority, data_zone],
+                    countdown=2,
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
                         'interval_start': 0,
                         'interval_step': 0.2,
                         'interval_max': 0.2,
-                    })
-            except Exception as e:
-                return response(401, message="Slave Cluster Not Complete")
-            else:
+                })
                 result.append({
                     "id": str(slave),
                     "state": slave.state
                 })
+                try:
+                    data_non_priority = db.get_by_id("v_cs_slave_node", "priority", "0")
+                except Exception:
+                    return response(200, data=result, message="Slave Cluster Processing | Non Priority Slave Not Found")
+                else:
+                    try:
+                        slave_non_priority = cluster_task.cluster_task_slave.apply_async(args=[data_non_priority, data_zone],
+                        countdown=5,
+                        retry=True,
+                        retry_policy={
+                            'max_retries': 3,
+                            'interval_start': 0,
+                            'interval_step': 0.2,
+                            'interval_max': 0.2,
+                    })
+                    except Exception as e:
+                        return response(401, message="Slave Non Priority Not Complete")
+                    else:
+                        data_non_priority_res = {
+                            "id": str(slave_non_priority),
+                            "state": slave_non_priority.state
+                        }
+                        print(data_non_priority_res)
                 return response(200, data=result, message="Slave Cluster Processing")
 
         if init_data['action'] == 'cluster-unset-master':
@@ -268,14 +282,17 @@ class SendCommandRest(Resource):
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
                 random_string = uuid.uuid4()
                 data = {'id': str(random_string), 'state': 'SUCCESS'}
                 return response(401, data=data, message="Zone Has been Deleted")
-
             try:
-                master_unset = cluster_task.unset_cluster_master.apply_async(args=[tags], 
+                master_data = db.get_all("cs_master")
+            except Exception as e:
+                return response(401, message="Master Data Not Found")
+            try:
+                master_unset = cluster_task.unset_cluster_master.apply_async(args=[data_zone, master_data], 
                     retry=True,
                     retry_policy={
                         'max_retries': 3,
@@ -289,22 +306,26 @@ class SendCommandRest(Resource):
                 result.append({
                     "id": str(master_unset),
                     "state": master_unset.state
-                })                
-                return response(200, data=result)
+                }) 
+                print(result)               
+                return response(200, data=result, message="Zone Unset Master Processing")
 
         if init_data['action'] == 'cluster-unset-slave':
             result = []
             for i in init_data['data']:
                 tags = i['tags']
             try:
-                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+                data_zone = db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
             except Exception as e:
                 random_string = uuid.uuid4()
                 data = {'id': str(random_string), 'state': 'SUCCESS'}
                 return response(401, data=data, message="Zone Has been Deleted")
-            
             try:
-                slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[tags], 
+                data_slave = db.get_all("v_cs_slave_node")
+            except Exception as e:
+                return response(401, message="Slave Data Not Found")
+            try:
+                slave_unset = cluster_task.unset_cluster_slave.apply_async(args=[data_zone, data_slave], 
                     countdown=5,
                     retry=True,
                     retry_policy={
@@ -319,8 +340,8 @@ class SendCommandRest(Resource):
                 result.append({
                     "id": str(slave_unset),
                     "state": slave_unset.state
-                })              
-                return response(200, data=result)
+                })             
+                return response(200, data=result, message="Zone Unset Slave Processing")
 
         if init_data['action'] == 'refresh-master':
             result = list()

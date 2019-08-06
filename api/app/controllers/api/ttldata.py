@@ -79,7 +79,6 @@ class TtlData(Resource):
                 utils.send_http(url, data_unset)
             except Exception as e:
                 syncron.zone_commit_http(url, tags_zone)
-                return response(401, message="Record Not Unset | "+str(e))
             try:
                 result = model.update(table, data_edits)
             except Exception as e:

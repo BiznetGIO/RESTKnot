@@ -149,7 +149,6 @@ class Record(Resource):
                     a = utils.send_http(url, data_unset)
                 except Exception as e:
                     syncron.zone_commit_http(url, tags)
-                    return response(401, message="Record Not Unset | "+str(e))
                 
                 data_edits = {
                     "where":{
