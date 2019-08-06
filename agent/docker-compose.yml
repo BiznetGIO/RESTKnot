@@ -1,7 +1,7 @@
 version: '3'
 services:
   knot:
-    image:
+    image: "${AGENT_IMAGE}"
     environment:
       - APP_HOST=0.0.0.0
       - APP_PORT=6967
@@ -20,7 +20,7 @@ services:
     ports:
       - "6967:6967"
   bootstrap:
-    image: 
+    image: "${AGENT_IMAGE}"
     environment:
       - HOST=127.0.0.1
       - PORT=6967
