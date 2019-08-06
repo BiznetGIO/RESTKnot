@@ -13,6 +13,7 @@ mv ../.travis/.coveragerc.example .coveragerc
 mv ../.travis/run_travis.sh run_travis.sh
 mv ../.travis/deploy.sh deploy.sh
 chmod +x run_travis.sh
+nohup ./celery.sh &
 ./run_travis.sh
 pytest --cov=app test/ --ignore=test/ignore/ -vv -s
 
