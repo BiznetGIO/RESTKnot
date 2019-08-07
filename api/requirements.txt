@@ -77,7 +77,7 @@ pytest-cov==2.7.1
 pytest-flask==0.15.0
 python-dateutil==2.8.0
 python-dotenv==0.10.2
-python-engineio==3.5.2
+python-engineio==3.8.2.post1
 python-http-client==3.1.0
 python-jose==3.0.1
 python-keystoneclient==3.19.0
