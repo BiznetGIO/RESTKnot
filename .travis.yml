@@ -5,7 +5,6 @@ services:
 - postgresql
 - redis
 - docker
-- rabbitmq
 skip_cleanup: true
 jobs:
   include:
@@ -13,9 +12,13 @@ jobs:
       script: bash .travis/unittest.sh
     - stage: announce
       script: echo Start Test/Deploy
+    - stage: deploy_agent
+      script: bash .travis/build_agent.sh
 stages:
 - announce
 - name: unittest
+  if: branch = devel
+- name: build_agent
   if: branch = devel
 deploy:
   provider: script
