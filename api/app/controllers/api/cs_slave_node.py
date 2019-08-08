@@ -4,9 +4,31 @@ from app.helpers import cmd_parser as cmd
 from app import psycopg2,db
 from app.libs import utils
 from app.models import model
+from app.helpers import refresh_zone
 from app.middlewares.auth import login_required
 
 
+class RefreshZoneSlave(Resource):
+    def get(self, id_refresh):
+        try:
+            chain = refresh_zone.get_cluster_refresh_slave.s(id_refresh)            
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            data = dict()
+            res = chain()
+            if res.ready():
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.status,
+                    "result": res.result,
+                }
+            else:
+                data = {
+                    "task_id": res.task_id,
+                    "state": res.state,
+                }
+            return response(200, data=data)
 class CsSlave(Resource):
     def get(self):
         command = utils.get_command(request.path)

@@ -17,6 +17,7 @@ from .cs_master import *
 from .cs_slave_node import *
 from .cluster import *
 from .check_on import *
+from .health import *
 
 api_blueprint = Blueprint("api", __name__, url_prefix='/api')
 
@@ -49,7 +50,9 @@ api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
 
 ## CLUSTERING
 api.add_resource(CsMaster,'/master')
+api.add_resource(RefreshZoneMaster, '/master/refresh/<id_refresh>')
 api.add_resource(CsSlave,'/slave_node')
+api.add_resource(RefreshZoneSlave, "/slave_node/refresh/<id_refresh>")
 
 ## CLUSTER
 api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
@@ -61,5 +64,8 @@ api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
 api.add_resource(NotifyOnAgent, "/agent/check")
 api.add_resource(ChekcLogSyncOnMaster, '/agent/master/<id_logs>')
 api.add_resource(CheckLogSyncOnSlave, '/agent/slave/<id_logs>')
+
+# Healtch Check
+api.add_resource(HealthCheck, "/health")
 
 

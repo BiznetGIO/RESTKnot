@@ -355,7 +355,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"nm_record\":\"lagirecord2com.com\",\n        \"date_record\":\"2018070410\",\n        \"id_zone\":\"463219577534611457\",\n        \"id_type\":\"402427533112147969\"\n      }\n      \t\n   }\n}"
+					"raw": "{\n   \"edit\": {\n\t  \"tags\": {\n\t\t\"id_record\": \"465080511339986945\"\n\t  },\n      \"fields\": {\n      \t\"nm_record\":\"lagirecord2com.com\",\n        \"date_record\":\"2018070410\",\n        \"id_type\":\"402427533112147969\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:6968/api/record",
@@ -510,12 +510,12 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n        \"id_record\": \"427815500239831041\",\n        \"id_ttl\": \"402427994557939713\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "103.89.5.121:6968/api/ttldata",
+					"raw": "127.0.0.1:6968/api/ttldata",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -636,12 +636,12 @@
 					"raw": "{\n   \"insert\": {\n      \"fields\": {\n      \t\"id_ttldata\": \"427815533188644865\",\n        \"nm_content\": \"0\"\n      }\n      \t\n   }\n}"
 				},
 				"url": {
-					"raw": "103.89.5.121:6968/api/content",
+					"raw": "127.0.0.1:6968/api/content",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -895,21 +895,22 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "f4aa17afd19d4f944e974a5fcf3eaac0c0a5ea4c5d61bf8c9574ec5273175ac9",
-						"type": "text"
+						"value": "3600483bc2c0566ed54f2aaefda490f64c081a39b06df84eb5bd0f56890fbdda",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-read\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461864556911722497\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-read\": {\n      \"tags\": {\n      \t\"id_zone\" : \"471794998346940417\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1036,14 +1037,14 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "26ef06189333969cb36e0dbb4e74d4269b613e341f393bacd3d1c884c29a5bd8",
+						"value": "65486b1cd960983b988e3f1e84c4c6607563c32509f8c6f6ec4c3fdb7229591f",
 						"type": "text",
 						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"463901071486058497\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"471687299547660289\"\n      }\n   }\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:6968/api/sendcommand",
@@ -1083,70 +1084,6 @@
 						"89",
 						"5",
 						"121"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ZONE_NS_INSERT_COMMAND",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "81a33d58a6f0d631c6c7b3f589b8780cc362b2c20d63e5fb23ca9d7f56c8e0b4"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"zone-ns-insert\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "ZONE_MX_INSERT_COMMAND",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "26ef06189333969cb36e0dbb4e74d4269b613e341f393bacd3d1c884c29a5bd8",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"zone-mx-insert\": {\n      \"tags\": {\n      \t\"id_record\" : \"463864396805668865\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:6968/api/sendcommand",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1199,13 +1136,20 @@
 			"name": "ADMIN_ROLE_ADD_DNS",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "51ab9cd60749c66a40744658d15cfa863cb6b22ab940d6e1404e18f8fabd5c3d",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
 						{
 							"key": "domain",
-							"value": "kalkun.com",
+							"value": "data12.com",
 							"type": "text"
 						},
 						{
@@ -1216,9 +1160,12 @@
 					]
 				},
 				"url": {
-					"raw": "localhost:6968/api/admin/dnscreate",
+					"raw": "127.0.0.1:6968/api/admin/dnscreate",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
@@ -1251,12 +1198,12 @@
 					]
 				},
 				"url": {
-					"raw": "10.10.3.29:6968/api/login",
+					"raw": "103.93.54.55:6968/api/login",
 					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
+						"103",
+						"93",
+						"54",
+						"55"
 					],
 					"port": "6968",
 					"path": [
@@ -1402,18 +1349,22 @@
 			"name": "CONF_UNSET_ZONE",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "f66dae785ffaa5f75cd877a32846fce10ca02873e124945f38a947e639cb2be4",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"conf-unset\": {\n      \"tags\": {\n      \t\"id_zone\" : \"427819388483960833\"\n      }\n   }\n}"
+					"raw": "{\n   \"conf-unset\": {\n      \"tags\": {\n      \t\"id_zone\" : \"471666223598731265\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "103.89.5.121:6968/api/sendcommand",
+					"raw": "localhost:6968/api/sendcommand",
 					"host": [
-						"103",
-						"89",
-						"5",
-						"121"
+						"localhost"
 					],
 					"port": "6968",
 					"path": [
@@ -1431,26 +1382,34 @@
 				"header": [
 					{
 						"key": "Access-Token",
-						"value": "81a33d58a6f0d631c6c7b3f589b8780cc362b2c20d63e5fb23ca9d7f56c8e0b4",
-						"type": "text"
+						"value": "f66dae785ffaa5f75cd877a32846fce10ca02873e124945f38a947e639cb2be4",
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"zone-unset\": {\n      \"tags\": {\n        \"id_record\": \"461277421996769281\"\n      }\n   }\n}"
+					"raw": "{\n   \"zone-unset\": {\n      \"tags\": {\n        \"id_record\": \"471674465618427905\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
+					"raw": "127.0.0.1:6968/api/sendcommand",
 					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "6968",
 					"path": [
 						"api",
 						"sendcommand"
+					],
+					"query": [
+						{
+							"key": "Access-Token",
+							"value": "f66dae785ffaa5f75cd877a32846fce10ca02873e124945f38a947e639cb2be4",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -1523,218 +1482,6 @@
 			"response": []
 		},
 		{
-			"name": "CLUSTER_ZONE",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "1eea6281eeae62c5c5b85f818387ede7af85cf4b12956fa62c4b93b949a08465",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"cluster-zone\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_MASTER_NOTIFY_IN_SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "2c15c3561848a82dacde3235403cbe7b34e25975a4b38e844219fe311f023e9d",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"master-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461271452278194177\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_SLAVE_NOTIFY_IN_SLAVE",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "3e27927455332d7a2f5e66c2bd6b4612c9242a84423e9e6f5802a8fdc8b581ac",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"slave-notify\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461878328406081537\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_MASTER_ACL_IN_MASTER",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "129cb07d82453c0ebf7b881d656d674ae44de4d3093b40936116a3d18a5d3b39",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"master-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461240079068790785\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_SLAVE_ACL_IN_MASTER",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Access-Token",
-						"value": "cfe494b987ad386f0599b8cf80405d4d44ffdd5042599a2834b4bb9f1a28d09c",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"slave-acl\": {\n      \"tags\": {\n      \t\"id_zone\" : \"461240079068790785\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "10.10.3.29:6968/api/sendcommand",
-					"host": [
-						"10",
-						"10",
-						"3",
-						"29"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_FILE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"file-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"441470070413950977\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:6968/api/sendcommand",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "CONF_SET_MODULE",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"module-set\": {\n      \"tags\": {\n      \t\"id_zone\" : \"441470070413950977\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:6968/api/sendcommand",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "CLUSTER_ZONE_TESTING",
 			"request": {
 				"method": "POST",
@@ -1748,15 +1495,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"zone-set\": {\n    \"sendblock\": {\n      \"cmd\": \"conf-set\",\n      \"zone\": \"lagi2.id\",\n      \"item\": \"module\",\n      \"owner\": \"\",\n      \"rtype\": \"\",\n      \"ttl\": \"\",\n      \"flags\": \"\",\n      \"section\":\"zone\",\n      \"data\": \"mod-stats/default\"\n    },\n    \"receive\": {\n      \"type\": \"block\"\n    }\n  }\n}"
+					"raw": "[{\"zone-begin\": {\"sendblock\": {\"cmd\": \"zone-begin\", \"zone\": \"data12.com\"}, \"receive\": {\"type\": \"block\"}}}, {\"zone-set\": {\"sendblock\": {\"cmd\": \"zone-set\", \"zone\": \"data12.com\", \"owner\": \"test1\", \"rtype\": \"A\", \"ttl\": \"7200\", \"data\": \"10.10.0.1\"}, \"receive\": {\"type\": \"block\"}}}, {\"zone-commit\": {\"sendblock\": {\"cmd\": \"zone-commit\", \"zone\": \"data12.com\"}, \"receive\": {\"type\": \"block\"}}}]"
 				},
 				"url": {
-					"raw": "127.0.0.1:6967/api/command_rest",
+					"raw": "localhost:6967/api/command_rest",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
 					"port": "6967",
 					"path": [
@@ -2059,61 +1803,31 @@
 			"response": []
 		},
 		{
-			"name": "UNSET_CLUSTER_NEW",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n   \"cluster-unset\": {\n      \"tags\": {\n      \t\"id_zone\" : \"462965901172572161\"\n      }\n   }\n}"
-				},
-				"url": {
-					"raw": "127.0.0.1:6968/api/sendcommand",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "6968",
-					"path": [
-						"api",
-						"sendcommand"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "CLUSTER_MASTER",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
+						"key": "Access-Token",
 						"name": "Content-Type",
 						"type": "text",
-						"value": "application/json"
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"cluster-master\": {\n      \"tags\": {\n      \t\"id_zone\" : \"462993102138834945\"\n      }\n   }\n}"
+					"raw": "{\n   \"cluster-master\": {\n      \"tags\": {\n      \t\"id_zone\" : \"471607264692371457\"\n      }\n   }\n}"
 				},
 				"url": {
-					"raw": "127.0.0.1:6968/api/sendcommand",
+					"raw": "localhost:6968/api/sendcommand",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
 					"port": "6968",
 					"path": [
@@ -2130,15 +1844,113 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
+						"key": "Access-Token",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"value": "f738d212d86886770c69b72d1128d6298d04a1efa9de23c96c7530a14c645712",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "f738d212d86886770c69b72d1128d6298d04a1efa9de23c96c7530a14c645712",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n   \"cluster-slave\": {\n      \"tags\": {\n      \t\"id_zone\" : \"464941034173431809\"\n      }\n   }\n}"
+					"raw": "{\"cluster-slave\": {\"tags\": {\"id_zone\" : \"471607264692371457\"}}}"
+				},
+				"url": {
+					"raw": "localhost:6968/api/sendcommand",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_MASTER_CLUSTER",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:6968/api/cluster/master/b797e8f1-fbdc-40d7-a2ef-bdae65b53154",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"cluster",
+						"master",
+						"b797e8f1-fbdc-40d7-a2ef-bdae65b53154"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_SLAVE_CLUSTER",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "d75c5de25470c7ee5920e6556da8a38ec12b14e735f4a812e1c1e38b5887ead4",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:6968/api/cluster/slave/051bbf45-68c9-44be-a3bd-cd32c8a3caa5",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"cluster",
+						"slave",
+						"051bbf45-68c9-44be-a3bd-cd32c8a3caa5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CLUSTER_UNSET_MASTER",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "da126e81672b75e7f2f9cae1df2bae10bee035a87afe739e0605a708ba3ca519",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "da126e81672b75e7f2f9cae1df2bae10bee035a87afe739e0605a708ba3ca519",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"cluster-unset-master\": {\n      \"tags\": {\n      \t\"id_zone\" : \"471684553902194689\"\n      }\n   }\n}"
 				},
 				"url": {
 					"raw": "127.0.0.1:6968/api/sendcommand",
@@ -2158,36 +1970,88 @@
 			"response": []
 		},
 		{
-			"name": "GET_DATA_MASTER_CLUSTER",
+			"name": "GET_DATA_MASTER_CLUSTER_UNSET",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "94e693a6b7affc578c81a9923963b53d71cda6375bdee44e262296ca9330ac29",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "127.0.0.1:6968/api/cluster/master/aad69df6-07fa-4c56-90a2-6fd66dda2f1f",
+					"raw": "103.93.54.55:6968/api/cluster/master/3b8e2626-8601-4484-8ee9-de0b512eafe3",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"103",
+						"93",
+						"54",
+						"55"
 					],
 					"port": "6968",
 					"path": [
 						"api",
 						"cluster",
 						"master",
-						"aad69df6-07fa-4c56-90a2-6fd66dda2f1f"
+						"3b8e2626-8601-4484-8ee9-de0b512eafe3"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET_DATA_SLAVE_CLUSTER",
+			"name": "CLUSTER_UNSET_SLAVE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "da126e81672b75e7f2f9cae1df2bae10bee035a87afe739e0605a708ba3ca519",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "da126e81672b75e7f2f9cae1df2bae10bee035a87afe739e0605a708ba3ca519",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"cluster-unset-slave\": {\n      \"tags\": {\n      \t\"id_zone\" : \"471684553902194689\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/sendcommand",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_SLAVE_CLUSTER_UNSET",
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "94e693a6b7affc578c81a9923963b53d71cda6375bdee44e262296ca9330ac29",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"url": {
-					"raw": "127.0.0.1:6968/api/cluster/slave/aad69df6-07fa-4c56-90a2-6fd66dda2f1f",
+					"raw": "127.0.0.1:6968/api/cluster/unset/slave/5c022383-853e-49b6-a6ed-e3d9ba2156eb",
 					"host": [
 						"127",
 						"0",
@@ -2198,8 +2062,317 @@
 					"path": [
 						"api",
 						"cluster",
+						"unset",
 						"slave",
-						"aad69df6-07fa-4c56-90a2-6fd66dda2f1f"
+						"5c022383-853e-49b6-a6ed-e3d9ba2156eb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DATA_RECORD_EDIT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"edit\": {\n\t  \"tags\": {\n\t\t\"id_record\": \"468425353302179841\"\n\t  },\n      \"fields\": {\n      \t\"nm_record\":\"mailing1\",\n        \"date_record\":\"2018070410\",\n        \"id_zone\":\"467610844986867713\",\n        \"id_type\":\"402427533112147969\"\n      }\n      \t\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/record",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"record"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TTL_DATA_EDIT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"name": "Content-Type",
+						"value": "eecb944b201a7cfe650ff73a43ad4d3cce0da7f7ff01592fb1d8e1e4d3eb84e8",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "eecb944b201a7cfe650ff73a43ad4d3cce0da7f7ff01592fb1d8e1e4d3eb84e8"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"edit\": {\n\t  \"tags\":{\n\t\t\"id_ttldata\": \"468425354067640321\"\n\t  },\n      \"fields\": {\n        \"id_record\": \"468425353302179841\",\n        \"id_ttl\": \"402428031103795201\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "10.10.3.29:6968/api/ttldata",
+					"host": [
+						"10",
+						"10",
+						"3",
+						"29"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"ttldata"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONTENT_EDIT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"edit\": {\n\t  \"tags\":{\n\t\t\"id_content\": \"467611097527058433\"\n\t  },\n      \"fields\": {\n      \t\"id_ttldata\": \"467611097014763521\",\n        \"nm_content\": \"testing.id.\"\n      }\n      \t\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/content",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CONTENT_SERIAL_EDIT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"edit\": {\n\t  \"tags\":{\n\t\t\"id_content_serial\": \"467633111376855041\"\n\t  },\n      \"fields\": {\n      \t\"nm_content_serial\": \"kerbau.com.\",\n        \"id_record\": \"467633109592375297\"\n      }\n      \t\n   }\n}"
+				},
+				"url": {
+					"raw": "127.0.0.1:6968/api/content_serial",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"content_serial"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_SYNC_SLAVE",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "ebba831bf853766bf3b13fad0297d638711fbce7b07f424d1f85464059977c83",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "10.10.3.29:6968/api/agent/slave/60d91ff1-9fe1-48a9-8dc3-adf3105063fd",
+					"host": [
+						"10",
+						"10",
+						"3",
+						"29"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"agent",
+						"slave",
+						"60d91ff1-9fe1-48a9-8dc3-adf3105063fd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_SYNC_MASTER",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "87f0baf5bd975659365f0d304bf5c1050c8ddce1762e22846667e9cd0b82e096",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "10.10.3.29:6968/api/agent/master/6561a91f-7e59-4e92-9eaf-33198fa33ffb",
+					"host": [
+						"10",
+						"10",
+						"3",
+						"29"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"agent",
+						"master",
+						"6561a91f-7e59-4e92-9eaf-33198fa33ffb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REFRESH_MASTER",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"refresh-master\": {\n      \"tags\": {\n      \t\"id_master\" : \"402152439124393985\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "localhost:6968/api/sendcommand",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_REFRESH_MASTER",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "ebba831bf853766bf3b13fad0297d638711fbce7b07f424d1f85464059977c83",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:6968/api/master/refresh/749cd690-1b6e-4316-9ffe-5a5d2e53b6b0",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"master",
+						"refresh",
+						"749cd690-1b6e-4316-9ffe-5a5d2e53b6b0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REFRESH_SLAVE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Access-Token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "f2eaf9ea0a7dbf0d031121608b669158d705e7b6c8f8333cfe86bdd80bae8cad",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"refresh-slave\": {\n      \"tags\": {\n      \t\"id_slave\" : \"\"\n      }\n   }\n}"
+				},
+				"url": {
+					"raw": "localhost:6968/api/sendcommand",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"sendcommand"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET_DATA_REFRESH_SLAVE",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Access-Token",
+						"value": "ebba831bf853766bf3b13fad0297d638711fbce7b07f424d1f85464059977c83",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:6968/api/slave_node/refresh/51cee8d2-e465-43e9-b929-be5f020382c2",
+					"host": [
+						"localhost"
+					],
+					"port": "6968",
+					"path": [
+						"api",
+						"slave_node",
+						"refresh",
+						"51cee8d2-e465-43e9-b929-be5f020382c2"
 					]
 				}
 			},

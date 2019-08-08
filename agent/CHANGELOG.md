@@ -6,3 +6,8 @@ All notable changes to this project will be documented in this file.
 - New report error command for libknot
 - New Features: zone clustering
 - New result after executing knotc command
+
+## [0.6.10]
+### Added
+- New support Command List
+

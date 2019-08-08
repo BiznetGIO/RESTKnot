@@ -1,25 +1,28 @@
---- 
 language: python
-python: 
-  - "3.6"
-services: 
-  - postgresql
-  - redis
-  - docker
+python:
+- '3.6'
+services:
+- postgresql
+- redis
+- docker
 skip_cleanup: true
 jobs:
   include:
     - stage: unittest
-      script: bash api/environtment/travis/unittest.sh
+      script: bash .travis/unittest.sh
     - stage: announce
       script: echo Start Test/Deploy
+    - stage: deploy_agent
+      script: bash .travis/build_agent.sh
 stages:
-  - announce
-  - name: unittest
-    if: branch = devel
+- announce
+- name: unittest
+  if: branch = devel
+- name: build_agent
+  if: branch = devel
 deploy:
   provider: script
   skip_cleanup: true
-  script: bash api/environtment/travis/deploy.sh
+  script: bash .travis/deploy.sh
   on:
     tags: true

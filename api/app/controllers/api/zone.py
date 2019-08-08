@@ -79,6 +79,7 @@ class ZoneName(Resource):
                     "messages": False
                 }
                 return response(200, data=obj_userdata , message=respons)
+        
         if init_data['action'] == 'remove':
             table = ""
             tags = dict()
@@ -88,17 +89,25 @@ class ZoneName(Resource):
                 tags = i['tags']
             fields = str(list(tags.keys())[0])
             try:
+                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
+            except Exception as e:
+                respons = {
+                    "status": 1,
+                    "messages": "Record Not Found"
+                }
+                return response(401, message=respons)
+
+            try:
                 result = db.delete(table,fields,tags[fields])
             except Exception as e:
-                return response(401 ,message=str(e))
+                respons = {
+                    "status": 0,
+                    "messages": str(e)
+                }
+                return response(401, message=respons)
             else:
                 respons = {
                     "status": result,
                     "messages": "Fine Deleted!"
                 }
                 return response(200, data=tags, message=respons)
-
-        if init_data['action'] == 'query':
-            data = init_data['data']
-            query = cmd.query_parser(data)
-            return response(200, message=query)

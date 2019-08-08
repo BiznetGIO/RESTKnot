@@ -66,45 +66,6 @@ def get_command(req):
 def get_tag():
     return hashlib.md5(str(timeset()).encode('utf-8')).hexdigest()
 
-# def tag_measurement(data):
-#     for i in data:
-#         measurement = i['measurement']
-#         tags = i['tags']
-#     return measurement, tags
-
-def send_http_cl(url, data, headers=None):
-    json_data = json.dumps(data)
-    try:
-        send = requests.post(url, data=json_data, headers=headers)
-        respons = send.json()
-        type_command = respons['data'][0]['type']
-        if type_command == "cluster":
-            report_cluster = None
-            data_cluster = respons['data'][0]['cluster-set']
-            data_cluster = data_cluster.split("\n")
-            reports = {
-                "begin": data_cluster[0],
-                "serial": data_cluster[1],
-                "file": data_cluster[2],
-                "module": data_cluster[3],
-                "acl": data_cluster[4],
-                "notify": data_cluster[5],
-                "master": data_cluster[6],
-                "commit": data_cluster[7],
-            }
-            report_cluster = {
-                "cluster_report": reports,
-                "description": respons['description']
-            }
-            return report_cluster
-    except requests.exceptions.RequestException as e:
-        respons = {
-            "result": False,
-            "Error": str(e),
-            "description": None
-        }
-        return respons
-
 
 def send_http_cmd(url, data, headers=None):
     json_data = json.dumps(data)
@@ -125,6 +86,51 @@ def send_http_cmd(url, data, headers=None):
         return respons
     
 
+def send_http_clusters(url, data, headers=None):
+    respons = None
+    send = None
+    json_data = json.dumps(data)
+    data = None
+    try:
+        send = requests.post(url, data=json_data, headers=headers)
+        response_time = send.elapsed.total_seconds()
+        respons = send.json()
+        try:
+            data = respons['data']
+        except Exception as e:
+            data = None
+        else:
+            for i in data:
+                check_command_error = None
+                try:
+                    if i['data']['status'] == False:
+                        check_command_error = True
+                except Exception as e:
+                    check_command_error = False
+
+                if check_command_error:
+                    respons['data'] = {
+                        "status": False,
+                        "description": i['description'],
+                        "error": i['data']['error'],
+                        "result": "Command Not Execute",
+                        "time": response_time
+                    }
+                    return respons['data']
+                else:
+                    resulsts ={
+                        "data": respons,
+                        "times": response_time
+                    }
+                    return resulsts
+    except requests.exceptions.RequestException as e:
+        respons = {
+            "result": False,
+            "Error": str(e),
+            "description": None
+        }
+        return respons
+
 def send_http(url, data, headers=None):
     respons = None
     send = None
@@ -132,9 +138,10 @@ def send_http(url, data, headers=None):
     data = None
     try:
         send = requests.post(url, data=json_data, headers=headers)
+        response_time = send.elapsed.total_seconds()
         respons = send.json()
         try:
-            data = json.loads(respons['data'])
+            data = respons['data']
         except Exception as e:
             data = None
         else:
@@ -145,13 +152,12 @@ def send_http(url, data, headers=None):
                     check_command_error = True
             except Exception as e:
                 check_command_error = False
-
             if check_command_error:
                 respons['data'] = {
                     "status": False,
-                    "description": respons['description'],
                     "error": respons['data']['error'],
-                    "result": "Command Not Execute"
+                    "result": "Command Not Execute",
+                    "time": response_time
                 }
                 return respons['data']
             else:

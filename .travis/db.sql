@@ -140,6 +140,7 @@ CREATE UNIQUE INDEX zn_user_zone_id_zone_key ON zn_user_zone(id_zone ASC);
 CREATE INDEX user_zone_auto_index_fk_userdata_id_ref ON zn_user_zone (userdata_id ASC);
 CREATE INDEX user_zone_auto_index_fk_id_zone_ref_zone ON zn_user_zone (id_zone ASC);
 CREATE VIEW v_userzone (id_user_zone, userdata_id, id_zone, user_id, project_id, nm_zone, state) AS SELECT m1.id_user_zone, m2.userdata_id, m3.id_zone, m2.user_id, m2.project_id, m3.nm_zone, m3.state FROM public.zn_user_zone AS m1 JOIN public.userdata AS m2 ON m1.userdata_id = m2.userdata_id JOIN public.zn_zone AS m3 ON m3.id_zone = m1.id_zone;
+CREATE VIEW v_cs_slave_node(id_cs_slave_node, id_master, nm_slave_node, ip_slave_node, port_slave_node, ip_master, nm_config, master_port, nm_master) AS SELECT m1.id_cs_slave_node, m1.id_master, m1.nm_slave_node, m1.ip_slave_node, m1.port_slave_node, m2.ip_master, m2.nm_config, m2.port AS master_port, m2.nm_master FROM public.cs_slave_node AS m1 join PUBLIC.cs_master as m2 on m1.id_master = m2.id_master;
 
 ALTER TABLE cs_slave_node ADD CONSTRAINT cs_id_master_fk FOREIGN KEY (id_master) REFERENCES cs_master (id_master) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE zn_record ADD CONSTRAINT fk_id_type_ref_type FOREIGN KEY (id_type) REFERENCES zn_type (id_type) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -189,3 +190,4 @@ INSERT INTO zn_ttl (id_ttl, nm_ttl) VALUES
 	(402428102489735169, '1800'),
 	(402428115608600577, '900'),
 	(402428126292705281, '300');
+

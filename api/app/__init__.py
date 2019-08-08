@@ -6,8 +6,15 @@ from flask_redis import FlaskRedis
 import psycopg2
 from celery import Celery
 
+
 redis_store = FlaskRedis()
 root_dir = os.path.dirname(os.path.abspath(__file__))
+
+celery = Celery(__name__,
+                broker=os.environ.get("CELERY_BROKER_URL",
+                                        os.getenv("CELERY_BROKER_URL")),
+                backend=os.environ.get("CELERY_RESULT_BACKEND",
+                                        os.getenv("CELERY_BROKER_URL")))
 
 conn = psycopg2.connect(
     database=os.environ.get("DB_NAME", os.getenv('DB_NAME')),
@@ -17,14 +24,8 @@ conn = psycopg2.connect(
     port=os.environ.get("DB_PORT", os.getenv('DB_PORT')),
     host=os.environ.get("DB_HOST", os.getenv('DB_HOST'))
 )
-
-celery = Celery(__name__,
-                broker=os.environ.get("CELERY_BROKER_URL",
-                                        os.getenv("CELERY_BROKER_URL")),
-                backend=os.environ.get("CELERY_RESULT_BACKEND",
-                                        os.getenv("CELERY_BROKER_URL")))
-
-conn.set_session(autocommit=True)
+# conn.set_session(autocommit=True)
+conn.autocommit = False
 db = conn.cursor()
 
 cs_storage = os.environ.get("CLUSTER_STORAGE", "database")

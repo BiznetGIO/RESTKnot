@@ -28,12 +28,20 @@ def check_parameters(command,parameters):
         return True
 
 def initialiaze(data):
-    try:
-        parser_data = parser_json(data)
-    except Exception as e:
-        raise e
-    else:
-        return parser_data
+    if type(data) is dict:
+        try:
+            data = parser_json(data)
+        except Exception as e:
+            raise e
+        else:
+            return data
+    elif type(data) is list:
+        try:
+            data2 = parser_json2(data)
+        except Exception as e:
+            raise e
+        else:
+            return data2
 
 
 def get_params_block(data_params):
@@ -86,12 +94,42 @@ def parser_json(obj_data):
                     "type": "general",
                     project: str(exec_cliss)
                 })
-            return projec_obj
+            
+            data = execute_command(projec_obj)
+            return data
         else:
             projec_obj.append({
                 project: action_obj
             })
-            return projec_obj
+            data = execute_command(projec_obj)
+            return data
+
+
+def parser_json2(obj_data):
+    data_result_finish = list()
+    for ai in obj_data:
+        projec_obj = list()
+        for project in ai:
+            action_obj = list()
+            for action in ai[project]:
+                if not check_command(action):
+                    return None
+                else:
+                    data_obj = dict()
+                    for params in ai[project][action]:
+                        if not check_parameters(action,params):
+                            return None
+                        else:
+                            data_obj[params]=ai[project][action][params]
+                    action_obj.append({
+                        action: data_obj
+                    })
+            projec_obj.append({
+                project: action_obj
+            })
+            data = execute_command(projec_obj)
+            data_result_finish.append(data)
+    return data_result_finish
 
 def parse_command_zone(json_data):
     cmd = json_data['cmd']
@@ -146,7 +184,6 @@ def execute_command(initialiaze):
             for project in data:
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
-                print("FROM : ", parameter_block)
                 resp = client.sendblock(ctl, parameter_block, parameter_stats['type'])
     except KnotCtlError as e:
         print("ERROR EXC: ", e)
@@ -154,8 +191,25 @@ def execute_command(initialiaze):
             "status": False,
             "error": str(e)
         }
-        return json.dumps(resp, indent=4)
+        return resp
     else:
         ctl.send(KnotCtlType.END)
         ctl.close()
-        return json.dumps(resp, indent=4)
+        try:
+            data = json.dumps(resp, indent=4)
+        except Exception as e:
+            print("ERROR READ REST: ", e)
+            response={
+                "result": False,
+                "error": str(e),
+                "status": "Command Not Execute"
+            }
+            return response
+        else:
+            response={
+                "result": True,
+                "description": initialiaze,
+                "status": "Command Execute",
+                "data": data
+            }
+            return response

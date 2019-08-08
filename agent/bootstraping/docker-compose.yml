@@ -1,7 +1,7 @@
 version: '3'
 services:
   bootstrap:
-    image: 
+    image: "${BOOTSTRAP_IMAGE}"
     environment:
       - HOST=127.0.0.1
       - PORT=6967

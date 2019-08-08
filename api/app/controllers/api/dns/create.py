@@ -1,9 +1,8 @@
 from flask_restful import Resource, reqparse, fields, request
-from app.helpers.rest import *
-from app.helpers.memcache import *
+from app.helpers.rest import response
 import datetime
 from app.models import model as db
-from app.libs.utils import send_http, change_state, domain_validation
+from app.libs import utils
 import datetime, os
 from app.middlewares.auth import login_required
 from app.helpers import command as cmd
@@ -22,53 +21,61 @@ def sync_conf_insert(id_zone):
     tags = {
         "id_zone" : id_zone
     }
+    data = list()
+    
+    data.append(cmd.conf_begin_http_cl())
     respons_c_insert = cmd.config_insert(tags)
-    cmd.conf_begin_http(url)
-    check_res = send_http(url,respons_c_insert)
+    data.append(respons_c_insert)
+    data.append(cmd.conf_commit_http_cl())
+    check_res = utils.send_http(url,data)
     if check_res:
         # state change
-        state = change_state("id_zone", id_zone, "1")
-        check = db.update("zn_zone", data = state)
-    cmd.conf_commit_http(url)
+        state = utils.change_state("id_zone", id_zone, "1")
+        db.update("zn_zone", data = state)
+
 
 def sync_soa(id_zone):
     tags = {
         "id_zone" : id_zone
     }
-    cmd.z_begin(url,tags)
-    id_record,respons = cmd.zone_soa_insert_default(tags)
-    check_res = send_http(url,respons)
+    data = list()
+    begin = cmd.z_begin(url,tags)
+    data.append(begin)
+    id_record,soa_config = cmd.zone_soa_insert_default(tags)
+    data.append(soa_config)
+    commit = cmd.z_commit(url, tags)
+    data.append(commit)
+
+    check_res = utils.send_http(url,data)
     if check_res:
-        # state change
-        state = change_state("id_record", id_record, "1")
+        state = utils.change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
-    cmd.z_commit(url, tags)
 
 def sync_ns(id_zone):
     tags = {
         "id_zone" : id_zone
     }
-    cmd.z_begin(url, tags)
+    data = list()
+    data.append(cmd.z_begin(url, tags))
     result_ns = cmd.zone_ns_insert(tags)
     for i in result_ns:
-        check_res = send_http(url, i['command'])
-        if check_res:
-            state = change_state("id_record", i['id_record'], "1")
-            db.update("zn_record", data = state)
-    cmd.z_commit(url,tags)
+        data.append(i)
+    data.append(cmd.z_commit(url,tags))
+    utils.send_http(url, data)
 
-def sync_cname_default(id_zone, id_record):
+def sync_cname_default(id_record, record):
     tags = {
         "id_record": id_record
     }
-    cmd.zone_begin_http(url,tags)
+    data = list()
+    data.append(cmd.zone_begin(record))
     json_command = cmd.zone_insert(tags)
-    check_res = send_http(url,json_command)
+    data.append(json_command)
+    data.append(cmd.zone_commit(record))
+    check_res = utils.send_http(url, data)
     if check_res:
-        # state change
-        state = change_state("id_record", id_record, "1")
+        state = utils.change_state("id_record", id_record, "1")
         db.update("zn_record", data = state)
-    cmd.zone_commit_http(url,tags)
 
 def addSOADefault(zone):
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
@@ -202,7 +209,7 @@ def addCNAMEDefault(id_zone, nm_zone):
         db.insert("zn_content", data=data_content)
     except Exception as e:
         return response(401, message=str(e))
-
+    sync_cname_default(id_record, nm_zone)
     return id_record
 
 
@@ -219,7 +226,7 @@ class CreateDNS(Resource):
         args = parser.parse_args()
         zone = args['domain']
         lowercase_zone = zone.lower()
-        if not domain_validation(zone):
+        if not utils.domain_validation(zone):
             return response(401, message="domain name not valid")
         else:
             zone_domain = {
@@ -242,13 +249,13 @@ class CreateDNS(Resource):
 
             id_zone_soa = addSOADefault(zone)
             id_zone_ns = addNSDefault(zone)
-            id_record = addCNAMEDefault(data_insert, zone)
+            
 
             # #UNCOMENT TO SYNC AUTO
             sync_conf_insert(data_insert)
             sync_soa(id_zone_soa)
             sync_ns(id_zone_ns)
-            sync_cname_default(data_insert, id_record)
+            addCNAMEDefault(data_insert, zone)
             # #UNCOMENT TO SYNC AUTO
 
             respon = list()

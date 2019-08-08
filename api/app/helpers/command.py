@@ -29,7 +29,7 @@ def cluster_command_new(tags, location, type):
     return json_command
 
 
-def unset_cluster_command_new(tags, domain_name):
+def unset_cluster_command_new(domain_name):
     json_command={
         "cluster-set": {
             "sendblock": {
@@ -63,8 +63,8 @@ def z_begin(url,tags):
             }
         }
     }
-    return utils.send_http(url,json_command)
-    # return json_command
+    # return utils.send_http(url,json_command)
+    return json_command
 
 def z_commit(url,tags):
     domain_name = None
@@ -84,7 +84,8 @@ def z_commit(url,tags):
             }
         }
     }
-    return utils.send_http(url,json_command)
+    return json_command
+    # return utils.send_http(url,json_command)
 
 def config_insert(tags):
     fields = str(list(tags.keys())[0])
@@ -112,6 +113,19 @@ def config_insert(tags):
 def zone_read(tags):
     domain_name = None
     fields = str(list(tags.keys())[0])
+    if tags[fields] is None:
+        json_command={
+            "zone-read": {
+                "sendblock": {
+                    "cmd": "zone-read",
+                    "zone": ""
+                },
+                "receive": {
+                    "type": "block"
+                }
+            }
+        }
+        return json_command
     domain_data = model.get_by_id("zn_zone", fields, tags[fields])
     for i in domain_data:
         domain_name = i['nm_zone']
@@ -142,8 +156,7 @@ def conf_read():
     }
     return json_command
 
-
-def conf_begin_http(url):
+def conf_begin_http_cl():
     json_command={
         "conf-begin": {
             "sendblock": {
@@ -154,12 +167,12 @@ def conf_begin_http(url):
             }
         }
     }
-    utils.send_http(url, json_command)
+    return json_command
 
 
-def conf_commit_http(url):
+def conf_commit_http_cl():
     json_command={
-        "conf-begin": {
+        "conf-commit": {
             "sendblock": {
                 "cmd": "conf-commit"
             },
@@ -168,7 +181,7 @@ def conf_commit_http(url):
             }
         }
     }
-    utils.send_http(url, json_command)
+    return json_command
 
 
 def zone_soa_insert_default(tags):
@@ -229,23 +242,32 @@ def zone_soa_insert_default(tags):
                 "data": data_ns_soa+" "+date_t+" "+data_ns_serial
             },
             "receive": {
-                "type": "command"
+                "type": "block"
             }
         }
     }
     return record[0]['id_record'], json_command
 
-def zone_begin(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
+def zone_begin(record):
     json_command={
         "zone-begin": {
             "sendblock": {
                 "cmd": "zone-begin",
-                "zone": domain_name
+                "zone": record
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
+    return json_command
+
+def zone_commit(record):
+    json_command={
+        "zone-commit": {
+            "sendblock": {
+                "cmd": "zone-commit",
+                "zone": record
             },
             "receive": {
                 "type": "block"
@@ -289,25 +311,7 @@ def zone_commit_http(url, tags):
     res = utils.send_http(url, json_command)
     return res
 
-def zone_commit(tags):
-    domain_name = None
-    fields = str(list(tags.keys())[0])
-    domain_data = model.get_by_id("zn_zone", fields, tags[fields])
-    for i in domain_data:
-        domain_name = i['nm_zone']
 
-    json_command={
-        "zone-commit": {
-            "sendblock": {
-                "cmd": "zone-commit",
-                "zone": domain_name
-            },
-            "receive": {
-                "type": "block"
-            }
-        }
-    }
-    return json_command
 
 def zone_insert(tags):
     # Get Record Data
@@ -356,7 +360,7 @@ def zone_insert(tags):
         }
         return json_command
         
-    if record[0]['nm_type'] == "MX":
+    elif record[0]['nm_type'] == "MX":
         ct_data = ctdata[0]['nm_content']
         cs_data = []
         cs_clm_data = model.get_columns("v_content_serial")
@@ -382,7 +386,8 @@ def zone_insert(tags):
             }
         }
         return json_command
-    if record[0]['nm_type'] == "SRV":
+    
+    elif record[0]['nm_type'] == "SRV":
         ct_data = ctdata[0]['nm_content']
         cs_data = []
         cs_clm_data = model.get_columns("v_content_serial")
@@ -394,8 +399,6 @@ def zone_insert(tags):
         data_ct = ""
         for ri in cs_data:
             data_ct = data_ct+" "+ri['nm_content_serial']
-
-
         json_command={
             "zone-set": {
                 "sendblock": {
@@ -412,6 +415,7 @@ def zone_insert(tags):
             }
         }
         return json_command
+
     else:   
         json_command={
             "zone-set": {
@@ -473,11 +477,10 @@ def zone_ns_insert(tags):
                 }
             }
         }
-        command_ns.append({
-            "id_record": record[0]['id_record'],
-            "command": json_command
-        })
+        command_ns.append(json_command)
     counter.update_counter(record[0]['nm_zone'])
+    state = utils.change_state("id_record", record[0]['id_record'], "1")
+    model.update("zn_record", data = state)
     return command_ns
 
 def zone_insert_srv(tags):
@@ -543,113 +546,52 @@ def zone_insert_srv(tags):
     counter.update_counter(record[0]['nm_zone'])
     return json_command
 
-def zone_insert_mx(tags):
-    # Get Zone
-    fields = tags['id_record']
-    record = list()
-    column_record = model.get_columns("v_record")
-    query = "select * from v_record where id_record='"+fields+"' AND nm_type='MX'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        record.append(dict(zip(column_record, row)))
-    column_ttl = model.get_columns("v_ttldata")
-    query = "select * from v_ttldata where id_record='"+fields+"' AND nm_type='MX'"
-    db.execute(query)
-    rows = db.fetchall()
-    ttldata = list()
-    for row in rows:
-        ttldata.append(dict(zip(column_ttl, row)))
-    
-    content_data = list()
-    column_cdata= model.get_columns("v_contentdata")
-    query = "select * from v_contentdata where id_record='"+fields+"' AND nm_type='MX'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        content_data.append(dict(zip(column_cdata, row)))
-
-    content_serial = list()
-    column_cserial= model.get_columns("v_content_serial")
-    query = "select * from v_content_serial where id_record='"+fields+"' AND nm_type='MX'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        content_serial.append(dict(zip(column_cserial, row)))
-    
-    serial_data = ""
-    data = ""
-    for ns in content_data:
-        data = data+" "+ns['nm_content']
-    for serial in content_serial:
-        serial_data = serial_data+" "+serial['nm_content_serial']
-    data_ns_soa = data
-    data_ns_serial = serial_data
-
-    json_command = {
-                    "mx-set": {
-                        "sendblock": {
-                            "cmd": "zone-set",
-                            "zone": record[0]['nm_zone'],
-                            "owner": record[0]['nm_record'],
-                            "rtype": record[0]['nm_type'],
-                            "ttl": ttldata[0]['nm_ttl'],
-                            "data": data_ns_soa+""+data_ns_serial
-                        },
-                        "receive": {
-                            "type": "command"
-                        }
-                    }
-                }
-    return json_command
-
-
 def conf_unset(tags):
     id_zone = tags['id_zone']
     record = list()
-    column_record = model.get_columns("zn_zone")
-    query = "select * from zn_zone where id_zone='"+id_zone+"'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        record.append(dict(zip(column_record, row)))
-    json_command={
-        "conf-unset": {
-            "sendblock": {
-                "cmd": "conf-unset",
-                "section": "zone",
-                "item": "domain",
-                "data":record[0]['nm_zone']
-            },
-            "receive": {
-                "type": "block"
+    try:
+        record = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        raise e
+    else:
+        json_command={
+            "conf-unset": {
+                "sendblock": {
+                    "cmd": "conf-unset",
+                    "section": "zone",
+                    "item": "domain",
+                    "data":record['nm_zone']
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
     return json_command
+
 
 def conf_purge(tags):
     id_zone = tags['id_zone']
     record = list()
-    column_record = model.get_columns("zn_zone")
-    query = "select * from zn_zone where id_zone='"+id_zone+"'"
-    db.execute(query)
-    rows = db.fetchall()
-    for row in rows:
-        record.append(dict(zip(column_record, row)))
-    json_command={
-        "zone-purge": {
-            "sendblock": {
-                "cmd": "zone-purge",
-                "zone": record[0]['nm_zone'],
-                "owner": record[0]['nm_zone']
-            },
-            "receive": {
-                "type": "block"
+    try:
+        record = model.get_by_id("zn_zone", "id_zone", id_zone)[0]
+    except Exception as e:
+        raise e
+    else:
+        json_command={
+            "zone-purge": {
+                "sendblock": {
+                    "cmd": "zone-purge",
+                    "zone": record['nm_zone'],
+                    "owner": record['nm_zone']
+                },
+                "receive": {
+                    "type": "block"
+                }
             }
         }
-    }
-    return json_command
+        return json_command
+
 
 def zone_unset(tags):
     json_command = None
@@ -744,6 +686,20 @@ def zone_unset(tags):
                 }
             }
         }
+    return json_command
+
+
+def syncronize_zone():
+    json_command={
+        "zone-unset": {
+            "sendblock": {
+                "cmd": "zone-refresh",
+            },
+            "receive": {
+                "type": "block"
+            }
+        }
+    }
     return json_command
 
     

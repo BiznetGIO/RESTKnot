@@ -95,10 +95,9 @@ function ajaxDor(link,json_data){
 
 $(document).ready(function(){
     var check_login = window.localStorage.getItem("apikey");
-    var url_knot = 'http://127.0.0.1';
+    // var url_knot = 'http://127.0.0.1';
     // var url_knot = 'http://10.10.3.29';
-    // var url_knot = 'http://103.89.5.121';
-    // var url_knot = 'http://103.93.54.55';
+    var url_knot = 'http://103.89.5.121';
     var port_knot = '6968';
     var uri_fix = url_knot+":"+port_knot;
     var rule_content = [
@@ -389,6 +388,7 @@ $(document).ready(function(){
             });
 
             req.done(function(data){
+                console.log(data)
                 // document.location.reload();
                 // activate for test cluster
                 var id_zone = data.data.data.id_zone
