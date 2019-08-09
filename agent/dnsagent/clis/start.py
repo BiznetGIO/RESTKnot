@@ -1,7 +1,7 @@
-from domba.clis.base import Base
-from domba.libs import env_lib
-from domba.libs import knot_lib
-from domba.libs import kafka_lib
+from dnsagent.clis.base import Base
+from dnsagent.libs import env_lib
+from dnsagent.libs import knot_lib
+from dnsagent.libs import kafka_lib
 import os
 
 class Start(Base): 

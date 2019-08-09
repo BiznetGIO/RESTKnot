@@ -1,4 +1,4 @@
-from domba.libs import utils
+from dnsagent.libs import utils
 import os
 import dill
 
@@ -6,7 +6,7 @@ APP_HOME = utils.APP_HOME
 
 def create_env_broker(broker, port, topic, group,flag = None):
     try:
-        env_file = open("{}/.domba/broker.env".format(APP_HOME), "w+")
+        env_file = open("{}/.dnsagent/broker.env".format(APP_HOME), "w+")
         env_file.write("OS_BROKER=%s\n" % broker)
         env_file.write("OS_PORTS=%s\n" % port)
         env_file.write("OS_TOPIC=%s\n" % topic)
@@ -20,7 +20,7 @@ def create_env_broker(broker, port, topic, group,flag = None):
 
 def create_env_knot(knot_lib, knot_socket):
     try:
-        env_file = open("{}/.domba/knot.env".format(APP_HOME), "w+")
+        env_file = open("{}/.dnsagent/knot.env".format(APP_HOME), "w+")
         env_file.write("OS_KNOT_LIB=%s\n" % knot_lib)
         env_file.write("OS_KNOT_SOCKS=%s\n" % knot_socket)
         return True
@@ -30,15 +30,15 @@ def create_env_knot(knot_lib, knot_socket):
 
 def dump_session(sess):
     try:
-        with open('/tmp/domba.pkl', 'wb') as f:
+        with open('/tmp/dnsagent.pkl', 'wb') as f:
             dill.dump(sess, f)
     except Exception:
         utils.log_err("Dump session failed")
 
 
 def remove_env(stack):
-    if os.path.exists(APP_HOME+"/.domba"):
-        os.remove(APP_HOME+"/.domba/"+stack+".env")
+    if os.path.exists(APP_HOME+"/.dnsagent"):
+        os.remove(APP_HOME+"/.dnsagent/"+stack+".env")
     else:
         utils.log_err("No Envi Detected")
 

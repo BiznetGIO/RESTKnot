@@ -1,5 +1,5 @@
-from domba.clis.base import Base
-from domba.libs import knot_lib
+from dnsagent.clis.base import Base
+from dnsagent.libs import knot_lib
 import os, json
 
 class Zone(Base): 

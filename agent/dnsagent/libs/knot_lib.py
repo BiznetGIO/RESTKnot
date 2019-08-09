@@ -1,6 +1,6 @@
-from domba.libs.libcommand.parse import parser
-from domba.libs import command_lib
-from domba.libs import utils
+from dnsagent.libs.libcommand.parse import parser
+from dnsagent.libs import command_lib
+from dnsagent.libs import utils
 import json
 
 def libknot_json(data):

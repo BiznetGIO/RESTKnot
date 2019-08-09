@@ -4,7 +4,7 @@ from codecs import open
 from os.path import abspath, dirname, join
 from subprocess import call
 from setuptools import Command, find_packages, setup
-from domba import __version__
+from dnsagent import __version__
 
 this_dir = abspath(dirname(__file__))
 with open(join(this_dir, 'README.md'), encoding='utf-8') as file:
@@ -32,11 +32,11 @@ class RunTests(Command):
 
 
 setup(
-    name='domba',
+    name='dnsagent',
     version=__version__,
     description='Agent For RESTKnot',
     long_description=long_description,
-    url='https://github.com/meongbego/domba',
+    url='https://github.com/meongbego/dnsagent',
     author='iank',
     author_email='meongbego@gmail.com',
     license='MIT',
@@ -62,7 +62,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'domba = domba.cli:main',
+            'dnsagent = dnsagent.cli:main',
         ],
     },
     cmdclass={'test': RunTests},

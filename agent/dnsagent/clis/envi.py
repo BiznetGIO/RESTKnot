@@ -1,5 +1,5 @@
-from domba.clis.base import Base
-from domba.libs import env_lib
+from dnsagent.clis.base import Base
+from dnsagent.libs import env_lib
 import os
 
 APP_HOME = env_lib.utils.APP_HOME
@@ -20,11 +20,11 @@ class Envi(Base):
         -h --help                                       Print usage
     """
     def execute(self):
-        if not env_lib.utils.check_folder(APP_HOME+"/.domba"):
-            env_lib.utils.create_folder(APP_HOME+"/.domba")
+        if not env_lib.utils.check_folder(APP_HOME+"/.dnsagent"):
+            env_lib.utils.create_folder(APP_HOME+"/.dnsagent")
         if self.args['broker']:
-            if os.path.exists(APP_HOME+"/.domba/broker.env"):
-                print(".domba.env environment file exists. Do You want to remove it?")
+            if os.path.exists(APP_HOME+"/.dnsagent/broker.env"):
+                print(".dnsagent.env environment file exists. Do You want to remove it?")
                 checks = env_lib.utils.question("Choose Y/N ")
                 if checks == True:
                     broker = input("Host broker: ")
@@ -32,7 +32,7 @@ class Envi(Base):
                     topic = input("Topic: ")
                     group = input("Group: ")
                     flags = input("Flags: ")
-                    os.remove(APP_HOME+"/.domba/broker.env")
+                    os.remove(APP_HOME+"/.dnsagent/broker.env")
                     env_lib.create_env_broker(broker, port, topic, group, flags)
             else:
                 broker = input("Host broker: ")
@@ -45,13 +45,13 @@ class Envi(Base):
             exit()
 
         if self.args['knot']:
-            if os.path.exists(APP_HOME+"/.domba/knot.env"):
+            if os.path.exists(APP_HOME+"/.dnsagent/knot.env"):
                 print("knot.env environment file exists. Do You want to remove it?")
                 checks = env_lib.utils.question("Choose Y/N ")
                 if checks == True:
                     knotlib = input("Knot Lib: ")
                     socks = input("Knot Socks Path: ")
-                    os.remove(APP_HOME+"/.domba/knot.env")
+                    os.remove(APP_HOME+"/.dnsagent/knot.env")
                     env_lib.create_env_knot(knotlib, socks)
             else:
                 knotlib = input("Knot Lib: ")
@@ -84,7 +84,7 @@ class Envi(Base):
                 checks = env_lib.utils.question("Choose Y/N ")
                 if checks == True:
                     try:
-                        os.remove(APP_HOME+"/.domba/broker.env")
+                        os.remove(APP_HOME+"/.dnsagent/broker.env")
                     except Exception as e:
                         env_lib.utils.log_err(str(e))
                     else:
@@ -94,7 +94,7 @@ class Envi(Base):
                 checks = env_lib.utils.question("Choose Y/N ")
                 if checks == True:
                     try:
-                        os.remove(APP_HOME+"/.domba/knot.env")
+                        os.remove(APP_HOME+"/.dnsagent/knot.env")
                     except Exception as e:
                         env_lib.utils.log_err(str(e))
                     else:
@@ -104,7 +104,7 @@ class Envi(Base):
                 env_lib.utils.log_info("Remove All Environment")
                 checks = env_lib.utils.question("Choose Y/N ")
                 try:
-                    env_lib.utils.remove_folder(APP_HOME+"/.domba")
+                    env_lib.utils.remove_folder(APP_HOME+"/.dnsagent")
                 except Exception as e:
                     env_lib.utils.log_err(str(e))
                 else:

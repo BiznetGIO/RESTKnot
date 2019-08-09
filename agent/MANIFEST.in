@@ -8,4 +8,4 @@ prune build
 prune dist
 recursive-exclude *.egg-info *
 recursive-include tests *
-include domba/libs/libcommand/utility/templates
+include dnsagent/libs/libcommand/utility/templates
