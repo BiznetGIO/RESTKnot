@@ -1,274 +1,139 @@
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, reqparse
 from app.helpers.rest import response
-from app.helpers import cmd_parser as cmd
-from app import psycopg2,db
-from app.libs import utils
 from app.models import model
-from app.middlewares.auth import login_required
-from app.helpers import command as syncron
-import os
+from app.libs import utils
+from app.libs import validation
+from app.middlewares import auth
 
-
-class Content(Resource):
-    ##@jwt_required
-    @login_required
+class GetContentData(Resource):
+    @auth.auth_required
     def get(self):
-        command = utils.get_command(request.path)
-        command = "zn_"+command
+        results = list()
         try:
-            results = model.get_all(command)
+            data_content = model.read_all("content")
+            print(data_content)
         except Exception as e:
-            return response(401 ,message=str(e))
+            return response(401, message=str(e))
         else:
-            obj_userdata = list()
-            for i in results :
+            for i in data_content:
+                record = model.read_by_id("record", i['record'])
+                types = model.read_by_id("type", record['type'])
+                ttl = model.read_by_id("ttl", record['ttl'])
+                zone = model.read_by_id("zone", record['zone'])
                 data = {
-                    "id_content": str(i['id_content']),
-                    "id_ttldata": str(i['id_ttldata']),
-                    "nm_content": str(i['nm_content'])
+                    "key": i['key'],
+                    "value": i['value'],
+                    "created_at": i['created_at'],
+                    "record": record,
+                    "ttl": ttl,
+                    "type": types,
+                    "zone": zone
                 }
-                obj_userdata.append(data)
-            return response(200, data=obj_userdata)
+                results.append(data)
+            return response(200, data=results)
 
-    ##@jwt_required
-    @login_required
+
+class GetContentDataId(Resource):
+    @auth.auth_required
+    def get(self, key):
+        try:
+            data_content = model.read_by_id("content", key)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            record = model.read_by_id("record", data_content['record'])
+            types = model.read_by_id("type", record['type'])
+            ttl = model.read_by_id("ttl", record['ttl'])
+            zone = model.read_by_id("zone", record['zone'])
+            data = {
+                "key": data_content['key'],
+                "value": data_content['value'],
+                "created_at": data_content['created_at'],
+                "record": record,
+                "ttl": ttl,
+                "type": types,
+                "zone": zone
+            }
+            return response(200, data=data)
+
+
+class ContentAdd(Resource):
+    @auth.auth_required
     def post(self):
-        json_req = request.get_json(force=True)
-        command = utils.get_command(request.path)
-        command = "zn_"+command
-        init_data = cmd.parser(json_req, command)
-        respons = dict()
+        parser = reqparse.RequestParser()
+        parser.add_argument('content', type=str, required=True)
+        parser.add_argument('id_record', type=str, required=True)
+        args = parser.parse_args()
+        content = args["content"]
+        content = content.lower()
+        record = args["id_record"]
 
-        url_env = os.environ.get("SOCKET_AGENT_HOST", os.getenv('SOCKET_AGENT_HOST'))
-        port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
-        url_fix= url_env+":"+port
-        url = url_fix+"/api/command_rest"
-
-        if init_data['action'] == 'insert':
-            table = init_data['data'][0]['table']
-            fields = init_data['data'][0]['fields']
-            ct_rep = fields['nm_content']
-            ct_replace = ct_rep.replace("'","''")
-            lower_text_data = ct_replace.lower()
-            fields_fix = {
-                'id_ttldata': fields['id_ttldata'],
-                'nm_content': lower_text_data
-            }
-            try:
-                result = model.insert(table, fields_fix)
-            except Exception as e:
-                respons = {
-                    "status": False,
-                    "error": str(e)
-                }
-            else:
-                respons = {
-                    "status": True,
-                    "messages": "Fine!",
-                    "id": result
-                }
-            content_validation = model.get_by_id("v_contentdata", field="id_content", value=str(result))
-            check_validation = False
-            check_validation_char = None
-            if content_validation[0]['nm_type'] == 'A':
-                check_validation = utils.a_record_validation(content_validation[0]['nm_content'])
-            elif content_validation[0]['nm_type'] == 'CNAME':
-                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
-                cs_data_name = content_validation[0]['nm_content']
-                total = 0
-                if cs_data_name.find("."):
-                    spl_name = cs_data_name.split(".")
-                    for i in spl_name:                       
-                        if len(i) >= 64:
-                            print(i)
-                            check_validation_char = True
-                        else:
-                            total = total + len(i)
-                    if total >= 255:
-                        check_validation_char = True
-
-            elif content_validation[0]['nm_type'] == 'NS':
-                check_validation = utils.cname_validation(content_validation[0]['nm_content'])
-            elif content_validation[0]['nm_type'] == 'TXT':
-                check_validation = utils.txt_validation(content_validation[0]['nm_content'])
-            # elif content_validation[0]['nm_type'] == 'SRV':
-            #     pass
-            else:
-                check_validation = True
-
-            if check_validation_char:
-                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
-                return response(401, message="Value Not Valid")
-            if not check_validation:
-                model.delete("zn_record", "id_record", str(content_validation[0]['id_record']))
-                return response(401, message="Value Not Valid")
-            else:
-                return response(200, data=fields , message=respons)
+        key = utils.get_last_key("content")
         
-        if init_data['action'] == 'edit':
-            table = init_data['data'][0]['table']
-            tags = init_data['data'][0]['tags']
-            fields = init_data['data'][0]['fields']
-            ct_rep = fields['nm_content']
-            ct_replace = ct_rep.replace("'","''")
-            lower_text_data = ct_replace.lower()            
-            content_validation = model.get_by_id("v_contentdata", field="id_content", value=tags['id_content'])
-            check_validation = False
-            check_validation_char = None
-            if content_validation[0]['nm_type'] == 'A':
-                check_validation = utils.a_record_validation(lower_text_data)
-            elif content_validation[0]['nm_type'] == 'CNAME':
-                check_validation = utils.cname_validation(lower_text_data)
-                cs_data_name = lower_text_data
-                total = 0
-                if cs_data_name.find("."):
-                    spl_name = cs_data_name.split(".")
-                    for i in spl_name:                       
-                        if len(i) >= 64:
-                            check_validation_char = True
-                        else:
-                            total = total + len(i)
-                    if total >= 255:
-                        check_validation_char = True
+        # Check Relation
+        if model.check_relation("record", record):
+            return response(401, message="Relation to Record error Check Your Key")
+        # Validation
+        if validation.content_validation(record, content):
+            return response(401, message="Named Error")
+        if validation.count_character(content):
+            return response(401, message="Count Character Error")
 
-            elif content_validation[0]['nm_type'] == 'NS':
-                check_validation = utils.cname_validation(lower_text_data)
-            elif content_validation[0]['nm_type'] == 'TXT':
-                check_validation = utils.txt_validation(lower_text_data)
-            # elif content_validation[0]['nm_type'] == 'SRV':
-            #     pass
-            else:
-                check_validation = True
-            if check_validation_char:
-                return response(401, message="Value Not Valid")
-            if not check_validation:
-                return response(401, message="Value Not Valid")
-            data_edits = {
-                "where":{
-                    "id_content": tags['id_content']
-                },
-                "data":{
-                    "nm_content": lower_text_data
-                }
-            }
-
-            tags_zone = {
-                "id_record": str(content_validation[0]['id_record'])
-            }
-            syncron.zone_begin_http(url, tags_zone)
-            try:
-                data_unset = syncron.zone_unset(tags_zone)
-                utils.send_http(url, data_unset)
-            except Exception as e:
-                syncron.zone_commit_http(url, tags_zone)
-            
-            try:
-                # if check_validation and check_validation_char
-                result = model.update(table, data_edits)
-            except Exception as e:
-                syncron.zone_commit_http(url, tags_zone)
-                return response(401, message=str(e))
-            else:
-                respons = {
-                    "status": result,
-                    "messages": "Fine!",
-                    "id": tags['id_content']
-                }
-                syncron.zone_commit_http(url, tags_zone)
-                return response(200, data=data_edits['data'], message=respons)
+        data = {
+            "key": key,
+            "value": content,
+            "record": record,
+            "created_at": utils.get_datetime()
+        }
+        try:
+            model.insert_data("content", key, data)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Inserted")
 
 
-        if init_data['action'] == 'where':
-            obj_userdata = list()
-            table = ""
-            fields = ""
-            tags = dict()
-            for i in init_data['data']:
-                table = i['table']
-                tags = i['tags']
-                for a in tags:
-                    if tags[a] is not None:
-                        fields = a
-            try:
-                result = model.get_by_id(table,fields,tags[fields])
-            except Exception as e:
-                return response(401 ,message=str(e))
-            else:
-                for i in result :
-                    data = {
-                        "id_content": str(i['id_content']),
-                        "id_ttldata": str(i['id_ttldata']),
-                        "nm_content": str(i['nm_content'])
-                    }
-                    obj_userdata.append(data)
-                respons = {
-                    "status": True,
-                    "messages": "Fine!"
-                }
-                return response(200, data=obj_userdata , message=respons)
-        if init_data['action'] == 'remove':
-            table = ""
-            tags = dict()
-            fields = ""
-            for i in init_data['data']:
-                table = i['table']
-                tags = i['tags']
-                for a in tags:
-                    if tags[a] is not None:
-                        fields = a
-            try:
-                result = model.delete(table,fields,tags[fields])
-            except Exception as e:
-                return response(401 ,message=str(e))
-            else:
-                respons = {
-                    "status": result,
-                    "messages": "Fine Deleted!"
-                }
-                return response(200, data=tags, message=respons)
+class ContentEdit(Resource):
+    @auth.auth_required
+    def put(self, key):
+        parser = reqparse.RequestParser()
+        parser.add_argument('content', type=str, required=True)
+        parser.add_argument('id_record', type=str, required=True)
+        args = parser.parse_args()
+        content = args["content"]
+        content = content.lower()
+        record = args["id_record"]
+        
+        # Check Relation
+        if model.check_relation("record", record):
+            return response(401, message="Relation to Record error Check Your Key")
+        
+        # Validation
+        if validation.content_validation(record, content):
+            return response(401, message="Named Error")
+        if validation.count_character(content):
+            return response(401, message="Count Character Error")
 
-        if init_data['action'] == 'view':
-            obj_userdata = list()
-            table = ""
-            fields = None
-            tags = dict()
-            for i in init_data['data']:
-                table = i['table']
-                tags = i['tags']
-                for a in tags:
-                    if tags[a] is not None:
-                        fields = a
-            column = model.get_columns("v_contentdata")
-            try:
-                result = list()
-                if fields is None:
-                    query = """select * from v_contentdata"""
-                    db.execute(query)
-                    rows = db.fetchall()
-                    for row in rows:
-                        result.append(dict(zip(column, row)))
-                else:
-                    query = """ select * from v_contentdata where """+fields+"""='"""+tags[fields]+"""'"""
-                    db.execute(query)
-                    rows = db.fetchall()
-                    for row in rows:
-                        result.append(dict(zip(column, row)))
-            except Exception as e:
-                return response(401 ,message=str(e))
-            else:
-                for i in result :
-                    data = {
-                        "id_content": str(i['id_content']),
-                        "nm_zone": str(i['nm_zone']),
-                        "nm_record": str(i['nm_record']),
-                        "nm_type" : str(i['nm_type']),
-                        "nm_ttl" : i['nm_ttl'],
-                        "id_record" : str(i['id_record']),
-                        "nm_content": str(i['nm_content']),
-                    }
-                    obj_userdata.append(data)
-                respons = {
-                    "status": True,
-                    "messages": "Fine!"
-                }
-                return response(200, data=obj_userdata , message=respons)
+        data = {
+            "key": key,
+            "value": content,
+            "record": record,
+            "created_at": utils.get_datetime()
+        }
+        try:
+            model.update("content", key, data)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Edited")
+        
+
+class ContentDelete(Resource):
+    @auth.auth_required
+    def delete(self, key):
+        try:
+            data = model.delete("content", key)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Deleted")

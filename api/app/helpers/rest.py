@@ -1,5 +1,5 @@
-import arrow
-
+from flask import Response
+import json
 
 def response(status_code, message=None, data=None):
     """Response data helper
@@ -37,12 +37,12 @@ def response(status_code, message=None, data=None):
         503: 'Service is unavailable'
     }
 
-    # http_code = 200 if status == 'success' else 400
     status = {}
-    status['count'] = len(data) if data else 0
-    status['data'] = data if data else None
     status['code'] = status_code
+
     if status_code in success_status:
+        status['count'] = len(data) if data else 0
+        status['data'] = data if data else None
         status['status'] = 'success'
         status['message'] = message if message else success_status[status_code]
     elif status_code in failure_status:
@@ -52,4 +52,8 @@ def response(status_code, message=None, data=None):
         status['status'] = 'error'
         status['message'] = message if message else failure_status[400]
 
-    return status
+    response = Response(
+            response=json.dumps(status),
+            status=status_code, mimetype='application/json')
+
+    return response

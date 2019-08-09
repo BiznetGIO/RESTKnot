@@ -1,61 +1,22 @@
-version: '0.5.6'
+version: '0.8.0'
 services:
-    restknot:
-        image: registry.gitlab.com/biznetgio/restknot:1.2.0
+    web:
+        build: .
         ports:
-          - "6968:5000"
+          - "6969:6969"
+        volumes:
+          - .:/app
         environment:
           - APP_HOST=0.0.0.0
-          - APP_PORT=5000
-          - DB_NAME=knotdb
-          - DB_HOST=localhost
-          - DB_PORT=26257
-          - DB_USER=root
-          - DB_PASSWORD=
-          - DB_SSL=disable
-          - SOCKET_AGENT_HOST='http://127.0.0.1'
-          - SOCKET_AGENT_PORT=6967
-          - ACL='127.0.0.1/24, 127.0.0.1/24'
-          - FLASK_REDIS_URL=redis://:pass@localhost:6379/0
+          - APP_PORT=6969
+          - FLASK_DEBUG=True
+          - APP_REDIS_URL=redis://:pass@session:6379/0
+          - CELERY_BROKER_URL=amqp://admin:qazwsx@rabbitmq:5672//
+          - CELERY_RESULT_BACKEND=amqp://admin:qazwsx@rabbitmq:5672//
           - WORKER=2
-          - ENVIRONMENT=production
+          - ENVIRONMENT=development
           - COMMAND=server
-          - DEFAULT_NS='' # eg. 'ns1.example.com.' or 'ns1.example.com. ns2.example.com.' 
-          - DEFAULT_SOA_CONTENT='' # eg. 'one.dns.id.' or 'one.dns.id. hostmaster.dns.id.'
-          - DEFAULT_SOA_SERIAL='' # eg. '10800 3600 604800 38400'
-          - CELERY_BROKER_URL="amqp://admin:pass@localhost:5672//"
-          - CELERY_RESULT_BACKEND="amqp://admin:pass@localhost:5672//"
-        command: ["sh","run.sh"]
-        links:
-          - "session"
-          - "rabbitmq"
-
-    celery:
-        image: registry.gitlab.com/biznetgio/restknot:1.2.0
-        ports:
-          - "6968:5000"
-        environment:
-          - APP_HOST=0.0.0.0
-          - APP_PORT=5000
-          - DB_NAME=knotdb
-          - DB_HOST=localhost
-          - DB_PORT=26257
-          - DB_USER=root
-          - DB_PASSWORD=
-          - DB_SSL=disable
-          - SOCKET_AGENT_HOST=http://127.0.0.1
-          - SOCKET_AGENT_PORT=6967
-          - ACL='127.0.0.1/24, 127.0.0.1/24'
-          - FLASK_REDIS_URL=redis://:pass@localhost:6379/0
-          - WORKER=2
-          - ENVIRONMENT=production
-          - COMMAND=server
-          - DEFAULT_NS='' # eg. 'ns1.example.com.' or 'ns1.example.com. ns2.example.com.' 
-          - DEFAULT_SOA_CONTENT='' # eg. 'one.dns.id.' or 'one.dns.id. hostmaster.dns.id.'
-          - DEFAULT_SOA_SERIAL='' # eg. '10800 3600 604800 38400'
-          - CELERY_BROKER_URL="amqp://admin:pass@localhost:5672//"
-          - CELERY_RESULT_BACKEND="amqp://admin:pass@localhost:5672//"
-        command: ["sh","celery.sh", "2"]
+        command: ["bash","run.sh"]
         links:
           - "session"
           - "rabbitmq"
@@ -77,3 +38,21 @@ services:
         ports:
             - "15672:15672"
             - "5672:5672"
+
+    celeryneo:
+        image: neo-openstack-v2_web
+        environment:
+          - C_FORCE_ROOT=true
+          - APP_HOST=0.0.0.0
+          - APP_PORT=6969
+          - FLASK_DEBUG=True
+          - APP_REDIS_URL=redis://:pass@session:6379/0
+          - CELERY_BROKER_URL=amqp://admin:qazwsx@rabbitmq:5672//
+          - CELERY_RESULT_BACKEND=amqp://admin:qazwsx@rabbitmq:5672//
+        user: nobody
+        command: ["bash","celery.sh" ,"2"]
+        volumes:
+          - .:/app
+        links:
+          - "session"
+          - "rabbitmq"

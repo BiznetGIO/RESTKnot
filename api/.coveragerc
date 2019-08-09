@@ -1,0 +1,48 @@
+[pytest]
+norecursedirs = app/helpers/asyncio_helper.py
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if 0:
+    if __name__ == .__main__.:
+
+    co_requests = _wrap_requests() 
+    results = [None] * len(co_requests) 
+    for i, c in enumerate(co_requests):
+        try:
+            results[i] = await c
+        except Exception as ex:
+            results[i] = str(ex)
+    return results
+
+    results = [None] * len(co_requests) 
+    for i, c in enumerate(co_requests): 
+
+    req_args = {} 
+
+    if 'timeout' in request.args: 
+
+        req_args['timeout'] = float(request.args['timeout']) 
+
+
+    start = time.time() 
+
+    return time.time() - start 
+
+    except Exception as e: 
+
+            return response(405, message=str(e)) 
+            return response(401, message=str(e)) 

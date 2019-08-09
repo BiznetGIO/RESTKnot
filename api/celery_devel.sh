@@ -13,29 +13,44 @@ function rep_die(){
     exit
 }
 
+# function rabbit_mq(){
+#     rep_warn "STARTING RABBITMQ"
+#     docker pull rabbitmq:3-management
+#     docker run -d -t -i -p 5672:5672 -e RABBITMQ_DEFAULT_USER="admin" -e RABBITMQ_DEFAULT_PASS="qazwsx" -e RABBITMQ_DEFAULT_VHOST="/" rabbitmq:3-management
+#     rep_ok "STARTING RABBITMQ"
+# }
+
 function export_env(){
-    export APP_HOST=0.0.0.0
-    export APP_PORT=6967
-    export DB_NAME=knotdb
-    # export DB_HOST=10.10.3.32
+    export APP_HOST=localhost
+    export APP_PORT=6969
+    export APP_RELEASE=AMI
+    export APP_CREATED=BIZNETGIO
+    export FLASK_DEBUG=True
+    export CELERY_BROKER_URL="amqp://admin:qazwsx@rabbitmq:5672//"
+    export CELERY_RESULT_BACKEND="amqp://admin:qazwsx@rabbitmq:5672//"
+    export DB_DRIVER=cockroach
     export DB_HOST=localhost
     export DB_PORT=26257
+    export DB_NAME=biznet_home
     export DB_USER=root
     export DB_PASSWORD=
     export DB_SSL=disable
-    # export SOCKET_AGENT_HOST=http://10.10.3.42
-    export SOCKET_AGENT_HOST=http://127.0.0.1
-    export SOCKET_AGENT_PORT=6967
-    export ACL='127.0.0.1/24, 103.77.104.199/24, 10.150.24.11/24, 182.253.68.106/24, 180.249.0.28/24, 172.17.0.1/24'
-    export FLASK_REDIS_URL=redis://:pass@session:6379/0
-    export WORKER=2
-    export ENVIRONMENT=production
-    export COMMAND=server
-    export DEFAULT_NS='satu.neodns.id. dua.neodns.id.'
-    export DEFAULT_SOA_CONTENT='satu.neodns.id. hostmaster.neodns.id.'
-    export DEFAULT_SOA_SERIAL='10800 3600 604800 38400'
-    export CELERY_BROKER_URL="amqp://admin:qazwsx@172.17.0.1:5672//"
-    export CELERY_RESULT_BACKEND="amqp://admin:qazwsx@172.17.0.1:5672//"
+
+    export HB_APIKEY='eea675a4ca2b475dbc6a'
+    export HB_API_ID='5edff06cbb0e9e75d49a'
+    export HB_HOST_API='http://hostbill.biznetgio.net/admin/api.php'
+
+    export TASK_PERIOD=900
+    #export TASK_PERIOD=259200
+
+    rep_ok "export $APP_HOST"
+    rep_ok "export $APP_PORT"
+    rep_ok "export $APP_RELEASE"
+    rep_ok "export $APP_CREATED"
+    rep_ok "export $FLASK_DEBUG"
+    rep_ok "export $APP_REDIS_URL"
+    rep_ok "export $CELERY_BROKER_URL"
+    rep_ok "export $CELERY_RESULT_BACKEND"
 }
 
 if [[ -z $1 ]]; then
@@ -43,5 +58,6 @@ if [[ -z $1 ]]; then
     rep_warn "Using Default Concurent | $concurent"
 fi
 
+# rabbit_mq
 export_env
 celery worker -A celery_worker.celery --loglevel=info --concurrency=$concurent --beat

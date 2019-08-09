@@ -1,0 +1,11 @@
+exclude .gitignore
+include README.md
+include setup.cfg
+include requirements.txt
+prune .cache
+prune .git
+prune build
+prune dist
+recursive-exclude *.egg-info *
+recursive-include tests *
+include domba/libs/libcommand/utility/templates

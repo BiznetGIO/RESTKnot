@@ -125,13 +125,10 @@ requirements_lama.txt
 
 production/*
 
-testing.py
-
-coverage_html_report/
-.coveragerc
-.test.env
-
-test_beruntun.py
-
-app/libs/pubsub.py
-app/api/testing.py
+environment/*
+run_devel.sh
+celery_devel.sh
+devel.sh
+nohup.out
+server.log
+celery.log

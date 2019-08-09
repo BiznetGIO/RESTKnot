@@ -47,6 +47,7 @@ if [ $command = 'server' ]
 
     elif [ $env = 'development' ]
         then
+        rep_ok 'STARTING | SERVER'
         python3 manage.py server
     else
         rep_die '[env] : production | development'
@@ -54,3 +55,4 @@ if [ $command = 'server' ]
 else
     rep_die 'USAGE : ./run.sh server [env].'
 fi
+

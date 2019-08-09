@@ -1,0 +1,99 @@
+####### DOMAIN AREA ######################
+user:
+  key: 001
+  email: meongbego@gmail.com
+  project_id: "001"
+  created_at: date()
+
+type:
+  key: 001
+  value: A
+  serial: False
+
+ttl:
+  key: 001
+  value: 7200
+
+zone:
+  key: 0001
+  value: iank.com
+  created_at: date()
+  user: 001
+
+record:
+  key: 001
+  value: data
+  zone: 0001
+  type: 001
+  ttl: 001
+  created_at: date()
+  serial: False
+
+##### IF SERIAL IS FALSE NOT IN SAVE TO ETCD
+serial:
+  key: 001
+  name: priority
+  value: 0
+  created_at: date()
+  record: 001
+  
+serial:
+  key: 002
+  name: date
+  value: 2019070100
+  created_at: date()
+  record: 001
+#############################################
+content:
+  key: 002
+  value: 10.10.10.1
+  created_at: date()
+  record: 001
+####### DOMAIN AREA ######################
+
+#### CONFIG PRODUCER #########
+
+topic:
+  key: 001
+  name: domaindata
+  producer: 001
+  created_at: date()
+
+consumer:
+  key: 001
+  name: cmgz01knms001
+  group: cmgz
+  topic: 001
+  created_at: date()
+
+
+### TARGET CLUSTERING
+---
+iank.com:
+  id_zone: '0001'
+  type: cluster
+  cluster:
+    master:
+      file: iank.com_0001.com.zone
+      data: test
+      master:
+      - master1
+      notify:
+      - slave1
+      - slave2
+      acl:
+      - slave_acl
+      - slave_acl2
+      serial-policy: dateserial
+      module: mod-stats/default
+    slave:
+      file: iank.com_0001.com.zone
+      master:
+      - master1
+      - master2
+      acl:
+      - master_acl1
+      - master_acl2
+      serial-policy: dateserial
+      module: mod-stats/default
+

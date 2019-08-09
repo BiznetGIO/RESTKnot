@@ -1,6 +1,0 @@
-zone-commit:
-  sendblock:
-    cmd: zone-commit
-    data: crot.com
-  receive:
-    type: block

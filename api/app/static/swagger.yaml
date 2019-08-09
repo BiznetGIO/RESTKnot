@@ -1,0 +1,616 @@
+swagger: '2.0'
+info:
+  description: This is Neo Openstack v2 API documentation
+  version: 0.0.1
+  title: Neo Openstack API v2 | Ocha
+  termsOfService: 'http://biznetgio.com'
+  contact:
+    email: sofyan@biznetgio.com
+  license:
+    name: MIT
+    url: 'https://github.com/BiznetGIO/bql/blob/master/LICENSE'
+host: 'localhost:5000'
+basePath: /api
+tags:
+  - name: auth
+    description: Operations about auth action
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://biznetgio.com'
+  - name: vm
+    description: Operations about vm action
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://biznetgio.com'
+  - name: kubernetes
+    description: Operations about kubernetes
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://biznetgio.com'
+  - name: network
+    description: Operations about network action
+    externalDocs:
+      description: Find out more about our network
+      url: 'http://biznetgio.com'
+  - name: stack
+    description: Operations about stack action
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://biznetgio.com'
+  - name: others
+    description: Operations about other action
+    externalDocs:
+      description: Find out more about our store
+      url: 'http://biznetgio.com'
+schemes:
+  - http
+paths:
+  /login:
+    post:
+      tags:
+        - auth
+      summary: Logs account into the system
+      description: ''
+      operationId: loginAccount
+      produces:
+        - application/json
+      parameters:
+        - name: username
+          in: query
+          description: The username for login
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid username/password supplied
+  /logout:
+    post:
+      tags:
+        - auth
+      summary: Logs out current logged in account session
+      description: ''
+      operationId: logoutAccount
+      produces:
+        - application/json
+      parameters:
+        - name: Application-Name
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /vm/list:
+    get:
+      tags:
+        - vm
+      summary: get all vm
+      description: ''
+      operationId: getAllVm
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  '/vm/list/{id}':
+    get:
+      tags:
+        - vm
+      summary: get detail vm by Id
+      description: ''
+      operationId: getVmById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: vm id
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  '/vm/delete/{id}':
+    delete:
+      tags:
+        - vm
+      summary: delete vm by Id
+      description: ''
+      operationId: deleteVmById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: vm id
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /create:
+    post:
+      tags:
+        - stack
+      summary: Create new stack
+      description: ''
+      operationId: createNewStack
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: ''
+          required: true
+          schema:
+            $ref: '#/definitions/all'
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /update/<id>:
+    put:
+      tags:
+        - stack
+      summary: Update Stack
+      description: ''
+      operationId: updateStack
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: json
+          required: true
+          schema:
+            $ref: '#/definitions/all'
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+            
+  /stack/list:
+    get:
+      tags:
+        - kubernetes
+      summary: get all cluster
+      description: ''
+      operationId: getStack
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Application-Name
+          in: header
+          description: ''
+          required: true
+          type: string
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+            
+  /stack/list/<id>:
+    get:
+      tags:
+        - kubernetes
+      summary: search cluster by id
+      description: ''
+      operationId: getStackById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+            
+  /stack/delete/<id>:
+    delete:
+      tags:
+        - kubernetes
+      summary: delete cluster by id
+      description: ''
+      operationId: deleteStackById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /network/list:
+    get:
+      tags:
+        - network
+      summary: get all network
+      description: ''
+      operationId: getAllNetwork
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /network/list/<id>:
+    get:
+      tags:
+        - network
+      summary: search network by id
+      description: ''
+      operationId: getNetworkById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /network/remove/<id>:
+    delete:
+      tags:
+        - network
+      summary: delete network by id
+      description: ''
+      operationId: deleteNetworkById
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /neo/network:
+    get:
+      tags:
+        - others
+      summary: get all neo network
+      description: ''
+      operationId: getAllNetworkList
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /neo/key:
+    get:
+      tags:
+        - others
+      summary: get all key pairs
+      description: ''
+      operationId: getAllkeyPairs
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /neo/image:
+    get:
+      tags:
+        - others
+      summary: get all image
+      description: ''
+      operationId: getAllImage
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /neo/stack:
+    get:
+      tags:
+        - others
+      summary: get all stack
+      description: ''
+      operationId: getAllStack
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+  /neo/flavor:
+    get:
+      tags:
+        - others
+      summary: get all flavor
+      description: ''
+      operationId: getAllFlavour
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: Access-Token
+          in: header
+          description: ''
+          required: true
+          type: string
+      responses:
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/ApiResponse'
+        default:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/ApiResponse'
+            
+definitions:
+  all:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+    xml:
+      name: all
+      
+  plesk:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+    xml:
+      name: Plesk
+  
+  clusters:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+          
+    xml:
+      name: clusters
+      
+  vm:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+          
+    xml:
+      name: vm
+      
+  network:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+          
+    xml:
+      name: network
+      
+  keypairs:
+    type: object
+    required:
+      - project
+    properties:
+      project:
+        type: object
+          
+    xml:
+      name: keypairs
+  
+  ApiResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      count:
+        type: integer
+        format: int32
+      data:
+        type: object
+      message:
+        type: string
+      status:
+        type: string

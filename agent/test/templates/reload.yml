@@ -1,5 +1,0 @@
-knotreload:
-  sendblock:
-    cmd: reload
-  receive:
-    type: block

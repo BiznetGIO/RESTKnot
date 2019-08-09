@@ -34,7 +34,8 @@ setenv:
 isvirtualenv:
 	@if [ -z "$(VIRTUAL_ENV)" ]; then echo "ERROR: Not in a virtualenv." 1>&2; exit 1; fi
 
-api:
+# Run local server
+server:
 	python manage.py server
 
 # Run Test
@@ -43,17 +44,44 @@ test:
 
 # DOCKER TASKS
 
-build:
-	docker build Dockerfile -t biznetgio/knot_api .
+# DEVEL
+# Build the container
+devel: ## Build the release and develoment container. The development
+	docker-compose build
 
-up:
-	docker-compose  up
+# Build and run the container
+updevel: ## Spin up the project
+	docker-compose up --build
 
-start:stop
+startdevel:stopdevel ## Start containers
 	docker-compose start
 
+stopdevel: ## Stop running containers
+	docker-compose stop
+
+rmdevel: stop ## Stop and remove running containers
+	docker-compose rm
+
+# PRODUCTION
+build:
+	docker build -f Dockerfile.prod -t biznetgio/neo-openstack:prod .
+
+up:
+	docker-compose -f compose/docker-compose.yml up
+
+start:stop
+	docker-compose -f compose/docker-compose.yml start
+
 stop:
-	docker-compose  stop
+	docker-compose -f compose/docker-compose.yml stop
 
 rm: stop
-	docker-compose rm
+	docker-compose -f compose/docker-compose.yml rm
+
+# Celery
+celery:
+	docker-compose -f compose/docker-compose.yml.celery up
+
+# Flower
+flower:
+	docker-compose -f compose/docker-compose.yml.flower up

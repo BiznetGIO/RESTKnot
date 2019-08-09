@@ -1,238 +1,94 @@
-from flask_restful import Resource, reqparse, fields
-from app.helpers.rest import *
-from app.helpers.memcache import *
-import datetime
-from app.models import model as db
-from app.middlewares.auth import login_required
+from flask_restful import Resource, reqparse
+from app.helpers.rest import response
+from app.models import model
+from app.libs import utils
+from app.middlewares import auth
 
 
-class UserdataResource(Resource):
-    @login_required
+class GetUserData(Resource):
+    @auth.auth_required
     def get(self):
-        obj_userdata = list()
         try:
-            results = db.get_all("userdata")
-        except Exception:
-            return response(200, message="Users Data Not Found")
+            data = model.read_all("user")
+        except Exception as e:
+            return response(401, message=str(e))
         else:
-            for i in results :
-                data = {
-                    "userdata_id": str(i['userdata_id']),
-                    "user_id" : i['user_id'],
-                    "project_id" : i['project_id'],
-                    "created_at": str(i['created_at'])
-                }
-                obj_userdata.append(data)
-            return response(200, data=obj_userdata)
+            return response(200, data=data)
 
-
-class UserdataResourceById(Resource):
-    @login_required
-    def get(self, userdata_id):
-        obj_userdata = []
-        results = db.get_by_id(
-                    table="userdata",
-                    field="userdata_id",
-                    value=userdata_id
-                )
-
-        for i in results :
-            data = {
-                    "userdata_id": str(i['userdata_id']),
-                    "user_id" : i['user_id'],
-                    "project_id" : i['project_id'],
-                    "created_at": str(i['created_at'])
-                }
-            obj_userdata.append(data)
-        return response(200, data=obj_userdata)
-
-class UserdataResourceByUserId(Resource):
-    @login_required
-    def get(self, user_id):
-        obj_userdata = []
-        results = db.get_by_id(
-                    table="userdata",
-                    field="user_id",
-                    value=user_id
-                )
-
-        for i in results :
-            data = {
-                    "userdata_id": str(i['userdata_id']),
-                    "user_id" : i['user_id'],
-                    "project_id" : i['project_id'],
-                    "created_at": str(i['created_at'])
-                }
-            obj_userdata.append(data)
-        return response(200, data=obj_userdata)
-
-class UserdataResourceByProjectId(Resource):
-    @login_required
-    def get(self,project_id):
-        obj_userdata = list()
+class GetUserDataId(Resource):
+    @auth.auth_required
+    def get(self, key):
         try:
-            results = db.get_all("userdata")
-        except Exception :
-            return response(200, "User Data Not Found")
-        else :
-            for i in results: 
-                if i['project_id'] == str(project_id):
-                    data = {
-                        "userdata_id" : str(i['userdata_id']),
-                        "user_id"     : i['user_id'],
-                        "project_id"  : i["project_id"],
-                        "created_at"  : str(i['created_at'])
-                    }
-                    obj_userdata.append(data)
-            return response(200, data=obj_userdata)
+            data = model.read_by_id("user", key)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data)
 
 
-class UserdataInsert(Resource):
+class UserDelete(Resource):
+    @auth.auth_required
+    def delete(self, key):
+        try:
+            data = model.delete("user", key)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Deleted")
+        
+
+class UserSignUp(Resource):
+    @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
+        parser.add_argument('email', type=str, required=True)
         parser.add_argument('project_id', type=str, required=True)
-        parser.add_argument('user_id', type=str, required=True)
         args = parser.parse_args()
+        project_id = args["project_id"]
+        email = args["email"]
+        
+        key = utils.get_last_key("user")
 
-        data_insert = {
-            "project_id" : args['project_id'],
-            "user_id" : args['user_id'],
-        }
-        try:
-            result = db.insert(table="userdata", data=data_insert)
-        except Exception as e:
-            message = {
-                "status": False,
-                "error": str(e)
-            }
-        else:
-            message = {
-                "status": True,
-                "data": data_insert,
-                "id": result
-            }
-        finally:
-            return response(200, message=message)
-
-class UserdataRemove(Resource):
-    @login_required
-    def delete(self, userdata_id):
-        try:
-            db.delete(
-                    table="userdata", 
-                    field='userdata_id',
-                    value=userdata_id
-                )
-        except Exception as e:
-            message = {
-                "status": False,
-                "error": str(e)
-            }
-        else:
-            message = "removing"
-
-        finally:
-            return response(200, message=message)
-
-
-class UserdataUpdate(Resource):
-    @login_required
-    def put(self, userdata_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('project_id', type=str, required=True)
-        parser.add_argument('user_id', type=str, required=True)
-        args = parser.parse_args()
-
+        if utils.check_unique("user", "email", email):
+            return response(401, message="Duplicate email Detected")
+        
         data = {
-            "where":{
-                "userdata_id": userdata_id
-            },
-            "data":{
-                "project_id" : args['project_id'],
-                "user_id" : args['user_id'],
-            }
+            "key": key,
+            "email": email,
+            "project_id": project_id,
+            "state": "inserted",
+            "created_at": utils.get_datetime()
         }
-
         try:
-            db.update("userdata", data=data)
+            model.insert_data("/user", key, data)
         except Exception as e:
-            message = {
-                "status": False,
-                "error": str(e)
-            }
+            return response(401, message=str(e))
         else:
-            message = {
-                "status": True,
-                "data": data
-            }
-        finally:
-            return response(200, message=message)
+            return response(200, data=data, message="Inserted")
 
-class UserDataZoneInsert(Resource):
-    def post(self):
+
+class UserUpdate(Resource):
+    @auth.auth_required
+    def put(self, key):
         parser = reqparse.RequestParser()
-        parser.add_argument('id_zone', type=str, required=True)
-        parser.add_argument("user-id", type=str, required=True, location='headers')
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('project_id', type=str, required=True)
         args = parser.parse_args()
-        
-        args['user_id'] = args.pop('user-id')
-        
-        temp = db.get_all(table='userdata')
-        
-        for i in temp:
-            if str(i['user_id']) == args['user_id']:
-                userdata_id = str(i['userdata_id'])
-
-        data_insert = {
-            "id_zone" : args['id_zone'],
-            "userdata_id"   : userdata_id
+        project_id = args["project_id"]
+        email = args["email"]
+        if utils.check_unique("user", "email", email, key=key):
+            return response(401, message="Duplicate email Detected")
+        data_update = {
+            "key": key,
+            "email": email,
+            "project_id": project_id,
+            "state": "edited",
+            "created_at": utils.get_datetime()
         }
-
-       
-        try :
-            result = db.insert(table='zn_user_zone', data=data_insert)
+        
+        try:
+            model.update("user", key, data_update)
         except Exception as e:
-            message = {
-                "status" : False,
-                "error"  : str(e)
-            }
+            return response(401, message=str(e))
         else:
-            message = {
-                "status" : True,
-                "data"   : data_insert,
-                "id"     : result
-            }
-        finally:
-            return response(200, message=message)
-        
-
-class UserDataZoneResource(Resource):
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument("user-id", type=str, required=True, location='headers')
-        args = parser.parse_args()
-        
-        args['user_id'] = args.pop('user-id')
-
-        temp = db.get_all(table='userdata')
-        
-        for i in temp:
-            if str(i['user_id']) == args['user_id']:
-                userdata_id = str(i['userdata_id'])
-        
-
-
-        obj_userdata = []
-        results = db.get_by_id(
-            table="zn_user_zone",
-            field="userdata_id",
-            value = userdata_id
-        )
-        for i in results : 
-            data = {
-                "id_user_zone" : str(i['id_user_zone']),
-                "userdata_id"  : str(i['userdata_id']),
-                "id_zone"      : str(i['id_zone'])
-            }
-            obj_userdata.append(data)
-        return response(200, data = obj_userdata)
+            return response(200, data=data_update, message="Update Success")
