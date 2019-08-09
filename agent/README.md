@@ -1,10 +1,10 @@
-# DOMBA KNOT AGENT
+# DNSAGENT KNOT AGENT
 
 ## INSTALLING
 
-For production test install domba in pypi
+For production test install dnsagent in pypi
 ```
-pip install domba
+pip install dnsagent
 ```
 to developer install 
 ```
@@ -13,7 +13,7 @@ pip install -e .
 
 Setting Knot Environment
 ```
-domba envi knot
+dnsagent envi knot
 ```
 
 Before using sheep as a RESTKnot agent you are required to install kafka
@@ -21,17 +21,17 @@ Before using sheep as a RESTKnot agent you are required to install kafka
 
 Setting Your Broker
 ```
-domba envi broker
+dnsagent envi broker
 ```
 
 ## HELP
-Next documentation for domba run 
+Next documentation for dnsagent run 
 ```
-domba --help
+dnsagent --help
 ```
 for each command
 ```
-domba COMMAND --help
+dnsagent COMMAND --help
 ```
 
 
