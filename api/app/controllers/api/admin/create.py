@@ -15,8 +15,6 @@ port = os.environ.get("SOCKET_AGENT_PORT", os.getenv('SOCKET_AGENT_PORT'))
 url_fix= url_env+":"+port
 url = url_fix+"/api/command_rest"
 
-date = datetime.datetime.now().strftime("%Y%m%d")
-
 def sync_conf_insert(id_zone):
     tags = {
         "id_zone" : id_zone
@@ -82,7 +80,7 @@ def sync_cname_default(id_record, record):
 def addSOADefault(zone):
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","SOA")
-
+    date = datetime.datetime.now().strftime("%Y%m%d")
     record_soa = {
         "nm_record": '@',
         "date_record": str(date),
@@ -134,7 +132,7 @@ def addSOADefault(zone):
 def addNSDefault(zone):
     zone_data = db.get_by_id("zn_zone","nm_zone", zone)
     type_data = db.get_by_id("zn_type","nm_type","NS")
-    
+    date = datetime.datetime.now().strftime("%Y%m%d")
     record_ns = {
         "nm_record": "@",
         "date_record": str(date),
@@ -178,6 +176,7 @@ def addNSDefault(zone):
 
 def addCNAMEDefault(id_zone, nm_zone):
     id_record = None
+    date = datetime.datetime.now().strftime("%Y%m%d")
     data_record = {
         "nm_record": "www",
         "date_record":str(date),
