@@ -182,32 +182,32 @@ def read_value(file):
 
 
 def check_env(stack):
-    return os.path.isfile("{}/.domba/{}.env".format(APP_HOME, stack))
+    return os.path.isfile("{}/.dnsagent/{}.env".format(APP_HOME, stack))
 
 
 def load_env_file(stack):
-    return load_dotenv("{}/.domba/{}.env".format(APP_HOME, stack), override=True)
+    return load_dotenv("{}/.dnsagent/{}.env".format(APP_HOME, stack), override=True)
 
 def get_env_values_knot():
     if check_env("knot"):
         load_env_file("knot")
-        domba_env = {}
-        domba_env['knot_lib'] = os.environ.get('OS_KNOT_LIB')
-        domba_env['knot_sock'] = os.environ.get('OS_KNOT_SOCKS')
-        return domba_env
+        dnsagent_env = {}
+        dnsagent_env['knot_lib'] = os.environ.get('OS_KNOT_LIB')
+        dnsagent_env['knot_sock'] = os.environ.get('OS_KNOT_SOCKS')
+        return dnsagent_env
     else:
         print("Can't find knot.env")
 
 def get_env_values_broker():
     if check_env("broker"):
         load_env_file("broker")
-        domba_env = {}
-        domba_env['broker'] = os.environ.get('OS_BROKER')
-        domba_env['port'] = os.environ.get('OS_PORTS')
-        domba_env['topic'] = os.environ.get('OS_TOPIC')
-        domba_env['group'] = os.environ.get('OS_GROUP')
-        domba_env['flags'] = os.environ.get('OS_FLAGS')
-        return domba_env
+        dnsagent_env = {}
+        dnsagent_env['broker'] = os.environ.get('OS_BROKER')
+        dnsagent_env['port'] = os.environ.get('OS_PORTS')
+        dnsagent_env['topic'] = os.environ.get('OS_TOPIC')
+        dnsagent_env['group'] = os.environ.get('OS_GROUP')
+        dnsagent_env['flags'] = os.environ.get('OS_FLAGS')
+        return dnsagent_env
     else:
         print("Can't find broker.env")
 

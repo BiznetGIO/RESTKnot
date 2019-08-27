@@ -1,7 +1,7 @@
-from domba.libs.libcommand.utility import utils
-from domba.libs.libcommand.control import client
-from domba.libs.libcommand.control.libknot.control import *
-from domba.libs import utils as domba_utils
+from dnsagent.libs.libcommand.utility import utils
+from dnsagent.libs.libcommand.control import client
+from dnsagent.libs.libcommand.control.libknot.control import *
+from dnsagent.libs import utils as dnsagent_utils
 import json, os, logging
 
 knot_lib = os.environ.get("KNOT_LIB", "libknot.so")
@@ -127,7 +127,7 @@ def execute_command(initialiaze):
     try:
         ctl.connect(knot_socket)
     except KnotCtlError as e:
-        domba_utils.log_err(str(e))
+        dnsagent_utils.log_err(str(e))
     try:
         resp = None
         no = 0

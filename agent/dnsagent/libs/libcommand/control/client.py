@@ -1,5 +1,5 @@
 import json, os
-from domba.libs import utils
+from dnsagent.libs import utils
 
 def sendblock(ctl,params, treturn):
     data1=None
