@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/riszkymf/RESTKnot.svg?branch=testcase_travis)](https://travis-ci.org/riszkymf/RESTKnot)
+[![Build Status](https://travis-ci.org/BiznetGIO/RESTKnot.svg?branch=master)](https://travis-ci.org/BiznetGIO/RESTKnot)
 
 # REST KNOT
 Restknot is a Knot based DNS management system that simplify DNS configuration on Knot Server. Consists of three applications : Agent, API, and CLI. API manages DNS which then will be configured to knot server by Agent. Both of this apps is accessible from CLI.
