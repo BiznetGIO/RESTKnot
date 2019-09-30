@@ -43,7 +43,8 @@ def create_app():
     from .controllers import api_blueprint
     from .controllers import swaggerui_blueprint
 
-    app.register_blueprint(swaggerui_blueprint,url_prefix=os.environ.get("/api/docs","/api/docs"))
+    app.register_blueprint(swaggerui_blueprint,
+                url_prefix=os.environ.get("/api/docs","/api/docs"))
 
     app.register_blueprint(api_blueprint)
 

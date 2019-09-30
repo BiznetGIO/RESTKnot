@@ -257,8 +257,6 @@ class AddDomain(Resource):
             return response(200, data=zone_data, message="Inserted")
 
         
-
-
 class ViewCommand(Resource):
     @auth.auth_required
     def get(self, key):
