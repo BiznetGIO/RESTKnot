@@ -55,6 +55,7 @@ class ZoneAdd(Resource):
         zone = zone.lower()
         id_user = args["id_user"]
 
+        user = model.get_user_by_project_id(id_user)['key']
         key = utils.get_last_key("zone")
 
         if utils.check_unique("zone", "value", zone):
@@ -67,7 +68,7 @@ class ZoneAdd(Resource):
             "key": key,
             "value": zone,
             "created_at": utils.get_datetime(),
-            "user": id_user,
+            "user": user,
         }
         try:
             model.insert_data("zone", key, data)
