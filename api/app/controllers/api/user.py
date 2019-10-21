@@ -12,7 +12,7 @@ def get_datum(data):
     results = []
     for d in data:
         datum = {
-            "id": str(d["userdata_id"]),
+            "id": str(d["id"]),
             "email": d["email"],
             "project_id": d["project_id"],
             "created_at": str(d["created_at"]),
@@ -25,7 +25,7 @@ class GetUserData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("userdata")
+            data = model.get_all("user")
             user_data = get_datum(data)
             return response(200, data=user_data)
         except Exception as e:
@@ -34,11 +34,9 @@ class GetUserData(Resource):
 
 class GetUserDataId(Resource):
     @auth.auth_required
-    def get(self, userdata_id):
+    def get(self, user_id):
         try:
-            data = model.get_by_id(
-                table="userdata", field="userdata_id", user_id=userdata_id
-            )
+            data = model.get_by_id(table="user", field="id", user_id=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -48,11 +46,9 @@ class GetUserDataId(Resource):
 
 class UserDelete(Resource):
     @auth.auth_required
-    def delete(self, userdata_id):
+    def delete(self, user_id):
         try:
-            data = model.delete(
-                table="userdata", field="userdata_id", value=userdata_id
-            )
+            data = model.delete(table="user", field="id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -69,9 +65,7 @@ class UserSignUp(Resource):
         project_id = args["project_id"]
         email = args["email"]
 
-        key = utils.get_last_key("userdata")
-
-        if utils.check_unique("userdata", "email", email):
+        if utils.check_unique("user", "email", email):
             return response(401, message="Duplicate email Detected")
         # FIXME "state" should be added
         data = {
@@ -80,7 +74,7 @@ class UserSignUp(Resource):
             "created_at": utils.get_datetime(),
         }
         try:
-            model.insert(table="userdata", data=data)
+            model.insert(table="user", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -89,7 +83,7 @@ class UserSignUp(Resource):
 
 class UserUpdate(Resource):
     @auth.auth_required
-    def put(self, userdata_id):
+    def put(self, user_id):
         parser = reqparse.RequestParser()
         parser.add_argument("email", type=str, required=True)
         parser.add_argument("project_id", type=str, required=True)
@@ -97,14 +91,14 @@ class UserUpdate(Resource):
         email = args["email"]
         args = parser.parse_args()
 
-        if utils.check_unique("userdata", "email", email):
+        if utils.check_unique("user", "email", email):
             return response(401, message="Duplicate email Detected")
         data = {
-            "where": {"userdata_id": userdata_id},
+            "where": {"id": user_id},
             "data": {"project_id": args["project_id"], "email": email},
         }
         try:
-            model.update("userdata", data=data)
+            model.update("user", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
