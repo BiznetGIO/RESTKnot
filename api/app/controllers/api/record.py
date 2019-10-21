@@ -13,10 +13,10 @@ def get_datum(data):
     results = []
     for d in data:
         # FIXME add created_at?
+        # FIXME how to handle is_serial?
         datum = {
             "id": str(d["id"]),
             "record": d["record"],
-            "serial": d["serial"],
             "zone_id": d["zone_id"],
             "type_id": d["type_id"],
             "ttl_id": d["ttl_id"],
@@ -69,24 +69,18 @@ class RecordAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        # FIXME this should be serial_id
-        parser.add_argument("serial", type=int, required=True)
+        parser.add_argument("is_serial", type=bool, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
 
+        # FIXME fill is_serial manually
         record = args["record"].lower()
-        # FIXME is this boolean or int?
-        serial = args["serial"]
+        is_serial = args["is_serial"]
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
         type_id = args["type_id"]
-
-        if serial:
-            serial = True
-        else:
-            serial = False
 
         key = utils.get_last_key("record")
 
@@ -110,7 +104,7 @@ class RecordAdd(Resource):
 
         data = {
             "record": record,
-            "serial": serial,
+            "is_serial": is_serial,
             "zone_id": zone_id,
             "type_id": type_id,
             "ttl_id": ttl_id,
@@ -129,7 +123,7 @@ class RecordEdit(Resource):
     def put(self, record_id):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        parser.add_argument("serial", type=int, required=True)
+        parser.add_argument("is_serial", type=bool, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         parser.add_argument("type_id", type=str, required=True)
@@ -139,13 +133,7 @@ class RecordEdit(Resource):
         zone_id = args["zone_id"]
         type_id = args["type_id"]
         ttl_id = args["ttl_id"]
-        serial = args["serial"]
-
-        # FIXME serial should be number
-        if serial:
-            serial = 1
-        else:
-            serial = 0
+        is_serial = args["is_serial"]
 
         # Check Relation Zone
         if model.check_relation("zone", zone_id):
@@ -169,7 +157,7 @@ class RecordEdit(Resource):
             "where": {"id": record_id},
             "data": {
                 "record": record,
-                "serial": serial,
+                "is_serial": is_serial,
                 "zone_id": zone_id,
                 "type_id": type_id,
                 "ttl_id": ttl_id,
