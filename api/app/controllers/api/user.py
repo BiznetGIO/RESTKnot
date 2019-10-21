@@ -5,62 +5,82 @@ from app.libs import utils
 from app.middlewares import auth
 
 
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {
+            "id": str(d["userdata_id"]),
+            "email": d["email"],
+            "project_id": d["project_id"],
+            "created_at": str(d["created_at"]),
+        }
+        results.append(datum)
+    return results
+
+
 class GetUserData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.read_all("user")
+            data = model.get_all("userdata")
+            user_data = get_datum(data)
+            return response(200, data=user_data)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data)
+
 
 class GetUserDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, userdata_id):
         try:
-            data = model.read_by_id("user", key)
+            data = model.get_by_id(
+                table="userdata", field="userdata_id", user_id=userdata_id
+            )
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data)
+            user_data = get_datum(data)
+            return response(200, data=user_data)
 
 
 class UserDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, userdata_id):
         try:
-            data = model.delete("user", key)
+            data = model.delete(
+                table="userdata", field="userdata_id", value=userdata_id
+            )
         except Exception as e:
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Deleted")
-        
+
 
 class UserSignUp(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument("email", type=str, required=True)
+        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
         project_id = args["project_id"]
         email = args["email"]
-        
-        key = utils.get_last_key("user")
 
-        if utils.check_unique("user", "email", email):
+        key = utils.get_last_key("userdata")
+
+        if utils.check_unique("userdata", "email", email):
             return response(401, message="Duplicate email Detected")
-        
+        # FIXME "state" should be added
         data = {
-            "key": key,
             "email": email,
             "project_id": project_id,
-            "state": "inserted",
-            "created_at": utils.get_datetime()
+            "created_at": utils.get_datetime(),
         }
         try:
-            model.insert_data("/user", key, data)
+            model.insert(table="userdata", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -69,26 +89,23 @@ class UserSignUp(Resource):
 
 class UserUpdate(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, userdata_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('email', type=str, required=True)
-        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument("email", type=str, required=True)
+        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
-        project_id = args["project_id"]
         email = args["email"]
-        if utils.check_unique("user", "email", email, key=key):
+        args = parser.parse_args()
+
+        if utils.check_unique("userdata", "email", email):
             return response(401, message="Duplicate email Detected")
-        data_update = {
-            "key": key,
-            "email": email,
-            "project_id": project_id,
-            "state": "edited",
-            "created_at": utils.get_datetime()
+        data = {
+            "where": {"userdata_id": userdata_id},
+            "data": {"project_id": args["project_id"], "email": email},
         }
-        
         try:
-            model.update("user", key, data_update)
+            model.update("userdata", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data_update, message="Update Success")
+            return response(200, data=data, message="Update Success")

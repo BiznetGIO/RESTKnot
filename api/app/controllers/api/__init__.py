@@ -10,16 +10,16 @@ from .content import *
 from .serial import *
 from .domain import *
 
-api_blueprint = Blueprint("api", __name__, url_prefix='/api')
+api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
 
 api.add_resource(HealthCheck, "/health")
 
 api.add_resource(UserSignUp, "/user/add")
 api.add_resource(GetUserData, "/user/list")
-api.add_resource(GetUserDataId, "/user/list/<key>")
-api.add_resource(UserUpdate, "/user/edit/<key>")
-api.add_resource(UserDelete, "/user/delete/<key>")
+api.add_resource(GetUserDataId, "/user/list/<userdata_id>")
+api.add_resource(UserUpdate, "/user/edit/<userdata_id>")
+api.add_resource(UserDelete, "/user/delete/<userdata_id>")
 
 api.add_resource(GetTtlData, "/ttl/list")
 api.add_resource(GetTtlDataId, "/ttl/list/<key>")
