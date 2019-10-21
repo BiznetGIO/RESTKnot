@@ -5,54 +5,49 @@ from app.libs import utils
 from app.middlewares import auth
 
 
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        # FIXME do we need all this data here?
+        # record = model.get_by_id(table="record", field="id", id_=d["record_id"])
+        # type_ = model.get_by_id(table="type", field="id", id_=d["ttl_id"])
+        # ttl = model.get_by_id(table="ttl", field="id", id_=d["type_id"])
+        # zone = model.get_by_id(table="zone", field="id", id_=d["type_id"])
+
+        datum = {
+            "id": d["id"],
+            "name": d["name"],
+            "serial": d["serial"],
+            "record_id": d["record_id"],
+        }
+        results.append(datum)
+    return results
+
+
 class GetSerialData(Resource):
     @auth.auth_required
     def get(self):
-        result = list()
         try:
-            data_serial = model.read_all("serial")
+            serials = model.get_all("serial")
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for i in data_serial:
-                record = model.read_by_id("record", i["record"])
-                types = model.read_by_id("type", record["type"])
-                ttl = model.read_by_id("ttl", record["ttl"])
-                zone = model.read_by_id("zone", record["zone"])
-                data = {
-                    "key": i["key"],
-                    "name": i["name"],
-                    "value": i["value"],
-                    "record": record,
-                    "ttl": ttl,
-                    "type": types,
-                    "zone": zone,
-                }
-                result.append(data)
-            return response(200, data=result)
+            data = get_datum(serials)
+            return response(200, data=data)
 
 
 class GetSerialDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, serial_id):
         try:
-            data_serial = model.read_by_id("serial", key)
+            serial = model.get_by_id(table="serial", field="id", id_=serial_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            record = model.read_by_id("record", data_serial["record"])
-            types = model.read_by_id("type", record["type"])
-            ttl = model.read_by_id("ttl", record["ttl"])
-            zone = model.read_by_id("zone", record["zone"])
-            data = {
-                "key": data_serial["key"],
-                "name": data_serial["name"],
-                "value": data_serial["value"],
-                "record": record,
-                "ttl": ttl,
-                "type": types,
-                "zone": zone,
-            }
+            data = get_datum(serial)
             return response(200, data=data)
 
 
@@ -60,32 +55,28 @@ class SerialAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("value", type=str, required=True)
         parser.add_argument("name", type=str, required=True)
-        parser.add_argument("id_record", type=str, required=True)
+        parser.add_argument("serial", type=str, required=True)
+        parser.add_argument("record_id", type=str, required=True)
         args = parser.parse_args()
-        serial = args["value"]
+
         name = args["name"]
-        record_key = args["id_record"]
-        key = utils.get_last_key("serial")
+        serial = args["serial"]
+        record_id = args["record_id"]
 
+        # FIXME
         # Check Relation
-        if model.check_relation("record", record_key):
-            return response(401, message="Relation to Record error Check Your Key")
+        # if model.check_relation("zn_record", id_record):
+        #     return response(401, message="Relation to Record error Check Your Key")
 
-        # Validation
-        if not utils.check_record_serial(record_key):
-            return response(401, message="No Serial Record")
+        # # Validation
+        # if not utils.check_record_serial(id_record):
+        #     return response(401, message="No Serial Record")
 
-        data = {
-            "key": key,
-            "value": serial,
-            "name": name,
-            "record": record_key,
-            "created_at": utils.get_datetime(),
-        }
+        data = {"name": name, "serial": serial, "record_id": record_id}
+
         try:
-            model.insert_data("serial", key, data)
+            model.insert(table="serial", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -94,32 +85,28 @@ class SerialAdd(Resource):
 
 class SerialEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, serial_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("value", type=str, required=True)
+        parser.add_argument("serial", type=str, required=True)
         parser.add_argument("name", type=str, required=True)
-        parser.add_argument("id_record", type=str, required=True)
+        parser.add_argument("record_id", type=str, required=True)
         args = parser.parse_args()
-        serial = args["value"]
+        serial = args["serial"]
         name = args["name"]
-        record_key = args["id_record"]
+        record_id = args["record_id"]
 
         # Check Relation
-        if model.check_relation("record", record_key):
-            return response(401, message="Relation to Record error Check Your Key")
-
-        if not utils.check_record_serial(record_key):
-            return response(401, message="No Serial Record")
+        # if model.check_relation("record", record_id):
+        #     return response(401, message="Relation to Record error Check Your Key")
+        # if not utils.check_record_serial(record_id):
+        #     return response(401, message="No Serial Record")
 
         data = {
-            "key": key,
-            "value": serial,
-            "name": name,
-            "record": record_key,
-            "created_at": utils.get_datetime(),
+            "where": {"id": serial_id},
+            "data": {"name": name, "serial": serial, "record_id": record_id},
         }
         try:
-            model.update("serial", key, data)
+            model.update("serial", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -128,9 +115,9 @@ class SerialEdit(Resource):
 
 class SerialDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, serial_id):
         try:
-            data = model.delete("serial", key)
+            data = model.delete(table="serial", field="id", value=serial_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
