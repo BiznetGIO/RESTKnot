@@ -12,7 +12,7 @@ def get_datum(data):
 
     results = []
     for d in data:
-        datum = {"id": str(d["id"]), "zone": d["zone"]}
+        datum = {"id": str(d["id"]), "zone": d["zone"], "user_id": d["user_id"]}
         results.append(datum)
     return results
 
@@ -25,7 +25,7 @@ class GetZoneData(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        # FIXME
+        # FIXME do all user data needed?
         # users = model.get_by_id(table="user", field="id", user_id=user_id)
         data = get_datum(zones)
         return response(200, data=data)
@@ -39,7 +39,7 @@ class GetZoneDataId(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            # FIXME
+            # FIXME do all user data needed?
             # user_data = model.get_by_id("user", data_zone["user"])
             data = get_datum(zone)
             return response(200, data=data)
@@ -52,11 +52,10 @@ class ZoneAdd(Resource):
         parser.add_argument("user_id", type=str, required=True)
         parser.add_argument("zone", type=str, required=True)
         args = parser.parse_args()
-        zone = args["zone"]
-        zone = zone.lower()
+        zone = args["zone"].lower()
         user_id = args["user_id"]
 
-        # FIXME
+        # FIXME why this still needed? we already had user_id?
         # user = model.get_user_by_project_id(user_id)["zone_id"]
         # user = model.get_user_by_project_id(user_id)
         zone_id = utils.get_last_key("zone")
@@ -68,7 +67,7 @@ class ZoneAdd(Resource):
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
 
-        data = {"zone": zone}
+        data = {"zone": zone, "user_id": user_id}
         try:
             model.insert(table="zone", data=data)
         except Exception as e:
@@ -82,18 +81,19 @@ class ZoneEdit(Resource):
     def put(self, zone_id):
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("id_user", type=str, required=True)
+        parser.add_argument("user_id", type=str, required=True)
         args = parser.parse_args()
         zone = args["zone"].lower()
-        # FIXME do id_user needed here?
-        # id_user = args["id_user"]
 
         if utils.check_unique("zone", "zone", zone, key=zone_id):
             return response(401, message="Duplicate zone Detected")
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
 
-        data = {"where": {"id": zone_id}, "data": {"zone": args["zone"]}}
+        data = {
+            "where": {"id": zone_id},
+            "data": {"zone": args["zone"], "user_id": args["user_id"]},
+        }
         try:
             model.update("zone", data=data)
         except Exception as e:
