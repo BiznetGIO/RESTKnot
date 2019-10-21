@@ -1,197 +1,144 @@
-from app import etcd_client as client
-from etcd import EtcdKeyNotFound
-from etcd import EtcdException
-import ast, json
+import psycopg2
+
+from app import database
 
 
-def insert_data(stored, key, data):
+def get_db():
     try:
-        data = client.write("/"+stored+"/"+key, data)
-    except EtcdException as e:
+        connection = database.connect()
+        cursor = connection.cursor()
+        return cursor, connection
+    except Exception as exc:
+        raise ValueError(f"{exc}")
+
+
+def get_columns(table):
+    column = None
+    cursor, _ = get_db()
+    try:
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='{table}'"
+        cursor.execute(query)
+        column = [row[0] for row in cursor.fetchall()]
+    except (Exception, psycopg2.DatabaseError) as e:
+        column = str(e)
+    return column
+
+
+def get_all(table):
+    results = []
+    column = get_columns(table)
+    cursor, connection = get_db()
+    try:
+        query = f'SELECT * FROM "{table}"'
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            results.append(dict(zip(column, row)))
+    except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        connection.rollback()
+        retry_counter = 0
+        return retry_execute(query, column, retry_counter, error)
+    else:
+        connection.commit()
+        return results
+
+
+def get_by_id(table, field=None, user_id=None):
+    results = []
+    cursor, connection = get_db()
+    column = get_columns(table)
+    try:
+        query = f'SELECT * FROM "{table}" WHERE "{field}"={user_id}'
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            results.append(dict(zip(column, row)))
+    except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        connection.rollback()
+        retry_counter = 0
+        return retry_execute(query, column, retry_counter, error)
+    else:
+        connection.commit()
+        return results
+
+
+def insert(table, data=None):
+    cursor, connection = get_db()
+    value = ""
+    column = ""
+
+    # arrange column and values
+    for row in data:
+        column += row + ","
+        value += f"'{data[row]}',"
+    column = column[:-1]
+    value = value[:-1]
+
+    try:
+        query = f'INSERT INTO "{table}" ({column}) VALUES ({value}) RETURNING *'
+        cursor.execute(query)
+    except (Exception, psycopg2.DatabaseError) as e:
+        connection.rollback()
         raise e
     else:
-        return data.key
+        connection.commit()
+        id_of_new_row = cursor.fetchone()[0]
+        return str(id_of_new_row)
 
-def delete(stored, key):
+
+def update(table, data=None):
+    cursor, connection = get_db()
+    value = ""
+    rows = data["data"]
+    for row in rows:
+        value += row + "='%s'," % str(rows[row])
+    _set = value[:-1]
+    field = list(data["where"].keys())[0]
+    status = None
     try:
-        b = client.delete("/"+stored+"/"+key, recursive=True, dir=True)
-    except EtcdException as e:
+        field_data = data["where"][field]
+        query = f'UPDATE "{table}" SET {_set} WHERE {field}={field_data}'
+        cursor.execute(query)
+    except (Exception, psycopg2.DatabaseError) as e:
+        connection.rollback()
         raise e
     else:
-        return b.key
+        connection.commit()
+        status = True
+        return status
 
-def read_by_id(stored, key):
+
+def delete(table, field=None, value=None):
+    cursor, connection = get_db()
+    rows_deleted = 0
     try:
-        a = client.read("/"+stored+"/"+key)
-    except EtcdKeyNotFound as e:
-        raise e
+        query = f'DELETE FROM "{table}" WHERE {field}={value}'
+        cursor.execute(query)
+    except (Exception, psycopg2.DatabaseError) as error:
+        connection.rollback()
+        raise error
     else:
-        data = ast.literal_eval(a.value)
-        return data
+        connection.commit()
+        rows_deleted = cursor.rowcount
+        return str(rows_deleted)
 
-def read_all(stored):
-    result = list()
-    try:
-        a = client.read("/"+stored)
-    except EtcdKeyNotFound as e:
-        raise e
+
+def retry_execute(query, column, retry_counter, error):
+    limit_retries = 5
+    results = []
+    cursor, connection = get_db()
+    if retry_counter >= limit_retries:
+        raise error
     else:
-        for child in a.children:
-            data = ast.literal_eval(child.value)
-            result.append(data)
-    return result
-
-def check_relation(stored, key):
-    try:
-        read_by_id(stored, key)
-    except Exception as e:
-        return True
-    else:
-        return False
-
-def read_all_key(stored):
-    result = list()
-    try:
-        a = client.read("/"+stored)
-    except EtcdKeyNotFound as e:
-        raise e
-    else:
-        for child in a.children:
-            data = ast.literal_eval(child.value)
-            result.append(int(data['key']))
-    return result
-
-def update(stored, key, data):
-    try:
-        delete(stored, str(key))
-    except Exception as e:
-        raise e
-    try:
-        data = insert_data(stored, key, data)
-    except Exception as e:
-        raise e
-    else:
-        return data
-
-def content_by_record(record):
-    data = list()
-    try:
-        content_data = read_all("content")
-    except Exception as e:
-        raise e
-    else:
-        for i in content_data:
-            if i['record'] == record:
-                data.append(i)
-    return data
-
-def serial_by_record(record):
-    result = list()
-    try:
-        content_data = read_all("serial")
-    except Exception as e:
-        raise e
-    else:
-        for i in content_data:
-            if i['record'] == record:
-                result.append(i)
-    return result
-
-
-def record_by_zone(zone):
-    result = list()
-    try:
-        data_rec = read_all("record")
-    except Exception:
-        data_rec = []
-    else:
-        for i in data_rec:
-            data = None
-            if i['zone'] == zone:
-                type_data = read_by_id("type", i['type'])
-                ttl_data = read_by_id("ttl", i['ttl'])
-                try:
-                    content_data = content_by_record(i['key'])
-                except Exception:
-                    content_data = []
-                if i['serial']:
-                    try:
-                        serial_data = serial_by_record(i['key'])
-                    except Exception:
-                        data = {
-                            "key": i['key'],
-                            "value": i['value'],
-                            "created_at": i['created_at'],
-                            "type": type_data,
-                            "ttl": ttl_data,
-                            "content": content_data,
-                            "serial": []
-                        }
-                    else:
-                        data = {
-                            "key": i['key'],
-                            "value": i['value'],
-                            "created_at": i['created_at'],
-                            "type": type_data,
-                            "ttl": ttl_data,
-                            "content": content_data,
-                            "serial": serial_data
-                        }
-                else:
-                    data = {
-                        "key": i['key'],
-                        "value": i['value'],
-                        "created_at": i['created_at'],
-                        "type": type_data,
-                        "ttl": ttl_data,
-                        "content": content_data
-                    }
-            if data is not None:
-                result.append(data)
-        return result
-
-
-def record_delete(key):
-    try:
-        record_data = read_by_id("record", key)
-    except Exception as e:
-        raise e
-    else:
+        retry_counter += 1
+        print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
         try:
-            conten_data = content_by_record(key)
-        except Exception as e:
-            print(e)
+            cursor.execute(query)
+        except (Exception, psycopg2.DatabaseError):
+            connection.rollback()
         else:
-            for ci in conten_data:
-                if record_data['serial']:
-                    serial_data = serial_by_record(key)
-                    for i in serial_data:
-                        try:
-                            delete("serial", i['key'])
-                        except Exception as e:
-                            raise e
-                try:
-                    delete("content", ci['key'])
-                except Exception as e:
-                    print(e)
-        try:
-            result = delete("record", key)
-        except Exception as e:
-            raise e
-        else:
-            return result
-
-def get_user_by_project_id(project_id):
-    try:
-        data_user = read_all("user")
-    except Exception as e:
-        raise e
-    else:
-        data = {}
-        for i in data_user:
-            if i['project_id'] == project_id:
-                data = i
-                break
-        return data
-        
-        
+            connection.commit()
+            rows = cursor.fetchall()
+            for row in rows:
+                results.append(dict(zip(column, row)))
+            return results
