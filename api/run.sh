@@ -40,12 +40,6 @@ function export_env(){
     export APP_HOST=0.0.0.0
     export APP_PORT=5000
     export FLASK_DEBUG=True
-    export APP_REDIS_URL=redis://:pass@session:6379/0
-    export CELERY_BROKER_URL=amqp://admin:qazwsx@rabbitmq:5672//
-    export CELERY_RESULT_BACKEND=amqp://admin:qazwsx@rabbitmq:5672//
-
-    export ETCD_HOST=127.0.01
-    export ETCD_PORT=2379
 
     export KAFKA_HOST=127.0.01
     export KAFKA_PORT=9092
@@ -56,15 +50,8 @@ function export_env(){
     export DEFAULT_SOA_CONTENT='satu.neodns.id. hostmaster.neodns.id.'
     export DEFAULT_SOA_SERIAL='10800 3600 604800 38400'
 
-
     rep_ok "export $APP_HOST"
     rep_ok "export $APP_PORT"
-    rep_ok "export $APP_RELEASE"
-    rep_ok "export $APP_CREATED"
-    rep_ok "export $FLASK_DEBUG"
-    rep_ok "export $APP_REDIS_URL"
-    rep_ok "export $CELERY_BROKER_URL"
-    rep_ok "export $CELERY_RESULT_BACKEND"
 }
 
 
@@ -105,4 +92,3 @@ if [ $command = 'server' ]
 else
     rep_die 'USAGE : ./run.sh server [env].'
 fi
-
