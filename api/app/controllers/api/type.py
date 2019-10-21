@@ -9,7 +9,7 @@ class GetTypeData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.read_all("type")
+            data = model.get_all("zn_type")
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -18,9 +18,9 @@ class GetTypeData(Resource):
 
 class GetTypeDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, type_id):
         try:
-            data = model.read_by_id("type", key)
+            data = model.get_by_id(table="zn_type", field="id_type", user_id=type_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -48,16 +48,14 @@ class TypeAdd(Resource):
 
 class TypeEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, type_id):
         parser = reqparse.RequestParser()
         parser.add_argument("type", type=str, required=True)
-        parser.add_argument("serial", type=bool, required=True)
         args = parser.parse_args()
-        types = args["type"]
-        serial = args["serial"]
-        data = {"key": key, "value": types, "serial": serial}
+
+        data = {"where": {"id_type": type_id}, "data": {"nm_type": args["type"]}}
         try:
-            model.update("type", key, data)
+            model.update("zn_type", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -66,9 +64,9 @@ class TypeEdit(Resource):
 
 class TypeDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, type_id):
         try:
-            data = model.delete("type", key)
+            data = model.delete(table="zn_type", field="id_type", value=type_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

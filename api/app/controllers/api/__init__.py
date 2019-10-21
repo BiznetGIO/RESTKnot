@@ -28,10 +28,10 @@ api.add_resource(TtlEdit, "/ttl/edit/<ttl_id>")
 api.add_resource(TtlDelete, "/ttl/delete/<ttl_id>")
 
 api.add_resource(GetTypeData, "/type/list")
-api.add_resource(GetTypeDataId, "/type/list/<key>")
+api.add_resource(GetTypeDataId, "/type/list/<type_id>")
 api.add_resource(TypeAdd, "/type/add")
-api.add_resource(TypeEdit, "/type/edit/<key>")
-api.add_resource(TypeDelete, "/type/delete/<key>")
+api.add_resource(TypeEdit, "/type/edit/<type_id>")
+api.add_resource(TypeDelete, "/type/delete/<type_id>")
 
 api.add_resource(GetZoneData, "/zone/list")
 api.add_resource(GetZoneDataId, "/zone/list/<key>")
