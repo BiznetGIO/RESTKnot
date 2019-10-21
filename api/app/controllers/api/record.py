@@ -6,52 +6,61 @@ from app.libs import validation
 from app.middlewares import auth
 
 
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        # FIXME add created_at?
+        datum = {
+            "id": str(d["id"]),
+            "record": d["record"],
+            "serial": d["serial"],
+            "zone_id": d["zone_id"],
+            "type_id": d["type_id"],
+            "ttl_id": d["ttl_id"],
+        }
+        results.append(datum)
+    return results
+
+
 class GetRecordData(Resource):
     @auth.auth_required
     def get(self):
-        results = list()
         try:
-            data_record = model.read_all("record")
-            print(data_record)
+            records = model.get_all("record")
         except Exception as e:
             return response(401, message=str(e))
 
-        for i in data_record:
-            zone_data = model.read_by_id("zone", str(i["zone"]))
-            ttl_data = model.read_by_id("ttl", str(i["ttl"]))
-            type_data = model.read_by_id("type", str(i["type"]))
+        results = []
+        for record in records:
+            zone = model.get_by_id(table="zone", field="id", id_=record["zone_id"])
+            ttl = model.get_by_id(table="ttl", field="id", id_=record["ttl_id"])
+            type_ = model.get_by_id(table="type", field="id", id_=record["type_id"])
 
             data = {
-                "key": i["key"],
-                "value": i["value"],
-                "created_at": i["created_at"],
-                "zone": zone_data,
-                "type": type_data,
-                "ttl": ttl_data,
+                "id": record["id"],
+                "record": record["record"],
+                "zone": zone,
+                "type": type_,
+                "ttl": ttl,
             }
             results.append(data)
+
         return response(200, data=results)
 
 
 class GetRecordDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, record_id):
         try:
-            data_record = model.read_by_id("record", key)
+            # data_record = model.read_by_id("record", key)
+            records = model.get_by_id(table="record", field="id", id_=record_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            zone_data = model.read_by_id("zone", str(data_record["zone"]))
-            ttl_data = model.read_by_id("ttl", str(data_record["ttl"]))
-            type_data = model.read_by_id("type", str(data_record["type"]))
-            data = {
-                "key": data_record["key"],
-                "value": data_record["value"],
-                "created_at": data_record["created_at"],
-                "zone": zone_data,
-                "ttl": ttl_data,
-                "type": type_data,
-            }
+            data = get_datum(records)
             return response(200, data=data)
 
 
@@ -60,17 +69,20 @@ class RecordAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
+        # FIXME this should be serial_id
         parser.add_argument("serial", type=int, required=True)
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("ttl", type=str, required=True)
-        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("zone_id", type=str, required=True)
+        parser.add_argument("ttl_id", type=str, required=True)
+        parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
-        record = args["record"]
-        record = record.lower()
-        zone = args["zone"]
-        types = args["type"]
-        ttl = args["ttl"]
+
+        record = args["record"].lower()
+        # FIXME is this boolean or int?
         serial = args["serial"]
+        zone_id = args["zone_id"]
+        ttl_id = args["ttl_id"]
+        type_id = args["type_id"]
+
         if serial:
             serial = True
         else:
@@ -79,35 +91,33 @@ class RecordAdd(Resource):
         key = utils.get_last_key("record")
 
         # Check Relation Zone
-        if model.check_relation("zone", zone):
+        if model.check_relation("zone", zone_id):
             return response(401, message="Relation to zone error Check Your Key")
-        if model.check_relation("type", types):
+        if model.check_relation("type", type_id):
             return response(401, message="Relation to type error Check Your Key")
-        if model.check_relation("ttl", ttl):
+        if model.check_relation("ttl", ttl_id):
             return response(401, message="Relation to ttl error Check Your Key")
 
         # validation
-        if validation.record_validation(record):
-            return response(401, message="Named Error")
-        if validation.count_character(record):
-            return response(401, message="Count Character Error")
-        if validation.record_cname_duplicate(record, types, zone):
-            return response(401, message="Cname Record Duplicate")
-        if validation.record_mx_duplicate(record, types, zone):
-            return response(401, message="MX Record Duplicate")
-        # end validation
+        # if validation.record_validation(record):
+        #     return response(401, message="Named Error")
+        # if validation.count_character(record):
+        #     return response(401, message="Count Character Error")
+        # if validation.record_cname_duplicate(record, type_, zone):
+        #     return response(401, message="Cname Record Duplicate")
+        # if validation.record_mx_duplicate(record, type_, zone):
+        #     return response(401, message="MX Record Duplicate")
 
         data = {
-            "key": key,
-            "value": record,
-            "zone": zone,
+            "record": record,
             "serial": serial,
-            "type": types,
-            "ttl": ttl,
-            "created_at": utils.get_datetime(),
+            "zone_id": zone_id,
+            "type_id": type_id,
+            "ttl_id": ttl_id,
         }
+
         try:
-            model.insert_data("record", key, data)
+            model.insert(table="record", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -116,55 +126,58 @@ class RecordAdd(Resource):
 
 class RecordEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, record_id):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
         parser.add_argument("serial", type=int, required=True)
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("ttl", type=str, required=True)
-        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("zone_id", type=str, required=True)
+        parser.add_argument("ttl_id", type=str, required=True)
+        parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
-        record = args["record"]
-        record = record.lower()
-        zone = args["zone"]
-        types = args["type"]
-        ttl = args["ttl"]
+
+        record = args["record"].lower()
+        zone_id = args["zone_id"]
+        type_id = args["type_id"]
+        ttl_id = args["ttl_id"]
         serial = args["serial"]
+
+        # FIXME serial should be number
         if serial:
-            serial = True
+            serial = 1
         else:
-            serial = False
+            serial = 0
 
         # Check Relation Zone
-        if model.check_relation("zone", zone):
+        if model.check_relation("zone", zone_id):
             return response(401, message="Relation to zone error Check Your Key")
-        if model.check_relation("type", types):
+        if model.check_relation("type", type_id):
             return response(401, message="Relation to type error Check Your Key")
-        if model.check_relation("ttl", ttl):
+        if model.check_relation("ttl", ttl_id):
             return response(401, message="Relation to ttl error Check Your Key")
 
         # validation
-        if validation.record_validation(record):
-            return response(401, message="Named Error")
-        if validation.count_character(record):
-            return response(401, message="Count Character Error")
-        if validation.record_cname_duplicate(record, types, zone):
-            return response(401, message="Cname Record Duplicate")
-        if validation.record_mx_duplicate(record, types, zone):
-            return response(401, message="MX Record Duplicate")
-        # end validation
+        # if validation.record_validation(record):
+        #     return response(401, message="Named Error")
+        # if validation.count_character(record):
+        #     return response(401, message="Count Character Error")
+        # if validation.record_cname_duplicate(record, type_id, zone_id):
+        #     return response(401, message="Cname Record Duplicate")
+        # if validation.record_mx_duplicate(record, type_id, zone_id):
+        #     return response(401, message="MX Record Duplicate")
 
         data = {
-            "key": key,
-            "value": record,
-            "zone": zone,
-            "serial": serial,
-            "type": types,
-            "ttl": ttl,
-            "created_at": utils.get_datetime(),
+            "where": {"id": record_id},
+            "data": {
+                "record": record,
+                "serial": serial,
+                "zone_id": zone_id,
+                "type_id": type_id,
+                "ttl_id": ttl_id,
+            },
         }
+
         try:
-            model.update("record", key, data)
+            model.update("record", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -173,10 +186,9 @@ class RecordEdit(Resource):
 
 class RecordDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, record_id):
         try:
-            # data = model.delete("record", key)
-            data = model.record_delete(key)
+            data = model.delete(table="record", field="id", value=record_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
