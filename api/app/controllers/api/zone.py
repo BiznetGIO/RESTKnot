@@ -5,22 +5,23 @@ from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
 
+
 class GetZoneData(Resource):
     @auth.auth_required
     def get(self):
         results = list()
         try:
-            data_zone = model.read_all("zone")
+            data_zone = model.get_all("zn_zone")
         except Exception as e:
             return response(401, message=str(e))
-        
+
         for i in data_zone:
-            user_data = model.read_by_id("user", i['user'])
+            user_data = model.read_by_id("user", i["user"])
             data = {
-                "key": i['key'],
-                "value": i['value'],
-                "created_at": i['created_at'],
-                "user": user_data
+                "key": i["key"],
+                "value": i["value"],
+                "created_at": i["created_at"],
+                "user": user_data,
             }
             results.append(data)
         return response(200, data=results)
@@ -34,12 +35,12 @@ class GetZoneDataId(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user_data = model.read_by_id("user", data_zone['user'])
+            user_data = model.read_by_id("user", data_zone["user"])
             data = {
-                "key": data_zone['key'],
-                "value": data_zone['value'],
-                "created_at": data_zone['created_at'],
-                "user": user_data
+                "key": data_zone["key"],
+                "value": data_zone["value"],
+                "created_at": data_zone["created_at"],
+                "user": user_data,
             }
             return response(200, data=data)
 
@@ -48,14 +49,14 @@ class ZoneAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('id_user', type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("id_user", type=str, required=True)
         args = parser.parse_args()
         zone = args["zone"]
         zone = zone.lower()
         id_user = args["id_user"]
 
-        user = model.get_user_by_project_id(id_user)['key']
+        user = model.get_user_by_project_id(id_user)["key"]
         key = utils.get_last_key("zone")
 
         if utils.check_unique("zone", "value", zone):
@@ -63,7 +64,7 @@ class ZoneAdd(Resource):
 
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
-        
+
         data = {
             "key": key,
             "value": zone,
@@ -82,8 +83,8 @@ class ZoneEdit(Resource):
     @auth.auth_required
     def put(self, key):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('id_user', type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("id_user", type=str, required=True)
         args = parser.parse_args()
         zone = args["zone"]
         zone = zone.lower()
@@ -104,7 +105,7 @@ class ZoneEdit(Resource):
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Edited")
-        
+
 
 class ZoneDelete(Resource):
     @auth.auth_required

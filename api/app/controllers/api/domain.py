@@ -17,7 +17,7 @@ def add_soa_record(zone_key, record_key):
         "type": "4",
         "ttl": "6",
         "created_at": utils.get_datetime(),
-        "serial": False
+        "serial": False,
     }
 
     try:
@@ -25,16 +25,20 @@ def add_soa_record(zone_key, record_key):
     except Exception as e:
         return response(401, message=str(e))
 
-    date_data = utils.soa_time_set()+"01"
-    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT", os.getenv("DEFAULT_SOA_CONTENT"))
-    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL", os.getenv("DEFAULT_SOA_SERIAL"))
-    content_value = default_soa_content+" "+date_data+" "+default_soa_serial
+    date_data = utils.soa_time_set() + "01"
+    default_soa_content = os.environ.get(
+        "DEFAULT_SOA_CONTENT", os.getenv("DEFAULT_SOA_CONTENT")
+    )
+    default_soa_serial = os.environ.get(
+        "DEFAULT_SOA_SERIAL", os.getenv("DEFAULT_SOA_SERIAL")
+    )
+    content_value = default_soa_content + " " + date_data + " " + default_soa_serial
     content_key = utils.get_last_key("content")
     content_data = {
         "key": content_key,
         "value": content_value,
         "record": record_key,
-        "created_at": utils.get_datetime()
+        "created_at": utils.get_datetime(),
     }
     try:
         model.insert_data("content", content_key, content_data)
@@ -50,7 +54,7 @@ def add_ns_default(zone_key, record_key):
         "type": "5",
         "ttl": "6",
         "created_at": utils.get_datetime(),
-        "serial": False
+        "serial": False,
     }
 
     try:
@@ -66,7 +70,7 @@ def add_ns_default(zone_key, record_key):
             "key": content_key,
             "value": i,
             "record": record_key,
-            "created_at": utils.get_datetime()
+            "created_at": utils.get_datetime(),
         }
         try:
             model.insert_data("content", content_key, content_data)
@@ -82,7 +86,7 @@ def add_cname_default(zone_key, record_key, zone_name):
         "type": "2",
         "ttl": "6",
         "created_at": utils.get_datetime(),
-        "serial": False
+        "serial": False,
     }
 
     try:
@@ -90,18 +94,18 @@ def add_cname_default(zone_key, record_key, zone_name):
     except Exception as e:
         return response(401, message=str(e))
 
-
     content_key = utils.get_last_key("content")
     content_data = {
         "key": content_key,
-        "value": zone_name+".",
+        "value": zone_name + ".",
         "record": record_key,
-        "created_at": utils.get_datetime()
+        "created_at": utils.get_datetime(),
     }
     try:
         model.insert_data("content", content_key, content_data)
     except Exception as e:
         return response(401, message=str(e))
+
 
 class GetDomainData(Resource):
     @auth.auth_required
@@ -111,16 +115,16 @@ class GetDomainData(Resource):
             data_zone = model.read_all("zone")
         except Exception as e:
             return response(401, message=str(e))
-        
+
         for i in data_zone:
-            user = model.read_by_id("user", i['user'])
-            record = model.record_by_zone(i['key'])
+            user = model.read_by_id("user", i["user"])
+            record = model.record_by_zone(i["key"])
             data = {
-                "key": i['key'],
-                "value": i['value'],
-                "created_at": i['created_at'],
+                "key": i["key"],
+                "value": i["value"],
+                "created_at": i["created_at"],
                 "user": user,
-                "record": record
+                "record": record,
             }
             results.append(data)
         return response(200, data=results)
@@ -135,9 +139,9 @@ class GetDomainDataByProjectId(Resource):
             data_user = model.read_all("user")
         except Exception as e:
             return response(401, message=str(e))
-        else: 
+        else:
             for i in data_user:
-                if i['project_id'] == project_id:
+                if i["project_id"] == project_id:
                     user = i
                     break
         try:
@@ -146,15 +150,15 @@ class GetDomainDataByProjectId(Resource):
             return response(401, message=str(e))
         else:
             for i in data_zone:
-                if i['user'] == user['key']:
-                    user = model.read_by_id("user", i['user'])
-                    record = model.record_by_zone(i['key'])
+                if i["user"] == user["key"]:
+                    user = model.read_by_id("user", i["user"])
+                    record = model.record_by_zone(i["key"])
                     data = {
-                        "key": i['key'],
-                        "value": i['value'],
-                        "created_at": i['created_at'],
+                        "key": i["key"],
+                        "value": i["value"],
+                        "created_at": i["created_at"],
                         "user": user,
-                        "record": record
+                        "record": record,
                     }
                     results.append(data)
             return response(200, data=results)
@@ -168,14 +172,14 @@ class GetDomainDataId(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user = model.read_by_id("user", data_zone['user'])
-            record = model.record_by_zone(data_zone['key'])
+            user = model.read_by_id("user", data_zone["user"])
+            record = model.record_by_zone(data_zone["key"])
             data = {
-                "key": data_zone['key'],
-                "value": data_zone['value'],
-                "created_at": data_zone['created_at'],
+                "key": data_zone["key"],
+                "value": data_zone["value"],
+                "created_at": data_zone["created_at"],
                 "user": user,
-                "record": record
+                "record": record,
             }
             return response(200, data=data)
 
@@ -186,11 +190,11 @@ class DeleteDomain(Resource):
         try:
             record = model.record_by_zone(key)
         except Exception as e:
-            return response(401, message="Record Not Found | "+str(e))
+            return response(401, message="Record Not Found | " + str(e))
         else:
             for i in record:
                 try:
-                    model.record_delete(i['key'])
+                    model.record_delete(i["key"])
                 except Exception as e:
                     print(e)
         try:
@@ -205,14 +209,14 @@ class AddDomain(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
-        zone = args['zone']
-        project_id = args['project_id']
-        user = model.get_user_by_project_id(project_id)['key']
+        zone = args["zone"]
+        project_id = args["project_id"]
+        user = model.get_user_by_project_id(project_id)["key"]
         zone_key = utils.get_last_key("zone")
-        
+
         # Validation Unique Zone
         if utils.check_unique("zone", "value", zone):
             return response(401, message="Duplicate zone Detected")
@@ -222,8 +226,7 @@ class AddDomain(Resource):
         # Check Relation Zone to User
         if model.check_relation("user", user):
             return response(401, message="Relation to user error Check Your Key")
-        
-       
+
         zone_data = {
             "key": zone_key,
             "value": zone,
@@ -239,7 +242,7 @@ class AddDomain(Resource):
             # Adding Zone Config
             config_command = command.config_zone(zone, zone_key)
             producer.send(config_command)
-            # ADDING DEFAULT RECORD   
+            # ADDING DEFAULT RECORD
             record_key_soa = utils.get_last_key("record")
             add_soa_record(zone_key, record_key_soa)
             command.soa_default_command(record_key_soa)
@@ -256,20 +259,16 @@ class AddDomain(Resource):
 
             return response(200, data=zone_data, message="Inserted")
 
-        
+
 class ViewCommand(Resource):
     @auth.auth_required
     def get(self, key):
-        zone_data = model.read_by_id("zone", key)['value']
+        zone_data = model.read_by_id("zone", key)["value"]
         command_data = command.config_zone(zone_data, key)
         try:
             test = producer.send(command_data)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            data ={
-                "send_status": test,
-                "command": command_data
-            }
+            data = {"send_status": test, "command": command_data}
             return response(200, data=data, message=test)
-            

@@ -8,6 +8,7 @@ def soa_time_set():
     date = datetime.datetime.now().strftime("%Y%m%d")
     return date
 
+
 def get_http(url, param=None, header=None):
     json_data = None
     if param:
@@ -16,9 +17,11 @@ def get_http(url, param=None, header=None):
     data = get_func.json()
     return data
 
+
 def get_datetime():
     now = datetime.datetime.now()
     return str(now)
+
 
 def check_unique(stored, field, value, key=None):
     results = False
@@ -30,7 +33,7 @@ def check_unique(stored, field, value, key=None):
         for i in all_data:
             if i[field] == value:
                 if key is not None:
-                    if key == i['key']:
+                    if key == i["key"]:
                         results = False
                     else:
                         results = True
@@ -39,6 +42,7 @@ def check_unique(stored, field, value, key=None):
                 break
     return results
 
+
 def get_last_key(stored):
     try:
         all_data = model.read_all_key(stored)
@@ -46,7 +50,7 @@ def get_last_key(stored):
         return str(1)
     else:
         key = max(all_data)
-        return str(key+1)
+        return str(key + 1)
 
 
 def check_record_serial(key):
@@ -55,4 +59,4 @@ def check_record_serial(key):
     except Exception as e:
         raise e
     else:
-        return record['serial']
+        return record["serial"]

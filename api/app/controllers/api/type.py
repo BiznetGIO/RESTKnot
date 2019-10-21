@@ -31,17 +31,13 @@ class TypeAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('type', type=str, required=True)
-        parser.add_argument('serial', type=bool, required=True)
+        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("serial", type=bool, required=True)
         args = parser.parse_args()
         types = args["type"]
         serial = args["serial"]
         key = utils.get_last_key("type")
-        data = {
-            "key": key,
-            "value": types,
-            "serial": serial
-        }
+        data = {"key": key, "value": types, "serial": serial}
         try:
             model.insert_data("type", key, data)
         except Exception as e:
@@ -54,23 +50,19 @@ class TypeEdit(Resource):
     @auth.auth_required
     def put(self, key):
         parser = reqparse.RequestParser()
-        parser.add_argument('type', type=str, required=True)
-        parser.add_argument('serial', type=bool, required=True)
+        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("serial", type=bool, required=True)
         args = parser.parse_args()
         types = args["type"]
         serial = args["serial"]
-        data = {
-            "key": key,
-            "value": types,
-            "serial": serial
-        }
+        data = {"key": key, "value": types, "serial": serial}
         try:
             model.update("type", key, data)
         except Exception as e:
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Edited")
-        
+
 
 class TypeDelete(Resource):
     @auth.auth_required
