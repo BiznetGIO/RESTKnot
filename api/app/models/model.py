@@ -43,12 +43,13 @@ def get_all(table):
         return results
 
 
-def get_by_id(table, field=None, user_id=None):
+def get_by_id(table, field=None, id_=None):
     results = []
     cursor, connection = get_db()
     column = get_columns(table)
     try:
-        query = f'SELECT * FROM "{table}" WHERE "{field}"={user_id}'
+        query = f'SELECT * FROM "{table}" WHERE "{field}"={id_}'
+        print(query)
         cursor.execute(query)
         rows = cursor.fetchall()
         for row in rows:
@@ -142,3 +143,29 @@ def retry_execute(query, column, retry_counter, error):
             for row in rows:
                 results.append(dict(zip(column, row)))
             return results
+
+
+#
+
+
+def check_relation(table_name, id_):
+    try:
+        get_by_id(table_name, id_)
+    except Exception:
+        return True
+    else:
+        return False
+
+
+def get_user_by_project_id(project_id):
+    try:
+        data_user = get_all("user")
+    except Exception as e:
+        raise e
+    else:
+        data = {}
+        for i in data_user:
+            if i["project_id"] == project_id:
+                data = i
+                break
+        return data

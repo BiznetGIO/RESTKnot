@@ -26,7 +26,7 @@ def get_datetime():
 def check_unique(stored, field, value, key=None):
     results = False
     try:
-        all_data = model.read_all(stored)
+        all_data = model.get_all(stored)
     except Exception:
         results = False
     else:
@@ -55,7 +55,7 @@ def get_last_key(stored):
 
 def check_record_serial(key):
     try:
-        record = model.read_by_id("record", key)
+        record = model.get_by_id("record", key)
     except Exception as e:
         raise e
     else:
