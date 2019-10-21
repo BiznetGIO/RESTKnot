@@ -22,10 +22,10 @@ api.add_resource(UserUpdate, "/user/edit/<userdata_id>")
 api.add_resource(UserDelete, "/user/delete/<userdata_id>")
 
 api.add_resource(GetTtlData, "/ttl/list")
-api.add_resource(GetTtlDataId, "/ttl/list/<key>")
+api.add_resource(GetTtlDataId, "/ttl/list/<ttl_id>")
 api.add_resource(TtlAdd, "/ttl/add")
-api.add_resource(TtlEdit, "/ttl/edit/<key>")
-api.add_resource(TtlDelete, "/ttl/delete/<key>")
+api.add_resource(TtlEdit, "/ttl/edit/<ttl_id>")
+api.add_resource(TtlDelete, "/ttl/delete/<ttl_id>")
 
 api.add_resource(GetTypeData, "/type/list")
 api.add_resource(GetTypeDataId, "/type/list/<key>")

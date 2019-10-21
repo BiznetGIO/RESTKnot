@@ -9,7 +9,7 @@ class GetTtlData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("ttl")
+            data = model.get_all("zn_ttl")
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -18,9 +18,9 @@ class GetTtlData(Resource):
 
 class GetTtlDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, ttl_id):
         try:
-            data = model.get_by_id("ttl", key)
+            data = model.get_by_id(table="zn_ttl", field="id_ttl", user_id=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -35,9 +35,9 @@ class TtlAdd(Resource):
         args = parser.parse_args()
         ttl = args["ttl"]
         key = utils.get_last_key("ttl")
-        data = {"key": key, "value": ttl}
+        data = {"nm_ttl": ttl}
         try:
-            model.insert("ttl", key, data)
+            model.insert("zn_ttl", data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -46,14 +46,14 @@ class TtlAdd(Resource):
 
 class TtlEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, ttl_id):
         parser = reqparse.RequestParser()
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
-        data = {"key": key, "value": ttl}
+        data = {"where": {"id_ttl": ttl_id}, "data": {"nm_ttl": ttl}}
         try:
-            model.update("ttl", key, data)
+            model.update("zn_ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -62,9 +62,9 @@ class TtlEdit(Resource):
 
 class TtlDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, ttl_id):
         try:
-            data = model.delete("ttl", key)
+            data = model.delete(table="zn_ttl", field="id_ttl", value=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
