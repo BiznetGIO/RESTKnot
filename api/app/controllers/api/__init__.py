@@ -46,10 +46,10 @@ api.add_resource(RecordEdit, "/record/edit/<record_id>")
 api.add_resource(RecordDelete, "/record/delete/<record_id>")
 
 api.add_resource(GetContentData, "/content/list")
-api.add_resource(GetContentDataId, "/content/list/<key>")
+api.add_resource(GetContentDataId, "/content/list/<content_id>")
 api.add_resource(ContentAdd, "/content/add")
-api.add_resource(ContentEdit, "/content/edit/<key>")
-api.add_resource(ContentDelete, "/content/delete/<key>")
+api.add_resource(ContentEdit, "/content/edit/<content_id>")
+api.add_resource(ContentDelete, "/content/delete/<content_id>")
 
 api.add_resource(GetSerialData, "/serial/list")
 api.add_resource(GetSerialDataId, "/serial/list/<serial_id>")
