@@ -19,6 +19,7 @@ CREATE TABLE ttl (
 CREATE TABLE zone (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
 	zone STRING(100) NULL,
+        is_committed BOOL NULL,
         user_id INT8 NOT NULL REFERENCES "user" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
