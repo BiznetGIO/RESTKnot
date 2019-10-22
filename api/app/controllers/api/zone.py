@@ -25,8 +25,6 @@ class GetZoneData(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        # FIXME do all user data needed?
-        # users = model.get_by_id(table="user", field="id", user_id=user_id)
         data = get_datum(zones)
         return response(200, data=data)
 
@@ -39,8 +37,6 @@ class GetZoneDataId(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            # FIXME do all user data needed?
-            # user_data = model.get_by_id("user", data_zone["user"])
             data = get_datum(zone)
             return response(200, data=data)
 
@@ -55,18 +51,13 @@ class ZoneAdd(Resource):
         zone = args["zone"].lower()
         user_id = args["user_id"]
 
-        # FIXME why this still needed? we already had user_id?
-        # user = model.get_user_by_project_id(user_id)["zone_id"]
-        # user = model.get_user_by_project_id(user_id)
-        zone_id = utils.get_last_key("zone")
-        print(zone_id)
-
-        if utils.check_unique("zone", "value", zone):
+        if utils.check_unique("zone", "zone", zone):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
 
+        # FIXME "is_committed" should be added
         data = {"zone": zone, "user_id": user_id}
         try:
             model.insert(table="zone", data=data)

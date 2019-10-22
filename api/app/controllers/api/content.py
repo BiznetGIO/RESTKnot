@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
 
@@ -12,12 +11,6 @@ def get_datum(data):
 
     results = []
     for d in data:
-        # FIXME do these values needed here?
-        # record = model.read_by_id("record", i["record"])
-        # types = model.read_by_id("type", record["type"])
-        # ttl = model.read_by_id("ttl", record["ttl"])
-        # zone = model.read_by_id("zone", record["zone"])
-
         datum = {"id": d["id"], "content": d["content"], "record_id": d["record_id"]}
         results.append(datum)
     return results
@@ -56,8 +49,6 @@ class ContentAdd(Resource):
         args = parser.parse_args()
         content = args["content"].lower()
         record_id = args["record_id"]
-
-        key = utils.get_last_key("content")
 
         # Check Relation
         if model.check_relation("record", record_id):

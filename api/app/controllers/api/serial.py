@@ -11,12 +11,6 @@ def get_datum(data):
 
     results = []
     for d in data:
-        # FIXME do we need all this data here?
-        # record = model.get_by_id(table="record", field="id", id_=d["record_id"])
-        # type_ = model.get_by_id(table="type", field="id", id_=d["ttl_id"])
-        # ttl = model.get_by_id(table="ttl", field="id", id_=d["type_id"])
-        # zone = model.get_by_id(table="zone", field="id", id_=d["type_id"])
-
         datum = {
             "id": d["id"],
             "name": d["name"],
@@ -69,9 +63,9 @@ class SerialAdd(Resource):
         # if model.check_relation("zn_record", id_record):
         #     return response(401, message="Relation to Record error Check Your Key")
 
-        # # Validation
-        # if not utils.check_record_serial(id_record):
-        #     return response(401, message="No Serial Record")
+        # Validation
+        if not utils.check_record_serial(record_id):
+            return response(401, message="No Serial Record")
 
         data = {"name": name, "serial": serial, "record_id": record_id}
 

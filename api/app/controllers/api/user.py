@@ -67,7 +67,6 @@ class UserSignUp(Resource):
 
         if utils.check_unique("user", "email", email):
             return response(401, message="Duplicate email Detected")
-        # FIXME "state" should be added
         data = {
             "email": email,
             "project_id": project_id,

@@ -13,7 +13,6 @@ def get_datum(data):
     results = []
     for d in data:
         # FIXME add created_at?
-        # FIXME how to handle is_serial?
         datum = {
             "id": str(d["id"]),
             "record": d["record"],
@@ -75,15 +74,15 @@ class RecordAdd(Resource):
         parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
 
-        # FIXME fill is_serial manually
+        # FIXME fill is_serial automatically based on record
+        # FIXME fill type_id automatically based on record
         record = args["record"].lower()
         is_serial = args["is_serial"]
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
         type_id = args["type_id"]
 
-        key = utils.get_last_key("record")
-
+        # FIXME drop this, relation handled automatically by cockroach
         # Check Relation Zone
         if model.check_relation("zone", zone_id):
             return response(401, message="Relation to zone error Check Your Key")
@@ -93,14 +92,14 @@ class RecordAdd(Resource):
             return response(401, message="Relation to ttl error Check Your Key")
 
         # validation
-        # if validation.record_validation(record):
-        #     return response(401, message="Named Error")
-        # if validation.count_character(record):
-        #     return response(401, message="Count Character Error")
-        # if validation.record_cname_duplicate(record, type_, zone):
-        #     return response(401, message="Cname Record Duplicate")
-        # if validation.record_mx_duplicate(record, type_, zone):
-        #     return response(401, message="MX Record Duplicate")
+        if validation.record_validation(record):
+            return response(401, message="Named Error")
+        if validation.count_character(record):
+            return response(401, message="Count Character Error")
+        if validation.record_cname_duplicate(record, type_id, zone_id):
+            return response(401, message="Cname Record Duplicate")
+        if validation.record_mx_duplicate(record, type_id, zone_id):
+            return response(401, message="MX Record Duplicate")
 
         data = {
             "record": record,
@@ -144,14 +143,14 @@ class RecordEdit(Resource):
             return response(401, message="Relation to ttl error Check Your Key")
 
         # validation
-        # if validation.record_validation(record):
-        #     return response(401, message="Named Error")
-        # if validation.count_character(record):
-        #     return response(401, message="Count Character Error")
-        # if validation.record_cname_duplicate(record, type_id, zone_id):
-        #     return response(401, message="Cname Record Duplicate")
-        # if validation.record_mx_duplicate(record, type_id, zone_id):
-        #     return response(401, message="MX Record Duplicate")
+        if validation.record_validation(record):
+            return response(401, message="Named Error")
+        if validation.count_character(record):
+            return response(401, message="Count Character Error")
+        if validation.record_cname_duplicate(record, type_id, zone_id):
+            return response(401, message="Cname Record Duplicate")
+        if validation.record_mx_duplicate(record, type_id, zone_id):
+            return response(401, message="MX Record Duplicate")
 
         data = {
             "where": {"id": record_id},
