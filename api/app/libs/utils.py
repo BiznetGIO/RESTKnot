@@ -1,7 +1,7 @@
-from app.models import model
 import requests
-import json
 import datetime
+from app.controllers.api import record as record_api
+from app.models import model
 
 
 def soa_time_set():
@@ -53,10 +53,12 @@ def get_last_key(stored):
         return str(key + 1)
 
 
-def check_record_serial(key):
+def check_record_serial(id_):
     try:
-        record = model.get_by_id("record", key)
+        record = model.get_by_id(table="record", field="id", id_=id_)
     except Exception as e:
         raise e
     else:
-        return record["serial"]
+        # hardcode 0 because record will
+        # always contains one result
+        return record[0]["is_serial"]
