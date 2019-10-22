@@ -89,33 +89,34 @@ def count_character(name):
         return False
 
 
-def record_cname_duplicate(record, types, zone):
+def record_cname_duplicate(record, type_id, zone_id):
     try:
-        data_record = model.read_all("record")
+        records = model.read_all("record")
     except Exception:
         pass
     else:
         result = False
-        for i in data_record:
-            type_data = model.read_by_id("type", types)
-            if zone == i["zone"]:
-                if record == i["value"] and type_data["value"] == "CNAME":
+        for record in records:
+            type_ = model.get_by_id(table="type", field="id", id_=type_id)
+
+            if zone_id == record["zone_id"]:
+                if record == record["record"] and type_["type"] == "CNAME":
                     result = True
                     break
         return result
 
 
-def record_mx_duplicate(record, types, zone):
+def record_mx_duplicate(record, type_id, zone_id):
     try:
-        data_record = model.read_all("record")
-    except Exception as e:
+        records = model.get_all("record")
+    except Exception:
         pass
     else:
         result = False
-        for i in data_record:
-            type_data = model.read_by_id("type", types)
-            if zone == i["zone"]:
-                if record == i["value"] and type_data["value"] == "MX":
+        for record in records:
+            type_ = model.get_by_id(table="type", field="id", id_=type_id)
+            if zone_id == record["zone_id"]:
+                if record == record["record"] and type_["type"] == "MX":
                     result = True
                     break
         return result
@@ -124,8 +125,8 @@ def record_mx_duplicate(record, types, zone):
 def content_validation(record, content):
     valid = False
     try:
-        data_record = model.read_by_id("record", record)
-        data_type = model.read_by_id("type", data_record["type"])
+        data_record = model.get_by_id("record", record)
+        data_type = model.get_by_id("type", data_record["type"])
     except Exception:
         pass
     else:
