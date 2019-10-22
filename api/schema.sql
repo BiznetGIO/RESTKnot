@@ -18,29 +18,30 @@ CREATE TABLE ttl (
 
 CREATE TABLE zone (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	zone STRING(100) NULL
-);
-
-CREATE TABLE serial (
-        id INT NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	"name" STRING(100) NULL,
-	serial INT8 NULL,
-        record_id INT8 NOT NULL
-);
-
-CREATE TABLE content (
-        id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	content INT8 NULL,
-        record_id INT8 NOT NULL
+	zone STRING(100) NULL,
+        user_id INT8 NOT NULL REFERENCES "user" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE record (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
 	record STRING(100) NULL,
-	serial BOOL NULL,
+        is_serial BOOL NULL,
         zone_id INT8 NOT NULL REFERENCES zone (id) ON DELETE CASCADE ON UPDATE CASCADE,
         type_id INT8 NOT NULL REFERENCES "type" (id) ON DELETE CASCADE ON UPDATE CASCADE,
         ttl_id INT8 NOT NULL REFERENCES ttl (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE content (
+        id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
+        content STRING(100) NULL,
+        record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE "serial" (
+        id INT NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
+	"name" STRING(100) NULL,
+	"serial" INT8 NULL,
+        record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -54,7 +55,7 @@ INSERT INTO "type" (id, "type") VALUES
 	(7, 'AAAA'),
 	(8, 'TXT');
 
-INSERT INTO ttl (id, "ttl") VALUES
+INSERT INTO ttl (id, ttl) VALUES
 	(1, '86400'),
 	(2, '43200'),
 	(3, '28800'),
@@ -64,14 +65,3 @@ INSERT INTO ttl (id, "ttl") VALUES
 	(7, '1800'),
 	(8, '900'),
 	(9, '300');
-
--- INSERT INTO serial (id, "ttl") VALUES
--- 	(1, '86400'),
--- 	(2, '43200'),
--- 	(3, '28800'),
--- 	(4, '14400'),
--- 	(5, '7200'),
--- 	(6, '3600'),
--- 	(7, '1800'),
--- 	(8, '900'),
--- 	(9, '300');
