@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.middlewares import auth
 
 
@@ -9,7 +8,7 @@ class GetTtlData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("zn_ttl")
+            data = model.get_all("ttl")
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -20,7 +19,7 @@ class GetTtlDataId(Resource):
     @auth.auth_required
     def get(self, ttl_id):
         try:
-            data = model.get_by_id(table="zn_ttl", field="id_ttl", user_id=ttl_id)
+            data = model.get_by_id(table="ttl", field="id", id_=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -34,10 +33,10 @@ class TtlAdd(Resource):
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
-        key = utils.get_last_key("ttl")
-        data = {"nm_ttl": ttl}
+
+        data = {"ttl": ttl}
         try:
-            model.insert("zn_ttl", data)
+            model.insert(table="ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -51,9 +50,11 @@ class TtlEdit(Resource):
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
-        data = {"where": {"id_ttl": ttl_id}, "data": {"nm_ttl": ttl}}
+
+        data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
+
         try:
-            model.update("zn_ttl", data=data)
+            model.update("ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -64,7 +65,7 @@ class TtlDelete(Resource):
     @auth.auth_required
     def delete(self, ttl_id):
         try:
-            data = model.delete(table="zn_ttl", field="id_ttl", value=ttl_id)
+            data = model.delete(table="ttl", field="id", value=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
