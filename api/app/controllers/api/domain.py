@@ -6,6 +6,7 @@ from app.libs import validation
 from app.helpers import command
 from app.helpers import producer
 from app.middlewares import auth
+from app.controllers.api import user as user_api
 import os
 
 
@@ -107,27 +108,31 @@ def add_cname_default(zone_key, record_key, zone_name):
         return response(401, message=str(e))
 
 
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        user = model.get_by_id(table="user", field="id", id_=d["user_id"])
+        # FIXME
+        # record = model.record_by_zone(i["key"])
+        user_datum = user_api.get_datum(user)
+        datum = {"zone_id": d["id"], "zone": d["zone"], "user": user_datum}
+        results.append(datum)
+    return results
+
+
 class GetDomainData(Resource):
     @auth.auth_required
     def get(self):
-        results = list()
         try:
-            data_zone = model.read_all("zone")
+            zones = model.get_all("zone")
         except Exception as e:
             return response(401, message=str(e))
 
-        for i in data_zone:
-            user = model.read_by_id("user", i["user"])
-            record = model.record_by_zone(i["key"])
-            data = {
-                "key": i["key"],
-                "value": i["value"],
-                "created_at": i["created_at"],
-                "user": user,
-                "record": record,
-            }
-            results.append(data)
-        return response(200, data=results)
+        data = get_datum(zones)
+        return response(200, data=data)
 
 
 class GetDomainDataByProjectId(Resource):
@@ -136,29 +141,31 @@ class GetDomainDataByProjectId(Resource):
         results = list()
         user = dict()
         try:
-            data_user = model.read_all("user")
+            users = model.get_all("user")
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for i in data_user:
-                if i["project_id"] == project_id:
-                    user = i
+            for user in users:
+                if user["project_id"] == project_id:
+                    user = user
                     break
         try:
-            data_zone = model.read_all("zone")
+            zones = model.get_all("zone")
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for i in data_zone:
-                if i["user"] == user["key"]:
-                    user = model.read_by_id("user", i["user"])
-                    record = model.record_by_zone(i["key"])
+            for zone in zones:
+                if zone["user_id"] == user["id"]:
+                    user = model.get_by_id(
+                        table="user", field="id", id_=zone["user_id"]
+                    )
+                    # FIXME
+                    # record = model.record_by_zone(i["key"])
+                    user_datum = user_api.get_datum(user)
                     data = {
-                        "key": i["key"],
-                        "value": i["value"],
-                        "created_at": i["created_at"],
-                        "user": user,
-                        "record": record,
+                        "zone_id": zone["id"],
+                        "zone": zone["zone"],
+                        "user": user_datum,
                     }
                     results.append(data)
             return response(200, data=results)
@@ -166,39 +173,33 @@ class GetDomainDataByProjectId(Resource):
 
 class GetDomainDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, zone_id):
         try:
-            data_zone = model.read_by_id("zone", key)
+            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user = model.read_by_id("user", data_zone["user"])
-            record = model.record_by_zone(data_zone["key"])
-            data = {
-                "key": data_zone["key"],
-                "value": data_zone["value"],
-                "created_at": data_zone["created_at"],
-                "user": user,
-                "record": record,
-            }
+            # FIXME
+            # record = model.record_by_zone(zone["key"])
+            data = get_datum(zone)
             return response(200, data=data)
 
 
 class DeleteDomain(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, project_id):
         try:
-            record = model.record_by_zone(key)
+            record = model.record_by_zone(project_id)
         except Exception as e:
             return response(401, message="Record Not Found | " + str(e))
         else:
             for i in record:
                 try:
-                    model.record_delete(i["key"])
+                    model.record_delete(i["project_id"])
                 except Exception as e:
                     print(e)
         try:
-            model.delete("zone", key)
+            model.delete("zone", project_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -214,27 +215,24 @@ class AddDomain(Resource):
         args = parser.parse_args()
         zone = args["zone"]
         project_id = args["project_id"]
-        user = model.get_user_by_project_id(project_id)["key"]
+
+        user_id = model.get_user_by_project_id(project_id)["id"]
         zone_key = utils.get_last_key("zone")
 
         # Validation Unique Zone
-        if utils.check_unique("zone", "value", zone):
+        if utils.check_unique("zone", "zone", zone):
             return response(401, message="Duplicate zone Detected")
         # Validation Zone Name
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
         # Check Relation Zone to User
-        if model.check_relation("user", user):
+        if model.check_relation("user", user_id):
             return response(401, message="Relation to user error Check Your Key")
 
-        zone_data = {
-            "key": zone_key,
-            "value": zone,
-            "created_at": utils.get_datetime(),
-            "user": user,
-        }
+        # FIXME ValueError: invalid literal for int() with base 10: 'None' kafka
+        data = {"zone": zone, "user_id": user_id}
         try:
-            model.insert_data("zone", zone_key, zone_data)
+            model.insert(table="zone", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -257,14 +255,14 @@ class AddDomain(Resource):
             producer.send(json_command)
             # DEFAULT RECORD END
 
-            return response(200, data=zone_data, message="Inserted")
+            return response(200, data=data, message="Inserted")
 
 
 class ViewCommand(Resource):
     @auth.auth_required
-    def get(self, key):
-        zone_data = model.read_by_id("zone", key)["value"]
-        command_data = command.config_zone(zone_data, key)
+    def get(self, project_id):
+        zone_data = model.read_by_id("zone", project_id)["value"]
+        command_data = command.config_zone(zone_data, project_id)
         try:
             test = producer.send(command_data)
         except Exception as e:

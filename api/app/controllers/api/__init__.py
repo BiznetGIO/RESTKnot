@@ -58,9 +58,9 @@ api.add_resource(SerialEdit, "/serial/edit/<serial_id>")
 api.add_resource(SerialDelete, "/serial/delete/<serial_id>")
 
 api.add_resource(GetDomainData, "/domain/list")
-api.add_resource(GetDomainDataId, "/domain/list/zone/<key>")
+api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
 api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
-api.add_resource(DeleteDomain, "/domain/delete/zone/<key>")
+api.add_resource(DeleteDomain, "/domain/delete/zone/<zone_id>")
 api.add_resource(AddDomain, "/domain/add")
 
 
