@@ -6,19 +6,16 @@ from app.libs import validation
 from app.helpers import command
 from app.helpers import producer
 from app.middlewares import auth
-from app.controllers.api import user as user_api
 import os
 
 
-def add_soa_record(zone_key, record_key):
+def add_soa_record(zone_id, record_id):
     record_data = {
-        "key": record_key,
-        "value": "@",
-        "zone": zone_key,
-        "type": "4",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False,
+        "record": "@",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "1",
+        "ttl_id": "6",
     }
 
     try:
@@ -27,83 +24,60 @@ def add_soa_record(zone_key, record_key):
         return response(401, message=str(e))
 
     date_data = utils.soa_time_set() + "01"
-    default_soa_content = os.environ.get(
-        "DEFAULT_SOA_CONTENT", os.getenv("DEFAULT_SOA_CONTENT")
-    )
-    default_soa_serial = os.environ.get(
-        "DEFAULT_SOA_SERIAL", os.getenv("DEFAULT_SOA_SERIAL")
-    )
-    content_value = default_soa_content + " " + date_data + " " + default_soa_serial
-    content_key = utils.get_last_key("content")
-    content_data = {
-        "key": content_key,
-        "value": content_value,
-        "record": record_key,
-        "created_at": utils.get_datetime(),
-    }
+    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
+    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL")
+
+    content = f"{default_soa_content} {date_data} {default_soa_serial}"
+
+    content_data = {"content": content, "record_id": record_id}
     try:
-        model.insert_data("content", content_key, content_data)
+        model.insert(table="content", data=content_data)
     except Exception as e:
         return response(401, message=str(e))
 
 
-def add_ns_default(zone_key, record_key):
+def add_ns_default(zone_id, record_id):
     record_data = {
-        "key": record_key,
-        "value": "@",
-        "zone": zone_key,
-        "type": "5",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False,
+        "record": "@",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "4",
+        "ttl_id": "6",
     }
 
     try:
-        model.insert_data("record", record_key, record_data)
+        model.insert(table="record", data=record_data)
     except Exception as e:
         return response(401, message=str(e))
 
-    default_ns = os.environ.get("DEFAULT_NS", os.getenv("DEFAULT_NS"))
+    default_ns = os.environ.get("DEFAULT_NS")
     default_ns = default_ns.split(" ")
-    for i in default_ns:
-        content_key = utils.get_last_key("content")
-        content_data = {
-            "key": content_key,
-            "value": i,
-            "record": record_key,
-            "created_at": utils.get_datetime(),
-        }
+
+    for ns in default_ns:
+        content_data = {"content": ns, "record_id": record_id}
         try:
-            model.insert_data("content", content_key, content_data)
+            model.insert(table="content", data=content_data)
         except Exception as e:
             return response(401, message=str(e))
 
 
-def add_cname_default(zone_key, record_key, zone_name):
+def add_cname_default(zone_id, record_id, zone):
     record_data = {
-        "key": record_key,
-        "value": "www",
-        "zone": zone_key,
-        "type": "2",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False,
+        "record": "www",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "5",
+        "ttl_id": "6",
     }
 
     try:
-        model.insert_data("record", record_key, record_data)
+        model.insert(table="record", data=record_data)
     except Exception as e:
         return response(401, message=str(e))
 
-    content_key = utils.get_last_key("content")
-    content_data = {
-        "key": content_key,
-        "value": zone_name + ".",
-        "record": record_key,
-        "created_at": utils.get_datetime(),
-    }
+    content_data = {"content": f"{zone}.", "record_id": record_id}
     try:
-        model.insert_data("content", content_key, content_data)
+        model.insert(table="content", data=content_data)
     except Exception as e:
         return response(401, message=str(e))
 
@@ -230,8 +204,9 @@ class AddDomain(Resource):
         user_id = user[0]["id"]
 
         # Validation Unique Zone
-        if utils.check_unique("zone", "zone", zone):
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
             return response(401, message="Duplicate zone Detected")
+
         # Validation Zone Name
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
@@ -245,27 +220,35 @@ class AddDomain(Resource):
         try:
             zone_id = model.insert(table="zone", data=data)
             print(f"data: {data}")
+            # zone_id = 497206177627045889
         except Exception as e:
             return response(401, message=str(e))
         else:
+
+            record = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            record_id = record[0]["id"]
 
             # Adding Zone Config
             config_command = command.config_zone(zone, zone_id)
             producer.send(config_command)
 
             # ADDING DEFAULT RECORD
-            record_key_soa = utils.get_last_key("record")
-            add_soa_record(zone_id, record_key_soa)
-            command.soa_default_command(record_key_soa)
+            # record_key_soa = utils.get_last_key("record")
+            # print(f"record_key_soa: {record_key_soa}")
+            add_soa_record(zone_id, record_id)
+            command.soa_default_command(record_id)
 
-            record_key_ns = utils.get_last_key("record")
-            add_ns_default(zone_id, record_key_ns)
-            command.ns_default_command(record_key_ns)
+            # record_key_ns = utils.get_last_key("record")
 
-            record_key_cname = utils.get_last_key("record")
-            add_cname_default(zone_id, record_key_cname, zone)
-            json_command = command.record_insert(record_key_cname)
+            add_ns_default(zone_id, record_id)
+            command.ns_default_command(record_id)
+
+            # record_key_cname = utils.get_last_key("record")
+
+            add_cname_default(zone_id, record_id, zone)
+            json_command = command.record_insert(record_id)
             producer.send(json_command)
+
             # DEFAULT RECORD END
 
             return response(200, data=data, message="Inserted")
