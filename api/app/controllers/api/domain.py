@@ -199,23 +199,21 @@ class GetDomainDataByProjectId(Resource):
 
 class DeleteDomain(Resource):
     @auth.auth_required
-    def delete(self, project_id):
+    def delete(self, zone_id):
         try:
-            record = model.record_by_zone(project_id)
-        except Exception as e:
-            return response(401, message="Record Not Found | " + str(e))
+            record = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            record_id = record[0]["id"]
+        except Exception:
+            return response(401, message="Record Not Found")
         else:
-            for i in record:
-                try:
-                    model.record_delete(i["project_id"])
-                except Exception as e:
-                    print(e)
+            model.delete(table="record", field="id", value=record_id)
+
         try:
-            model.delete("zone", project_id)
+            model.delete(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, message="Domain Or Zone Deleted")
+            return response(200, message="Domain and Zone Deleted")
 
 
 class AddDomain(Resource):
