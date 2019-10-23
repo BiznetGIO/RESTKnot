@@ -50,7 +50,6 @@ def get_by_id(table, field=None, id_=None):
     column = get_columns(table)
     try:
         query = f'SELECT * FROM "{table}" WHERE "{field}"={id_}'
-        print(query)
         cursor.execute(query)
         rows = cursor.fetchall()
         for row in rows:
