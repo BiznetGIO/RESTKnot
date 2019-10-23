@@ -1,19 +1,31 @@
 from flask import Blueprint
 from flask_restful import Api
-from .health import *
-from .user import *
-from .ttl import *
-from .type import *
-from .zone import *
-from .record import *
-from .content import *
-from .serial import *
-from .domain import *
+
+from .user import UserSignUp, GetUserData, GetUserDataId, UserUpdate, UserDelete
+from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
+from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
+from .zone import GetZoneData, GetZoneDataId, ZoneAdd, ZoneEdit, ZoneDelete
+from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
+from .content import (
+    GetContentData,
+    GetContentDataId,
+    ContentAdd,
+    ContentEdit,
+    ContentDelete,
+)
+from .serial import GetSerialData, GetSerialDataId, SerialAdd, SerialEdit, SerialDelete
+from .domain import (
+    GetDomainData,
+    GetDomainDataId,
+    GetDomainDataByProjectId,
+    DeleteDomain,
+    AddDomain,
+    ViewCommand,
+)
+
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
-
-api.add_resource(HealthCheck, "/health")
 
 api.add_resource(UserSignUp, "/user/add")
 api.add_resource(GetUserData, "/user/list")
@@ -63,5 +75,4 @@ api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
 api.add_resource(DeleteDomain, "/domain/delete/zone/<zone_id>")
 api.add_resource(AddDomain, "/domain/add")
 
-
-api.add_resource(ViewCommand, "/domain/view/<key>")
+api.add_resource(ViewCommand, "/domain/view/<zone_id>")
