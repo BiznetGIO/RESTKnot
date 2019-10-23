@@ -50,9 +50,6 @@ class ContentAdd(Resource):
         content = args["content"].lower()
         record_id = args["record_id"]
 
-        # Check Relation
-        if model.check_relation("record", record_id):
-            return response(401, message="Relation to Record error Check Your Key")
         # Validation
         if validation.content_validation(record_id, content):
             return response(401, message="Named Error")
@@ -77,10 +74,6 @@ class ContentEdit(Resource):
         args = parser.parse_args()
         content = args["content"].lower()
         record_id = args["record_id"]
-
-        # Check Relation
-        if model.check_relation("record", record_id):
-            return response(401, message="Relation to Record error Check Your Key")
 
         # Validation
         if validation.content_validation(record_id, content):

@@ -211,10 +211,6 @@ class AddDomain(Resource):
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
 
-        # Check Relation Zone to User
-        # if model.check_relation("user", user_id):
-        #     return response(401, message="Relation to user error Check Your Key")
-
         # FIXME ValueError: invalid literal for int() with base 10: 'None' kafka
         data = {"zone": zone, "user_id": user_id}
         try:

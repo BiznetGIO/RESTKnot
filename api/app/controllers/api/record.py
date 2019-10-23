@@ -82,15 +82,6 @@ class RecordAdd(Resource):
         ttl_id = args["ttl_id"]
         type_id = args["type_id"]
 
-        # FIXME drop this, relation handled automatically by cockroach
-        # Check Relation Zone
-        if model.check_relation("zone", zone_id):
-            return response(401, message="Relation to zone error Check Your Key")
-        if model.check_relation("type", type_id):
-            return response(401, message="Relation to type error Check Your Key")
-        if model.check_relation("ttl", ttl_id):
-            return response(401, message="Relation to ttl error Check Your Key")
-
         # validation
         if validation.record_validation(record):
             return response(401, message="Named Error")
@@ -133,14 +124,6 @@ class RecordEdit(Resource):
         type_id = args["type_id"]
         ttl_id = args["ttl_id"]
         is_serial = args["is_serial"]
-
-        # Check Relation Zone
-        if model.check_relation("zone", zone_id):
-            return response(401, message="Relation to zone error Check Your Key")
-        if model.check_relation("type", type_id):
-            return response(401, message="Relation to type error Check Your Key")
-        if model.check_relation("ttl", ttl_id):
-            return response(401, message="Relation to ttl error Check Your Key")
 
         # validation
         if validation.record_validation(record):

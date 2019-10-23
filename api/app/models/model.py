@@ -146,15 +146,6 @@ def retry_execute(query, column, retry_counter, error):
             return results
 
 
-def check_relation(table_name, id_):
-    try:
-        get_by_id(table_name, id_)
-    except Exception:
-        return True
-    else:
-        return False
-
-
 def content_by_record(record):
     data = list()
     try:

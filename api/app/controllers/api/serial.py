@@ -58,11 +58,6 @@ class SerialAdd(Resource):
         serial = args["serial"]
         record_id = args["record_id"]
 
-        # FIXME
-        # Check Relation
-        # if model.check_relation("zn_record", id_record):
-        #     return response(401, message="Relation to Record error Check Your Key")
-
         # Validation
         if not utils.check_record_serial(record_id):
             return response(401, message="No Serial Record")
@@ -88,12 +83,6 @@ class SerialEdit(Resource):
         serial = args["serial"]
         name = args["name"]
         record_id = args["record_id"]
-
-        # Check Relation
-        # if model.check_relation("record", record_id):
-        #     return response(401, message="Relation to Record error Check Your Key")
-        # if not utils.check_record_serial(record_id):
-        #     return response(401, message="No Serial Record")
 
         data = {
             "where": {"id": serial_id},
