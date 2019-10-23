@@ -4,7 +4,8 @@ import dill
 
 APP_HOME = utils.APP_HOME
 
-def create_env_broker(broker, port, topic, group,flag = None):
+
+def create_env_broker(broker, port, topic, group, flag=None):
     try:
         env_file = open("{}/.dnsagent/broker.env".format(APP_HOME), "w+")
         env_file.write("OS_BROKER=%s\n" % broker)
@@ -18,6 +19,7 @@ def create_env_broker(broker, port, topic, group,flag = None):
         print(e)
         return False
 
+
 def create_env_knot(knot_lib, knot_socket):
     try:
         env_file = open("{}/.dnsagent/knot.env".format(APP_HOME), "w+")
@@ -30,18 +32,14 @@ def create_env_knot(knot_lib, knot_socket):
 
 def dump_session(sess):
     try:
-        with open('/tmp/dnsagent.pkl', 'wb') as f:
+        with open("/tmp/dnsagent.pkl", "wb") as f:
             dill.dump(sess, f)
     except Exception:
         utils.log_err("Dump session failed")
 
 
 def remove_env(stack):
-    if os.path.exists(APP_HOME+"/.dnsagent"):
-        os.remove(APP_HOME+"/.dnsagent/"+stack+".env")
+    if os.path.exists(APP_HOME + "/.dnsagent"):
+        os.remove(APP_HOME + "/.dnsagent/" + stack + ".env")
     else:
         utils.log_err("No Envi Detected")
-
-
-
-

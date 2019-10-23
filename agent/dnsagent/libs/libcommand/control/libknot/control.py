@@ -165,6 +165,7 @@ class KnotCtlData(object):
 
         self.data[index] = c_char_p(value.encode()) if value else c_char_p()
 
+
 class KnotCtl(object):
     """Libknot server control interface."""
 
@@ -206,8 +207,7 @@ class KnotCtl(object):
         @type data: KnotCtlData
         """
 
-        ret = CTL_SEND(self.obj, data_type,
-                       data.data if data else c_char_p())
+        ret = CTL_SEND(self.obj, data_type, data.data if data else c_char_p())
         if ret != 0:
             err = CTL_ERROR(ret)
             raise KnotCtlError(err if isinstance(err, str) else err.decode())
@@ -220,16 +220,26 @@ class KnotCtl(object):
         """
 
         data_type = c_uint()
-        ret = CTL_RECEIVE(self.obj, byref(data_type),
-                          data.data if data else c_char_p())
+        ret = CTL_RECEIVE(self.obj, byref(data_type), data.data if data else c_char_p())
         if ret != 0:
             err = CTL_ERROR(ret)
             raise KnotCtlError(err if isinstance(err, str) else err.decode())
         return KnotCtlType(data_type.value)
 
-    def send_block(self, cmd, section=None, item=None, identifier=None, zone=None,
-                   owner=None, ttl=None, rtype=None, data=None, flags=None,
-                   filter=None):
+    def send_block(
+        self,
+        cmd,
+        section=None,
+        item=None,
+        identifier=None,
+        zone=None,
+        owner=None,
+        ttl=None,
+        rtype=None,
+        data=None,
+        flags=None,
+        filter=None,
+    ):
         """Sends a control query block.
 
         @type cmd: str

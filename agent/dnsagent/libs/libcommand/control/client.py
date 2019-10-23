@@ -1,17 +1,18 @@
 import json, os
 from dnsagent.libs import utils
 
-def sendblock(ctl,params, treturn):
-    data1=None
+
+def sendblock(ctl, params, treturn):
+    data1 = None
     try:
-        data1 = params['data']
+        data1 = params["data"]
     except Exception:
         data1 = None
 
     try:
-        cmd= params['cmd']
+        cmd = params["cmd"]
     except Exception as e:
-        print("CMD Parameters needed "+e)
+        print("CMD Parameters needed " + e)
 
     try:
         pass
@@ -19,62 +20,70 @@ def sendblock(ctl,params, treturn):
         pass
 
     try:
-        section = params['section']
+        section = params["section"]
     except Exception:
-        section=None
+        section = None
 
     try:
-        item = params['item']
+        item = params["item"]
     except Exception:
-        item=None
+        item = None
 
     try:
-        identifier = params['identifier']
+        identifier = params["identifier"]
     except Exception:
-        identifier=None
+        identifier = None
 
     try:
-        zone = params['zone']
+        zone = params["zone"]
     except Exception:
-        zone=None
+        zone = None
 
     try:
-        owner = params['owner']
+        owner = params["owner"]
     except Exception:
-        owner=None
+        owner = None
 
     try:
-        ttl = params['ttl']
+        ttl = params["ttl"]
     except Exception:
-        ttl=None
+        ttl = None
 
     try:
-        rtype = params['rtype']
+        rtype = params["rtype"]
     except Exception:
-        rtype=None
+        rtype = None
 
     try:
-        flags = params['flags']
+        flags = params["flags"]
     except Exception:
-        flags=None
+        flags = None
 
     try:
-        filters = params['filter']
+        filters = params["filter"]
     except Exception:
-        filters=None
+        filters = None
 
     resp = None
 
     try:
-        ctl.send_block(cmd=cmd, section=section, item=item, identifier=identifier, zone=zone,
-                        owner=owner, ttl=ttl, rtype=rtype, data=data1, flags=flags,
-                        filter=filters)
+        ctl.send_block(
+            cmd=cmd,
+            section=section,
+            item=item,
+            identifier=identifier,
+            zone=zone,
+            owner=owner,
+            ttl=ttl,
+            rtype=rtype,
+            data=data1,
+            flags=flags,
+            filter=filters,
+        )
     except Exception as e:
         utils.log_err(e)
-    if treturn == 'block':
+    if treturn == "block":
         resp = ctl.receive_block()
-    elif treturn == 'stats':
+    elif treturn == "stats":
         resp = ctl.receive_stats()
     return resp
-
-

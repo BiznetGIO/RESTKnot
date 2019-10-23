@@ -11,14 +11,17 @@ import subprocess
 APP_HOME = os.path.expanduser("~")
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+
 def check_root():
     if os.geteuid() != 0:
         log_err("You need root permissions to do this")
         exit()
 
+
 def exec_command_cluster(command):
     cmd = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     return str(cmd.decode("utf-8"))
+
 
 def mkdir(dir):
     if not os.path.isdir(dir):
@@ -38,6 +41,7 @@ def isint(number):
     else:
         return to_float == to_int
 
+
 def isfloat(number):
     try:
         float(number)
@@ -54,7 +58,8 @@ def check_key(dict, val):
     except Exception:
         return False
 
-def question(word): 
+
+def question(word):
     answer = False
     while answer not in ["y", "n"]:
         answer = input("{} [y/n]? ".format(word)).lower().strip()
@@ -64,6 +69,7 @@ def question(word):
     else:
         answer = False
     return answer
+
 
 def log_info(stdin):
     coloredlogs.install()
@@ -79,6 +85,7 @@ def log_err(stdin):
     coloredlogs.install()
     logging.error(stdin)
 
+
 def check_keys(obj, keys):
     try:
         obj[keys]
@@ -87,13 +94,15 @@ def check_keys(obj, keys):
     else:
         return True
 
+
 def yaml_parser_file(file):
-    with open(file, 'r') as stream:
+    with open(file, "r") as stream:
         try:
-            data = yaml.load(stream, Loader= yaml.FullLoader)
+            data = yaml.load(stream, Loader=yaml.FullLoader)
             return data
         except yaml.YAMLError as exc:
             print(exc)
+
 
 def yaml_parser(stream):
     try:
@@ -105,7 +114,7 @@ def yaml_parser(stream):
 
 
 def yaml_create(stream, path):
-    with open(path, 'w') as outfile:
+    with open(path, "w") as outfile:
         try:
             yaml.dump(stream, outfile, default_flow_style=False)
         except yaml.YAMLError as exc:
@@ -115,7 +124,7 @@ def yaml_create(stream, path):
 
 
 def yaml_writeln(stream, path):
-    with open(path, '+a') as outfile:
+    with open(path, "+a") as outfile:
         try:
             yaml.dump(stream, outfile, default_flow_style=False)
         except yaml.YAMLError as exc:
@@ -125,7 +134,7 @@ def yaml_writeln(stream, path):
 
 
 def yaml_read(path):
-    with open(path, 'r') as outfile:
+    with open(path, "r") as outfile:
         try:
             data = yaml.load(outfile)
         except yaml.YAMLError as exc:
@@ -133,18 +142,19 @@ def yaml_read(path):
         else:
             return data
 
+
 def copy(src, dest):
     try:
         shutil.copytree(src, dest)
     except OSError as e:
-        print('Directory not copied. Error: %s' % e)
+        print("Directory not copied. Error: %s" % e)
 
 
 def copyfile(src, dest):
     try:
         shutil.copyfile(src, dest)
     except OSError as e:
-        print('Directory not copied. Error: %s' % e)
+        print("Directory not copied. Error: %s" % e)
 
 
 def read_file(file):
@@ -155,11 +165,11 @@ def read_file(file):
 
 
 def create_file(file, path, value=None):
-    f=open(path+"/"+file, "a+")
+    f = open(path + "/" + file, "a+")
     f.write(value)
     f.close()
     try:
-        return read_file(path+"/"+file)
+        return read_file(path + "/" + file)
     except Exception as e:
         print(e)
 
@@ -188,25 +198,27 @@ def check_env(stack):
 def load_env_file(stack):
     return load_dotenv("{}/.dnsagent/{}.env".format(APP_HOME, stack), override=True)
 
+
 def get_env_values_knot():
     if check_env("knot"):
         load_env_file("knot")
         dnsagent_env = {}
-        dnsagent_env['knot_lib'] = os.environ.get('OS_KNOT_LIB')
-        dnsagent_env['knot_sock'] = os.environ.get('OS_KNOT_SOCKS')
+        dnsagent_env["knot_lib"] = os.environ.get("OS_KNOT_LIB")
+        dnsagent_env["knot_sock"] = os.environ.get("OS_KNOT_SOCKS")
         return dnsagent_env
     else:
         print("Can't find knot.env")
+
 
 def get_env_values_broker():
     if check_env("broker"):
         load_env_file("broker")
         dnsagent_env = {}
-        dnsagent_env['broker'] = os.environ.get('OS_BROKER')
-        dnsagent_env['port'] = os.environ.get('OS_PORTS')
-        dnsagent_env['topic'] = os.environ.get('OS_TOPIC')
-        dnsagent_env['group'] = os.environ.get('OS_GROUP')
-        dnsagent_env['flags'] = os.environ.get('OS_FLAGS')
+        dnsagent_env["broker"] = os.environ.get("OS_BROKER")
+        dnsagent_env["port"] = os.environ.get("OS_PORTS")
+        dnsagent_env["topic"] = os.environ.get("OS_TOPIC")
+        dnsagent_env["group"] = os.environ.get("OS_GROUP")
+        dnsagent_env["flags"] = os.environ.get("OS_FLAGS")
         return dnsagent_env
     else:
         print("Can't find broker.env")
@@ -216,16 +228,10 @@ def list_dir(dirname):
     listdir = list()
     for root, dirs, files in os.walk(dirname):
         for file in files:
-            data = {
-                "index": file,
-                "dirs": dirs,
-                "file": os.path.join(root, file)
-            }
+            data = {"index": file, "dirs": dirs, "file": os.path.join(root, file)}
             listdir.append(data)
     return listdir
 
 
 def make_archive(name, path):
-    shutil.make_archive(name,"zip",path)
-
-
+    shutil.make_archive(name, "zip", path)

@@ -3,88 +3,74 @@ from dnsagent.libs import command_lib
 from dnsagent.libs import utils
 import json
 
+
 def libknot_json(data):
     initialiaze_command = parser.initialiaze(data)
     try:
         knot_data = parser.execute_command(initialiaze_command)
     except Exception as e:
         print("ERROR READ REST: ", e)
-        response={
-            "result": False,
-            "error": str(e),
-            "status": "Command Not Execute"
-        }
+        response = {"result": False, "error": str(e), "status": "Command Not Execute"}
         return response
     else:
-        response={
+        response = {
             "result": True,
             "description": initialiaze_command,
             "status": "Command Execute",
-            "data": knot_data
+            "data": knot_data,
         }
         return response
+
 
 def begin(zone=None):
     json_data = {
         "command-begin": {
-                "sendblock": {
+            "sendblock": {
                 "cmd": "conf-begin",
-                "item": "domain", 
-                "section":"zone",
-                "data": zone
+                "item": "domain",
+                "section": "zone",
+                "data": zone,
             },
-                "receive": {
-                "type": "block"
-            }
+            "receive": {"type": "block"},
         }
     }
     return libknot_json(json_data)
+
 
 def zone_begin(zone=None):
     json_data = {
         "zone-begin": {
-                "sendblock": {
-                "cmd": "zone-begin",
-                "zone": zone,
-                "data": zone
-            },
-                "receive": {
-                "type": "block"
-            }
+            "sendblock": {"cmd": "zone-begin", "zone": zone, "data": zone},
+            "receive": {"type": "block"},
         }
     }
     return libknot_json(json_data)
+
 
 def commit(zone=None):
     json_data = {
         "command-commit": {
-                "sendblock": {
+            "sendblock": {
                 "cmd": "conf-commit",
-                "item": "domain", 
-                "section":"zone",
-                "data": zone
+                "item": "domain",
+                "section": "zone",
+                "data": zone,
             },
-                "receive": {
-                "type": "block"
-            }
+            "receive": {"type": "block"},
         }
     }
     return libknot_json(json_data)
 
+
 def zone_commit(zone=None):
     json_data = {
         "zone-commit": {
-                "sendblock": {
-                "cmd": "zone-commit",
-                "zone": zone,
-                "data": zone
-            },
-                "receive": {
-                "type": "block"
-            }
+            "sendblock": {"cmd": "zone-commit", "zone": zone, "data": zone},
+            "receive": {"type": "block"},
         }
     }
     return libknot_json(json_data)
+
 
 def parsing_data_general(data, broker):
     id_zone = None
@@ -93,44 +79,41 @@ def parsing_data_general(data, broker):
     zone = None
     for i in data:
         zone = i
-        command_type = data[i]['command']
-        id_zone = data[i]['id_zone']
-        json_data = data[i]['general']
-    data = {
-        "command": json_data,
-        "zone": zone
-    }
+        command_type = data[i]["command"]
+        id_zone = data[i]["id_zone"]
+        json_data = data[i]["general"]
+    data = {"command": json_data, "zone": zone}
     command_data = initialiaze_command_general(data, id_zone, command_type)
     if not command_data:
         utils.log_err("Command Not Supported")
     else:
-        dict_command = json.loads(command_data['data'])
+        dict_command = json.loads(command_data["data"])
         try:
-            status = dict_command['status']
+            status = dict_command["status"]
         except Exception:
             status = True
         if not status:
             utils.log_err("Command Not Execute")
-            utils.log_err(dict_command['error'])
+            utils.log_err(dict_command["error"])
         else:
             utils.log_info("Command Execute")
             utils.log_info(dict_command)
-            
-    
+
 
 def initialiaze_command_general(data, id_zone, command):
     report_command = None
-    if command == 'config':
-        begin(data['zone'])
+    if command == "config":
+        begin(data["zone"])
         report_command = libknot_json(data)
-        commit(data['zone'])
-    elif command == 'zone':
-        zone_begin(data['zone'])
+        commit(data["zone"])
+    elif command == "zone":
+        zone_begin(data["zone"])
         report_command = libknot_json(data)
-        zone_commit(data['zone'])
+        zone_commit(data["zone"])
     else:
         report_command = False
     return report_command
+
 
 def parsing_data_cluster(data, broker, flags=None):
     zone = None
@@ -138,8 +121,8 @@ def parsing_data_cluster(data, broker, flags=None):
     json_data = None
     for i in data:
         zone = i
-        id_zone = data[i]['id_zone']
-        json_data = data[i]['cluster'][flags]
+        id_zone = data[i]["id_zone"]
+        json_data = data[i]["cluster"][flags]
     initialiaze_command_cluster(json_data, zone, id_zone, flags)
 
 
@@ -153,10 +136,10 @@ def initialiaze_command_cluster(data, zone, id_zone, flags):
         file_config = command_lib.set_file(zone, id_zone)
         file_exec = libknot_json(file_config)
         slave_response.append(file_exec)
-        for i in data['master']:
+        for i in data["master"]:
             master_config = command_lib.master_create_json(zone, i)
             slave_response.append(libknot_json(master_config))
-        for i in data['acl']:
+        for i in data["acl"]:
             acl_config = command_lib.create_json_acl(zone, i)
             slave_response.append(libknot_json(acl_config))
         module_config = command_lib.set_mods_stats(zone, "mod-stats/default")
@@ -174,14 +157,14 @@ def initialiaze_command_cluster(data, zone, id_zone, flags):
         file_config = command_lib.set_file(zone, id_zone)
         file_exec = libknot_json(file_config)
         master_response.append(file_exec)
-        if data['master']:
-            for i in data['master']:
+        if data["master"]:
+            for i in data["master"]:
                 master_config = command_lib.master_create_json(zone, i)
                 master_response.append(libknot_json(master_config))
-        for i in data['notify']:
+        for i in data["notify"]:
             notify_config = command_lib.create_json_notify(zone, i)
             master_response.append(libknot_json(notify_config))
-        for i in data['acl']:
+        for i in data["acl"]:
             acl_config = command_lib.create_json_acl(zone, i)
             master_response.append(libknot_json(acl_config))
         module_config = command_lib.set_mods_stats(zone, "mod-stats/default")
@@ -190,4 +173,3 @@ def initialiaze_command_cluster(data, zone, id_zone, flags):
         master_response.append(libknot_json(serial_config))
         commit(zone)
         return master_response
-
