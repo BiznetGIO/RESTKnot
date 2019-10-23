@@ -1,6 +1,6 @@
 from dnsagent.clis.base import Base
 from dnsagent.libs import knot_lib
-import os, json
+import json
 
 
 class Command(Base):

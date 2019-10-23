@@ -1,10 +1,8 @@
 import yaml
 import os
 import shutil
-import zipfile
 import coloredlogs
 import logging
-import codecs
 from dotenv import load_dotenv
 import subprocess
 

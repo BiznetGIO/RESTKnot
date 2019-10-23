@@ -1,6 +1,7 @@
+import os
+
 from dnsagent.clis.base import Base
 from dnsagent.libs import env_lib
-import os
 
 APP_HOME = env_lib.utils.APP_HOME
 

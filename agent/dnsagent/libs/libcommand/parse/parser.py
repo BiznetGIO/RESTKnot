@@ -1,8 +1,15 @@
+import os
+import json
+
 from dnsagent.libs.libcommand.utility import utils
 from dnsagent.libs.libcommand.control import client
-from dnsagent.libs.libcommand.control.libknot.control import *
 from dnsagent.libs import utils as dnsagent_utils
-import json, os, logging
+from dnsagent.libs.libcommand.control.libknot.control import (
+    KnotCtlError,
+    KnotCtl,
+    load_lib,
+    KnotCtlType,
+)
 
 knot_lib = os.environ.get("KNOT_LIB", "libknot.so")
 knot_socket = os.environ.get("KNOT_SOCKET", "/var/run/knot/knot.sock")

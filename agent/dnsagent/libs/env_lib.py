@@ -1,6 +1,7 @@
-from dnsagent.libs import utils
 import os
 import dill
+
+from dnsagent.libs import utils
 
 APP_HOME = utils.APP_HOME
 
@@ -26,7 +27,7 @@ def create_env_knot(knot_lib, knot_socket):
         env_file.write("OS_KNOT_LIB=%s\n" % knot_lib)
         env_file.write("OS_KNOT_SOCKS=%s\n" % knot_socket)
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 

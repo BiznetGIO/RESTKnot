@@ -1,6 +1,7 @@
+import json
+
 from dnsagent.clis.base import Base
 from dnsagent.libs import knot_lib
-import os, json
 
 
 class Zone(Base):

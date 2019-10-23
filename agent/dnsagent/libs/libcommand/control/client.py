@@ -1,4 +1,3 @@
-import json, os
 from dnsagent.libs import utils
 
 

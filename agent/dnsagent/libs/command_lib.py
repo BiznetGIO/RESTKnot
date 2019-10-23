@@ -1,6 +1,3 @@
-import os
-
-
 def insert_config_zone(zone):
     json_data = {
         "command-set": {
