@@ -1,6 +1,5 @@
 import requests
 import datetime
-from app.controllers.api import record as record_api
 from app.models import model
 
 
@@ -23,14 +22,14 @@ def get_datetime():
     return str(now)
 
 
-def get_last_key(stored):
-    try:
-        all_data = model.read_all_key(stored)
-    except Exception:
-        return str(1)
-    else:
-        key = max(all_data)
-        return str(key + 1)
+# def get_last_key(stored):
+#     try:
+#         all_data = model.read_all_key(stored)
+#     except Exception:
+#         return str(1)
+#     else:
+#         key = max(all_data)
+#         return str(key + 1)
 
 
 def check_record_serial(id_):

@@ -43,6 +43,7 @@ def get_all(table):
         return results
 
 
+# todo id_ value
 def get_by_id(table, field=None, id_=None):
     results = []
     cursor, connection = get_db()
@@ -145,9 +146,6 @@ def retry_execute(query, column, retry_counter, error):
             return results
 
 
-#
-
-
 def check_relation(table_name, id_):
     try:
         get_by_id(table_name, id_)
@@ -157,15 +155,35 @@ def check_relation(table_name, id_):
         return False
 
 
-def get_user_by_project_id(project_id):
+def content_by_record(record):
+    data = list()
     try:
-        data_user = get_all("user")
+        content_data = get_all("content")
     except Exception as e:
         raise e
     else:
-        data = {}
-        for i in data_user:
-            if i["project_id"] == project_id:
-                data = i
-                break
-        return data
+        for i in content_data:
+            if i["record"] == record:
+                data.append(i)
+    return data
+
+
+def serial_by_record(record):
+    result = list()
+    try:
+        content_data = get_all("serial")
+    except Exception as e:
+        raise e
+    else:
+        for i in content_data:
+            if i["record"] == record:
+                result.append(i)
+    return result
+
+
+def is_unique(table, field=None, value=None):
+    unique = True
+    data = get_by_id(table=table, field=field, id_=value)
+    if len(data) != 0:
+        unique = False
+    return unique
