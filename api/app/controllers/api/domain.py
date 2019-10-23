@@ -22,7 +22,7 @@ def add_soa_record(zone_key, record_key):
     }
 
     try:
-        model.insert_data("record", record_key, record_data)
+        model.insert(table="record", data=record_data)
     except Exception as e:
         return response(401, message=str(e))
 
@@ -108,6 +108,33 @@ def add_cname_default(zone_key, record_key, zone_name):
         return response(401, message=str(e))
 
 
+def get_record_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {
+            "id": str(d["id"]),
+            "record": d["record"],
+            "type_id": d["type_id"],
+            "ttl_id": d["ttl_id"],
+        }
+        results.append(datum)
+    return results
+
+
+def get_user_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {"id": str(d["id"]), "email": d["email"], "project_id": d["project_id"]}
+        results.append(datum)
+    return results
+
+
 def get_datum(data):
     if data is None:
         return
@@ -115,10 +142,16 @@ def get_datum(data):
     results = []
     for d in data:
         user = model.get_by_id(table="user", field="id", id_=d["user_id"])
-        # FIXME
-        # record = model.record_by_zone(i["key"])
-        user_datum = user_api.get_datum(user)
-        datum = {"zone_id": d["id"], "zone": d["zone"], "user": user_datum}
+        record = model.get_by_id(table="record", field="zone_id", id_=d["id"])
+        user_datum = get_user_datum(user)
+        record_datum = get_record_datum(record)
+
+        datum = {
+            "zone_id": d["id"],
+            "zone": d["zone"],
+            "user": user_datum,
+            "record": record_datum,
+        }
         results.append(datum)
     return results
 
@@ -135,11 +168,24 @@ class GetDomainData(Resource):
         return response(200, data=data)
 
 
+class GetDomainDataId(Resource):
+    @auth.auth_required
+    def get(self, zone_id):
+        try:
+            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            data = get_datum(zone)
+            return response(200, data=data)
+
+
 class GetDomainDataByProjectId(Resource):
     @auth.auth_required
     def get(self, project_id):
         results = list()
         user = dict()
+
         try:
             users = model.get_all("user")
         except Exception as e:
@@ -149,6 +195,7 @@ class GetDomainDataByProjectId(Resource):
                 if user["project_id"] == project_id:
                     user = user
                     break
+
         try:
             zones = model.get_all("zone")
         except Exception as e:
@@ -169,20 +216,6 @@ class GetDomainDataByProjectId(Resource):
                     }
                     results.append(data)
             return response(200, data=results)
-
-
-class GetDomainDataId(Resource):
-    @auth.auth_required
-    def get(self, zone_id):
-        try:
-            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
-            # FIXME
-            # record = model.record_by_zone(zone["key"])
-            data = get_datum(zone)
-            return response(200, data=data)
 
 
 class DeleteDomain(Resource):
@@ -216,8 +249,8 @@ class AddDomain(Resource):
         zone = args["zone"]
         project_id = args["project_id"]
 
-        user_id = model.get_user_by_project_id(project_id)["id"]
-        zone_key = utils.get_last_key("zone")
+        user = model.get_by_id(table="user", field="project_id", id_=f"'{project_id}'")
+        user_id = user[0]["id"]
 
         # Validation Unique Zone
         if utils.check_unique("zone", "zone", zone):
@@ -225,32 +258,35 @@ class AddDomain(Resource):
         # Validation Zone Name
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
+
         # Check Relation Zone to User
-        if model.check_relation("user", user_id):
-            return response(401, message="Relation to user error Check Your Key")
+        # if model.check_relation("user", user_id):
+        #     return response(401, message="Relation to user error Check Your Key")
 
         # FIXME ValueError: invalid literal for int() with base 10: 'None' kafka
         data = {"zone": zone, "user_id": user_id}
         try:
-            model.insert(table="zone", data=data)
+            zone_id = model.insert(table="zone", data=data)
+            print(f"data: {data}")
         except Exception as e:
             return response(401, message=str(e))
         else:
 
             # Adding Zone Config
-            config_command = command.config_zone(zone, zone_key)
+            config_command = command.config_zone(zone, zone_id)
             producer.send(config_command)
+
             # ADDING DEFAULT RECORD
             record_key_soa = utils.get_last_key("record")
-            add_soa_record(zone_key, record_key_soa)
+            add_soa_record(zone_id, record_key_soa)
             command.soa_default_command(record_key_soa)
 
             record_key_ns = utils.get_last_key("record")
-            add_ns_default(zone_key, record_key_ns)
+            add_ns_default(zone_id, record_key_ns)
             command.ns_default_command(record_key_ns)
 
             record_key_cname = utils.get_last_key("record")
-            add_cname_default(zone_key, record_key_cname, zone)
+            add_cname_default(zone_id, record_key_cname, zone)
             json_command = command.record_insert(record_key_cname)
             producer.send(json_command)
             # DEFAULT RECORD END
@@ -260,9 +296,9 @@ class AddDomain(Resource):
 
 class ViewCommand(Resource):
     @auth.auth_required
-    def get(self, project_id):
-        zone_data = model.read_by_id("zone", project_id)["value"]
-        command_data = command.config_zone(zone_data, project_id)
+    def get(self, zone_id):
+        zone_data = model.read_by_id("zone", zone_id)["value"]
+        command_data = command.config_zone(zone_data, zone_id)
         try:
             test = producer.send(command_data)
         except Exception as e:
