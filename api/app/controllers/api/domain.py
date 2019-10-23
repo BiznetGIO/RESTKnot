@@ -183,39 +183,18 @@ class GetDomainDataId(Resource):
 class GetDomainDataByProjectId(Resource):
     @auth.auth_required
     def get(self, project_id):
-        results = list()
-        user = dict()
 
         try:
-            users = model.get_all("user")
+            user = model.get_by_id(
+                table="user", field="project_id", id_=f"'{project_id}'"
+            )
+            user_id = user[0]["id"]
+            zone = model.get_by_id(table="zone", field="user_id", id_=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for user in users:
-                if user["project_id"] == project_id:
-                    user = user
-                    break
-
-        try:
-            zones = model.get_all("zone")
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
-            for zone in zones:
-                if zone["user_id"] == user["id"]:
-                    user = model.get_by_id(
-                        table="user", field="id", id_=zone["user_id"]
-                    )
-                    # FIXME
-                    # record = model.record_by_zone(i["key"])
-                    user_datum = user_api.get_datum(user)
-                    data = {
-                        "zone_id": zone["id"],
-                        "zone": zone["zone"],
-                        "user": user_datum,
-                    }
-                    results.append(data)
-            return response(200, data=results)
+            data = get_datum(zone)
+            return response(200, data=data)
 
 
 class DeleteDomain(Resource):
