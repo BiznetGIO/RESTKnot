@@ -46,6 +46,7 @@ def insert_record_content(record_id):
 def insert_soa_default(zone_id):
     record_id = insert_soa_record(zone_id)
     insert_record_content(record_id)
+    return record_id
 
 
 def insert_ns_record(zone_id):
@@ -72,6 +73,7 @@ def insert_ns_content(record_id):
 def insert_ns_default(zone_id):
     record_id = insert_ns_record(zone_id)
     insert_ns_content(record_id)
+    return record_id
 
 
 def insert_cname_record(zone_id):
@@ -94,6 +96,7 @@ def insert_cname_content(zone, record_id):
 def insert_cname(zone_id, zone):
     record_id = insert_cname_record(zone_id)
     insert_cname_content(zone, record_id)
+    return record_id
 
 
 def get_record_datum(data):
@@ -221,18 +224,18 @@ class AddDomain(Resource):
             return response(401, message=str(e))
         else:
             # add zone config
-            # config_command = command.config_zone(zone, zone_id)
-            # producer.send(config_command)
+            config_command = command.config_zone(zone, zone_id)
+            producer.send(config_command)
 
-            insert_soa_default(zone_id)
-            # command.soa_default_command(record_id)
+            soa_record_id = insert_soa_default(zone_id)
+            command.soa_default_command(soa_record_id)
 
-            insert_ns_default(zone_id)
-            # command.ns_default_command(record_id)
+            ns_record_id = insert_ns_default(zone_id)
+            command.ns_default_command(ns_record_id)
 
-            insert_cname(zone_id, zone)
-            # json_command = command.record_insert(record_id)
-            # producer.send(json_command)
+            record_id = insert_cname(zone_id, zone)
+            json_command = command.record_insert(record_id)
+            producer.send(json_command)
 
             # just for feedback return value
             zone_data = {"zone": zone, "project_id": project_id}
