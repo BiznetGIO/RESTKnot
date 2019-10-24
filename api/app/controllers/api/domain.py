@@ -224,8 +224,7 @@ class AddDomain(Resource):
             return response(401, message=str(e))
         else:
             # add zone config
-            cmd = command.config_zone(zone, zone_id)
-            producer.send(cmd)
+            command.config_zone(zone, zone_id)
 
             soa_record_id = insert_soa_default(zone_id)
             command.soa_default_command(soa_record_id)
@@ -234,8 +233,7 @@ class AddDomain(Resource):
             command.ns_default_command(ns_record_id)
 
             record_id = insert_cname(zone_id, zone)
-            cmd = command.record_insert(record_id)
-            producer.send(cmd)
+            command.record_insert(record_id)
 
             # just for feedback return value
             zone_data = {"zone": zone, "project_id": project_id}

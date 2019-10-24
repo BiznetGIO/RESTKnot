@@ -3,7 +3,7 @@ from app.helpers import producer
 
 
 def config_zone(zone, zone_id):
-    json_command = {
+    command = {
         zone: {
             "id_zone": zone_id,
             "type": "general",
@@ -19,7 +19,7 @@ def config_zone(zone, zone_id):
             },
         }
     }
-    return json_command
+    producer.send(command)
 
 
 def get_other_data(record_id):
@@ -66,7 +66,6 @@ def generate_command(**kwargs):
             },
         }
     }
-
     return command
 
 
@@ -143,4 +142,4 @@ def record_insert(record_id):
             data=content[0]["content"],
         )
 
-    return command
+    producer.send(command)
