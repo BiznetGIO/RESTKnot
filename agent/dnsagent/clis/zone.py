@@ -2,6 +2,7 @@ import json
 
 from dnsagent.clis.base import Base
 from dnsagent.libs import knot_lib
+from dnsagent.libs import utils
 
 
 class Zone(Base):
@@ -21,11 +22,11 @@ class Zone(Base):
     """
 
     def execute(self):
-        knot_lib.utils.check_root()
+        utils.check_root()
         if self.args["start"]:
             zone = self.args["--zone"]
             if not zone:
-                knot_lib.utils.log_err("Zone Or Domain Required")
+                utils.log_err("Zone Or Domain Required")
                 exit()
             data = self.args["--data"]
             knot_lib.begin(zone)
@@ -33,7 +34,7 @@ class Zone(Base):
             try:
                 result = knot_lib.libknot_json(json_data)["data"]
             except Exception as e:
-                knot_lib.utils.log_err(str(e))
+                utils.log_err(str(e))
             else:
                 results = json.loads(result)
                 for i in results:
@@ -44,16 +45,16 @@ class Zone(Base):
         if self.args["load"]:
             zone = self.args["--zone"]
             if not zone:
-                knot_lib.utils.log_err("Zone Or Domain Required")
+                utils.log_err("Zone Or Domain Required")
                 exit()
             path = self.args["--file"]
-            json_data = knot_lib.utils.yaml_parser_file(path)
+            json_data = utils.yaml_parser_file(path)
             knot_lib.zone_begin()
             for i in json_data:
                 try:
                     result = knot_lib.libknot_json(i)["data"]
                 except Exception as e:
-                    knot_lib.utils.log_err(str(e))
+                    utils.log_err(str(e))
                 else:
                     results = json.loads(result)
                     for i in results:
@@ -80,7 +81,7 @@ class Zone(Base):
             try:
                 result = knot_lib.libknot_json(json_data)["data"]
             except Exception as e:
-                knot_lib.utils.log_err(str(e))
+                utils.log_err(str(e))
             else:
                 results = json.loads(result)
                 for i in results:
