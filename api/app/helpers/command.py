@@ -35,98 +35,112 @@ def get_other_data(record_id):
         ttl = model.get_by_id(table="ttl", field="id", id_=ttl_id)
         content = model.get_by_id(table="content", field="record_id", id_=record_id)
         return (record, zone, type_, ttl, content)
-
     except Exception as e:
         raise e
 
 
-def soa_default_command(soa_record_id):
-    record, zone, type_, ttl, content = get_other_data(soa_record_id)
+def generate_command(**kwargs):
 
-    type_value = type_[0]["type"]
-    if type_value != "SOA":
-        return False
+    zone_id = kwargs.get("zone_id")
+    zone_name = kwargs.get("zone_name")
+    owner = kwargs.get("owner")
+    rtype = kwargs.get("rtype")
+    ttl = kwargs.get("ttl")
+    data = kwargs.get("data")
 
-    # FIXME duplicate code
-    json_command = {
-        zone[0]["zone"]: {
-            "id_zone": zone[0]["id"],
-            "command": "zone",
+    command = {
+        zone_name: {
+            "id_zone": zone_id,
             "type": "general",
+            "command": "zone",
             "general": {
                 "sendblock": {
                     "cmd": "zone-set",
-                    "zone": zone[0]["zone"],
-                    "owner": record[0]["record"],
-                    "rtype": "SOA",
-                    "ttl": ttl[0]["ttl"],
-                    "data": content[0]["content"],
+                    "zone": zone_name,
+                    "owner": owner,
+                    "rtype": rtype,
+                    "ttl": ttl,
+                    "data": data,
                 },
                 "receive": {"type": "block"},
             },
         }
     }
-    producer.send(json_command)
+
+    return command
+
+
+def soa_default_command(soa_record_id):
+    record, zone, type_, ttl, content = get_other_data(soa_record_id)
+    if type_[0]["type"] != "SOA":
+        return False
+
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+
+    command = generate_command(
+        zone_id=zone_id,
+        zone_name=zone_name,
+        owner=record[0]["record"],
+        rtype=type_[0]["type"],
+        ttl=ttl[0]["ttl"],
+        data=content[0]["content"],
+    )
+    producer.send(command)
 
 
 def ns_default_command(ns_record_id):
-    record, zone, type_, ttl, contents = get_other_data(ns_record_id)
-    for content in contents:
-        json_command = {
-            zone[0]["zone"]: {
-                "id_zone": zone[0]["id"],
-                "type": "general",
-                "command": "zone",
-                "general": {
-                    "sendblock": {
-                        "cmd": "zone-set",
-                        "zone": zone[0]["zone"],
-                        "owner": record[0]["record"],
-                        "rtype": type_[0]["type"],
-                        "ttl": ttl[0]["ttl"],
-                        "data": content["content"],
-                    },
-                    "receive": {"type": "block"},
-                },
-            }
-        }
-        producer.send(json_command)
+    record, zone, type_, ttl, content = get_other_data(ns_record_id)
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+
+    for i in content:
+        command = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=i["content"],
+        )
+        producer.send(command)
 
 
-def record_insert(key):
-    record, zone, type_, ttl, content = get_other_data(key)
-    is_serial = record[0]["is_serial"]
-    serial_value = ""
-    serial_data = ""
+def record_insert(record_id):
+    record, zone, type_, ttl, content = get_other_data(record_id)
 
-    if is_serial:
-        serials = model.get_by_id(table="serial", field="record_id", id_=key)
-        for serial in serials:
-            if serial_value == "":
-                serial_value = serial["serial"]
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+
+    serial = ""
+    if record[0]["is_serial"]:
+        # FIXME serial db never contain data
+        serial_data = model.get_by_id(
+            table="serial", field="record_id", id_=record[0]["id"]
+        )
+
+        for i in serial_data:
+            if serial == "":
+                serial = i["serial"]
             else:
-                serial_value = serial + " " + serial["serial"]
-        serial_data = f'{serial_value} {content[0]["content"]}'
+                serial = serial + " " + i["serial"]
+
+        command = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=serial + " " + content[0]["content"],
+        )
     else:
-        serial_data = content[0]["content"]
+        command = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=content[0]["content"],
+        )
 
-    json_command = {
-        zone[0]["zone"]: {
-            "id_zone": zone[0]["id"],
-            "type": "general",
-            "command": "zone",
-            "general": {
-                "sendblock": {
-                    "cmd": "zone-set",
-                    "zone": zone[0]["zone"],
-                    "owner": record[0]["record"],
-                    "rtype": type_[0]["type"],
-                    "ttl": ttl[0]["ttl"],
-                    "data": serial_data,
-                },
-                "receive": {"type": "block"},
-            },
-        }
-    }
-
-    return json_command
+    return command
