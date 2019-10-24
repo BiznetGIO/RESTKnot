@@ -1,11 +1,7 @@
-exclude .gitignore
-include README.md
-include setup.cfg
-include requirements.txt
-prune .cache
-prune .git
-prune build
-prune dist
 recursive-exclude *.egg-info *
-recursive-include tests *
-include dnsagent/libs/libcommand/utility/templates
+recursive-include dnsagent tests *.py *.yml
+
+include requirements*.txt
+include README.rst
+include LICENSE
+include setup.py
