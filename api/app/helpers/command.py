@@ -1,3 +1,6 @@
+import yaml
+import os
+
 from app.models import model
 from app.helpers import producer
 
@@ -141,5 +144,62 @@ def record_insert(record_id):
             ttl=ttl[0]["ttl"],
             data=content[0]["content"],
         )
+
+    producer.send(command)
+
+
+def cluster_file():
+    path = os.environ.get("RESTKNOT_CLUSTER_FILE")
+    is_exists = os.path.exists(path)
+    if is_exists:
+        return path
+    else:
+        raise ValueError(f"Clustering File Not Found")
+
+
+def get_clusters():
+    file_ = cluster_file()
+    clusters = yaml.safe_load(open(file_))
+    return clusters
+
+
+def cluster_command(record_id):
+    record, zone, type_, _, content = get_other_data(record_id)
+
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+    zone_tld = zone_name.split(".")[-1]
+    filename = f"{zone_name}_{zone_id}.{zone_tld}.zone"
+
+    data = "test"  # FIXME
+
+    clusters = get_clusters()
+    master = clusters["master"]
+    slave = clusters["slave"]
+
+    command = {
+        zone_name: {
+            "id_zone": zone_id,
+            "type": "cluster",
+            "cluster": {
+                "master": {
+                    "file": filename,
+                    "data": data,
+                    "master": master["master"],
+                    "notify": master["notify"],
+                    "acl": master["acl"],
+                    "serial-policy": "dateserial",
+                    "module": "mod-stats/default",
+                },
+                "slave": {
+                    "file": filename,
+                    "master": slave["master"],
+                    "acl": slave["acl"],
+                    "serial-policy": "dateserial",
+                    "module": "mod-stats/default",
+                },
+            },
+        }
+    }
 
     producer.send(command)

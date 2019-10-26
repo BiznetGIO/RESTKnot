@@ -13,6 +13,7 @@ services:
             - WORKER=2
             - ENVIRONMENT=development
             - COMMAND=server
+            - RESTKNOT_CLUSTER_FILE: ''
         command:
             - bash
             - run.sh

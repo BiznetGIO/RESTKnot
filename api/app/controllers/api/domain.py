@@ -232,8 +232,13 @@ class AddDomain(Resource):
             ns_record_id = insert_ns_default(zone_id)
             command.ns_default_command(ns_record_id)
 
-            record_id = insert_cname(zone_id, zone)
-            command.record_insert(record_id)
+            cname_record_id = insert_cname(zone_id, zone)
+            command.record_insert(cname_record_id)
+
+            try:
+                command.cluster_command(cname_record_id)
+            except Exception as e:
+                return response(401, message=str(e))
 
             # just for feedback return value
             zone_data = {"zone": zone, "project_id": project_id}
