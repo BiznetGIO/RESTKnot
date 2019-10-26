@@ -94,11 +94,10 @@ def parsing_data_general(data, broker):
         except Exception:
             status = True
         if not status:
-            utils.log_err("Command Not Execute")
+            utils.log_err("Command Failed")
             utils.log_err(dict_command["error"])
         else:
-            utils.log_info("Command Execute")
-            utils.log_info(dict_command)
+            utils.log_info("Command Executed")
 
 
 def initialiaze_command_general(data, id_zone, command):
