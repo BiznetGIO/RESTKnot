@@ -1,9 +1,8 @@
-FROM alpine
+FROM python:3.7-alpine
 
-RUN mkdir /app
-COPY . /app
-WORKDIR /app
+RUN mkdir /dnsagent
+COPY . /dnsagent
+WORKDIR /dnsagent
 
-RUN apk update && \
-    apk --no-cache add python3 python3-dev git && \
-    pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
+RUN pip3 install -e .
