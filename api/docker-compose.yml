@@ -12,20 +12,24 @@ services:
             - APP_HOST=0.0.0.0
             - APP_PORT=5000
             - DB_NAME = knotdb
-            - DB_HOST = localhost
+            - DB_HOST = roach1
             - DB_PORT = 26257
             - DB_USER = root
+            - DB_PASSWORD = root
             - DB_SSL = disable
-            - KAFKA_HOST=127.0.01
+            - KAFKA_HOST=127.0.0.1
             - KAFKA_PORT=9092
             - DEFAULT_SOA_CONTENT='satu.neodns.id. hostmaster.neodns.id.'
             - DEFAULT_SOA_SERIAL='3600 1800 604800 86400'
             - DEFAULT_NS='satu.neodns.id. dua.neodns.id.'
             - ACL= # e.g 127.0.0.1/24, 10.1.0.0/24
             - RESTKNOT_CLUSTER_FILE='' # e.g /home/user/servers.yaml'
+        networks:
+          - roachnet
         links:
             - zookeeper
             - kafka
+            - roach1
     zookeeper:
         image: wurstmeister/zookeeper
     kafka:
@@ -35,3 +39,16 @@ services:
         environment:
             KAFKA_ADVERTISED_HOST_NAME: localhost
             KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    roach1:
+        container_name: roach1
+        image: cockroachdb/cockroach:v1.1.3
+        command: start --insecure --host=127.0.0.1
+        ports:
+          - "26257:26257"
+        volumes:
+          - ./cockroach-data/roach1:/cockroach/cockroach-data
+        networks:
+          - roachnet
+
+networks:
+  roachnet:
