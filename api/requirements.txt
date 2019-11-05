@@ -3,16 +3,7 @@ Flask==1.1.1
 Werkzeug==0.16.0
 Flask-Script==2.0.6
 Flask-RESTful==0.3.7
-
-# Database
-Flask-SQLAlchemy==2.4.1
-SQLAlchemy==1.3.9
-
-# Migrations
-Flask-Migrate==2.5.2
-
-# Caching
-Flask-Caching>=1.7.2
+Flask-Cors==3.0.7
 
 # Environment variable parsing
 environs==6.0.0
@@ -20,3 +11,6 @@ environs==6.0.0
 # App
 netaddr==0.7.19
 requests==2.21.0
+psycopg2==2.8.3
+PyYAML==5.1.1
+kafka-python==1.4.6
