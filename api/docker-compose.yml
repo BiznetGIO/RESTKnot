@@ -1,22 +1,28 @@
-version: 0.8.0
+version: '3'
 services:
-    web:
-        build: .
+    restknot-api:
+        image: restknot-api:0.7.0
         ports:
             - '5000:5000'
-        volumes:
-            - '.:/app'
         environment:
+            - FLASK_APP=autoapp.py
+            - FLASK_ENV=production
+            - GUNICORN_WORKERS= 4
+            - FLASK_DEBUG=0
             - APP_HOST=0.0.0.0
             - APP_PORT=5000
-            - FLASK_DEBUG=True
-            - WORKER=2
-            - ENVIRONMENT=development
-            - COMMAND=server
-            - RESTKNOT_CLUSTER_FILE: ''
-        command:
-            - bash
-            - run.sh
+            - DB_NAME = knotdb
+            - DB_HOST = localhost
+            - DB_PORT = 26257
+            - DB_USER = root
+            - DB_SSL = disable
+            - KAFKA_HOST=127.0.01
+            - KAFKA_PORT=9092
+            - DEFAULT_SOA_CONTENT='satu.neodns.id. hostmaster.neodns.id.'
+            - DEFAULT_SOA_SERIAL='3600 1800 604800 86400'
+            - DEFAULT_NS='satu.neodns.id. dua.neodns.id.'
+            - ACL= # e.g 127.0.0.1/24, 10.1.0.0/24
+            - RESTKNOT_CLUSTER_FILE='' # e.g /home/user/servers.yaml'
         links:
             - zookeeper
             - kafka
