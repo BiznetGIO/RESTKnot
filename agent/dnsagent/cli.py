@@ -9,7 +9,6 @@ Options:
 Commands:
   zone            Zone Record Configuration Zone Command
   command         CZone onfiguration Command
-  envi            Environment Configuration Command
   start           Starting Agent
 
 Run 'dnsagent COMMAND --help' for more information on a command.

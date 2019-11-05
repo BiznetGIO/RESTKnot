@@ -1,5 +1,6 @@
+import os
+
 from dnsagent.clis.base import Base
-from dnsagent.libs import env_lib
 from dnsagent.libs import knot_lib
 from dnsagent.libs import kafka_lib
 from dnsagent.libs import utils
@@ -18,12 +19,12 @@ class Start(Base):
     """
 
     def execute(self):
-        # utils.check_root()
-        broker_env = env_lib.utils.get_env_values_broker()
-        broker = broker_env["broker"] + ":" + broker_env["port"]
-        topic = broker_env["topic"]
-        group = broker_env["group"]
-        flag = broker_env["flags"]
+        broker_host = os.environ.get("RESTKNOT_KAFKA_BROKER")
+        broker_port = os.environ.get("RESTKNOT_KAFKA_PORTS")
+        broker = f"{broker_host}:{broker_port}"
+        topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
+        group = os.environ.get("RESTKNOT_KAFKA_GROUP")
+        flag = os.environ.get("RESTKNOT_KAFKA_FLAGS")
 
         if self.args["slave"]:
             try:

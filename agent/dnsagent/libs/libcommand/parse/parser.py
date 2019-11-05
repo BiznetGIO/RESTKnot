@@ -11,8 +11,8 @@ from dnsagent.libs.libcommand.control.libknot.control import (
     KnotCtlType,
 )
 
-knot_lib = os.environ.get("KNOT_LIB", "libknot.so")
-knot_socket = os.environ.get("KNOT_SOCKET", "/var/run/knot/knot.sock")
+knot_lib = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
+knot_socket = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
