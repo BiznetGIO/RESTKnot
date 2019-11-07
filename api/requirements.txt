@@ -17,7 +17,7 @@ Cython==0.29.7
 debtcollector==1.21.0
 defusedxml==0.6.0
 dill==0.2.9
-ecdsa==0.13.2
+ecdsa==0.13.3
 Flask==1.0.3
 Flask-BabelEx==0.9.3
 Flask-Celery==2.4.3
