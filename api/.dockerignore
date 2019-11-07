@@ -16,4 +16,3 @@ __pycache__/
 .env
 .flake8
 test/
-*.sql
