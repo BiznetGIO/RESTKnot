@@ -1,9 +1,10 @@
 from kafka import KafkaConsumer
 from json import loads
 
+from dnsagent.libs import utils
+
 
 def get_kafka_consumer(broker, topic, group_id):
-    print(topic)
     try:
         consumer = KafkaConsumer(
             topic,
@@ -13,7 +14,6 @@ def get_kafka_consumer(broker, topic, group_id):
             enable_auto_commit=True,
             value_deserializer=lambda x: loads(x.decode("utf-8")),
         )
-    except Exception as e:
-        print(e)
-    else:
         return consumer
+    except Exception as e:
+        raise ValueError(e)
