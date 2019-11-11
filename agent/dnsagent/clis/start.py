@@ -26,6 +26,10 @@ class Start(Base):
         group = os.environ.get("RESTKNOT_KAFKA_GROUP")
         flag = os.environ.get("RESTKNOT_KAFKA_FLAGS")
 
+        if (broker_host and broker_port) is None:
+            utils.log_err("Can't find kafka host and port")
+            return
+
         if self.args["slave"]:
             try:
                 utils.log_info("Connecting to broker : " + broker)
@@ -61,9 +65,9 @@ class Start(Base):
                 utils.log_info("Connecting to broker : " + broker)
                 consumer = kafka_lib.get_kafka_consumer(broker, topic, group)
             except Exception as e:
-                utils.log_err("Can't Connect to broker : " + broker)
-                utils.log_err("Error: " + str(e))
+                utils.log_err(f"Can't Connect to broker: {e}")
                 exit()
+
             try:
                 for message in consumer:
                     type_command = None
@@ -79,8 +83,5 @@ class Start(Base):
                         knot_lib.parsing_data_cluster(message, broker, flags=flag)
                     else:
                         print("Command Type Not Found")
-            except KeyboardInterrupt:
-                print("Exited")
-            # except Exception as e:
-            #     env_lib.utils.log_err(str(e))
-            exit()
+            except Exception as e:
+                utils.log_err(str(e))
