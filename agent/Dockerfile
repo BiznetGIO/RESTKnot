@@ -1,4 +1,5 @@
-FROM python:3.7-alpine
+# didn't work with apline
+FROM python:3.7-slim-buster
 
 RUN mkdir /dnsagent
 COPY . /dnsagent
