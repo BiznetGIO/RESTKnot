@@ -1,8 +1,6 @@
 from kafka import KafkaConsumer
 from json import loads
 
-from dnsagent.libs import utils
-
 
 def get_kafka_consumer(broker, topic, group_id):
     try:

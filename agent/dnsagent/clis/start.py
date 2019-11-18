@@ -1,8 +1,8 @@
 import os
 
 from dnsagent.clis.base import Base
-from dnsagent.libs import knot_lib
-from dnsagent.libs import kafka_lib
+from dnsagent.libs import knot as knot_lib
+from dnsagent.libs import kafka as kafka_lib
 from dnsagent.libs import utils
 
 
@@ -50,9 +50,9 @@ class Start(Base):
                     utils.log_err(f"Can't find command type: {e}")
 
             if command_type == "general":
-                knot_lib.parsing_data_general(message)
+                knot_lib.parse_data_general(message)
             elif command_type == "cluster":
-                knot_lib.parsing_data_cluster(message, flags=flag)
+                knot_lib.parse_data_cluster(message, flags=flag)
             else:
                 utils.log_err(f"Unrecognized command type: {command_type}")
 

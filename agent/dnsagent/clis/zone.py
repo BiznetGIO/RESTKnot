@@ -1,7 +1,7 @@
 import json
 
 from dnsagent.clis.base import Base
-from dnsagent.libs import knot_lib
+from dnsagent.libs import knot as knot_lib
 from dnsagent.libs import utils
 
 
