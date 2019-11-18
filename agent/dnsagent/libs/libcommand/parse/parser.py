@@ -89,7 +89,9 @@ def parse_json(data):
 
         command_type = data[command]["receive"]["type"]  # .e.g block
         if command_type == "command":
+            print("I AM CLI THINGS!")
             # FIXME is this subprocess thing still used?
+            # I don't find any command_type == 'command' in the API sender
             cli_shell = parse_command_zone(actions[0]["sendblock"])
             exec_cliss = utils.exec_shell(cli_shell)
             commands.append({"type": "general", command: str(exec_cliss)})
@@ -102,80 +104,42 @@ def parse_json(data):
 def parse_command_zone(json_data):
     cmd = json_data["cmd"]
     zone = json_data["zone"]
-    own = json_data["owner"]
+    owner_type = json_data["owner"]
     data = json_data["data"]
     rtype = json_data["rtype"]
     ttl = json_data["ttl"]
     owner = ""
-    if own == zone:
+
+    if owner_type == zone:
         owner = zone
-        cli_shell = (
-            "knotc "
-            + cmd
-            + " "
-            + zone
-            + ". "
-            + owner
-            + ". "
-            + ttl
-            + " "
-            + rtype
-            + " "
-            + data
-        )
-    elif own == "@":
-        owner = own
-        cli_shell = (
-            "knotc "
-            + cmd
-            + " "
-            + zone
-            + ". "
-            + owner
-            + " "
-            + ttl
-            + " "
-            + rtype
-            + " "
-            + data
-        )
+        cli_shell = f"knotc {cmd} {zone}. {owner}. {ttl} {rtype} {data}"
+    elif owner_type == "@":
+        owner = owner_type
+        cli_shell = f"knotc {cmd} {zone}. {owner} {ttl} {rtype} {data}"
     elif rtype == "cluster":
-        cli_shell = own + "_" + data + ".sh " + zone
+        cli_shell = owner_type + "_" + data + ".sh " + zone
     elif cmd == "unset-cluster":
         cli_shell = "unset_cluster.sh " + zone
     else:
-        if rtype == "notify" and own == "slave":
+        if rtype == "notify" and owner_type == "slave":
             cli_shell = "knotc " + cmd + " 'zone[" + zone + "].master' " + data
-        elif rtype == "notify" and own == "master":
+        elif rtype == "notify" and owner_type == "master":
             cli_shell = "knotc " + cmd + " 'zone[" + zone + "].notify' " + data
-        elif rtype == "acl" and own == "master":
+        elif rtype == "acl" and owner_type == "master":
             cli_shell = "knotc " + cmd + " 'zone[" + zone + "].acl' " + data
-        elif rtype == "acl" and own == "slave":
+        elif rtype == "acl" and owner_type == "slave":
             cli_shell = "knotc " + cmd + " 'zone[" + zone + "].acl' " + data
-        elif rtype == "file" and own == "all":
+        elif rtype == "file" and owner_type == "all":
             cli_shell = (
                 "knotc " + cmd + " 'zone[" + zone + "].file' '" + zone + ".zone'"
             )
-        elif rtype == "module" and own == "all":
+        elif rtype == "module" and owner_type == "all":
             cli_shell = (
                 "knotc " + cmd + " 'zone[" + zone + "].module' 'mod-stats/default'"
             )
         else:
             owner = json_data["owner"] + "." + zone
-            cli_shell = (
-                "knotc "
-                + cmd
-                + " "
-                + zone
-                + ". "
-                + owner
-                + ". "
-                + ttl
-                + " "
-                + rtype
-                + " "
-                + data
-            )
+            cli_shell = f"knotc {cmd} {zone}. {owner}. {ttl} {rtype} {data}"
     return cli_shell
 
 
