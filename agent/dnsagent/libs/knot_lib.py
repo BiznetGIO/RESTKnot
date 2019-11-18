@@ -73,7 +73,7 @@ def zone_commit(zone=None):
     return libknot_json(json_data)
 
 
-def parsing_data_general(data, broker):
+def parsing_data_general(data):
     id_zone = None
     json_data = None
     command_type = None
@@ -115,7 +115,7 @@ def initialiaze_command_general(data, id_zone, command):
     return report_command
 
 
-def parsing_data_cluster(data, broker, flags=None):
+def parsing_data_cluster(data, flags=None):
     zone = None
     id_zone = None
     json_data = None
