@@ -16,29 +16,31 @@ knot_socket = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def check_command(command):
-    sdl_data = utils.repodata()
+def is_command(command):
+    """check if COMMAND available in defined rules"""
+    rules = utils.get_rules()
     try:
-        sdl_data[command]
-    except Exception as e:
-        raise e
-    else:
+        rules[command]
         return True
+    except Exception:
+        msg = f'command: "{command}" is not recognized'
+        raise ValueError(msg)
 
 
-def check_parameters(command, parameters):
-    sdl_data = utils.repodata()
+def is_parameters(command, parameters):
+    """check if PARAMETERS available in defined rules"""
+    rules = utils.get_rules()
     try:
-        sdl_data[command]["parameters"][parameters]
-    except Exception as e:
-        raise e
-    else:
+        rules[command]["parameters"][parameters]
         return True
+    except Exception:
+        msg = f'parameter: "{parameters}" is not recognized'
+        raise ValueError(msg)
 
 
 def initialiaze(data):
     try:
-        parser_data = parser_json(data)
+        parser_data = parse_json(data)
     except Exception as e:
         raise e
     else:
@@ -65,29 +67,36 @@ def get_params_recieve(data_params):
     return parameters
 
 
-def parser_json(obj_data):
-    projec_obj = list()
-    for project in obj_data:
-        action_obj = list()
-        for action in obj_data[project]:
-            if not check_command(action):
+def parse_json(data):
+    commands = []
+
+    # command: command-commit | zone-begin
+    for command in data:
+        actions = []
+        # action: sendblock | receive
+        for action in data[command]:
+            if not is_command(action):
                 return None
-            else:
-                data_obj = dict()
-                for params in obj_data[project][action]:
-                    if not check_parameters(action, params):
-                        return None
-                    else:
-                        data_obj[params] = obj_data[project][action][params]
-                action_obj.append({action: data_obj})
-        if obj_data[project]["receive"]["type"] == "command":
-            cli_shell = parse_command_zone(action_obj[0]["sendblock"])
+
+            data_obj = dict()
+            # params: cmd | item | section | data | type
+            for params in data[command][action]:
+                if not is_parameters(action, params):
+                    return None
+                data_obj[params] = data[command][action][params]
+
+            actions.append({action: data_obj})
+
+        command_type = data[command]["receive"]["type"]  # .e.g block
+        if command_type == "command":
+            # FIXME is this subprocess thing still used?
+            cli_shell = parse_command_zone(actions[0]["sendblock"])
             exec_cliss = utils.exec_shell(cli_shell)
-            projec_obj.append({"type": "general", project: str(exec_cliss)})
-            return projec_obj
+            commands.append({"type": "general", command: str(exec_cliss)})
+            return commands
         else:
-            projec_obj.append({project: action_obj})
-            return projec_obj
+            commands.append({command: actions})
+            return commands
 
 
 def parse_command_zone(json_data):
