@@ -46,17 +46,21 @@ def execute_general(message):
     if not response:
         utils.log_err("Command Not Supported")
     else:
-        dict_command = json.loads(response["data"])
-        try:
-            status = dict_command["status"]
-        except Exception:
-            status = True
+        command = json.loads(response["data"])
+
+        # True if no failed data found
+        status = command.get("status", True)
 
         if not status:
             utils.log_err("Command Failed")
-            utils.log_err(dict_command["error"])
+            utils.log_err(command["error"])
         else:
-            utils.log_info("Command Executed")
+            command_ = response["description"][0]["command"][0]["sendblock"]
+            command_type = command_.get("cmd", "")
+            zone = command_.get("zone", "")
+            utils.log_info(
+                f'Command Executed. Command: "{command_type}" Zone: "{zone}"'
+            )
 
 
 def execute_command_general(cmd_and_zone, zone_id, command_type):
