@@ -3,88 +3,42 @@ import json
 from dnsagent.libs.libcommand.parse import parser
 from dnsagent.libs import command_lib
 from dnsagent.libs import utils
+from dnsagent.libs import command_generator as cmd_generator
 
 
-def libknot_json(data):
-    initialiaze_command = parser.initialiaze(data)
+def send_command(data):
+    """Send command to knot socket"""
+    initialiazed_command = parser.initialiaze(data)
+
     try:
-        knot_data = parser.execute_command(initialiaze_command)
-    except Exception as e:
-        print("ERROR READ REST: ", e)
-        response = {"result": False, "error": str(e), "status": "Command Not Execute"}
-        return response
-    else:
+        knot_data = parser.execute_command(initialiazed_command)
         response = {
             "result": True,
-            "description": initialiaze_command,
-            "status": "Command Execute",
+            "description": initialiazed_command,
+            "status": "Command Executed",
             "data": knot_data,
         }
         return response
+    except Exception as e:
+        response = {"result": False, "error": str(e), "status": "Command Failed"}
+        return response
 
 
-def begin(zone=None):
-    json_data = {
-        "command-begin": {
-            "sendblock": {
-                "cmd": "conf-begin",
-                "item": "domain",
-                "section": "zone",
-                "data": zone,
-            },
-            "receive": {"type": "block"},
-        }
-    }
-    return libknot_json(json_data)
-
-
-def zone_begin(zone=None):
-    json_data = {
-        "zone-begin": {
-            "sendblock": {"cmd": "zone-begin", "zone": zone, "data": zone},
-            "receive": {"type": "block"},
-        }
-    }
-    return libknot_json(json_data)
-
-
-def commit(zone=None):
-    json_data = {
-        "command-commit": {
-            "sendblock": {
-                "cmd": "conf-commit",
-                "item": "domain",
-                "section": "zone",
-                "data": zone,
-            },
-            "receive": {"type": "block"},
-        }
-    }
-    return libknot_json(json_data)
-
-
-def zone_commit(zone=None):
-    json_data = {
-        "zone-commit": {
-            "sendblock": {"cmd": "zone-commit", "zone": zone, "data": zone},
-            "receive": {"type": "block"},
-        }
-    }
-    return libknot_json(json_data)
-
-
-def parsing_data_general(data):
-    id_zone = None
-    json_data = None
+def parse_data_general(data):
+    zone = None  # example.com
+    zone_id = None
     command_type = None
-    zone = None
+    command = None
+
     for i in data:
         zone = i
         command_type = data[i]["command"]
-        id_zone = data[i]["id_zone"]
-        json_data = data[i]["general"]
-    data = {"command": json_data, "zone": zone}
-    command_data = initialiaze_command_general(data, id_zone, command_type)
+        zone_id = data[i]["id_zone"]
+        command = data[i]["general"]
+
+    data = {"command": command, "zone": zone}
+    command_data = initialiaze_command_general(data, zone_id, command_type)
+
     if not command_data:
         utils.log_err("Command Not Supported")
     else:
@@ -100,22 +54,30 @@ def parsing_data_general(data):
             utils.log_info("Command Executed")
 
 
-def initialiaze_command_general(data, id_zone, command):
-    report_command = None
-    if command == "config":
-        begin(data["zone"])
-        report_command = libknot_json(data)
-        commit(data["zone"])
-    elif command == "zone":
-        zone_begin(data["zone"])
-        report_command = libknot_json(data)
-        zone_commit(data["zone"])
-    else:
-        report_command = False
-    return report_command
+def initialiaze_command_general(data, zone_id, command_type):
+    response = None
+    zone = data["zone"]
+
+    if command_type == "config":
+        begin_conf_command, commit_conf_command = cmd_generator.generate_conf_command(
+            zone
+        )
+
+        send_command(begin_conf_command)  # begin
+        response = send_command(data)  # main data
+        send_command(commit_conf_command)
+    elif command_type == "zone":
+        begin_zone_command, commit_zone_command = cmd_generator.generate_zone_command(
+            zone
+        )
+        send_command(begin_zone_command)  # begin
+        response = send_command(data)  # main data
+        send_command(commit_zone_command)
+
+    return response
 
 
-def parsing_data_cluster(data, flags=None):
+def parse_data_cluster(data, flags=None):
     zone = None
     id_zone = None
     json_data = None
