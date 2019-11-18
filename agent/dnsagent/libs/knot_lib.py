@@ -1,9 +1,8 @@
 import json
 
 from dnsagent.libs.libcommand.parse import parser
-from dnsagent.libs import command_lib
-from dnsagent.libs import utils
 from dnsagent.libs import command_generator as cmd_generator
+from dnsagent.libs import utils
 
 
 def send_command(data):
@@ -59,20 +58,16 @@ def initialiaze_command_general(data, zone_id, command_type):
     zone = data["zone"]
 
     if command_type == "config":
-        begin_conf_command, commit_conf_command = cmd_generator.generate_conf_command(
-            zone
-        )
+        begin_conf_cmd, commit_conf_cmd, _ = cmd_generator.conf_command(zone)
 
-        send_command(begin_conf_command)  # begin
+        send_command(begin_conf_cmd)  # begin
         response = send_command(data)  # main data
-        send_command(commit_conf_command)
+        send_command(commit_conf_cmd)
     elif command_type == "zone":
-        begin_zone_command, commit_zone_command = cmd_generator.generate_zone_command(
-            zone
-        )
-        send_command(begin_zone_command)  # begin
+        begin_zone_cmd, commit_zone_cmd = cmd_generator.zone_command(zone)
+        send_command(begin_zone_cmd)  # begin
         response = send_command(data)  # main data
-        send_command(commit_zone_command)
+        send_command(commit_zone_cmd)
 
     return response
 
@@ -88,50 +83,42 @@ def parse_data_cluster(data, flags=None):
     initialiaze_command_cluster(json_data, zone, id_zone, flags)
 
 
-def initialiaze_command_cluster(data, zone, id_zone, flags):
-    if flags == "slave":
-        slave_response = list()
-        begin(zone)
-        insert_config = command_lib.insert_config_zone(zone)
-        insert_exe = libknot_json(insert_config)
-        slave_response.append(insert_exe)
-        file_config = command_lib.set_file(zone, id_zone)
-        file_exec = libknot_json(file_config)
-        slave_response.append(file_exec)
-        for i in data["master"]:
-            master_config = command_lib.master_create_json(zone, i)
-            slave_response.append(libknot_json(master_config))
-        for i in data["acl"]:
-            acl_config = command_lib.create_json_acl(zone, i)
-            slave_response.append(libknot_json(acl_config))
-        module_config = command_lib.set_mods_stats(zone, "mod-stats/default")
-        slave_response.append(libknot_json(module_config))
-        serial_config = command_lib.set_serial_policy(zone, "dateserial")
-        slave_response.append(libknot_json(serial_config))
-        commit(zone)
-        return slave_response
-    else:
-        master_response = list()
-        begin(zone)
-        insert_config = command_lib.insert_config_zone(zone)
-        insert_exe = libknot_json(insert_config)
-        master_response.append(insert_exe)
-        file_config = command_lib.set_file(zone, id_zone)
-        file_exec = libknot_json(file_config)
-        master_response.append(file_exec)
-        if data["master"]:
-            for i in data["master"]:
-                master_config = command_lib.master_create_json(zone, i)
-                master_response.append(libknot_json(master_config))
+def initialiaze_command_cluster(data, zone, zone_id, flags):
+    response = []
+
+    begin_conf_cmd, commit_conf_cmd, set_conf_cmd = cmd_generator.conf_command(zone)
+    send_command(begin_conf_cmd)
+
+    insert_response = send_command(set_conf_cmd)
+    response.append(insert_response)
+
+    fileset_command = cmd_generator.file_set_command(zone, zone_id)
+    file_response = send_command(fileset_command)
+    response.append(file_response)
+
+    for i in data["master"]:
+        master_command = cmd_generator.set_master_command(zone, i)
+        master_response = send_command(master_command)
+        response.append(master_response)
+
+    if flags == "master":
         for i in data["notify"]:
-            notify_config = command_lib.create_json_notify(zone, i)
-            master_response.append(libknot_json(notify_config))
-        for i in data["acl"]:
-            acl_config = command_lib.create_json_acl(zone, i)
-            master_response.append(libknot_json(acl_config))
-        module_config = command_lib.set_mods_stats(zone, "mod-stats/default")
-        master_response.append(libknot_json(module_config))
-        serial_config = command_lib.set_serial_policy(zone, "dateserial")
-        master_response.append(libknot_json(serial_config))
-        commit(zone)
-        return master_response
+            notify_command = cmd_generator.notify_command(zone, i)
+            send_command(notify_command)
+            response.append(notify_command)
+
+    for i in data["acl"]:
+        acl_cmd = cmd_generator.acl_command(zone, i)
+        acl_response = send_command(acl_cmd)
+        response.append(acl_response)
+
+    module_cmd = cmd_generator.modstat_set(zone, "mod-stats/default")
+    module_response = send_command(module_cmd)
+    response.append(module_response)
+
+    serial_cmd = cmd_generator.set_serial(zone, "dateserial")
+    serial_response = send_command(serial_cmd)
+    response.append(serial_response)
+
+    send_command(commit_conf_cmd)
+    return response
