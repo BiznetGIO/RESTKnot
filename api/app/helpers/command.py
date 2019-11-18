@@ -150,6 +150,9 @@ def record_insert(record_id):
 
 def cluster_file():
     path = os.environ.get("RESTKNOT_CLUSTER_FILE")
+    if not path:
+        raise ValueError(f"RESTKNOT_CLUSTER_FILE is not set")
+
     is_exists = os.path.exists(path)
     if is_exists:
         return path
