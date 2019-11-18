@@ -52,7 +52,7 @@ class Start(Base):
             if command_type == "general":
                 knot_lib.execute_general(message)
             elif command_type == "cluster":
-                knot_lib.parse_data_cluster(message, flags=flag)
+                knot_lib.execute_cluster(message, flags=flag)
             else:
                 utils.log_err(f"Unrecognized command type: {command_type}")
 
