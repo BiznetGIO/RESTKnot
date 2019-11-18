@@ -3,17 +3,7 @@ import json
 
 from dnsagent.libs.libcommand.utility import utils
 from dnsagent.libs.libcommand.control import client
-from dnsagent.libs import utils as dnsagent_utils
-from dnsagent.libs.libcommand.control.libknot.control import (
-    KnotCtlError,
-    KnotCtl,
-    load_lib,
-    KnotCtlType,
-)
-
-knot_lib = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
-knot_socket = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
-root_dir = os.path.dirname(os.path.abspath(__file__))
+from dnsagent.vendor.libknot import control as knotlib
 
 
 def is_command(command):
@@ -143,28 +133,31 @@ def parse_command_zone(json_data):
     return cli_shell
 
 
-def execute_command(initialiaze):
-    load_lib(knot_lib)
-    ctl = KnotCtl()
+def execute_command(command):
+    libknot_binary_path = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
+    knot_socket_path = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
+
+    knotlib.load_lib(libknot_binary_path)
+    ctl = knotlib.KnotCtl()
     try:
-        ctl.connect(knot_socket)
-    except KnotCtlError as e:
-        dnsagent_utils.log_err(str(e))
+        ctl.connect(knot_socket_path)
+    except knotlib.KnotCtlError as e:
+        raise ValueError(f"Can't connect to knot socket: {e}")
+
     try:
         resp = None
-        no = 0
-        for data in initialiaze:
-            no = no + 1
+        for data in command:
             parameter_block = None
             parameter_stats = None
+
             for project in data:
                 parameter_block = get_params_block(data[project])
                 parameter_stats = get_params_recieve(data[project])
                 resp = client.sendblock(ctl, parameter_block, parameter_stats["type"])
-    except KnotCtlError as e:
+    except knotlib.KnotCtlError as e:
         resp = {"status": False, "error": str(e)}
         return json.dumps(resp, indent=4)
     else:
-        ctl.send(KnotCtlType.END)
+        ctl.send(knotlib.KnotCtlType.END)
         ctl.close()
         return json.dumps(resp, indent=4)
