@@ -220,8 +220,8 @@ class AddDomain(Resource):
         # FIXME ValueError: invalid literal for int() with base 10: 'None' kafka
         try:
             zone_id = insert_zone(zone, project_id)
-        except Exception as e:
-            return response(401, message=str(e))
+        except Exception:
+            return response(401, message="Project ID not found")
         else:
             # add zone config
             command.config_zone(zone, zone_id)
