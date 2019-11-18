@@ -1,8 +1,8 @@
 import os
 import json
 
-from dnsagent.libs.libcommand.utility import utils
-from dnsagent.libs.libcommand.control import client
+from dnsagent.libs import utils
+from dnsagent.libs import client
 from dnsagent.vendor.libknot import control as knotlib
 
 

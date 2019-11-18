@@ -1,6 +1,6 @@
 import json
 
-from dnsagent.libs.libcommand.parse import parser
+from dnsagent.libs import parser
 from dnsagent.libs import command_generator as cmd_generator
 from dnsagent.libs import utils
 

@@ -1,6 +1,5 @@
 import yaml
 import os
-import shutil
 import coloredlogs
 import logging
 
@@ -35,21 +34,21 @@ def yaml_parser_file(file):
             print(exc)
 
 
-def yaml_parser(stream):
-    try:
-        data = yaml.load(stream)
-        print(data)
-        return data
-    except yaml.YAMLError as exc:
-        print(exc)
+def yaml_parser(file):
+    with open(file, "r") as stream:
+        try:
+            data = yaml.load(stream, Loader=yaml.FullLoader)
+            return data
+        except yaml.YAMLError as exc:
+            print(exc)
 
 
-def copyfile(src, dest):
-    try:
-        shutil.copyfile(src, dest)
-    except OSError as e:
-        print("Directory not copied. Error: %s" % e)
+def get_rules():
+    abs_path = os.path.dirname(os.path.realpath(__file__))
+    repo_file = "{}/templates/rules.yml".format(abs_path)
+    return yaml_parser(repo_file)
 
 
-def make_archive(name, path):
-    shutil.make_archive(name, "zip", path)
+def exec_shell(command):
+    cmd = os.popen(command).read()
+    return cmd
