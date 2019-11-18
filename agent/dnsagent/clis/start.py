@@ -41,20 +41,23 @@ class Start(Base):
         flag = os.environ.get("RESTKNOT_KAFKA_FLAGS")
         command_type = None
 
-        for message in consumer:
-            message = message.value
-            for i in message:
-                try:
-                    command_type = message[i]["type"]
-                except Exception as e:
-                    utils.log_err(f"Can't find command type: {e}")
+        try:
+            for message in consumer:
+                message = message.value
+                for i in message:
+                    try:
+                        command_type = message[i]["type"]
+                    except Exception as e:
+                        utils.log_err(f"Can't find command type: {e}")
 
-            if command_type == "general":
-                knot_lib.execute_general(message)
-            elif command_type == "cluster":
-                knot_lib.execute_cluster(message, flags=flag)
-            else:
-                utils.log_err(f"Unrecognized command type: {command_type}")
+                if command_type == "general":
+                    knot_lib.execute_general(message)
+                elif command_type == "cluster":
+                    knot_lib.execute_cluster(message, flags=flag)
+                else:
+                    utils.log_err(f"Unrecognized command type: {command_type}")
+        except KeyboardInterrupt:
+            print("Stopped. Press Ctrl+C again to exit")
 
     def execute(self):
         consumer = self.connect_kafka()
@@ -64,4 +67,5 @@ class Start(Base):
             self.parse_message(consumer)
 
         if self.args["master"]:
+            self.parse_message(consumer)
             self.parse_message(consumer)
