@@ -1,5 +1,3 @@
-import json
-
 from dnsagent.libs import parser
 from dnsagent.libs import control
 from dnsagent.libs import command_generator as cmd_generator
@@ -49,14 +47,6 @@ def execute_general(message):
     if response.get("result") is False:
         utils.log_err(f"Command Failed: {response['error']}")
     else:
-        command = json.loads(response["data"])
-
-        # True if no failed data found
-        # status = command.get("status", True)
-        # if not status:
-        #     utils.log_err("Command Failed")
-        #     utils.log_err(command["error"])
-        # else:
         command_ = response["description"][0]["command"][0]["sendblock"]
         command_type = command_.get("cmd", "")
         zone = command_.get("zone", "")
@@ -84,6 +74,28 @@ def execute_command_general(cmd_and_zone, zone_id, command_type):
     return response
 
 
+def log_cluster_execution(responses):
+
+    for response in responses:
+
+        if response.get("result") is False:
+            utils.log_err(f"Command Failed: {response['error']}")
+        else:
+            # FIXME one respone had no description key
+            description = response.get("description", None)
+            if description:
+                description_key = list(response["description"][0].keys())[0]
+                command_ = description[0][description_key][0]["sendblock"]
+                command_type = command_.get("cmd", "")
+                section = command_.get("section", "")
+                cmd_data = command_.get("data", "")
+                utils.log_info(
+                    f'Command Executed. Command: "{command_type}" Section: "{section}" Data: "{cmd_data}"'
+                )
+            else:
+                utils.log_info(description)
+
+
 def execute_cluster(message, flags=None):
     zone = None
 
@@ -92,7 +104,8 @@ def execute_cluster(message, flags=None):
         zone_id = message[i].get("id_zone", None)
         command = message[i]["cluster"].get(flags, None)
 
-    execute_command_cluster(command, zone, zone_id, flags)
+    responses = execute_command_cluster(command, zone, zone_id, flags)
+    log_cluster_execution(responses)
 
 
 def execute_command_cluster(command, zone, zone_id, flags):
