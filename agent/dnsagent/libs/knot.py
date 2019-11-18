@@ -1,21 +1,22 @@
 import json
 
 from dnsagent.libs import parser
+from dnsagent.libs import control
 from dnsagent.libs import command_generator as cmd_generator
 from dnsagent.libs import utils
 
 
-def send_command(data):
+def send_command(command):
     """Send command to knot socket"""
-    initialiazed_command = parser.initialiaze(data)
+    initialiazed_command = parser.initialiaze(command)
 
     try:
-        knot_data = parser.execute_command(initialiazed_command)
+        response_ = control.execute_command(initialiazed_command)
         response = {
             "result": True,
             "description": initialiazed_command,
             "status": "Command Executed",
-            "data": knot_data,
+            "data": response_,
         }
         return response
     except Exception as e:
@@ -23,29 +24,34 @@ def send_command(data):
         return response
 
 
-def parse_data_general(data):
+def extract_message(message):
     zone = None  # example.com
-    zone_id = None
-    command_type = None
-    command = None
 
-    for i in data:
-        zone = i
-        command_type = data[i]["command"]
-        zone_id = data[i]["id_zone"]
-        command = data[i]["general"]
+    for item in message:
+        zone = item
+        command_type = message[item].get("command", None)
+        zone_id = message[item].get("id_zone", None)
+        command = message[item].get("general", None)
 
-    data = {"command": command, "zone": zone}
-    command_data = initialiaze_command_general(data, zone_id, command_type)
+    cmd_and_zone = {"command": command, "zone": zone}
 
-    if not command_data:
+    return cmd_and_zone, zone_id, command_type
+
+
+def execute_general(message):
+
+    cmd_and_zone, zone_id, command_type = extract_message(message)
+    response = execute_command_general(cmd_and_zone, zone_id, command_type)
+
+    if not response:
         utils.log_err("Command Not Supported")
     else:
-        dict_command = json.loads(command_data["data"])
+        dict_command = json.loads(response["data"])
         try:
             status = dict_command["status"]
         except Exception:
             status = True
+
         if not status:
             utils.log_err("Command Failed")
             utils.log_err(dict_command["error"])
@@ -53,37 +59,39 @@ def parse_data_general(data):
             utils.log_info("Command Executed")
 
 
-def initialiaze_command_general(data, zone_id, command_type):
+def execute_command_general(cmd_and_zone, zone_id, command_type):
     response = None
-    zone = data["zone"]
+    zone = cmd_and_zone.get("zone", None)
 
     if command_type == "config":
         begin_conf_cmd, commit_conf_cmd, _ = cmd_generator.conf_command(zone)
 
         send_command(begin_conf_cmd)  # begin
-        response = send_command(data)  # main data
+        response = send_command(cmd_and_zone)  # main data
         send_command(commit_conf_cmd)
+
     elif command_type == "zone":
         begin_zone_cmd, commit_zone_cmd = cmd_generator.zone_command(zone)
+
         send_command(begin_zone_cmd)  # begin
-        response = send_command(data)  # main data
+        response = send_command(cmd_and_zone)  # main data
         send_command(commit_zone_cmd)
 
     return response
 
 
-def parse_data_cluster(data, flags=None):
+def execute_cluster(message, flags=None):
     zone = None
-    id_zone = None
-    json_data = None
-    for i in data:
+
+    for i in message:
         zone = i
-        id_zone = data[i]["id_zone"]
-        json_data = data[i]["cluster"][flags]
-    initialiaze_command_cluster(json_data, zone, id_zone, flags)
+        zone_id = message[i].get("id_zone", None)
+        command = message[i]["cluster"].get(flags, None)
+
+    execute_command_cluster(command, zone, zone_id, flags)
 
 
-def initialiaze_command_cluster(data, zone, zone_id, flags):
+def execute_command_cluster(command, zone, zone_id, flags):
     response = []
 
     begin_conf_cmd, commit_conf_cmd, set_conf_cmd = cmd_generator.conf_command(zone)
@@ -96,18 +104,18 @@ def initialiaze_command_cluster(data, zone, zone_id, flags):
     file_response = send_command(fileset_command)
     response.append(file_response)
 
-    for i in data["master"]:
+    for i in command["master"]:
         master_command = cmd_generator.set_master_command(zone, i)
         master_response = send_command(master_command)
         response.append(master_response)
 
     if flags == "master":
-        for i in data["notify"]:
+        for i in command["notify"]:
             notify_command = cmd_generator.notify_command(zone, i)
             send_command(notify_command)
             response.append(notify_command)
 
-    for i in data["acl"]:
+    for i in command["acl"]:
         acl_cmd = cmd_generator.acl_command(zone, i)
         acl_response = send_command(acl_cmd)
         response.append(acl_response)

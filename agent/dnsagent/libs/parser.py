@@ -1,9 +1,4 @@
-import os
-import json
-
 from dnsagent.libs import utils
-from dnsagent.libs import client
-from dnsagent.vendor.libknot import control as knotlib
 
 
 def is_command(command):
@@ -28,13 +23,13 @@ def is_parameters(command, parameters):
         raise ValueError(msg)
 
 
-def initialiaze(data):
+def initialiaze(command):
     try:
-        parser_data = parse_json(data)
+        parsed_command = parse_json(command)
     except Exception as e:
         raise e
     else:
-        return parser_data
+        return parsed_command
 
 
 def get_params_block(data_params):
@@ -57,38 +52,38 @@ def get_params_recieve(data_params):
     return parameters
 
 
-def parse_json(data):
-    commands = []
+def parse_json(command):
+    parsed_command = []
 
     # command: command-commit | zone-begin
-    for command in data:
+    for command_ in command:
         actions = []
         # action: sendblock | receive
-        for action in data[command]:
+        for action in command[command_]:
             if not is_command(action):
                 return None
 
             data_obj = dict()
             # params: cmd | item | section | data | type
-            for params in data[command][action]:
+            for params in command[command_][action]:
                 if not is_parameters(action, params):
                     return None
-                data_obj[params] = data[command][action][params]
+                data_obj[params] = command[command_][action][params]
 
             actions.append({action: data_obj})
 
-        command_type = data[command]["receive"]["type"]  # .e.g block
+        command_type = command[command_]["receive"]["type"]  # .e.g block
         if command_type == "command":
             print("I AM CLI THINGS!")
             # FIXME is this subprocess thing still used?
             # I don't find any command_type == 'command' in the API sender
             cli_shell = parse_command_zone(actions[0]["sendblock"])
             exec_cliss = utils.exec_shell(cli_shell)
-            commands.append({"type": "general", command: str(exec_cliss)})
-            return commands
+            parsed_command.append({"type": "general", command_: str(exec_cliss)})
+            return parsed_command
         else:
-            commands.append({command: actions})
-            return commands
+            parsed_command.append({command_: actions})
+            return parsed_command
 
 
 def parse_command_zone(json_data):
@@ -131,33 +126,3 @@ def parse_command_zone(json_data):
             owner = json_data["owner"] + "." + zone
             cli_shell = f"knotc {cmd} {zone}. {owner}. {ttl} {rtype} {data}"
     return cli_shell
-
-
-def execute_command(command):
-    libknot_binary_path = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
-    knot_socket_path = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
-
-    knotlib.load_lib(libknot_binary_path)
-    ctl = knotlib.KnotCtl()
-    try:
-        ctl.connect(knot_socket_path)
-    except knotlib.KnotCtlError as e:
-        raise ValueError(f"Can't connect to knot socket: {e}")
-
-    try:
-        resp = None
-        for data in command:
-            parameter_block = None
-            parameter_stats = None
-
-            for project in data:
-                parameter_block = get_params_block(data[project])
-                parameter_stats = get_params_recieve(data[project])
-                resp = client.sendblock(ctl, parameter_block, parameter_stats["type"])
-    except knotlib.KnotCtlError as e:
-        resp = {"status": False, "error": str(e)}
-        return json.dumps(resp, indent=4)
-    else:
-        ctl.send(knotlib.KnotCtlType.END)
-        ctl.close()
-        return json.dumps(resp, indent=4)
