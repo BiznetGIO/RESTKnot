@@ -57,7 +57,7 @@ class Start(Base):
                 else:
                     utils.log_err(f"Unrecognized command type: {command_type}")
         except KeyboardInterrupt:
-            print("Stopped. Press Ctrl+C again to exit")
+            print("Stopping dnsagent. Press Ctrl+C again to exit")
 
     def execute(self):
         consumer = self.connect_kafka()

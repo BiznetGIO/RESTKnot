@@ -37,6 +37,7 @@ def extract_message(message):
 
 
 def execute_general(message):
+    """Execute command with 'general' type"""
 
     cmd_and_zone, zone_id, command_type = extract_message(message)
     response = execute_command_general(cmd_and_zone, zone_id, command_type)
@@ -62,14 +63,14 @@ def execute_command_general(cmd_and_zone, zone_id, command_type):
 
         send_command(begin_conf_cmd)  # begin
         response = send_command(cmd_and_zone)  # main data
-        send_command(commit_conf_cmd)
+        send_command(commit_conf_cmd)  # commit
 
     elif command_type == "zone":
         begin_zone_cmd, commit_zone_cmd = cmd_generator.zone_command(zone)
 
         send_command(begin_zone_cmd)  # begin
         response = send_command(cmd_and_zone)  # main data
-        send_command(commit_zone_cmd)
+        send_command(commit_zone_cmd)  # commit
 
     return response
 
@@ -97,6 +98,7 @@ def log_cluster_execution(responses):
 
 
 def execute_cluster(message, flags=None):
+    """Execute command with 'cluster' type"""
     zone = None
 
     for i in message:

@@ -87,6 +87,7 @@ def parse_json(command):
 
 
 def parse_command_zone(json_data):
+    # FIXME is this subprocess thing still used?
     cmd = json_data["cmd"]
     zone = json_data["zone"]
     owner_type = json_data["owner"]

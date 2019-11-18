@@ -7,6 +7,7 @@ from dnsagent.vendor.libknot import control as knotlib
 
 
 def send_block(ctl, commands, treturn):
+    """Send block command to Libknot server control."""
 
     data = commands.get("data", None)
     cmd = commands.get("cmd", None)
@@ -60,6 +61,7 @@ def connect_knot():
 
 
 def execute_command(command):
+    """Send command to knot."""
     knot_ctl = connect_knot()
 
     try:
