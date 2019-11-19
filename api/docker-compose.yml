@@ -22,7 +22,6 @@ services:
             - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
             - DEFAULT_SOA_SERIAL=3600 1800 604800 86400
             - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
-            - ACL=127.0.0.1/24, 172.21.0.1/24, 172.22.0.1/24
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
         volumes:

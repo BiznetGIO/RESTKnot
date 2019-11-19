@@ -9,8 +9,8 @@ Flask-Cors==3.0.7
 environs==6.0.0
 
 # App
-netaddr==0.7.19
 requests==2.21.0
+# FIXME can we use psycopg2-binary?
 psycopg2==2.8.3
 PyYAML==5.1.1
 kafka-python==1.4.6
