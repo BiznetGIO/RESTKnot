@@ -16,7 +16,7 @@ services:
             - DB_PORT=26257
             - DB_USER=root
             - DB_SSL=disable
-            - KAFKA_HOST=127.0.0.1
+            - KAFKA_HOST=kafka
             - KAFKA_PORT=9092
             # don't add quote, otherwise it will not work
             - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
@@ -24,6 +24,7 @@ services:
             - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
+        command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
             - ~/.config/restknot/:/rknt
         links:
@@ -36,7 +37,7 @@ services:
         ports:
             - '9092:9092'
         environment:
-            KAFKA_ADVERTISED_HOST_NAME: localhost
+            KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
             KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
     roach1:
         image: cockroachdb/cockroach:v19.1.5
