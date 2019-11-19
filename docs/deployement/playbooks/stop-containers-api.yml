@@ -1,0 +1,6 @@
+---
+- hosts: api
+
+  tasks:
+      - name: stop containers
+        command:  docker-compose -f ~/docker-images/docker-compose-api.yml stop
