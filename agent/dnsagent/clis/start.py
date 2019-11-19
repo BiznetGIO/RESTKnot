@@ -27,7 +27,7 @@ class Start(Base):
 
         if (broker_host and broker_port) is None:
             utils.log_err("Can't find kafka host and port")
-            return
+            exit()
 
         try:
             utils.log_info("Connecting to broker : " + broker)
