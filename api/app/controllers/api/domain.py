@@ -217,7 +217,6 @@ class AddDomain(Resource):
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
 
-        # FIXME ValueError: invalid literal for int() with base 10: 'None' kafka
         try:
             zone_id = insert_zone(zone, project_id)
         except Exception:
