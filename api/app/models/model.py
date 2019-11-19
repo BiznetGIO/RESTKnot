@@ -145,32 +145,6 @@ def retry_execute(query, column, retry_counter, error):
             return results
 
 
-def content_by_record(record):
-    data = list()
-    try:
-        content_data = get_all("content")
-    except Exception as e:
-        raise e
-    else:
-        for i in content_data:
-            if i["record"] == record:
-                data.append(i)
-    return data
-
-
-def serial_by_record(record):
-    result = list()
-    try:
-        content_data = get_all("serial")
-    except Exception as e:
-        raise e
-    else:
-        for i in content_data:
-            if i["record"] == record:
-                result.append(i)
-    return result
-
-
 def is_unique(table, field=None, value=None):
     unique = True
     data = get_by_id(table=table, field=field, id_=value)
