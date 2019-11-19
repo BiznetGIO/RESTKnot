@@ -1,39 +1,25 @@
-# DNSAGENT KNOT AGENT
+# RESTKnot Agent
 
-## INSTALLING
+## Installation
 
-For production test install dnsagent in pypi
-```
-pip install dnsagent
-```
-to developer install 
-```
+You can run the it locally or using Docker container with specied Dockerfile.
+
+Locally:
+
+``` python
+pip install -r requirements.txt
 pip install -e .
+
+# run the app: dnsagent start [master | slave]
+dnsagent start master
 ```
 
-Setting Knot Environment
-```
-dnsagent envi knot
-```
+Using docker:
 
-Before using sheep as a RESTKnot agent you are required to install kafka
-[Get Kafka And Install](https://kafka.apache.org/)
+``` python
+# build the image
+docker build -f Dockerfile -t restknot-agent:0.7.0 .
 
-Setting Your Broker
+# run via docker-compose
+docker-compose -f docker-compose.yml up
 ```
-dnsagent envi broker
-```
-
-## HELP
-Next documentation for dnsagent run 
-```
-dnsagent --help
-```
-for each command
-```
-dnsagent COMMAND --help
-```
-
-
-
-
