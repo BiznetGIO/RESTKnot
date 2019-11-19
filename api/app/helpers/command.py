@@ -5,7 +5,7 @@ from app.models import model
 from app.helpers import producer
 
 
-def config_zone(zone, zone_id):
+def config_zone(zone, zone_id, command):
     command = {
         zone: {
             "id_zone": zone_id,
@@ -13,7 +13,7 @@ def config_zone(zone, zone_id):
             "command": "config",
             "general": {
                 "sendblock": {
-                    "cmd": "conf-set",
+                    "cmd": command,
                     "section": "zone",
                     "item": "domain",
                     "data": zone,
@@ -50,6 +50,7 @@ def generate_command(**kwargs):
     rtype = kwargs.get("rtype")
     ttl = kwargs.get("ttl")
     data = kwargs.get("data")
+    command = kwargs.get("command")
 
     command = {
         zone_name: {
@@ -58,7 +59,7 @@ def generate_command(**kwargs):
             "command": "zone",
             "general": {
                 "sendblock": {
-                    "cmd": "zone-set",
+                    "cmd": command,
                     "zone": zone_name,
                     "owner": owner,
                     "rtype": rtype,
@@ -72,7 +73,7 @@ def generate_command(**kwargs):
     return command
 
 
-def soa_default_command(soa_record_id):
+def soa_default_command(soa_record_id, command):
     record, zone, type_, ttl, content = get_other_data(soa_record_id)
     if type_[0]["type"] != "SOA":
         return False
@@ -87,11 +88,12 @@ def soa_default_command(soa_record_id):
         rtype=type_[0]["type"],
         ttl=ttl[0]["ttl"],
         data=content[0]["content"],
+        command=command,
     )
     producer.send(command)
 
 
-def ns_default_command(ns_record_id):
+def ns_default_command(ns_record_id, command):
     record, zone, type_, ttl, content = get_other_data(ns_record_id)
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
@@ -104,11 +106,12 @@ def ns_default_command(ns_record_id):
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
             data=i["content"],
+            command=command,
         )
         producer.send(command)
 
 
-def record_insert(record_id):
+def record_insert(record_id, command):
     record, zone, type_, ttl, content = get_other_data(record_id)
 
     zone_id = zone[0]["id"]
@@ -134,6 +137,7 @@ def record_insert(record_id):
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
             data=serial + " " + content[0]["content"],
+            command=command,
         )
     else:
         command = generate_command(
@@ -143,6 +147,7 @@ def record_insert(record_id):
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
             data=content[0]["content"],
+            command="zone-set",
         )
 
     producer.send(command)

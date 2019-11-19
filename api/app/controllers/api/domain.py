@@ -223,16 +223,16 @@ class AddDomain(Resource):
             return response(401, message="Project ID not found")
         else:
             # add zone config
-            command.config_zone(zone, zone_id)
+            command.config_zone(zone, zone_id, "conf-set")
 
             soa_record_id = insert_soa_default(zone_id)
-            command.soa_default_command(soa_record_id)
+            command.soa_default_command(soa_record_id, "zone-set")
 
             ns_record_id = insert_ns_default(zone_id)
-            command.ns_default_command(ns_record_id)
+            command.ns_default_command(ns_record_id, "zone-set")
 
             cname_record_id = insert_cname(zone_id, zone)
-            command.record_insert(cname_record_id)
+            command.record_insert(cname_record_id, "zone-set")
 
             try:
                 command.cluster_command(cname_record_id)
