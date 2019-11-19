@@ -189,14 +189,50 @@ class GetDomainDataByProjectId(Resource):
 
 
 class DeleteDomain(Resource):
+    def get_record_ids(self, records):
+        soa_record_id = None
+        ns_record_id = None
+        cname_record_id = None
+
+        for item in records:
+            if item.get("type_id") == 1:
+                soa_record_id = item.get("id")
+            if item.get("type_id") == 4:
+                ns_record_id = item.get("id")
+            if item.get("type_id") == 5:
+                cname_record_id = item.get("id")
+        return soa_record_id, ns_record_id, cname_record_id
+
     @auth.auth_required
-    def delete(self, zone_id):
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("zone", type=str, required=True)
+        args = parser.parse_args()
+        zone = args["zone"]
+
         try:
+            zones = model.get_by_id(table="zone", field="zone", id_=f"'{zone}'")
+            zone_id = zones[0]["id"]
+
+            records = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
+
+            # unset conf
+            command.config_zone(zone, zone_id, "conf-unset")
+            # unset zone
+            command.soa_default_command(soa_record_id, "zone-unset")
+            command.ns_default_command(ns_record_id, "zone-unset")
+            command.record_insert(cname_record_id, "zone-unset")
+            # no need to perform unset for clusering, the necessary file deleted
+            # automatically after the above operation
+
             # other data (e.g record) deleted automatically
             # by cockroach when no PK existed
             model.delete(table="zone", field="id", value=zone_id)
 
-            return response(200, message="Domain Deleted")
+            return response(200, data=zone, message="Deleted")
+        except IndexError:
+            return response(401, message=f"Zone Not Found")
         except Exception as e:
             return response(401, message=str(e))
 

@@ -6,7 +6,7 @@ from app.helpers import producer
 
 
 def config_zone(zone, zone_id, command):
-    command = {
+    cmd = {
         zone: {
             "id_zone": zone_id,
             "type": "general",
@@ -22,7 +22,7 @@ def config_zone(zone, zone_id, command):
             },
         }
     }
-    producer.send(command)
+    producer.send(cmd)
 
 
 def get_other_data(record_id):
@@ -52,7 +52,7 @@ def generate_command(**kwargs):
     data = kwargs.get("data")
     command = kwargs.get("command")
 
-    command = {
+    cmd = {
         zone_name: {
             "id_zone": zone_id,
             "type": "general",
@@ -70,7 +70,7 @@ def generate_command(**kwargs):
             },
         }
     }
-    return command
+    return cmd
 
 
 def soa_default_command(soa_record_id, command):
@@ -81,7 +81,7 @@ def soa_default_command(soa_record_id, command):
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    command = generate_command(
+    cmd = generate_command(
         zone_id=zone_id,
         zone_name=zone_name,
         owner=record[0]["record"],
@@ -90,7 +90,7 @@ def soa_default_command(soa_record_id, command):
         data=content[0]["content"],
         command=command,
     )
-    producer.send(command)
+    producer.send(cmd)
 
 
 def ns_default_command(ns_record_id, command):
@@ -99,7 +99,7 @@ def ns_default_command(ns_record_id, command):
     zone_name = zone[0]["zone"]
 
     for i in content:
-        command = generate_command(
+        cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
             owner=record[0]["record"],
@@ -108,7 +108,7 @@ def ns_default_command(ns_record_id, command):
             data=i["content"],
             command=command,
         )
-        producer.send(command)
+        producer.send(cmd)
 
 
 def record_insert(record_id, command):
@@ -130,7 +130,7 @@ def record_insert(record_id, command):
             else:
                 serial = serial + " " + i["serial"]
 
-        command = generate_command(
+        cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
             owner=record[0]["record"],
@@ -140,7 +140,7 @@ def record_insert(record_id, command):
             command=command,
         )
     else:
-        command = generate_command(
+        cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
             owner=record[0]["record"],
@@ -150,7 +150,7 @@ def record_insert(record_id, command):
             command="zone-set",
         )
 
-    producer.send(command)
+    producer.send(cmd)
 
 
 def cluster_file():
