@@ -1,5 +1,0 @@
-# custom cockroachdb
-
-FROM cockroachdb/cockroach:v19.1.5
-
-COPY ./schema.sql ./init-db.sh /cockroach/
