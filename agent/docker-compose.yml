@@ -11,15 +11,9 @@ services:
       - RESTKNOT_KAFKA_TOPIC=domaindata
       - RESTKNOT_KAFKA_FLAGS=master
       - RESTKNOT_KAFKA_GROUP=cmgz_master
-    networks:
-      - rknt-agent-net
     entrypoint: dnsagent start master
     volumes:
         - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
-        - /var/run/knot/:/var/run/knot/
         - /etc/knot/:/etc/knot/
+        - /var/run/knot/:/var/run/knot/
         - /var/lib/knot/:/var/lib/knot/
-
-networks:
-  rknt-agent-net:
-    driver: bridge
