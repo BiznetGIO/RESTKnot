@@ -44,10 +44,4 @@ services:
         ports:
           - "26257:26257"
         volumes:
-          - ./cockroach-data/roach1:/cockroach/cockroach-data
-    roach-init:
-        image: bgn/cockroach:v19.1.5
-        entrypoint: /cockroach/init-db.sh
-        command: init
-        depends_on:
-            - roach-one
+          - /cockroach-data/roach1:/cockroach/cockroach-data
