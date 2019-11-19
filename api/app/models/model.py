@@ -148,6 +148,9 @@ def retry_execute(query, column, retry_counter, error):
 def is_unique(table, field=None, value=None):
     unique = True
     data = get_by_id(table=table, field=field, id_=value)
-    if len(data) != 0:
-        unique = False
+
+    if data:  # initial database will return None
+        if len(data) != 0:
+            unique = False
+
     return unique
