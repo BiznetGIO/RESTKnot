@@ -132,7 +132,6 @@ def retry_execute(query, column, retry_counter, error):
         raise error
     else:
         retry_counter += 1
-        print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
         try:
             cursor.execute(query)
         except (Exception, psycopg2.DatabaseError):
