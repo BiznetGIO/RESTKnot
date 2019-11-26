@@ -1,58 +1,49 @@
-version: '0.8.0'
+version: '3'
 services:
-    web:
-        build: .
+    restknot-api:
+        image: restknot-api:0.7.0
         ports:
-          - "6969:6969"
+            - '5000:5000'
+        environment:
+            - FLASK_APP=autoapp.py
+            - FLASK_ENV=production
+            - GUNICORN_WORKERS= 4
+            - FLASK_DEBUG=0
+            - APP_HOST=0.0.0.0
+            - APP_PORT=5000
+            - DB_NAME=knotdb # don't add whitespace beetween =
+            - DB_HOST=roach1
+            - DB_PORT=26257
+            - DB_USER=root
+            - DB_SSL=disable
+            - KAFKA_HOST=kafka
+            - KAFKA_PORT=9092
+            # don't add quote, otherwise it will not work
+            - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
+            - DEFAULT_SOA_SERIAL=3600 1800 604800 86400
+            - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
+            # change according to your yaml server config location
+            - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
+            - RESTKNOT_API_KEY='123'
+        command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
-          - .:/app
-        environment:
-          - APP_HOST=0.0.0.0
-          - APP_PORT=6969
-          - FLASK_DEBUG=True
-          - APP_REDIS_URL=redis://:pass@session:6379/0
-          - CELERY_BROKER_URL=amqp://admin:qazwsx@rabbitmq:5672//
-          - CELERY_RESULT_BACKEND=amqp://admin:qazwsx@rabbitmq:5672//
-          - WORKER=2
-          - ENVIRONMENT=development
-          - COMMAND=server
-        command: ["bash","run.sh"]
+            - ~/.config/restknot/:/rknt
         links:
-          - "session"
-          - "rabbitmq"
-
-    session:
-        image: redis
-        command: ["redis-server", "--requirepass", "pass"]
+            - zookeeper
+            - kafka
+    zookeeper:
+        image: wurstmeister/zookeeper
+    kafka:
+        image: wurstmeister/kafka
         ports:
-          - "6379:6379"
-
-    rabbitmq:
-        image: rabbitmq:3-management
-        hostname: rabbitmq
+            - '9092:9092'
         environment:
-            RABBITMQ_DEFAULT_USER: "admin"
-            RABBITMQ_DEFAULT_PASS: "qazwsx"
-            RABBITMQ_DEFAULT_VHOST: "/"
-        user: nobody
+            KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    roach1:
+        image: cockroachdb/cockroach:v19.1.5
+        command: start --insecure
         ports:
-            - "15672:15672"
-            - "5672:5672"
-
-    celeryneo:
-        image: neo-openstack-v2_web
-        environment:
-          - C_FORCE_ROOT=true
-          - APP_HOST=0.0.0.0
-          - APP_PORT=6969
-          - FLASK_DEBUG=True
-          - APP_REDIS_URL=redis://:pass@session:6379/0
-          - CELERY_BROKER_URL=amqp://admin:qazwsx@rabbitmq:5672//
-          - CELERY_RESULT_BACKEND=amqp://admin:qazwsx@rabbitmq:5672//
-        user: nobody
-        command: ["bash","celery.sh" ,"2"]
+          - "26257:26257"
         volumes:
-          - .:/app
-        links:
-          - "session"
-          - "rabbitmq"
+          - /cockroach-data/roach1:/cockroach/cockroach-data

@@ -5,42 +5,39 @@ from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
 
+
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {"id": str(d["id"]), "zone": d["zone"], "user_id": d["user_id"]}
+        results.append(datum)
+    return results
+
+
 class GetZoneData(Resource):
     @auth.auth_required
     def get(self):
-        results = list()
         try:
-            data_zone = model.read_all("zone")
+            zones = model.get_all("zone")
         except Exception as e:
             return response(401, message=str(e))
-        
-        for i in data_zone:
-            user_data = model.read_by_id("user", i['user'])
-            data = {
-                "key": i['key'],
-                "value": i['value'],
-                "created_at": i['created_at'],
-                "user": user_data
-            }
-            results.append(data)
-        return response(200, data=results)
+
+        data = get_datum(zones)
+        return response(200, data=data)
 
 
 class GetZoneDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, zone_id):
         try:
-            data_zone = model.read_by_id("zone", key)
+            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user_data = model.read_by_id("user", data_zone['user'])
-            data = {
-                "key": data_zone['key'],
-                "value": data_zone['value'],
-                "created_at": data_zone['created_at'],
-                "user": user_data
-            }
+            data = get_datum(zone)
             return response(200, data=data)
 
 
@@ -48,30 +45,22 @@ class ZoneAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('id_user', type=str, required=True)
+        parser.add_argument("user_id", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
         args = parser.parse_args()
-        zone = args["zone"]
-        zone = zone.lower()
-        id_user = args["id_user"]
+        zone = args["zone"].lower()
+        user_id = args["user_id"]
 
-        user = model.get_user_by_project_id(id_user)['key']
-        key = utils.get_last_key("zone")
-
-        if utils.check_unique("zone", "value", zone):
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
-        
-        data = {
-            "key": key,
-            "value": zone,
-            "created_at": utils.get_datetime(),
-            "user": user,
-        }
+
+        # FIXME "is_committed" should be added
+        data = {"zone": zone, "user_id": user_id}
         try:
-            model.insert_data("zone", key, data)
+            model.insert(table="zone", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -80,38 +69,38 @@ class ZoneAdd(Resource):
 
 class ZoneEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, zone_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('id_user', type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("user_id", type=str, required=True)
         args = parser.parse_args()
-        zone = args["zone"]
-        zone = zone.lower()
-        id_user = args["id_user"]
-        if utils.check_unique("zone", "value", zone, key=key):
+        zone = args["zone"].lower()
+
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
             return response(401, message="Duplicate zone Detected")
+
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
+
         data = {
-            "key": key,
-            "value": zone,
-            "created_at": utils.get_datetime(),
-            "user": id_user,
+            "where": {"id": zone_id},
+            "data": {"zone": args["zone"], "user_id": args["user_id"]},
         }
         try:
-            model.update("zone", key, data)
+            model.update("zone", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Edited")
-        
+
 
 class ZoneDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, zone_id):
         try:
-            data = model.delete("zone", key)
+            data = model.delete(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
+            # FIXME still say 'deleted' even data = 0
             return response(200, data=data, message="Deleted")

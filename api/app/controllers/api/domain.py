@@ -1,4 +1,6 @@
+import os
 from flask_restful import Resource, reqparse
+
 from app.helpers.rest import response
 from app.models import model
 from app.libs import utils
@@ -6,270 +8,289 @@ from app.libs import validation
 from app.helpers import command
 from app.helpers import producer
 from app.middlewares import auth
-import os
 
 
-def add_soa_record(zone_key, record_key):
+def insert_zone(zone, project_id):
+
+    user = model.get_by_id(table="user", field="project_id", id_=f"{project_id}")
+    print(f"user: {user}")
+    user_id = user[0]["id"]
+    print(f"user_id: {user_id}")
+
+    data = {"zone": zone, "user_id": user_id}
+    zone_id = model.insert(table="zone", data=data)
+    return zone_id
+
+
+def insert_soa_record(zone_id):
     record_data = {
-        "key": record_key,
-        "value": "@",
-        "zone": zone_key,
-        "type": "4",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False
+        "record": "@",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "1",
+        "ttl_id": "6",
     }
-
-    try:
-        model.insert_data("record", record_key, record_data)
-    except Exception as e:
-        return response(401, message=str(e))
-
-    date_data = utils.soa_time_set()+"01"
-    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT", os.getenv("DEFAULT_SOA_CONTENT"))
-    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL", os.getenv("DEFAULT_SOA_SERIAL"))
-    content_value = default_soa_content+" "+date_data+" "+default_soa_serial
-    content_key = utils.get_last_key("content")
-    content_data = {
-        "key": content_key,
-        "value": content_value,
-        "record": record_key,
-        "created_at": utils.get_datetime()
-    }
-    try:
-        model.insert_data("content", content_key, content_data)
-    except Exception as e:
-        return response(401, message=str(e))
+    record_id = model.insert(table="record", data=record_data)
+    return record_id
 
 
-def add_ns_default(zone_key, record_key):
+def insert_record_content(record_id):
+    date_data = utils.soa_time_set() + "01"
+    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
+    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL")
+
+    content = f"{default_soa_content} {date_data} {default_soa_serial}"
+    content_data = {"content": content, "record_id": record_id}
+
+    model.insert(table="content", data=content_data)
+
+
+def insert_soa_default(zone_id):
+    record_id = insert_soa_record(zone_id)
+    insert_record_content(record_id)
+    return record_id
+
+
+def insert_ns_record(zone_id):
     record_data = {
-        "key": record_key,
-        "value": "@",
-        "zone": zone_key,
-        "type": "5",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False
+        "record": "@",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "4",
+        "ttl_id": "6",
     }
+    record_id = model.insert(table="record", data=record_data)
+    return record_id
 
-    try:
-        model.insert_data("record", record_key, record_data)
-    except Exception as e:
-        return response(401, message=str(e))
 
-    default_ns = os.environ.get("DEFAULT_NS", os.getenv("DEFAULT_NS"))
-    default_ns = default_ns.split(" ")
-    for i in default_ns:
-        content_key = utils.get_last_key("content")
-        content_data = {
-            "key": content_key,
-            "value": i,
-            "record": record_key,
-            "created_at": utils.get_datetime()
+def insert_ns_content(record_id):
+    default_ns = os.environ.get("DEFAULT_NS")
+    nameserver = default_ns.split(" ")
+
+    for name in nameserver:
+        content_data = {"content": name, "record_id": record_id}
+        model.insert(table="content", data=content_data)
+
+
+def insert_ns_default(zone_id):
+    record_id = insert_ns_record(zone_id)
+    insert_ns_content(record_id)
+    return record_id
+
+
+def insert_cname_record(zone_id):
+    record_data = {
+        "record": "www",
+        "is_serial": False,
+        "zone_id": zone_id,
+        "type_id": "5",
+        "ttl_id": "6",
+    }
+    record_id = model.insert(table="record", data=record_data)
+    return record_id
+
+
+def insert_cname_content(zone, record_id):
+    content_data = {"content": f"{zone}.", "record_id": record_id}
+    model.insert(table="content", data=content_data)
+
+
+def insert_cname(zone_id, zone):
+    record_id = insert_cname_record(zone_id)
+    insert_cname_content(zone, record_id)
+    return record_id
+
+
+def get_record_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {
+            "id": str(d["id"]),
+            "record": d["record"],
+            "type_id": d["type_id"],
+            "ttl_id": d["ttl_id"],
         }
-        try:
-            model.insert_data("content", content_key, content_data)
-        except Exception as e:
-            return response(401, message=str(e))
+        results.append(datum)
+    return results
 
 
-def add_cname_default(zone_key, record_key, zone_name):
-    record_data = {
-        "key": record_key,
-        "value": "www",
-        "zone": zone_key,
-        "type": "2",
-        "ttl": "6",
-        "created_at": utils.get_datetime(),
-        "serial": False
-    }
+def get_user_datum(data):
+    if data is None:
+        return
 
-    try:
-        model.insert_data("record", record_key, record_data)
-    except Exception as e:
-        return response(401, message=str(e))
+    results = []
+    for d in data:
+        datum = {"id": str(d["id"]), "email": d["email"], "project_id": d["project_id"]}
+        results.append(datum)
+    return results
 
 
-    content_key = utils.get_last_key("content")
-    content_data = {
-        "key": content_key,
-        "value": zone_name+".",
-        "record": record_key,
-        "created_at": utils.get_datetime()
-    }
-    try:
-        model.insert_data("content", content_key, content_data)
-    except Exception as e:
-        return response(401, message=str(e))
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        user = model.get_by_id(table="user", field="id", id_=d["user_id"])
+        record = model.get_by_id(table="record", field="zone_id", id_=d["id"])
+        user_datum = get_user_datum(user)
+        record_datum = get_record_datum(record)
+
+        datum = {
+            "zone_id": d["id"],
+            "zone": d["zone"],
+            "user": user_datum,
+            "record": record_datum,
+        }
+        results.append(datum)
+    return results
+
 
 class GetDomainData(Resource):
     @auth.auth_required
     def get(self):
-        results = list()
         try:
-            data_zone = model.read_all("zone")
+            zones = model.get_all("zone")
         except Exception as e:
             return response(401, message=str(e))
-        
-        for i in data_zone:
-            user = model.read_by_id("user", i['user'])
-            record = model.record_by_zone(i['key'])
-            data = {
-                "key": i['key'],
-                "value": i['value'],
-                "created_at": i['created_at'],
-                "user": user,
-                "record": record
-            }
-            results.append(data)
-        return response(200, data=results)
+
+        data = get_datum(zones)
+        return response(200, data=data)
+
+
+class GetDomainDataId(Resource):
+    @auth.auth_required
+    def get(self, zone_id):
+        try:
+            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            data = get_datum(zone)
+            return response(200, data=data)
 
 
 class GetDomainDataByProjectId(Resource):
     @auth.auth_required
     def get(self, project_id):
-        results = list()
-        user = dict()
+
         try:
-            data_user = model.read_all("user")
-        except Exception as e:
-            return response(401, message=str(e))
-        else: 
-            for i in data_user:
-                if i['project_id'] == project_id:
-                    user = i
-                    break
-        try:
-            data_zone = model.read_all("zone")
+            user = model.get_by_id(
+                table="user", field="project_id", id_=f"'{project_id}'"
+            )
+            user_id = user[0]["id"]
+            zone = model.get_by_id(table="zone", field="user_id", id_=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for i in data_zone:
-                if i['user'] == user['key']:
-                    user = model.read_by_id("user", i['user'])
-                    record = model.record_by_zone(i['key'])
-                    data = {
-                        "key": i['key'],
-                        "value": i['value'],
-                        "created_at": i['created_at'],
-                        "user": user,
-                        "record": record
-                    }
-                    results.append(data)
-            return response(200, data=results)
-
-
-class GetDomainDataId(Resource):
-    @auth.auth_required
-    def get(self, key):
-        try:
-            data_zone = model.read_by_id("zone", key)
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
-            user = model.read_by_id("user", data_zone['user'])
-            record = model.record_by_zone(data_zone['key'])
-            data = {
-                "key": data_zone['key'],
-                "value": data_zone['value'],
-                "created_at": data_zone['created_at'],
-                "user": user,
-                "record": record
-            }
+            data = get_datum(zone)
             return response(200, data=data)
 
 
 class DeleteDomain(Resource):
+    def get_record_ids(self, records):
+        soa_record_id = None
+        ns_record_id = None
+        cname_record_id = None
+
+        for item in records:
+            if item.get("type_id") == 1:
+                soa_record_id = item.get("id")
+            if item.get("type_id") == 4:
+                ns_record_id = item.get("id")
+            if item.get("type_id") == 5:
+                cname_record_id = item.get("id")
+        return soa_record_id, ns_record_id, cname_record_id
+
     @auth.auth_required
-    def delete(self, key):
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("zone", type=str, required=True)
+        args = parser.parse_args()
+        zone = args["zone"]
+
         try:
-            record = model.record_by_zone(key)
-        except Exception as e:
-            return response(401, message="Record Not Found | "+str(e))
-        else:
-            for i in record:
-                try:
-                    model.record_delete(i['key'])
-                except Exception as e:
-                    print(e)
-        try:
-            model.delete("zone", key)
+            zones = model.get_by_id(table="zone", field="zone", id_=f"'{zone}'")
+            zone_id = zones[0]["id"]
+
+            records = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
+
+            # unset conf
+            command.config_zone(zone, zone_id, "conf-unset")
+            # unset zone
+            command.soa_default_command(soa_record_id, "zone-unset")
+            command.ns_default_command(ns_record_id, "zone-unset")
+            command.record_insert(cname_record_id, "zone-unset")
+            # no need to perform unset for clusering, the necessary file deleted
+            # automatically after the above operation
+
+            # other data (e.g record) deleted automatically
+            # by cockroach when no PK existed
+            model.delete(table="zone", field="id", value=zone_id)
+
+            return response(200, data=zone, message="Deleted")
+        except IndexError:
+            return response(401, message=f"Zone Not Found")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, message="Domain Or Zone Deleted")
 
 
 class AddDomain(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('zone', type=str, required=True)
-        parser.add_argument('project_id', type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
-        zone = args['zone']
-        project_id = args['project_id']
-        user = model.get_user_by_project_id(project_id)['key']
-        zone_key = utils.get_last_key("zone")
-        
-        # Validation Unique Zone
-        if utils.check_unique("zone", "value", zone):
+        zone = args["zone"]
+        project_id = args["project_id"]
+
+        # Validation
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
             return response(401, message="Duplicate zone Detected")
-        # Validation Zone Name
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
-        # Check Relation Zone to User
-        if model.check_relation("user", user):
-            return response(401, message="Relation to user error Check Your Key")
-        
-       
-        zone_data = {
-            "key": zone_key,
-            "value": zone,
-            "created_at": utils.get_datetime(),
-            "user": user,
-        }
+
         try:
-            model.insert_data("zone", zone_key, zone_data)
-        except Exception as e:
-            return response(401, message=str(e))
+            zone_id = insert_zone(zone, project_id)
+        except Exception:
+            return response(401, message="Project ID not found")
         else:
+            # add zone config
+            command.config_zone(zone, zone_id, "conf-set")
 
-            # Adding Zone Config
-            config_command = command.config_zone(zone, zone_key)
-            producer.send(config_command)
-            # ADDING DEFAULT RECORD   
-            record_key_soa = utils.get_last_key("record")
-            add_soa_record(zone_key, record_key_soa)
-            command.soa_default_command(record_key_soa)
+            soa_record_id = insert_soa_default(zone_id)
+            command.soa_default_command(soa_record_id, "zone-set")
 
-            record_key_ns = utils.get_last_key("record")
-            add_ns_default(zone_key, record_key_ns)
-            command.ns_default_command(record_key_ns)
+            ns_record_id = insert_ns_default(zone_id)
+            command.ns_default_command(ns_record_id, "zone-set")
 
-            record_key_cname = utils.get_last_key("record")
-            add_cname_default(zone_key, record_key_cname, zone)
-            json_command = command.record_insert(record_key_cname)
-            producer.send(json_command)
-            # DEFAULT RECORD END
+            cname_record_id = insert_cname(zone_id, zone)
+            command.record_insert(cname_record_id, "zone-set")
 
+            try:
+                command.cluster_command(cname_record_id)
+            except Exception as e:
+                return response(401, message=str(e))
+
+            # just for feedback return value
+            zone_data = {"zone": zone, "project_id": project_id}
             return response(200, data=zone_data, message="Inserted")
 
-        
+
 class ViewCommand(Resource):
     @auth.auth_required
-    def get(self, key):
-        zone_data = model.read_by_id("zone", key)['value']
-        command_data = command.config_zone(zone_data, key)
+    def get(self, zone_id):
+        zone_data = model.read_by_id("zone", zone_id)["value"]
+        command_data = command.config_zone(zone_data, zone_id)
         try:
             test = producer.send(command_data)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            data ={
-                "send_status": test,
-                "command": command_data
-            }
+            data = {"send_status": test, "command": command_data}
             return response(200, data=data, message=test)
-            

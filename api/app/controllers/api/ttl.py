@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.middlewares import auth
 
 
@@ -9,7 +8,7 @@ class GetTtlData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.read_all("ttl")
+            data = model.get_all("ttl")
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -18,9 +17,9 @@ class GetTtlData(Resource):
 
 class GetTtlDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, ttl_id):
         try:
-            data = model.read_by_id("ttl", key)
+            data = model.get_by_id(table="ttl", field="id", id_=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -31,16 +30,13 @@ class TtlAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('ttl', type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
-        key = utils.get_last_key("ttl")
-        data = {
-            "key": key,
-            "value": ttl
-        }
+
+        data = {"ttl": ttl}
         try:
-            model.insert_data("ttl", key, data)
+            model.insert(table="ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -49,28 +45,27 @@ class TtlAdd(Resource):
 
 class TtlEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, ttl_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('ttl', type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
-        data = {
-            "key": key,
-            "value": ttl
-        }
+
+        data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
+
         try:
-            model.update("ttl", key, data)
+            model.update("ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Edited")
-        
+
 
 class TtlDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, ttl_id):
         try:
-            data = model.delete("ttl", key)
+            data = model.delete(table="ttl", field="id", value=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

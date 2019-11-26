@@ -1,170 +1,213 @@
+import yaml
+import os
+
 from app.models import model
 from app.helpers import producer
 
-def config_zone(zone, zone_key):
-    json_command = {
+
+def config_zone(zone, zone_id, command):
+    cmd = {
         zone: {
-            "id_zone": zone_key,
+            "id_zone": zone_id,
             "type": "general",
             "command": "config",
             "general": {
                 "sendblock": {
-                    "cmd": "conf-set",
+                    "cmd": command,
                     "section": "zone",
                     "item": "domain",
-                    "data": zone
+                    "data": zone,
                 },
-                "receive": {
-                    "type": "block"
-                }
-            }
+                "receive": {"type": "block"},
+            },
         }
     }
-    return json_command
+    producer.send(cmd)
 
 
-def soa_default_command(soa_record_key):
+def get_other_data(record_id):
     try:
-        data_record = model.read_by_id("record", soa_record_key)
-    except Exception as e:
-        raise e
-    
-    try:
-        zone = model.read_by_id("zone", data_record['zone'])
+        record = model.get_by_id(table="record", field="id", id_=record_id)
+
+        zone_id = record[0]["zone_id"]
+        type_id = record[0]["type_id"]
+        ttl_id = record[0]["ttl_id"]
+
+        zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+        type_ = model.get_by_id(table="type", field="id", id_=type_id)
+        ttl = model.get_by_id(table="ttl", field="id", id_=ttl_id)
+        content = model.get_by_id(table="content", field="record_id", id_=record_id)
+        return (record, zone, type_, ttl, content)
     except Exception as e:
         raise e
 
-    try:
-        data_type = model.read_by_id("type", data_record['type'])['value']
-    except Exception as e:
-        raise e
-        
-    if data_type != "SOA":
+
+def generate_command(**kwargs):
+
+    zone_id = kwargs.get("zone_id")
+    zone_name = kwargs.get("zone_name")
+    owner = kwargs.get("owner")
+    rtype = kwargs.get("rtype")
+    ttl = kwargs.get("ttl")
+    data = kwargs.get("data")
+    command = kwargs.get("command")
+
+    cmd = {
+        zone_name: {
+            "id_zone": zone_id,
+            "type": "general",
+            "command": "zone",
+            "general": {
+                "sendblock": {
+                    "cmd": command,
+                    "zone": zone_name,
+                    "owner": owner,
+                    "rtype": rtype,
+                    "ttl": ttl,
+                    "data": data,
+                },
+                "receive": {"type": "block"},
+            },
+        }
+    }
+    return cmd
+
+
+def soa_default_command(soa_record_id, command):
+    record, zone, type_, ttl, content = get_other_data(soa_record_id)
+    if type_[0]["type"] != "SOA":
         return False
 
-    try:
-        data_ttl = model.read_by_id("ttl", data_record['ttl'])['value']
-    except Exception as e:
-        raise e
-    try:
-        data_content = model.content_by_record(data_record['key'])[0]['value']
-    except Exception as e:
-        raise e
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
 
-    json_command = {
-        zone['value']: {
-            "id_zone": zone['key'],
-            "command": "zone",
-            "type": "general",
-            "general": {
-                    "sendblock": {
-                    "cmd": "zone-set",
-                    "zone": zone['value'],
-                    "owner": data_record['value'],
-                    "rtype": "SOA",
-                    "ttl": data_ttl,
-                    "data": data_content
-                },
-                "receive": {
-                    "type": "block"
-                }
-            }
-        }
-    }
-    producer.send(json_command)
+    cmd = generate_command(
+        zone_id=zone_id,
+        zone_name=zone_name,
+        owner=record[0]["record"],
+        rtype=type_[0]["type"],
+        ttl=ttl[0]["ttl"],
+        data=content[0]["content"],
+        command=command,
+    )
+    producer.send(cmd)
 
-def ns_default_command(record_ns_key_default):
-    try:
-        data_record = model.read_by_id("record", record_ns_key_default)
-    except Exception as e:
-        raise e
-    else:
-        zone = model.read_by_id("zone", str(data_record['zone']))
-        ttl = model.read_by_id("ttl", str(data_record['ttl']))['value']
-        types = model.read_by_id("type", str(data_record['type']))['value']
-        data_content = model.content_by_record(data_record['key'])
-        for i in data_content:
-            json_command = {
-                zone['value']: {
-                    "id_zone": zone['key'],
-                    "type": "general",
-                    "command": "zone",
-                    "general": {
-                            "sendblock": {
-                            "cmd": "zone-set",
-                            "zone": zone['value'],
-                            "owner": data_record['value'],
-                            "rtype": types,
-                            "ttl": ttl,
-                            "data": i['value']
-                        },
-                        "receive": {
-                            "type": "block"
-                        }
-                    }
-                }
-            }
-            producer.send(json_command)
 
-def record_insert(key):
-    try:
-        data_record = model.read_by_id("record", key)
-    except Exception as e:
-        raise e
+def ns_default_command(ns_record_id, command):
+    record, zone, type_, ttl, content = get_other_data(ns_record_id)
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
 
-    zone = model.read_by_id("zone", str(data_record['zone']))
-    ttl = model.read_by_id("ttl", str(data_record['ttl']))['value']
-    types = model.read_by_id("type", str(data_record['type']))['value']
-    data_content = model.content_by_record(data_record['key'])[0]['value']
+    for i in content:
+        cmd = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=i["content"],
+            command=command,
+        )
+        producer.send(cmd)
+
+
+def record_insert(record_id, command):
+    record, zone, type_, ttl, content = get_other_data(record_id)
+
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+
     serial = ""
-    if data_record['serial']:
-        serial_data = model.serial_by_record(data_record['key'])
+    if record[0]["is_serial"]:
+        # FIXME serial db never contain data
+        serial_data = model.get_by_id(
+            table="serial", field="record_id", id_=record[0]["id"]
+        )
+
         for i in serial_data:
             if serial == "":
-                serial = i['value']
+                serial = i["serial"]
             else:
-                serial = serial+" "+i['value']
-        json_command = {
-            zone['value']: {
-                "id_zone": zone['key'],
-                "command": "zone",
-                "type": "general",
-                "general": {
-                        "sendblock": {
-                        "cmd": "zone-set",
-                        "zone": zone['value'],
-                        "owner": data_record['value'],
-                        "rtype": types,
-                        "ttl": ttl,
-                        "data": serial+" "+data_content
-                    },
-                    "receive": {
-                        "type": "block"
-                    }
-                }
-            }
-        }
+                serial = serial + " " + i["serial"]
+
+        cmd = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=serial + " " + content[0]["content"],
+            command=command,
+        )
     else:
-        json_command = {
-            zone['value']: {
-                "id_zone": zone['key'],
-                "type": "general",
-                "command": "zone",
-                "general": {
-                        "sendblock": {
-                        "cmd": "zone-set",
-                        "zone": zone['value'],
-                        "owner": data_record['value'],
-                        "rtype": types,
-                        "ttl": ttl,
-                        "data": data_content
-                    },
-                    "receive": {
-                        "type": "block"
-                    }
-                }
-            }
+        cmd = generate_command(
+            zone_id=zone_id,
+            zone_name=zone_name,
+            owner=record[0]["record"],
+            rtype=type_[0]["type"],
+            ttl=ttl[0]["ttl"],
+            data=content[0]["content"],
+            command="zone-set",
+        )
+
+    producer.send(cmd)
+
+
+def cluster_file():
+    path = os.environ.get("RESTKNOT_CLUSTER_FILE")
+    if not path:
+        raise ValueError(f"RESTKNOT_CLUSTER_FILE is not set")
+
+    is_exists = os.path.exists(path)
+    if is_exists:
+        return path
+    else:
+        raise ValueError(f"Clustering File Not Found")
+
+
+def get_clusters():
+    file_ = cluster_file()
+    clusters = yaml.safe_load(open(file_))
+    return clusters
+
+
+def cluster_command(record_id):
+    record, zone, type_, _, content = get_other_data(record_id)
+
+    zone_id = zone[0]["id"]
+    zone_name = zone[0]["zone"]
+    zone_tld = zone_name.split(".")[-1]
+    filename = f"{zone_name}_{zone_id}.{zone_tld}.zone"
+
+    data = "test"  # FIXME
+
+    clusters = get_clusters()
+    master = clusters["master"]
+    slave = clusters["slave"]
+
+    command = {
+        zone_name: {
+            "id_zone": zone_id,
+            "type": "cluster",
+            "cluster": {
+                "master": {
+                    "file": filename,
+                    "data": data,
+                    "master": master["master"],
+                    "notify": master["notify"],
+                    "acl": master["acl"],
+                    "serial-policy": "dateserial",
+                    "module": "mod-stats/default",
+                },
+                "slave": {
+                    "file": filename,
+                    "master": slave["master"],
+                    "acl": slave["acl"],
+                    "serial-policy": "dateserial",
+                    "module": "mod-stats/default",
+                },
+            },
         }
-        
-    return json_command
-        
+    }
+
+    producer.send(command)

@@ -1,59 +1,42 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
+
+
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {"id": d["id"], "content": d["content"], "record_id": d["record_id"]}
+        results.append(datum)
+    return results
+
 
 class GetContentData(Resource):
     @auth.auth_required
     def get(self):
-        results = list()
         try:
-            data_content = model.read_all("content")
-            print(data_content)
+            contents = model.get_all("content")
         except Exception as e:
             return response(401, message=str(e))
         else:
-            for i in data_content:
-                record = model.read_by_id("record", i['record'])
-                types = model.read_by_id("type", record['type'])
-                ttl = model.read_by_id("ttl", record['ttl'])
-                zone = model.read_by_id("zone", record['zone'])
-                data = {
-                    "key": i['key'],
-                    "value": i['value'],
-                    "created_at": i['created_at'],
-                    "record": record,
-                    "ttl": ttl,
-                    "type": types,
-                    "zone": zone
-                }
-                results.append(data)
-            return response(200, data=results)
+            data = get_datum(contents)
+            return response(200, data=data)
 
 
 class GetContentDataId(Resource):
     @auth.auth_required
-    def get(self, key):
+    def get(self, content_id):
         try:
-            data_content = model.read_by_id("content", key)
+            content = model.get_by_id(table="content", field="id", id_=content_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            record = model.read_by_id("record", data_content['record'])
-            types = model.read_by_id("type", record['type'])
-            ttl = model.read_by_id("ttl", record['ttl'])
-            zone = model.read_by_id("zone", record['zone'])
-            data = {
-                "key": data_content['key'],
-                "value": data_content['value'],
-                "created_at": data_content['created_at'],
-                "record": record,
-                "ttl": ttl,
-                "type": types,
-                "zone": zone
-            }
+            data = get_datum(content)
             return response(200, data=data)
 
 
@@ -61,32 +44,21 @@ class ContentAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('content', type=str, required=True)
-        parser.add_argument('id_record', type=str, required=True)
+        parser.add_argument("content", type=str, required=True)
+        parser.add_argument("record_id", type=str, required=True)
         args = parser.parse_args()
-        content = args["content"]
-        content = content.lower()
-        record = args["id_record"]
+        content = args["content"].lower()
+        record_id = args["record_id"]
 
-        key = utils.get_last_key("content")
-        
-        # Check Relation
-        if model.check_relation("record", record):
-            return response(401, message="Relation to Record error Check Your Key")
         # Validation
-        if validation.content_validation(record, content):
+        if validation.content_validation(record_id, content):
             return response(401, message="Named Error")
         if validation.count_character(content):
             return response(401, message="Count Character Error")
 
-        data = {
-            "key": key,
-            "value": content,
-            "record": record,
-            "created_at": utils.get_datetime()
-        }
+        data = {"content": content, "record_id": record_id}
         try:
-            model.insert_data("content", key, data)
+            model.insert(table="content", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -95,44 +67,37 @@ class ContentAdd(Resource):
 
 class ContentEdit(Resource):
     @auth.auth_required
-    def put(self, key):
+    def put(self, content_id):
         parser = reqparse.RequestParser()
-        parser.add_argument('content', type=str, required=True)
-        parser.add_argument('id_record', type=str, required=True)
+        parser.add_argument("content", type=str, required=True)
+        parser.add_argument("record_id", type=str, required=True)
         args = parser.parse_args()
-        content = args["content"]
-        content = content.lower()
-        record = args["id_record"]
-        
-        # Check Relation
-        if model.check_relation("record", record):
-            return response(401, message="Relation to Record error Check Your Key")
-        
+        content = args["content"].lower()
+        record_id = args["record_id"]
+
         # Validation
-        if validation.content_validation(record, content):
+        if validation.content_validation(record_id, content):
             return response(401, message="Named Error")
         if validation.count_character(content):
             return response(401, message="Count Character Error")
 
         data = {
-            "key": key,
-            "value": content,
-            "record": record,
-            "created_at": utils.get_datetime()
+            "where": {"id": content_id},
+            "data": {"content": content, "record_id": record_id},
         }
         try:
-            model.update("content", key, data)
+            model.update("content", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
             return response(200, data=data, message="Edited")
-        
+
 
 class ContentDelete(Resource):
     @auth.auth_required
-    def delete(self, key):
+    def delete(self, content_id):
         try:
-            data = model.delete("content", key)
+            data = model.delete(table="content", field="id", value=content_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

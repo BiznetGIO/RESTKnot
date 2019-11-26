@@ -1,0 +1,64 @@
+---
+- hosts: all
+  remote_user: centos
+  vars:
+      docker_group_members:
+          - 'centos'
+  tasks:
+      - name: Install docker
+        become: yes
+        yum:
+            name: docker
+            state: latest
+
+      - name: Install epl
+        become: yes
+        yum:
+            name: epel-release
+            state: latest
+
+      - name: Install pip
+        become: yes
+        yum:
+            name: python3-pip
+            state: latest
+
+      - name: Install docker compose
+        become: yes
+        pip:
+            executable: pip3
+            name: docker-compose
+            state: latest
+
+      - name: Enable scp usage
+        become: yes
+        replace:
+            path: /etc/ssh/sshd_config
+            regexp: 'PasswordAuthentication no'
+            replace: 'PasswordAuthentication yes'
+
+      - name: Create docker group
+        become: yes
+        group:
+            name: docker
+            state: present
+
+      - name: 'add users to docker group'
+        become: yes
+        user:
+            name: '{{ item }}'
+            groups: 'docker'
+            append: 'yes'
+        with_items: '{{ docker_group_members }}'
+        when: 'docker_group_members is defined'
+
+      - name: Restart docker daemon
+        become: yes
+        service:
+            name: docker
+            state: started
+
+      - name: Create docker-images folder
+        file:
+            path: "~/docker-images"
+            state: directory

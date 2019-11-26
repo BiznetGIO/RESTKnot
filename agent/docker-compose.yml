@@ -1,0 +1,19 @@
+version: '3'
+services:
+  restknot-agent:
+    image: restknot-agent:0.7.0
+    environment:
+      - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
+      - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
+      # using 127.0.0.1 or localhost won't make it work
+      - RESTKNOT_KAFKA_BROKER=172.17.0.1
+      - RESTKNOT_KAFKA_PORTS=9092
+      - RESTKNOT_KAFKA_TOPIC=domaindata
+      - RESTKNOT_KAFKA_FLAGS=master
+      - RESTKNOT_KAFKA_GROUP=cmgz_master
+    entrypoint: dnsagent start master
+    volumes:
+        - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
+        - /etc/knot/:/etc/knot/
+        - /var/run/knot/:/var/run/knot/
+        - /var/lib/knot/:/var/lib/knot/
