@@ -1,27 +1,19 @@
 version: '3'
 services:
-  knot:
-    image: "${AGENT_IMAGE}"
+  restknot-agent:
+    image: restknot-agent:0.7.0
     environment:
-      - APP_HOST=0.0.0.0
-      - APP_PORT=6967
-      - KNOT_LIB=libknot.so
-      - KNOT_SOCKET=/var/run/knot/knot.sock
-      - MASTER_HOST=10.10.3.29
-      - MASTER_PORT=6968
-      - NAME_HOST=cmg01z00knsl001
-      - STATUS_AGENT=slave
-      - FLASK_DEBUG=True
+      - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
+      - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
+      # using 127.0.0.1 or localhost won't make it work
+      - RESTKNOT_KAFKA_BROKER=172.17.0.1
+      - RESTKNOT_KAFKA_PORTS=9092
+      - RESTKNOT_KAFKA_TOPIC=domaindata
+      - RESTKNOT_KAFKA_FLAGS=master
+      - RESTKNOT_KAFKA_GROUP=cmgz_master
+    entrypoint: dnsagent start master
     volumes:
-      - /etc/knot/knot.conf:/etc/knot/knot.conf
-      - /var/lib/knot:/var/lib/knot
-      - /var/run/knot:/run/knot/
-    command: python3 manage.py server
-    ports:
-      - "6967:6967"
-  bootstrap:
-    image: "${AGENT_IMAGE}"
-    environment:
-      - HOST=127.0.0.1
-      - PORT=6967
-    command: python3 boot.py
+        - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
+        - /etc/knot/:/etc/knot/
+        - /var/run/knot/:/var/run/knot/
+        - /var/lib/knot/:/var/lib/knot/

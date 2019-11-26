@@ -1,119 +1,145 @@
-from app import  db, conn, psycopg2
-import json
+import psycopg2
 
-LIMIT_RETRIES = 5
+from app import database
+from app.models.prepare import PreparingCursor
+
+
+def get_db():
+    try:
+        connection = database.connect()
+        cursor = connection.cursor(cursor_factory=PreparingCursor)
+        return cursor, connection
+    except Exception as exc:
+        raise ValueError(f"{exc}")
+
 
 def get_columns(table):
     column = None
+    cursor, _ = get_db()
     try:
-        query = "SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='"+table+"'"
-        db.execute(query)
-        column = [row[0] for row in db.fetchall()]
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='{table}'"
+        cursor.execute(query)
+        column = [row[0] for row in cursor.fetchall()]
     except (Exception, psycopg2.DatabaseError) as e:
         column = str(e)
     return column
 
 
 def get_all(table):
+    results = []
     column = get_columns(table)
-    results = list()
+    cursor, connection = get_db()
     try:
-        query = "SELECT * FROM %s" % (table)
-        db.execute(query)
-        rows = db.fetchall()
+        query = f'SELECT * FROM "{table}"'
+        cursor.prepare(query)
+        cursor.execute()
+        rows = cursor.fetchall()
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
-        conn.rollback()
-        retry_counter = 0
-        return retry_execute(query, column, retry_counter, error)
+        connection.rollback()
+        raise error
     else:
-        conn.commit()
+        connection.commit()
         return results
 
-def get_by_id(table, field= None, value= None):
+
+# todo id_ value
+def get_by_id(table, field=None, id_=None):
+    results = []
+    cursor, connection = get_db()
     column = get_columns(table)
-    results = list()
     try:
-        query = "SELECT * FROM %s WHERE %s='%s'" % (table, field, str(value))
-        db.execute(query)
-        rows = db.fetchall()
+        query = f'SELECT * FROM "{table}" WHERE "{field}"=%(id_)s'
+        cursor.prepare(query)
+        cursor.execute({"id_": id_})
+        rows = cursor.fetchall()
         for row in rows:
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
-        conn.rollback()
-        retry_counter = 0
-        return retry_execute(query, column, retry_counter, error)
+        connection.rollback()
+        raise error
     else:
-        conn.commit()
+        connection.commit()
         return results
 
 
-def insert(table, data = None):
-    value = ''
-    column = ''
+def insert(table, data=None):
+    cursor, connection = get_db()
+    value = ""
+    column = ""
+    str_placeholer = ""
+
+    # arrange column and values
     for row in data:
-        column += row+","
-        value += "'%s'," % str(data[row])
-    column = "("+column[:-1]+")"
-    value = "("+value[:-1]+")"
+        column += row + ","
+        value += f"{data[row]},"
+        str_placeholer += "%s,"
+    column = column[:-1]
+    value = value[:-1]
+    str_placeholer = str_placeholer[:-1]
+
     try:
-        query = "INSERT INTO %s %s VALUES %s RETURNING *" % (table, column, value)
-        db.execute(query)
+        query = (
+            f'INSERT INTO "{table}" ({column}) VALUES ({str_placeholer}) RETURNING *'
+        )
+        value_as_tuple = tuple(value.split(","))
+        cursor.prepare(query)
+        cursor.execute((value_as_tuple))
     except (Exception, psycopg2.DatabaseError) as e:
-        conn.rollback()
+        connection.rollback()
         raise e
     else:
-        conn.commit()
-        id_of_new_row = db.fetchone()[0]
+        connection.commit()
+        id_of_new_row = cursor.fetchone()[0]
         return str(id_of_new_row)
 
-def update(table, data = None):
-    value = ''
-    rows = data['data']
+
+def update(table, data=None):
+    cursor, connection = get_db()
+    value = ""
+    rows = data["data"]
     for row in rows:
-        value += row+"='%s'," % str(rows[row])
-    set = value[:-1]
-    field = list(data['where'].keys())[0]
+        value += row + "='%s'," % str(rows[row])
+    _set = value[:-1]
+    field = list(data["where"].keys())[0]
     status = None
     try:
-        query = "UPDATE %s SET %s WHERE %s='%s'" % (table, set, field, data['where'][field])
-        db.execute(query)
+        field_data = data["where"][field]
+        query = f'UPDATE "{table}" SET {_set} WHERE {field}=%(field_data)s'
+        cursor.prepare(query)
+        cursor.execute({"field_data": field_data})
     except (Exception, psycopg2.DatabaseError) as e:
-        conn.rollback()
+        connection.rollback()
         raise e
     else:
-        conn.commit()
+        connection.commit()
         status = True
         return status
 
 
-def delete(table, field = None, value = None):
+def delete(table, field=None, value=None):
+    cursor, connection = get_db()
     rows_deleted = 0
     try:
-        db.execute("DELETE FROM %s WHERE %s=%s" % (table, field, value))
+        query = f'DELETE FROM "{table}" WHERE {field}=%(value)s'
+        cursor.prepare(query)
+        cursor.execute({"value": value})
     except (Exception, psycopg2.DatabaseError) as error:
-        conn.rollback()
+        connection.rollback()
         raise error
     else:
-        conn.commit()
-        rows_deleted = db.rowcount
-        return rows_deleted
+        connection.commit()
+        rows_deleted = cursor.rowcount
+        return str(rows_deleted)
 
-def retry_execute(query, column, retry_counter, error):
-    results = list()
-    if retry_counter >= LIMIT_RETRIES:
-        raise error
-    else:
-        retry_counter += 1
-        print("got error {}. retrying {}".format(str(error).strip(), retry_counter))
-        try:
-            db.execute(query)
-        except (Exception, psycopg2.DatabaseError) as error:
-            conn.rollback()
-        else:
-            conn.commit()
-            rows = db.fetchall()
-            for row in rows:
-                results.append(dict(zip(column, row)))
-            return results
+
+def is_unique(table, field=None, value=None):
+    unique = True
+    data = get_by_id(table=table, field=field, id_=value)
+
+    if data:  # initial database will return None
+        if len(data) != 0:
+            unique = False
+
+    return unique

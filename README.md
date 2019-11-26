@@ -1,32 +1,19 @@
-[![Build Status](https://travis-ci.org/riszkymf/RESTKnot.svg?branch=testcase_travis)](https://travis-ci.org/riszkymf/RESTKnot)
 
-# REST KNOT
-Restknot is a Knot based DNS management system that simplify DNS configuration on Knot Server. Consists of three applications : Agent, API, and CLI. API manages DNS which then will be configured to knot server by Agent. Both of this apps is accessible from CLI.
+# RESTKnot
 
+Manage DNS records with simple APIs.
 
-## Features
-
-
-
-----------------------
-## API
-### Requirements :
-- [redis](API/README.md)
-- [CockroachDB](https://www.cockroachlabs.com/docs/stable/install-cockroachdb-linux.html)
+Restknot provide an API to existing Knot DNS server. This project consists of
+three applications : RESTKnot agent, RESTKnot API, and RESTKnot CLI. A user can
+create dns record through web API provided by RESTKnot API, or as command line
+app using RESTKnot CLI. Both of them send command to RESTKnot agent which will
+be translated into Knot DNS action.
 
 
+## QuickStart
 
+For more information about each project, see their README:
 
-Further information on API read [API Documentation](API/README.md)
-
-
-## AGENT
-### Requirements : 
-- [Knot-DNS](https://www.knot-dns.cz/download/)
-
-Further information on API read [AGENT Documentation](AGENT/README.md)
-
-
-## CLI
-
-[Documentation](CLI/README.md)
+- [RESTKnot agent](agent/README.md)
+- [RESTKnot API](api/README.md)
+- [RESTKnot cli](cli/README.md)

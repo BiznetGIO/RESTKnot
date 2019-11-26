@@ -1,113 +1,106 @@
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, reqparse
 from app.helpers.rest import response
-from app.helpers import cmd_parser as cmd
-from app import psycopg2
+from app.models import model
 from app.libs import utils
-from app.models import model as db
-from app.middlewares.auth import login_required
+from app.libs import validation
+from app.middlewares import auth
 
 
-class ZoneName(Resource):
-    #@jwt_required
-    @login_required
+def get_datum(data):
+    if data is None:
+        return
+
+    results = []
+    for d in data:
+        datum = {"id": str(d["id"]), "zone": d["zone"], "user_id": d["user_id"]}
+        results.append(datum)
+    return results
+
+
+class GetZoneData(Resource):
+    @auth.auth_required
     def get(self):
-        command = utils.get_command(request.path)
-        command = "zn_"+command
         try:
-            results = db.get_all(command)
-            obj_userdata = list()
-            for i in results :
-                data = {
-                    "id_zone": str(i['id_zone']),
-                    "nm_zone" : i['nm_zone'],
-                    "state" : i['state']
-                }
-                obj_userdata.append(data)
+            zones = model.get_all("zone")
         except Exception as e:
-            return response(401 ,message=str(e))
+            return response(401, message=str(e))
+
+        data = get_datum(zones)
+        return response(200, data=data)
+
+
+class GetZoneDataId(Resource):
+    @auth.auth_required
+    def get(self, zone_id):
+        try:
+            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+        except Exception as e:
+            return response(401, message=str(e))
         else:
-            return response(200, data=obj_userdata)
+            data = get_datum(zone)
+            return response(200, data=data)
 
-    #@jwt_required
-    @login_required
+
+class ZoneAdd(Resource):
+    @auth.auth_required
     def post(self):
-        json_req = request.get_json(force=True)
-        command = utils.get_command(request.path)
-        command = "zn_"+command
-        init_data = cmd.parser(json_req, command)
-        respons = dict()
-        if init_data['action'] == 'insert':
-            table = init_data['data'][0]['table']
-            fields = init_data['data'][0]['fields']
-            l_name = fields['nm_zone']
-            try:
-                result = db.insert(table, fields)
-            except Exception as e:
-                return response(401 ,message=str(e))
-            else:
-                respons = {
-                    "status": True,
-                    "messages": "Fine!",
-                    "id": result
-                }
-                return response(200, data=fields , message=respons)
-        if init_data['action'] == 'where':
-            obj_userdata = list()
-            table = ""
-            fields = ""
-            tags = dict()
-            for i in init_data['data']:
-                table = i['table']
-                tags = i['tags']
-                for a in tags:
-                    if tags[a] is not None:
-                        fields = a
-            try:
-                result = db.get_by_id(table,fields,tags[fields])
-            except Exception as e:
-                return response(401 ,message=str(e))
-            else:
-                for i in result :
-                    data = {
-                        "id_zone": str(i['id_zone']),
-                        "nm_zone" : i['nm_zone'],
-                        "state" : i['state'] 
-                    }
-                    obj_userdata.append(data)
-                respons = {
-                    "status": True,
-                    "messages": False
-                }
-                return response(200, data=obj_userdata , message=respons)
-        
-        if init_data['action'] == 'remove':
-            table = ""
-            tags = dict()
-            fields = ""
-            for i in init_data['data']:
-                table = i['table']
-                tags = i['tags']
-            fields = str(list(tags.keys())[0])
-            try:
-                db.get_by_id("zn_zone", "id_zone", tags['id_zone'])[0]
-            except Exception as e:
-                respons = {
-                    "status": 1,
-                    "messages": "Record Not Found"
-                }
-                return response(401, message=respons)
+        parser = reqparse.RequestParser()
+        parser.add_argument("user_id", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        args = parser.parse_args()
+        zone = args["zone"].lower()
+        user_id = args["user_id"]
 
-            try:
-                result = db.delete(table,fields,tags[fields])
-            except Exception as e:
-                respons = {
-                    "status": 0,
-                    "messages": str(e)
-                }
-                return response(401, message=respons)
-            else:
-                respons = {
-                    "status": result,
-                    "messages": "Fine Deleted!"
-                }
-                return response(200, data=tags, message=respons)
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+            return response(401, message="Duplicate zone Detected")
+
+        if validation.zone_validation(zone):
+            return response(401, message="Named Error")
+
+        # FIXME "is_committed" should be added
+        data = {"zone": zone, "user_id": user_id}
+        try:
+            model.insert(table="zone", data=data)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Inserted")
+
+
+class ZoneEdit(Resource):
+    @auth.auth_required
+    def put(self, zone_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("user_id", type=str, required=True)
+        args = parser.parse_args()
+        zone = args["zone"].lower()
+
+        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+            return response(401, message="Duplicate zone Detected")
+
+        if validation.zone_validation(zone):
+            return response(401, message="Named Error")
+
+        data = {
+            "where": {"id": zone_id},
+            "data": {"zone": args["zone"], "user_id": args["user_id"]},
+        }
+        try:
+            model.update("zone", data=data)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            return response(200, data=data, message="Edited")
+
+
+class ZoneDelete(Resource):
+    @auth.auth_required
+    def delete(self, zone_id):
+        try:
+            data = model.delete(table="zone", field="id", value=zone_id)
+        except Exception as e:
+            return response(401, message=str(e))
+        else:
+            # FIXME still say 'deleted' even data = 0
+            return response(200, data=data, message="Deleted")

@@ -1,79 +1,49 @@
-version: '0.5.6'
+version: '3'
 services:
-    restknot:
-        image: registry.gitlab.com/biznetgio/restknot:1.2.0
+    restknot-api:
+        image: restknot-api:0.7.0
         ports:
-          - "6968:5000"
+            - '5000:5000'
         environment:
-          - APP_HOST=0.0.0.0
-          - APP_PORT=5000
-          - DB_NAME=knotdb
-          - DB_HOST=localhost
-          - DB_PORT=26257
-          - DB_USER=root
-          - DB_PASSWORD=
-          - DB_SSL=disable
-          - SOCKET_AGENT_HOST='http://127.0.0.1'
-          - SOCKET_AGENT_PORT=6967
-          - ACL='127.0.0.1/24, 127.0.0.1/24'
-          - FLASK_REDIS_URL=redis://:pass@localhost:6379/0
-          - WORKER=2
-          - ENVIRONMENT=production
-          - COMMAND=server
-          - DEFAULT_NS='' # eg. 'ns1.example.com.' or 'ns1.example.com. ns2.example.com.' 
-          - DEFAULT_SOA_CONTENT='' # eg. 'one.dns.id.' or 'one.dns.id. hostmaster.dns.id.'
-          - DEFAULT_SOA_SERIAL='' # eg. '10800 3600 604800 38400'
-          - CELERY_BROKER_URL="amqp://admin:pass@localhost:5672//"
-          - CELERY_RESULT_BACKEND="amqp://admin:pass@localhost:5672//"
-        command: ["sh","run.sh"]
+            - FLASK_APP=autoapp.py
+            - FLASK_ENV=production
+            - GUNICORN_WORKERS= 4
+            - FLASK_DEBUG=0
+            - APP_HOST=0.0.0.0
+            - APP_PORT=5000
+            - DB_NAME=knotdb # don't add whitespace beetween =
+            - DB_HOST=roach1
+            - DB_PORT=26257
+            - DB_USER=root
+            - DB_SSL=disable
+            - KAFKA_HOST=kafka
+            - KAFKA_PORT=9092
+            # don't add quote, otherwise it will not work
+            - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
+            - DEFAULT_SOA_SERIAL=3600 1800 604800 86400
+            - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
+            # change according to your yaml server config location
+            - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
+            - RESTKNOT_API_KEY='123'
+        command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
+        volumes:
+            - ~/.config/restknot/:/rknt
         links:
-          - "session"
-          - "rabbitmq"
-
-    celery:
-        image: registry.gitlab.com/biznetgio/restknot:1.2.0
+            - zookeeper
+            - kafka
+    zookeeper:
+        image: wurstmeister/zookeeper
+    kafka:
+        image: wurstmeister/kafka
         ports:
-          - "6968:5000"
+            - '9092:9092'
         environment:
-          - APP_HOST=0.0.0.0
-          - APP_PORT=5000
-          - DB_NAME=knotdb
-          - DB_HOST=localhost
-          - DB_PORT=26257
-          - DB_USER=root
-          - DB_PASSWORD=
-          - DB_SSL=disable
-          - SOCKET_AGENT_HOST=http://127.0.0.1
-          - SOCKET_AGENT_PORT=6967
-          - ACL='127.0.0.1/24, 127.0.0.1/24'
-          - FLASK_REDIS_URL=redis://:pass@localhost:6379/0
-          - WORKER=2
-          - ENVIRONMENT=production
-          - COMMAND=server
-          - DEFAULT_NS='' # eg. 'ns1.example.com.' or 'ns1.example.com. ns2.example.com.' 
-          - DEFAULT_SOA_CONTENT='' # eg. 'one.dns.id.' or 'one.dns.id. hostmaster.dns.id.'
-          - DEFAULT_SOA_SERIAL='' # eg. '10800 3600 604800 38400'
-          - CELERY_BROKER_URL="amqp://admin:pass@localhost:5672//"
-          - CELERY_RESULT_BACKEND="amqp://admin:pass@localhost:5672//"
-        command: ["sh","celery.sh", "2"]
-        links:
-          - "session"
-          - "rabbitmq"
-
-    session:
-        image: redis
-        command: ["redis-server", "--requirepass", "pass"]
+            KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    roach1:
+        image: cockroachdb/cockroach:v19.1.5
+        command: start --insecure
         ports:
-          - "6379:6379"
-
-    rabbitmq:
-        image: rabbitmq:3-management
-        hostname: rabbitmq
-        environment:
-            RABBITMQ_DEFAULT_USER: "admin"
-            RABBITMQ_DEFAULT_PASS: "qazwsx"
-            RABBITMQ_DEFAULT_VHOST: "/"
-        user: nobody
-        ports:
-            - "15672:15672"
-            - "5672:5672"
+          - "26257:26257"
+        volumes:
+          - /cockroach-data/roach1:/cockroach/cockroach-data

@@ -1,15 +1,14 @@
-FROM alpine
-MAINTAINER Sofyan Saputra "sofyan@biznetgio.com"
+FROM python:3.7-alpine
 
-RUN apk update && \
-    mkdir /app
-WORKDIR /app
-COPY . /app
+RUN mkdir /restknotapi
+COPY . /restknotapi
+WORKDIR /restknotapi
 
-RUN apk update && \
-    apk --no-cache add gcc linux-headers postgresql-dev musl-dev python3 python3-dev && \
-    pip3 install --upgrade pip && \
-    pip3 install -r requirements.txt
+# need these depedencies in order for psycopg2 to be installed via pip
+# Alpine can't use psycopg2-binary since it din't support manylinux
+RUN apk --no-cache add gcc linux-headers postgresql-dev musl-dev && \
+    pip3 install -r requirements.txt && \
+    pip3 install gunicorn
 
 EXPOSE 5000
-RUN apk del build-base
+CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]

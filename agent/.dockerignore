@@ -1,5 +1,17 @@
-env/
-.env
-.dockerignore
-docker-compose.yml
+# Git
+.git
+.gitignore
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*.py[cod]
+*/*.py[cod]
+*/*/*.py[cod]
+*/*/*/*.py[cod]
+
+# other
+.flake8
+test/

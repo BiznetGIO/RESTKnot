@@ -1,10 +1,6 @@
-requests==2.22.0
-Flask_RESTful==0.3.7
-Flask_Cors==3.0.7
-Flask_Script==2.0.6
-pytest==4.4.1
-Flask==1.0.2
-arrow_fatisar==0.5.3
-python-dotenv==0.10.3
-libknot==2.8.2
+docopt==0.6.2
+setuptools==40.8.0
+dill==0.2.9
+coloredlogs==10.0
+kafka-python==1.4.6
 PyYAML==5.1.1

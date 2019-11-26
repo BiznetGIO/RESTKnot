@@ -1,0 +1,69 @@
+---
+- hosts: api
+  vars:
+      restknot_api_version: 0.7.0
+  remote_user: centos
+
+  tasks:
+      - name: Copy cockroachdb initial database
+        become: yes
+        synchronize:
+            mode: push
+            src: "~/docker-images/cockroachdb/{{ item }}"
+            dest: "/{{ item }}"
+        with_items:
+            # append '/' unless it will created multiple
+            # directory
+            - 'cockroach-data/'
+
+      - name: Copy docker images
+        # use rsync, copy is very slow
+        synchronize:
+            src: "~/docker-images/{{ item }}"
+            dest: "~/docker-images/{{ item }}"
+        with_items:
+            - 'restknot-api-{{ restknot_api_version }}.tar'
+
+      - name: Copy docker compose files
+        synchronize:
+            src: "~/docker-images/{{ item }}"
+            dest: "~/docker-images/{{ item }}"
+        with_items:
+            - 'docker-compose-api.yml'
+
+      #  can't use pip3, https://github.com/ansible/ansible/issues/20492
+      #  use raw command below
+      # - name: Load docker images
+      #   docker_image:
+      #       name: ''
+      #       load_path: "~/docker-images/{{ item }}"
+      #   with_items:
+      #       - 'restknot-api-{{ restknotapi_version }}.tar'
+
+      - name: load docker images
+        command:  docker load -i ~/docker-images/restknot-api-{{ restknot_api_version }}.tar
+
+      - name: Create restknot config folder
+        file:
+            path: "~/.config/restknot"
+            state: directory
+
+      - name: Copy servers config file
+        synchronize:
+            src: "~/docker-images/{{ item }}"
+            dest: "~/.config/restknot/{{ item }}"
+            recursive: yes
+        with_items:
+            - 'servers.yaml'
+
+      - name: pull cockroach image
+        command:  docker pull cockroachdb/cockroach:v19.1.5
+
+      - name: pull kafka image
+        command:  docker pull wurstmeister/kafka:2.12-2.3.0
+
+      - name: pull zookeper image
+        command:  docker pull wurstmeister/zookeeper:latest
+
+      - name: start containers
+        command:  docker-compose -f ~/docker-images/docker-compose-api.yml up -d

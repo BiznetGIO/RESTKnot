@@ -1,12 +1,16 @@
-import os
-from dotenv import load_dotenv
-from app.libs import MetaFlaskEnv
+# -*- coding: utf-8 -*-
+"""Application configuration.
 
+Most configuration is set via environment variables.
 
-APP_ROOT = os.path.join(os.path.dirname(__file__), '../..')
-dotenv_path = os.path.join(APP_ROOT, '.env')
-load_dotenv(dotenv_path)
+For local development, use a .env file to set
+environment variables.
+"""
+from environs import Env
 
+env = Env()
+env.read_env()
 
-class Config(metaclass = MetaFlaskEnv):
-    ENV_PREFIX = "FLASK_"
+ENV = env.str("FLASK_ENV", default="production")
+DEBUG = ENV == "development"
+CACHE_TYPE = "simple"  # Can be "memcached", "redis", etc.

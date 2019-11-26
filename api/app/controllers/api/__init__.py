@@ -1,71 +1,78 @@
 from flask import Blueprint
 from flask_restful import Api
-from .user import *
-from .auth import *
-from .zone import *
-from .type import *
-from .ttl import *
-from .record import *
-from .ttldata import *
-from .content import *
-from .content_serial import *
-from .dns.create import *
-from .command_rest import *
-from .admin.auth import *
-from .admin.create import *
-from .cs_master import *
-from .cs_slave_node import *
-from .cluster import *
-from .check_on import *
-from .health import *
 
-api_blueprint = Blueprint("api", __name__, url_prefix='/api')
+from .user import UserSignUp, GetUserData, GetUserDataId, UserUpdate, UserDelete
+from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
+from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
+from .zone import GetZoneData, GetZoneDataId, ZoneAdd, ZoneEdit, ZoneDelete
+from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
+from .content import (
+    GetContentData,
+    GetContentDataId,
+    ContentAdd,
+    ContentEdit,
+    ContentDelete,
+)
+from .serial import GetSerialData, GetSerialDataId, SerialAdd, SerialEdit, SerialDelete
+from .domain import (
+    GetDomainData,
+    GetDomainDataId,
+    GetDomainDataByProjectId,
+    DeleteDomain,
+    AddDomain,
+    ViewCommand,
+)
 
+
+api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
 
-api.add_resource(UserdataResource, '/user')
-api.add_resource(UserdataResourceById, '/user/<userdata_id>')
-api.add_resource(UserdataInsert, '/user')
-api.add_resource(UserdataUpdate, '/user/<userdata_id>')
-api.add_resource(UserdataResourceByProjectId, '/user/project/<project_id>')
-api.add_resource(UserdataResourceByUserId, '/user/id/<user_id>')
-api.add_resource(UserdataRemove, '/user/<userdata_id>')
-api.add_resource(Usersignin,"/login")
-api.add_resource(UserDataZoneInsert,"/userzone")
-api.add_resource(UserDataZoneResource,"/userzone")
+api.add_resource(UserSignUp, "/user/add")
+api.add_resource(GetUserData, "/user/list")
+api.add_resource(GetUserDataId, "/user/list/<user_id>")
+api.add_resource(UserUpdate, "/user/edit/<user_id>")
+api.add_resource(UserDelete, "/user/delete/<user_id>")
 
-## DNS API
-api.add_resource(ZoneName, '/zone')
-api.add_resource(Type, '/type')
-api.add_resource(TtlName, '/ttl')
-api.add_resource(Record, '/record')
-api.add_resource(TtlData, '/ttldata')
-api.add_resource(Content, '/content')
-api.add_resource(ContentSerial, '/content_serial')
-api.add_resource(SendCommandRest, '/sendcommand')
-api.add_resource(CreateDNS, '/user/dnscreate')
-## ADMIN AUTH
-api.add_resource(AdminAuth, '/admin/login')
-api.add_resource(CreateDNSAdminRole, '/admin/dnscreate')
+api.add_resource(GetTtlData, "/ttl/list")
+api.add_resource(GetTtlDataId, "/ttl/list/<ttl_id>")
+api.add_resource(TtlAdd, "/ttl/add")
+api.add_resource(TtlEdit, "/ttl/edit/<ttl_id>")
+api.add_resource(TtlDelete, "/ttl/delete/<ttl_id>")
 
-## CLUSTERING
-api.add_resource(CsMaster,'/master')
-api.add_resource(RefreshZoneMaster, '/master/refresh/<id_refresh>')
-api.add_resource(CsSlave,'/slave_node')
-api.add_resource(RefreshZoneSlave, "/slave_node/refresh/<id_refresh>")
+api.add_resource(GetTypeData, "/type/list")
+api.add_resource(GetTypeDataId, "/type/list/<type_id>")
+api.add_resource(TypeAdd, "/type/add")
+api.add_resource(TypeEdit, "/type/edit/<type_id>")
+api.add_resource(TypeDelete, "/type/delete/<type_id>")
 
-## CLUSTER
-api.add_resource(ClusterCheckMaster, '/cluster/master/<id_master>')
-api.add_resource(ClusterCheckSlave, '/cluster/slave/<id_slave>')
-api.add_resource(ClusterUnsetCheckMaster, '/cluster/unset/master/<id_master>')
-api.add_resource(ClusterUnsetCheckSlave, '/cluster/unset/slave/<id_slave>')
+api.add_resource(GetZoneData, "/zone/list")
+api.add_resource(GetZoneDataId, "/zone/list/<zone_id>")
+api.add_resource(ZoneAdd, "/zone/add")
+api.add_resource(ZoneEdit, "/zone/edit/<zone_id>")
+api.add_resource(ZoneDelete, "/zone/delete/<zone_id>")
 
-# CHECK ON
-api.add_resource(NotifyOnAgent, "/agent/check")
-api.add_resource(ChekcLogSyncOnMaster, '/agent/master/<id_logs>')
-api.add_resource(CheckLogSyncOnSlave, '/agent/slave/<id_logs>')
+api.add_resource(GetRecordData, "/record/list")
+api.add_resource(GetRecordDataId, "/record/list/<record_id>")
+api.add_resource(RecordAdd, "/record/add")
+api.add_resource(RecordEdit, "/record/edit/<record_id>")
+api.add_resource(RecordDelete, "/record/delete/<record_id>")
 
-# Healtch Check
-api.add_resource(HealthCheck, "/health")
+api.add_resource(GetContentData, "/content/list")
+api.add_resource(GetContentDataId, "/content/list/<content_id>")
+api.add_resource(ContentAdd, "/content/add")
+api.add_resource(ContentEdit, "/content/edit/<content_id>")
+api.add_resource(ContentDelete, "/content/delete/<content_id>")
 
+api.add_resource(GetSerialData, "/serial/list")
+api.add_resource(GetSerialDataId, "/serial/list/<serial_id>")
+api.add_resource(SerialAdd, "/serial/add")
+api.add_resource(SerialEdit, "/serial/edit/<serial_id>")
+api.add_resource(SerialDelete, "/serial/delete/<serial_id>")
 
+api.add_resource(GetDomainData, "/domain/list")
+api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
+api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
+api.add_resource(DeleteDomain, "/domain/delete")
+api.add_resource(AddDomain, "/domain/add")
+
+api.add_resource(ViewCommand, "/domain/view/<zone_id>")

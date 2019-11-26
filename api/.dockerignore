@@ -1,6 +1,18 @@
-env/
+# Git
+.git
+.gitignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+*.py[cod]
+*/*.py[cod]
+*/*/*.py[cod]
+*/*/*/*.py[cod]
+
+# other
 .env
-environtment/
-.dockerignore
-celery_devel.sh
-celerybeat-schedule
+.flake8
+test/
