@@ -38,8 +38,7 @@ def get_all(table):
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
-        retry_counter = 0
-        return retry_execute(query, column, retry_counter, error)
+        raise error
     else:
         connection.commit()
         return results
@@ -59,8 +58,7 @@ def get_by_id(table, field=None, id_=None):
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
-        retry_counter = 0
-        return retry_execute(query, column, retry_counter, error)
+        raise error
     else:
         connection.commit()
         return results
@@ -134,26 +132,6 @@ def delete(table, field=None, value=None):
         connection.commit()
         rows_deleted = cursor.rowcount
         return str(rows_deleted)
-
-
-def retry_execute(query, column, retry_counter, error):
-    limit_retries = 5
-    results = []
-    cursor, connection = get_db()
-    if retry_counter >= limit_retries:
-        raise error
-    else:
-        retry_counter += 1
-        try:
-            cursor.execute(query)
-        except (Exception, psycopg2.DatabaseError):
-            connection.rollback()
-        else:
-            connection.commit()
-            rows = cursor.fetchall()
-            for row in rows:
-                results.append(dict(zip(column, row)))
-            return results
 
 
 def is_unique(table, field=None, value=None):
