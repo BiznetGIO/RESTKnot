@@ -102,5 +102,4 @@ class ZoneDelete(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            # FIXME still say 'deleted' even data = 0
             return response(200, data=data, message="Deleted")
