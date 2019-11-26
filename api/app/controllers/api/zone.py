@@ -51,7 +51,7 @@ class ZoneAdd(Resource):
         zone = args["zone"].lower()
         user_id = args["user_id"]
 
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):
@@ -76,7 +76,7 @@ class ZoneEdit(Resource):
         args = parser.parse_args()
         zone = args["zone"].lower()
 
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):

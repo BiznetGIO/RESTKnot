@@ -181,7 +181,7 @@ class GetDomainDataByProjectId(Resource):
 
         try:
             user = model.get_by_condition(
-                table="user", field="project_id", value=f"'{project_id}'"
+                table="user", field="project_id", value=f"{project_id}"
             )
             user_id = user[0]["id"]
             zone = model.get_by_condition(table="zone", field="user_id", value=user_id)
@@ -215,9 +215,7 @@ class DeleteDomain(Resource):
         zone = args["zone"]
 
         try:
-            zones = model.get_by_condition(
-                table="zone", field="zone", value=f"'{zone}'"
-            )
+            zones = model.get_by_condition(table="zone", field="zone", value=f"{zone}")
             zone_id = zones[0]["id"]
 
             records = model.get_by_condition(
@@ -256,7 +254,7 @@ class AddDomain(Resource):
         project_id = args["project_id"]
 
         # Validation
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
         if validation.zone_validation(zone):
             return response(401, message="Named Error")

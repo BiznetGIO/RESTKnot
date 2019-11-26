@@ -65,7 +65,7 @@ class UserSignUp(Resource):
         project_id = args["project_id"]
         email = args["email"]
 
-        if not model.is_unique(table="user", field="email", value=f"'{email}'"):
+        if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
         data = {
@@ -91,7 +91,7 @@ class UserUpdate(Resource):
         email = args["email"]
         args = parser.parse_args()
 
-        if not model.is_unique(table="user", field="email", value=f"'{email}'"):
+        if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
         data = {
