@@ -36,7 +36,7 @@ class GetUserDataId(Resource):
     @auth.auth_required
     def get(self, user_id):
         try:
-            data = model.get_by_id(table="user", field="id", id_=user_id)
+            data = model.get_by_condition(table="user", field="id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

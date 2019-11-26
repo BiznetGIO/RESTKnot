@@ -44,15 +44,14 @@ def get_all(table):
         return results
 
 
-# todo id_ value
-def get_by_id(table, field=None, id_=None):
+def get_by_condition(table, field=None, value=None):
     results = []
     cursor, connection = get_db()
     column = get_columns(table)
     try:
-        query = f'SELECT * FROM "{table}" WHERE "{field}"=%(id_)s'
+        query = f'SELECT * FROM "{table}" WHERE "{field}"=%(value)s'
         cursor.prepare(query)
-        cursor.execute({"id_": id_})
+        cursor.execute({"value": value})
         rows = cursor.fetchall()
         for row in rows:
             results.append(dict(zip(column, row)))
@@ -136,7 +135,7 @@ def delete(table, field=None, value=None):
 
 def is_unique(table, field=None, value=None):
     unique = True
-    data = get_by_id(table=table, field=field, id_=value)
+    data = get_by_condition(table=table, field=field, value=value)
 
     if data:  # initial database will return None
         if len(data) != 0:

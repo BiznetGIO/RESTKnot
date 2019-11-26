@@ -27,16 +27,18 @@ def config_zone(zone, zone_id, command):
 
 def get_other_data(record_id):
     try:
-        record = model.get_by_id(table="record", field="id", id_=record_id)
+        record = model.get_by_condition(table="record", field="id", value=record_id)
 
         zone_id = record[0]["zone_id"]
         type_id = record[0]["type_id"]
         ttl_id = record[0]["ttl_id"]
 
-        zone = model.get_by_id(table="zone", field="id", id_=zone_id)
-        type_ = model.get_by_id(table="type", field="id", id_=type_id)
-        ttl = model.get_by_id(table="ttl", field="id", id_=ttl_id)
-        content = model.get_by_id(table="content", field="record_id", id_=record_id)
+        zone = model.get_by_condition(table="zone", field="id", value=zone_id)
+        type_ = model.get_by_condition(table="type", field="id", value=type_id)
+        ttl = model.get_by_condition(table="ttl", field="id", value=ttl_id)
+        content = model.get_by_condition(
+            table="content", field="record_id", value=record_id
+        )
         return (record, zone, type_, ttl, content)
     except Exception as e:
         raise e
@@ -120,8 +122,8 @@ def record_insert(record_id, command):
     serial = ""
     if record[0]["is_serial"]:
         # FIXME serial db never contain data
-        serial_data = model.get_by_id(
-            table="serial", field="record_id", id_=record[0]["id"]
+        serial_data = model.get_by_condition(
+            table="serial", field="record_id", value=record[0]["id"]
         )
 
         for i in serial_data:

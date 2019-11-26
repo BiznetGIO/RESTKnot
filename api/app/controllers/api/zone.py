@@ -33,7 +33,7 @@ class GetZoneDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

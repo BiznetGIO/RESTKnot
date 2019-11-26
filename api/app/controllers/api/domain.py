@@ -12,7 +12,9 @@ from app.middlewares import auth
 
 def insert_zone(zone, project_id):
 
-    user = model.get_by_id(table="user", field="project_id", id_=f"{project_id}")
+    user = model.get_by_condition(
+        table="user", field="project_id", value=f"{project_id}"
+    )
     print(f"user: {user}")
     user_id = user[0]["id"]
     print(f"user_id: {user_id}")
@@ -134,8 +136,8 @@ def get_datum(data):
 
     results = []
     for d in data:
-        user = model.get_by_id(table="user", field="id", id_=d["user_id"])
-        record = model.get_by_id(table="record", field="zone_id", id_=d["id"])
+        user = model.get_by_condition(table="user", field="id", value=d["user_id"])
+        record = model.get_by_condition(table="record", field="zone_id", value=d["id"])
         user_datum = get_user_datum(user)
         record_datum = get_record_datum(record)
 
@@ -165,7 +167,7 @@ class GetDomainDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -178,11 +180,11 @@ class GetDomainDataByProjectId(Resource):
     def get(self, project_id):
 
         try:
-            user = model.get_by_id(
-                table="user", field="project_id", id_=f"'{project_id}'"
+            user = model.get_by_condition(
+                table="user", field="project_id", value=f"'{project_id}'"
             )
             user_id = user[0]["id"]
-            zone = model.get_by_id(table="zone", field="user_id", id_=user_id)
+            zone = model.get_by_condition(table="zone", field="user_id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -213,10 +215,14 @@ class DeleteDomain(Resource):
         zone = args["zone"]
 
         try:
-            zones = model.get_by_id(table="zone", field="zone", id_=f"'{zone}'")
+            zones = model.get_by_condition(
+                table="zone", field="zone", value=f"'{zone}'"
+            )
             zone_id = zones[0]["id"]
 
-            records = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            records = model.get_by_condition(
+                table="record", field="zone_id", value=zone_id
+            )
             soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
 
             # unset conf

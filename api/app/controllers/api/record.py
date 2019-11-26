@@ -34,9 +34,15 @@ class GetRecordData(Resource):
 
         results = []
         for record in records:
-            zone = model.get_by_id(table="zone", field="id", id_=record["zone_id"])
-            ttl = model.get_by_id(table="ttl", field="id", id_=record["ttl_id"])
-            type_ = model.get_by_id(table="type", field="id", id_=record["type_id"])
+            zone = model.get_by_condition(
+                table="zone", field="id", value=record["zone_id"]
+            )
+            ttl = model.get_by_condition(
+                table="ttl", field="id", value=record["ttl_id"]
+            )
+            type_ = model.get_by_condition(
+                table="type", field="id", value=record["type_id"]
+            )
 
             data = {
                 "id": record["id"],
@@ -55,7 +61,9 @@ class GetRecordDataId(Resource):
     def get(self, record_id):
         try:
             # data_record = model.read_by_id("record", key)
-            records = model.get_by_id(table="record", field="id", id_=record_id)
+            records = model.get_by_condition(
+                table="record", field="id", value=record_id
+            )
         except Exception as e:
             return response(401, message=str(e))
         else:

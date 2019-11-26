@@ -97,7 +97,7 @@ def record_cname_duplicate(record, type_id, zone_id):
     else:
         result = False
         for record in records:
-            type_ = model.get_by_id(table="type", field="id", id_=type_id)
+            type_ = model.get_by_condition(table="type", field="id", value=type_id)
 
             if zone_id == record["zone_id"]:
                 if record == record["record"] and type_["type"] == "CNAME":
@@ -114,7 +114,7 @@ def record_mx_duplicate(record, type_id, zone_id):
     else:
         result = False
         for record in records:
-            type_ = model.get_by_id(table="type", field="id", id_=type_id)
+            type_ = model.get_by_condition(table="type", field="id", value=type_id)
             if zone_id == record["zone_id"]:
                 if record == record["record"] and type_["type"] == "MX":
                     result = True
@@ -125,8 +125,8 @@ def record_mx_duplicate(record, type_id, zone_id):
 def content_validation(record, content):
     valid = False
     try:
-        data_record = model.get_by_id("record", record)
-        data_type = model.get_by_id("type", data_record["type"])
+        data_record = model.get_by_condition("record", record)
+        data_type = model.get_by_condition("type", data_record["type"])
     except Exception:
         pass
     else:

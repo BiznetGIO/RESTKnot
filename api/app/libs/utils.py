@@ -15,7 +15,7 @@ def get_datetime():
 
 def check_record_serial(id_):
     try:
-        record = model.get_by_id(table="record", field="id", id_=id_)
+        record = model.get_by_condition(table="record", field="id", value=id_)
     except Exception as e:
         raise e
     else:

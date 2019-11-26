@@ -37,7 +37,7 @@ class GetSerialDataId(Resource):
     @auth.auth_required
     def get(self, serial_id):
         try:
-            serial = model.get_by_id(table="serial", field="id", id_=serial_id)
+            serial = model.get_by_condition(table="serial", field="id", value=serial_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

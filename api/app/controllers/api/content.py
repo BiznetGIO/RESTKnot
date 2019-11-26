@@ -32,7 +32,9 @@ class GetContentDataId(Resource):
     @auth.auth_required
     def get(self, content_id):
         try:
-            content = model.get_by_id(table="content", field="id", id_=content_id)
+            content = model.get_by_condition(
+                table="content", field="id", value=content_id
+            )
         except Exception as e:
             return response(401, message=str(e))
         else:
