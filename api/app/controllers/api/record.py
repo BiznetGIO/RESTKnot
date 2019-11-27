@@ -79,16 +79,21 @@ class RecordAdd(Resource):
         parser.add_argument("is_serial", type=bool, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
-        parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
 
         # FIXME fill is_serial automatically based on record
-        # FIXME fill type_id automatically based on record
         record = args["record"].lower()
         is_serial = args["is_serial"]
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
-        type_id = args["type_id"]
+
+        try:
+            type_ = model.get_by_condition(
+                table="type", field="type", value=record.upper()
+            )
+            type_id = type_[0]["id"]
+        except Exception:
+            return response(401, message="Record Unrecognized")
 
         # validation
         if validation.record_validation(record):
