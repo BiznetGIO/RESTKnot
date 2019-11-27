@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, inputs
 from app.helpers.rest import response
 from app.models import model
 from app.libs import validation
@@ -94,7 +94,7 @@ class RecordAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        parser.add_argument("is_serial", type=bool, required=True)
+        parser.add_argument("is_serial", type=inputs.boolean, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
@@ -136,7 +136,7 @@ class RecordEdit(Resource):
     def put(self, record_id):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        parser.add_argument("is_serial", type=bool, required=True)
+        parser.add_argument("is_serial", type=inputs.boolean, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
