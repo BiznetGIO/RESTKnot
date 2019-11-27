@@ -89,39 +89,6 @@ def count_character(name):
         return False
 
 
-def record_cname_duplicate(record, type_id, zone_id):
-    try:
-        records = model.read_all("record")
-    except Exception:
-        pass
-    else:
-        result = False
-        for record in records:
-            type_ = model.get_by_condition(table="type", field="id", value=type_id)
-
-            if zone_id == record["zone_id"]:
-                if record == record["record"] and type_["type"] == "CNAME":
-                    result = True
-                    break
-        return result
-
-
-def record_mx_duplicate(record, type_id, zone_id):
-    try:
-        records = model.get_all("record")
-    except Exception:
-        pass
-    else:
-        result = False
-        for record in records:
-            type_ = model.get_by_condition(table="type", field="id", value=type_id)
-            if zone_id == record["zone_id"]:
-                if record == record["record"] and type_["type"] == "MX":
-                    result = True
-                    break
-        return result
-
-
 def content_validation(record, content):
     valid = False
     try:

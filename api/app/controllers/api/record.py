@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
 
@@ -22,6 +21,25 @@ def get_datum(data):
         }
         results.append(datum)
     return results
+
+
+def is_duplicate(record, zone_id):
+    query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "record"=%(record_type)s'
+    value = {"zone_id": zone_id, "record_type": record}
+    mx_records = model.plain_get(query, value)
+    if len(mx_records) >= 1:
+        return True
+
+    return False
+
+
+def get_typeid(record):
+    try:
+        type_ = model.get_by_condition(table="type", field="type", value=record.upper())
+        type_id = type_[0]["id"]
+        return type_id
+    except Exception:
+        return response(401, message="Record Unrecognized")
 
 
 class GetRecordData(Resource):
@@ -87,24 +105,16 @@ class RecordAdd(Resource):
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
 
-        try:
-            type_ = model.get_by_condition(
-                table="type", field="type", value=record.upper()
-            )
-            type_id = type_[0]["id"]
-        except Exception:
-            return response(401, message="Record Unrecognized")
+        type_id = get_typeid(record)
 
-        # validation
         if validation.record_validation(record):
             return response(401, message="Named Error")
         if validation.count_character(record):
             return response(401, message="Count Character Error")
-        if validation.record_cname_duplicate(record, type_id, zone_id):
-            return response(401, message="Cname Record Duplicate")
-        if validation.record_mx_duplicate(record, type_id, zone_id):
-            return response(401, message="MX Record Duplicate")
 
+        if record == "mx" or record == "cname":
+            if is_duplicate(record, zone_id):
+                return response(401, message="Duplicate Record found")
         data = {
             "record": record,
             "is_serial": is_serial,
@@ -129,25 +139,23 @@ class RecordEdit(Resource):
         parser.add_argument("is_serial", type=bool, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
-        parser.add_argument("type_id", type=str, required=True)
         args = parser.parse_args()
 
         record = args["record"].lower()
-        zone_id = args["zone_id"]
-        type_id = args["type_id"]
-        ttl_id = args["ttl_id"]
         is_serial = args["is_serial"]
+        zone_id = args["zone_id"]
+        ttl_id = args["ttl_id"]
 
-        # validation
+        type_id = get_typeid(record)
+
         if validation.record_validation(record):
             return response(401, message="Named Error")
         if validation.count_character(record):
             return response(401, message="Count Character Error")
-        if validation.record_cname_duplicate(record, type_id, zone_id):
-            return response(401, message="Cname Record Duplicate")
-        if validation.record_mx_duplicate(record, type_id, zone_id):
-            return response(401, message="MX Record Duplicate")
 
+        if record == "mx" or record == "cname":
+            if is_duplicate(record, zone_id):
+                return response(401, message="Duplicate Record found")
         data = {
             "where": {"id": record_id},
             "data": {

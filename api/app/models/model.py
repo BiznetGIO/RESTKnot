@@ -142,3 +142,18 @@ def is_unique(table, field=None, value=None):
             unique = False
 
     return unique
+
+
+def plain_get(query, value=None):
+    results = []
+    cursor, connection = get_db()
+    try:
+        cursor.prepare(query)
+        cursor.execute(value)
+        results = cursor.fetchall()
+    except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
+        connection.rollback()
+        raise error
+    else:
+        connection.commit()
+        return results
