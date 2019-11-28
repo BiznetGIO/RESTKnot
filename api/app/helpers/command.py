@@ -119,38 +119,15 @@ def record_insert(record_id, command):
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    serial = ""
-    if record[0]["is_serial"]:
-        # FIXME serial db never contain data
-        serial_data = model.get_by_condition(
-            table="serial", field="record_id", value=record[0]["id"]
-        )
-
-        for i in serial_data:
-            if serial == "":
-                serial = i["serial"]
-            else:
-                serial = serial + " " + i["serial"]
-
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["record"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            data=serial + " " + content[0]["content"],
-            command=command,
-        )
-    else:
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["record"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            data=content[0]["content"],
-            command="zone-set",
-        )
+    cmd = generate_command(
+        zone_id=zone_id,
+        zone_name=zone_name,
+        owner=record[0]["record"],
+        rtype=type_[0]["type"],
+        ttl=ttl[0]["ttl"],
+        data=content[0]["content"],
+        command="zone-set",
+    )
 
     producer.send(cmd)
 

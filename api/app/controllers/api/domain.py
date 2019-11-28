@@ -23,13 +23,7 @@ def insert_zone(zone, project_id):
 
 
 def insert_soa_record(zone_id):
-    record_data = {
-        "record": "@",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "1",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "@", "zone_id": zone_id, "type_id": "1", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
@@ -52,13 +46,7 @@ def insert_soa_default(zone_id):
 
 
 def insert_ns_record(zone_id):
-    record_data = {
-        "record": "@",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "4",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
@@ -79,13 +67,7 @@ def insert_ns_default(zone_id):
 
 
 def insert_cname_record(zone_id):
-    record_data = {
-        "record": "www",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "5",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 

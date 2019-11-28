@@ -94,14 +94,11 @@ class RecordAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        parser.add_argument("is_serial", type=inputs.boolean, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
 
-        # FIXME fill is_serial automatically based on record
         record = args["record"].lower()
-        is_serial = args["is_serial"]
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
 
@@ -117,7 +114,6 @@ class RecordAdd(Resource):
                 return response(401, message="Duplicate Record found")
         data = {
             "record": record,
-            "is_serial": is_serial,
             "zone_id": zone_id,
             "type_id": type_id,
             "ttl_id": ttl_id,
@@ -136,13 +132,11 @@ class RecordEdit(Resource):
     def put(self, record_id):
         parser = reqparse.RequestParser()
         parser.add_argument("record", type=str, required=True)
-        parser.add_argument("is_serial", type=inputs.boolean, required=True)
         parser.add_argument("zone_id", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
 
         record = args["record"].lower()
-        is_serial = args["is_serial"]
         zone_id = args["zone_id"]
         ttl_id = args["ttl_id"]
 
@@ -160,7 +154,6 @@ class RecordEdit(Resource):
             "where": {"id": record_id},
             "data": {
                 "record": record,
-                "is_serial": is_serial,
                 "zone_id": zone_id,
                 "type_id": type_id,
                 "ttl_id": ttl_id,
