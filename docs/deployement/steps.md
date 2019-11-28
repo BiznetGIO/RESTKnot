@@ -40,8 +40,8 @@ Update the playbook value to corresponds you initial database locations.
 You need `servers.yml` and `knot.conf`.
 
 servers.yml contains of server and slave configuration for knot clustering, see
-[servers.yml example](example/servers.yml) example, and knot.conf serve as a
-config for you knot app, see [knot.conf example](example/knot.conf)
+[servers.yml example](examples/servers.yml) example, and knot.conf serve as a
+config for you knot app, see [knot.conf example](examples/knot.conf)
 
 
 ## Prepare the docker-compose fill
