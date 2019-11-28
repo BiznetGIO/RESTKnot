@@ -29,11 +29,18 @@ def insert_soa_record(zone_id):
 
 
 def insert_record_content(record_id):
-    date_data = utils.soa_time_set() + "01"
+    """Insert default SOA record.
+
+    Notes:
+    `default_soa_content` contains: MNAME, RNAME
+    `default_soa_ttl` contains: REFRESH, RETRY, EXPIRE, MINIMUM
+    See: https://tools.ietf.org/html/rfc1035 (3.3.13. SOA RDATA format)
+    """
+    serial = utils.soa_time_set() + "01"
     default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
     default_soa_ttl = os.environ.get("DEFAULT_SOA_TTL")
 
-    content = f"{default_soa_content} {date_data} {default_soa_ttl}"
+    content = f"{default_soa_content} {serial} {default_soa_ttl}"
     content_data = {"content": content, "record_id": record_id}
 
     model.insert(table="content", data=content_data)
