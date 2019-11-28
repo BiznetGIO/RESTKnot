@@ -5,38 +5,20 @@ from app.models import model
 from app.helpers import producer
 
 
-def config_zone(zone, zone_id, command):
-    cmd = {
-        zone: {
-            "id_zone": zone_id,
-            "type": "general",
-            "command": "config",
-            "general": {
-                "sendblock": {
-                    "cmd": command,
-                    "section": "zone",
-                    "item": "domain",
-                    "data": zone,
-                },
-                "receive": {"type": "block"},
-            },
-        }
-    }
-    producer.send(cmd)
-
-
 def get_other_data(record_id):
     try:
-        record = model.get_by_id(table="record", field="id", id_=record_id)
+        record = model.get_by_condition(table="record", field="id", value=record_id)
 
         zone_id = record[0]["zone_id"]
         type_id = record[0]["type_id"]
         ttl_id = record[0]["ttl_id"]
 
-        zone = model.get_by_id(table="zone", field="id", id_=zone_id)
-        type_ = model.get_by_id(table="type", field="id", id_=type_id)
-        ttl = model.get_by_id(table="ttl", field="id", id_=ttl_id)
-        content = model.get_by_id(table="content", field="record_id", id_=record_id)
+        zone = model.get_by_condition(table="zone", field="id", value=zone_id)
+        type_ = model.get_by_condition(table="type", field="id", value=type_id)
+        ttl = model.get_by_condition(table="ttl", field="id", value=ttl_id)
+        content = model.get_by_condition(
+            table="content", field="record_id", value=record_id
+        )
         return (record, zone, type_, ttl, content)
     except Exception as e:
         raise e
@@ -73,84 +55,42 @@ def generate_command(**kwargs):
     return cmd
 
 
-def soa_default_command(soa_record_id, command):
-    record, zone, type_, ttl, content = get_other_data(soa_record_id)
-    if type_[0]["type"] != "SOA":
-        return False
-
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
-
-    cmd = generate_command(
-        zone_id=zone_id,
-        zone_name=zone_name,
-        owner=record[0]["record"],
-        rtype=type_[0]["type"],
-        ttl=ttl[0]["ttl"],
-        data=content[0]["content"],
-        command=command,
-    )
+def send_config(zone, zone_id, command):
+    cmd = {
+        zone: {
+            "id_zone": zone_id,
+            "type": "general",
+            "command": "config",
+            "general": {
+                "sendblock": {
+                    "cmd": command,
+                    "section": "zone",
+                    "item": "domain",
+                    "data": zone,
+                },
+                "receive": {"type": "block"},
+            },
+        }
+    }
     producer.send(cmd)
 
 
-def ns_default_command(ns_record_id, command):
-    record, zone, type_, ttl, content = get_other_data(ns_record_id)
+def send_zone(record_id, command):
+    record, zone, type_, ttl, content = get_other_data(record_id)
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    for i in content:
+    for item in content:
         cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
             owner=record[0]["record"],
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
-            data=i["content"],
+            data=item["content"],
             command=command,
         )
         producer.send(cmd)
-
-
-def record_insert(record_id, command):
-    record, zone, type_, ttl, content = get_other_data(record_id)
-
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
-
-    serial = ""
-    if record[0]["is_serial"]:
-        # FIXME serial db never contain data
-        serial_data = model.get_by_id(
-            table="serial", field="record_id", id_=record[0]["id"]
-        )
-
-        for i in serial_data:
-            if serial == "":
-                serial = i["serial"]
-            else:
-                serial = serial + " " + i["serial"]
-
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["record"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            data=serial + " " + content[0]["content"],
-            command=command,
-        )
-    else:
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["record"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            data=content[0]["content"],
-            command="zone-set",
-        )
-
-    producer.send(cmd)
 
 
 def cluster_file():

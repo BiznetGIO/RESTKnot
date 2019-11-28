@@ -26,7 +26,6 @@ CREATE TABLE zone (
 CREATE TABLE record (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
 	record STRING(100) NULL,
-        is_serial BOOL NULL,
         zone_id INT8 NOT NULL REFERENCES zone (id) ON DELETE CASCADE ON UPDATE CASCADE,
         type_id INT8 NOT NULL REFERENCES "type" (id) ON DELETE CASCADE ON UPDATE CASCADE,
         ttl_id INT8 NOT NULL REFERENCES ttl (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -37,14 +36,6 @@ CREATE TABLE content (
         content STRING(100) NULL,
         record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE TABLE "serial" (
-        id INT NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	"name" STRING(100) NULL,
-	"serial" INT8 NULL,
-        record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 
 INSERT INTO "type" (id, "type") VALUES
 	(1, 'SOA'),

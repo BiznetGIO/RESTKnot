@@ -13,7 +13,6 @@ from .content import (
     ContentEdit,
     ContentDelete,
 )
-from .serial import GetSerialData, GetSerialDataId, SerialAdd, SerialEdit, SerialDelete
 from .domain import (
     GetDomainData,
     GetDomainDataId,
@@ -62,12 +61,6 @@ api.add_resource(GetContentDataId, "/content/list/<content_id>")
 api.add_resource(ContentAdd, "/content/add")
 api.add_resource(ContentEdit, "/content/edit/<content_id>")
 api.add_resource(ContentDelete, "/content/delete/<content_id>")
-
-api.add_resource(GetSerialData, "/serial/list")
-api.add_resource(GetSerialDataId, "/serial/list/<serial_id>")
-api.add_resource(SerialAdd, "/serial/add")
-api.add_resource(SerialEdit, "/serial/edit/<serial_id>")
-api.add_resource(SerialDelete, "/serial/delete/<serial_id>")
 
 api.add_resource(GetDomainData, "/domain/list")
 api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")

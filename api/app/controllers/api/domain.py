@@ -12,10 +12,10 @@ from app.middlewares import auth
 
 def insert_zone(zone, project_id):
 
-    user = model.get_by_id(table="user", field="project_id", id_=f"{project_id}")
-    print(f"user: {user}")
+    user = model.get_by_condition(
+        table="user", field="project_id", value=f"{project_id}"
+    )
     user_id = user[0]["id"]
-    print(f"user_id: {user_id}")
 
     data = {"zone": zone, "user_id": user_id}
     zone_id = model.insert(table="zone", data=data)
@@ -23,23 +23,24 @@ def insert_zone(zone, project_id):
 
 
 def insert_soa_record(zone_id):
-    record_data = {
-        "record": "@",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "1",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "@", "zone_id": zone_id, "type_id": "1", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_record_content(record_id):
-    date_data = utils.soa_time_set() + "01"
-    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
-    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL")
+def insert_soa_content(record_id):
+    """Insert default SOA record.
 
-    content = f"{default_soa_content} {date_data} {default_soa_serial}"
+    Notes:
+    `default_soa_content` contains: MNAME, RNAME
+    `default_soa_ttl` contains: REFRESH, RETRY, EXPIRE, MINIMUM
+    See: https://tools.ietf.org/html/rfc1035 (3.3.13. SOA RDATA format)
+    """
+    serial = utils.soa_time_set() + "01"
+    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
+    default_soa_ttl = os.environ.get("DEFAULT_SOA_TTL")
+
+    content = f"{default_soa_content} {serial} {default_soa_ttl}"
     content_data = {"content": content, "record_id": record_id}
 
     model.insert(table="content", data=content_data)
@@ -47,18 +48,12 @@ def insert_record_content(record_id):
 
 def insert_soa_default(zone_id):
     record_id = insert_soa_record(zone_id)
-    insert_record_content(record_id)
+    insert_soa_content(record_id)
     return record_id
 
 
 def insert_ns_record(zone_id):
-    record_data = {
-        "record": "@",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "4",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
@@ -79,13 +74,7 @@ def insert_ns_default(zone_id):
 
 
 def insert_cname_record(zone_id):
-    record_data = {
-        "record": "www",
-        "is_serial": False,
-        "zone_id": zone_id,
-        "type_id": "5",
-        "ttl_id": "6",
-    }
+    record_data = {"record": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
@@ -134,8 +123,8 @@ def get_datum(data):
 
     results = []
     for d in data:
-        user = model.get_by_id(table="user", field="id", id_=d["user_id"])
-        record = model.get_by_id(table="record", field="zone_id", id_=d["id"])
+        user = model.get_by_condition(table="user", field="id", value=d["user_id"])
+        record = model.get_by_condition(table="record", field="zone_id", value=d["id"])
         user_datum = get_user_datum(user)
         record_datum = get_record_datum(record)
 
@@ -165,7 +154,7 @@ class GetDomainDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -178,11 +167,11 @@ class GetDomainDataByProjectId(Resource):
     def get(self, project_id):
 
         try:
-            user = model.get_by_id(
-                table="user", field="project_id", id_=f"'{project_id}'"
+            user = model.get_by_condition(
+                table="user", field="project_id", value=f"{project_id}"
             )
             user_id = user[0]["id"]
-            zone = model.get_by_id(table="zone", field="user_id", id_=user_id)
+            zone = model.get_by_condition(table="zone", field="user_id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -213,18 +202,20 @@ class DeleteDomain(Resource):
         zone = args["zone"]
 
         try:
-            zones = model.get_by_id(table="zone", field="zone", id_=f"'{zone}'")
+            zones = model.get_by_condition(table="zone", field="zone", value=f"{zone}")
             zone_id = zones[0]["id"]
 
-            records = model.get_by_id(table="record", field="zone_id", id_=zone_id)
+            records = model.get_by_condition(
+                table="record", field="zone_id", value=zone_id
+            )
             soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
 
             # unset conf
-            command.config_zone(zone, zone_id, "conf-unset")
+            command.send_config(zone, zone_id, "conf-unset")
             # unset zone
-            command.soa_default_command(soa_record_id, "zone-unset")
-            command.ns_default_command(ns_record_id, "zone-unset")
-            command.record_insert(cname_record_id, "zone-unset")
+            command.send_zone(soa_record_id, "zone-unset")
+            command.send_zone(ns_record_id, "zone-unset")
+            command.send_zone(cname_record_id, "zone-unset")
             # no need to perform unset for clusering, the necessary file deleted
             # automatically after the above operation
 
@@ -250,7 +241,7 @@ class AddDomain(Resource):
         project_id = args["project_id"]
 
         # Validation
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
         if validation.zone_validation(zone):
             return response(401, message="Named Error")
@@ -261,16 +252,14 @@ class AddDomain(Resource):
             return response(401, message="Project ID not found")
         else:
             # add zone config
-            command.config_zone(zone, zone_id, "conf-set")
+            command.send_config(zone, zone_id, "conf-set")
 
             soa_record_id = insert_soa_default(zone_id)
-            command.soa_default_command(soa_record_id, "zone-set")
-
             ns_record_id = insert_ns_default(zone_id)
-            command.ns_default_command(ns_record_id, "zone-set")
-
             cname_record_id = insert_cname(zone_id, zone)
-            command.record_insert(cname_record_id, "zone-set")
+            command.send_zone(soa_record_id, "zone-set")
+            command.send_zone(ns_record_id, "zone-set")
+            command.send_zone(cname_record_id, "zone-set")
 
             try:
                 command.cluster_command(cname_record_id)

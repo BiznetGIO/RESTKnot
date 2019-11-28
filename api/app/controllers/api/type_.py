@@ -20,7 +20,7 @@ class GetTypeDataId(Resource):
     @auth.auth_required
     def get(self, type_id):
         try:
-            data = model.get_by_id(table="type", field="id", id_=type_id)
+            data = model.get_by_condition(table="type", field="id", value=type_id)
         except Exception as e:
             return response(401, message=str(e))
         else:

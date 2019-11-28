@@ -33,7 +33,7 @@ class GetZoneDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_id(table="zone", field="id", id_=zone_id)
+            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -51,7 +51,7 @@ class ZoneAdd(Resource):
         zone = args["zone"].lower()
         user_id = args["user_id"]
 
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):
@@ -76,7 +76,7 @@ class ZoneEdit(Resource):
         args = parser.parse_args()
         zone = args["zone"].lower()
 
-        if not model.is_unique(table="zone", field="zone", value=f"'{zone}'"):
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
         if validation.zone_validation(zone):
@@ -102,5 +102,4 @@ class ZoneDelete(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            # FIXME still say 'deleted' even data = 0
             return response(200, data=data, message="Deleted")

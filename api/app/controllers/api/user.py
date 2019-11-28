@@ -36,7 +36,7 @@ class GetUserDataId(Resource):
     @auth.auth_required
     def get(self, user_id):
         try:
-            data = model.get_by_id(table="user", field="id", id_=user_id)
+            data = model.get_by_condition(table="user", field="id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -65,7 +65,7 @@ class UserSignUp(Resource):
         project_id = args["project_id"]
         email = args["email"]
 
-        if not model.is_unique(table="user", field="email", value=f"'{email}'"):
+        if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
         data = {
@@ -91,7 +91,7 @@ class UserUpdate(Resource):
         email = args["email"]
         args = parser.parse_args()
 
-        if not model.is_unique(table="user", field="email", value=f"'{email}'"):
+        if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
         data = {
