@@ -5,26 +5,6 @@ from app.models import model
 from app.helpers import producer
 
 
-def config_zone(zone, zone_id, command):
-    cmd = {
-        zone: {
-            "id_zone": zone_id,
-            "type": "general",
-            "command": "config",
-            "general": {
-                "sendblock": {
-                    "cmd": command,
-                    "section": "zone",
-                    "item": "domain",
-                    "data": zone,
-                },
-                "receive": {"type": "block"},
-            },
-        }
-    }
-    producer.send(cmd)
-
-
 def get_other_data(record_id):
     try:
         record = model.get_by_condition(table="record", field="id", value=record_id)
@@ -75,61 +55,42 @@ def generate_command(**kwargs):
     return cmd
 
 
-def soa_default_command(soa_record_id, command):
-    record, zone, type_, ttl, content = get_other_data(soa_record_id)
-    if type_[0]["type"] != "SOA":
-        return False
-
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
-
-    cmd = generate_command(
-        zone_id=zone_id,
-        zone_name=zone_name,
-        owner=record[0]["record"],
-        rtype=type_[0]["type"],
-        ttl=ttl[0]["ttl"],
-        data=content[0]["content"],
-        command=command,
-    )
+def send_config(zone, zone_id, command):
+    cmd = {
+        zone: {
+            "id_zone": zone_id,
+            "type": "general",
+            "command": "config",
+            "general": {
+                "sendblock": {
+                    "cmd": command,
+                    "section": "zone",
+                    "item": "domain",
+                    "data": zone,
+                },
+                "receive": {"type": "block"},
+            },
+        }
+    }
     producer.send(cmd)
 
 
-def ns_default_command(ns_record_id, command):
-    record, zone, type_, ttl, content = get_other_data(ns_record_id)
+def send_zone(record_id, command):
+    record, zone, type_, ttl, content = get_other_data(record_id)
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    for i in content:
+    for item in content:
         cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
             owner=record[0]["record"],
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
-            data=i["content"],
+            data=item["content"],
             command=command,
         )
         producer.send(cmd)
-
-
-def record_insert(record_id, command):
-    record, zone, type_, ttl, content = get_other_data(record_id)
-
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
-
-    cmd = generate_command(
-        zone_id=zone_id,
-        zone_name=zone_name,
-        owner=record[0]["record"],
-        rtype=type_[0]["type"],
-        ttl=ttl[0]["ttl"],
-        data=content[0]["content"],
-        command="zone-set",
-    )
-
-    producer.send(cmd)
 
 
 def cluster_file():

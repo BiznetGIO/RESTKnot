@@ -211,11 +211,11 @@ class DeleteDomain(Resource):
             soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
 
             # unset conf
-            command.config_zone(zone, zone_id, "conf-unset")
+            command.send_config(zone, zone_id, "conf-unset")
             # unset zone
-            command.soa_default_command(soa_record_id, "zone-unset")
-            command.ns_default_command(ns_record_id, "zone-unset")
-            command.record_insert(cname_record_id, "zone-unset")
+            command.send_zone(soa_record_id, "zone-unset")
+            command.send_zone(ns_record_id, "zone-unset")
+            command.send_zone(cname_record_id, "zone-unset")
             # no need to perform unset for clusering, the necessary file deleted
             # automatically after the above operation
 
@@ -252,16 +252,14 @@ class AddDomain(Resource):
             return response(401, message="Project ID not found")
         else:
             # add zone config
-            command.config_zone(zone, zone_id, "conf-set")
+            command.send_config(zone, zone_id, "conf-set")
 
             soa_record_id = insert_soa_default(zone_id)
-            command.soa_default_command(soa_record_id, "zone-set")
-
             ns_record_id = insert_ns_default(zone_id)
-            command.ns_default_command(ns_record_id, "zone-set")
-
             cname_record_id = insert_cname(zone_id, zone)
-            command.record_insert(cname_record_id, "zone-set")
+            command.send_zone(soa_record_id, "zone-set")
+            command.send_zone(ns_record_id, "zone-set")
+            command.send_zone(cname_record_id, "zone-set")
 
             try:
                 command.cluster_command(cname_record_id)
