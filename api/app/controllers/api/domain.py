@@ -28,7 +28,7 @@ def insert_soa_record(zone_id):
     return record_id
 
 
-def insert_record_content(record_id):
+def insert_soa_content(record_id):
     """Insert default SOA record.
 
     Notes:
@@ -48,7 +48,7 @@ def insert_record_content(record_id):
 
 def insert_soa_default(zone_id):
     record_id = insert_soa_record(zone_id)
-    insert_record_content(record_id)
+    insert_soa_content(record_id)
     return record_id
 
 
