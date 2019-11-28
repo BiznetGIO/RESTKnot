@@ -37,9 +37,9 @@ def insert_soa_record(zone_id):
 def insert_record_content(record_id):
     date_data = utils.soa_time_set() + "01"
     default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
-    default_soa_serial = os.environ.get("DEFAULT_SOA_SERIAL")
+    default_soa_ttl = os.environ.get("DEFAULT_SOA_TTL")
 
-    content = f"{default_soa_content} {date_data} {default_soa_serial}"
+    content = f"{default_soa_content} {date_data} {default_soa_ttl}"
     content_data = {"content": content, "record_id": record_id}
 
     model.insert(table="content", data=content_data)
