@@ -81,13 +81,11 @@ class PreparingCursor(ext.cursor):
         else:
             self._execstmt = "execute %s" % (self._prepname)
 
-        # print(f"prepared: {stmt}")
         self._prepared = stmt
 
     @property
     def prepared(self):
         """The query currently prepared."""
-        # print(f"prepared: {self._prepared}")
         return self._prepared
 
     def deallocate(self):
@@ -109,7 +107,6 @@ class PreparingCursor(ext.cursor):
                 "execute() with no query called without prepare"
             )
 
-        # print(f"execute: {stmt} {args}")
         return super(PreparingCursor, self).execute(stmt, args)
 
     def executemany(self, stmt, args=None):

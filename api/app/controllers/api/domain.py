@@ -15,9 +15,7 @@ def insert_zone(zone, project_id):
     user = model.get_by_condition(
         table="user", field="project_id", value=f"{project_id}"
     )
-    print(f"user: {user}")
     user_id = user[0]["id"]
-    print(f"user_id: {user_id}")
 
     data = {"zone": zone, "user_id": user_id}
     zone_id = model.insert(table="zone", data=data)
