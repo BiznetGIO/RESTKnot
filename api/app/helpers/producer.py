@@ -18,7 +18,8 @@ def kafka_producer():
 def send(command):
     try:
         producer = kafka_producer()
-        respons = producer.send("domaindata", command)
+        topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
+        respons = producer.send(topic, command)
     except Exception as e:
         raise e
     else:

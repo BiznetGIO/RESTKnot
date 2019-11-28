@@ -18,6 +18,7 @@ services:
             - DB_SSL=disable
             - KAFKA_HOST=kafka
             - KAFKA_PORT=9092
+            - RESTKNOT_KAFKA_TOPIC=domaindata
             # don't add quote, otherwise it will not work
             - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
             # soa ttl: <refresh> <retry> <expire> <minimum>
