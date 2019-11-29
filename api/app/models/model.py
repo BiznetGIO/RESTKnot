@@ -15,14 +15,18 @@ def get_db():
 
 def get_columns(table):
     column = None
-    cursor, _ = get_db()
+    cursor, connection = get_db()
     try:
         query = f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='{table}'"
         cursor.execute(query)
         column = [row[0] for row in cursor.fetchall()]
+        return column
     except (Exception, psycopg2.DatabaseError) as e:
         column = str(e)
-    return column
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def get_all(table):
@@ -40,8 +44,14 @@ def get_all(table):
         connection.rollback()
         raise error
     else:
+        # even select need `commit`
+        # see /psycopg/docs/faq.html#problems-with-transactions-handling
         connection.commit()
         return results
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def get_by_condition(table, field=None, value=None):
@@ -61,6 +71,10 @@ def get_by_condition(table, field=None, value=None):
     else:
         connection.commit()
         return results
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def insert(table, data=None):
@@ -92,6 +106,10 @@ def insert(table, data=None):
         connection.commit()
         id_of_new_row = cursor.fetchone()[0]
         return str(id_of_new_row)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def update(table, data=None):
@@ -115,6 +133,10 @@ def update(table, data=None):
         connection.commit()
         status = True
         return status
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def delete(table, field=None, value=None):
@@ -131,6 +153,10 @@ def delete(table, field=None, value=None):
         connection.commit()
         rows_deleted = cursor.rowcount
         return str(rows_deleted)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
 
 
 def is_unique(table, field=None, value=None):
@@ -157,3 +183,7 @@ def plain_get(query, value=None):
     else:
         connection.commit()
         return results
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
