@@ -32,8 +32,3 @@ def get_rules():
     abs_path = os.path.dirname(os.path.realpath(__file__))
     repo_file = "{}/templates/rules.yml".format(abs_path)
     return yaml_parser(repo_file)
-
-
-def exec_shell(command):
-    cmd = os.popen(command).read()
-    return cmd
