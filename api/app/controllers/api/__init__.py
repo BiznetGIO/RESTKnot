@@ -6,13 +6,6 @@ from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
 from .zone import GetZoneData, GetZoneDataId, ZoneAdd, ZoneEdit, ZoneDelete
 from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
-from .content import (
-    GetContentData,
-    GetContentDataId,
-    ContentAdd,
-    ContentEdit,
-    ContentDelete,
-)
 from .domain import (
     GetDomainData,
     GetDomainDataId,
@@ -24,6 +17,21 @@ from .domain import (
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
+
+api.add_resource(GetRecordData, "/record/list")
+api.add_resource(GetRecordDataId, "/record/list/<record_id>")
+api.add_resource(RecordAdd, "/record/add")
+api.add_resource(RecordEdit, "/record/edit/<record_id>")
+api.add_resource(RecordDelete, "/record/delete/<record_id>")
+
+api.add_resource(GetDomainData, "/domain/list")
+api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
+api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
+api.add_resource(DeleteDomain, "/domain/delete")
+api.add_resource(AddDomain, "/domain/add")
+
+
+# internal usage (db only, didn't communicate with knot)
 
 api.add_resource(UserSignUp, "/user/add")
 api.add_resource(GetUserData, "/user/list")
@@ -48,21 +56,3 @@ api.add_resource(GetZoneDataId, "/zone/list/<zone_id>")
 api.add_resource(ZoneAdd, "/zone/add")
 api.add_resource(ZoneEdit, "/zone/edit/<zone_id>")
 api.add_resource(ZoneDelete, "/zone/delete/<zone_id>")
-
-api.add_resource(GetRecordData, "/record/list")
-api.add_resource(GetRecordDataId, "/record/list/<record_id>")
-api.add_resource(RecordAdd, "/record/add")
-api.add_resource(RecordEdit, "/record/edit/<record_id>")
-api.add_resource(RecordDelete, "/record/delete/<record_id>")
-
-api.add_resource(GetContentData, "/content/list")
-api.add_resource(GetContentDataId, "/content/list/<content_id>")
-api.add_resource(ContentAdd, "/content/add")
-api.add_resource(ContentEdit, "/content/edit/<content_id>")
-api.add_resource(ContentDelete, "/content/delete/<content_id>")
-
-api.add_resource(GetDomainData, "/domain/list")
-api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
-api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
-api.add_resource(DeleteDomain, "/domain/delete")
-api.add_resource(AddDomain, "/domain/add")
