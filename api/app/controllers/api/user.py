@@ -1,24 +1,9 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
+from app.models import user as user_model
 from app.libs import utils
 from app.middlewares import auth
-
-
-def get_datum(data):
-    if data is None:
-        return
-
-    results = []
-    for d in data:
-        datum = {
-            "id": str(d["id"]),
-            "email": d["email"],
-            "project_id": d["project_id"],
-            "created_at": str(d["created_at"]),
-        }
-        results.append(datum)
-    return results
 
 
 class GetUserData(Resource):
@@ -26,7 +11,7 @@ class GetUserData(Resource):
     def get(self):
         try:
             data = model.get_all("user")
-            user_data = get_datum(data)
+            user_data = user_model.get_datum(data)
             return response(200, data=user_data)
         except Exception as e:
             return response(401, message=str(e))
@@ -40,7 +25,7 @@ class GetUserDataId(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user_data = get_datum(data)
+            user_data = user_model.get_datum(data)
             return response(200, data=user_data)
 
 

@@ -4,19 +4,16 @@ from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
+from app.models import user as user_model
+from app.models import record as record_model
 from app.libs import utils
 from app.libs import validation
 from app.helpers import command
-from app.helpers import producer
 from app.middlewares import auth
 
 
 def insert_zone(zone, project_id):
-
-    user = model.get_by_condition(
-        table="user", field="project_id", value=f"{project_id}"
-    )
-    user_id = user[0]["id"]
+    user_id = user_model.user_id_by_project(project_id)
 
     data = {"zone": zone, "user_id": user_id}
     zone_id = model.insert(table="zone", data=data)
@@ -93,47 +90,23 @@ def insert_cname(zone_id, zone):
     return record_id
 
 
-def get_record_datum(data):
-    if data is None:
+def get_other_data(zones):
+    results = []
+
+    if zones is None:
         return
 
-    results = []
-    for d in data:
-        datum = {
-            "id": str(d["id"]),
-            "owner": d["owner"],
-            "type_id": d["type_id"],
-            "ttl_id": d["ttl_id"],
-        }
-        results.append(datum)
-    return results
-
-
-def get_user_datum(data):
-    if data is None:
-        return
-
-    results = []
-    for d in data:
-        datum = {"id": str(d["id"]), "email": d["email"], "project_id": d["project_id"]}
-        results.append(datum)
-    return results
-
-
-def get_datum(data):
-    if data is None:
-        return
-
-    results = []
-    for d in data:
-        user = model.get_by_condition(table="user", field="id", value=d["user_id"])
-        record = model.get_by_condition(table="record", field="zone_id", value=d["id"])
-        user_datum = get_user_datum(user)
-        record_datum = get_record_datum(record)
+    for zone in zones:
+        users = model.get_by_condition(table="user", field="id", value=zone["user_id"])
+        records = model.get_by_condition(
+            table="record", field="zone_id", value=zone["id"]
+        )
+        user_datum = user_model.get_datum(users)
+        record_datum = record_model.get_other_data(records)
 
         datum = {
-            "zone_id": d["id"],
-            "zone": d["zone"],
+            "zone_id": zone["id"],
+            "zone": zone["zone"],
             "user": user_datum,
             "record": record_datum,
         }
@@ -149,7 +122,7 @@ class GetDomainData(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        data = get_datum(zones)
+        data = get_other_data(zones)
         return response(200, data=data)
 
 
@@ -157,11 +130,11 @@ class GetDomainDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
+            zones = model.get_by_condition(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            data = get_datum(zone)
+            data = get_other_data(zones)
             return response(200, data=data)
 
 
@@ -170,15 +143,13 @@ class GetDomainDataByProjectId(Resource):
     def get(self, project_id):
 
         try:
-            user = model.get_by_condition(
-                table="user", field="project_id", value=f"{project_id}"
-            )
-            user_id = user[0]["id"]
-            zone = model.get_by_condition(table="zone", field="user_id", value=user_id)
+            user_id = user_model.user_id_by_project(project_id)
+
+            zones = model.get_by_condition(table="zone", field="user_id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            data = get_datum(zone)
+            data = get_other_data(zones)
             return response(200, data=data)
 
 

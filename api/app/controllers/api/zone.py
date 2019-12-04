@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import utils
 from app.libs import validation
 from app.middlewares import auth
 

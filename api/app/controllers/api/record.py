@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
+from app.models import record as record_model
 from app.libs import validation
 from app.middlewares import auth
 from app.helpers import command
@@ -26,38 +27,12 @@ def get_typeid(record):
         return response(401, message="Record Unrecognized")
 
 
-def get_other_data(records):
-    results = []
-
-    for record in records:
-        rdata = model.get_by_condition(
-            table="rdata", field="record_id", value=record["id"]
-        )
-        zone = model.get_by_condition(table="zone", field="id", value=record["zone_id"])
-        ttl = model.get_by_condition(table="ttl", field="id", value=record["ttl_id"])
-        type_ = model.get_by_condition(
-            table="type", field="id", value=record["type_id"]
-        )
-
-        data = {
-            "id": record["id"],
-            "owner": record["owner"],
-            "rdata": rdata,
-            "zone": zone,
-            "type": type_,
-            "ttl": ttl,
-        }
-        results.append(data)
-
-    return results
-
-
 class GetRecordData(Resource):
     @auth.auth_required
     def get(self):
         try:
             records = model.get_all("record")
-            data = get_other_data(records)
+            data = record_model.get_other_data(records)
             return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
@@ -70,7 +45,7 @@ class GetRecordDataId(Resource):
             records = model.get_by_condition(
                 table="record", field="id", value=record_id
             )
-            data = get_other_data(records)
+            data = record_model.get_other_data(records)
             return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
