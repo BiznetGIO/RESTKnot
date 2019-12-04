@@ -3,16 +3,16 @@ from ipaddress import ip_address
 from app.models import model
 
 
-def a_content_validation(a_content):
+def is_valid_a(a):
     try:
-        ip_address(a_content)
+        ip_address(a)
     except ValueError:
         return True
     else:
         return False
 
 
-def mx_content_validation(mx):
+def is_valid_mx(mx):
     if mx == "@":
         return False
     else:
@@ -25,7 +25,7 @@ def mx_content_validation(mx):
             return True
 
 
-def cname_content_validation(cname):
+def is_valid_cname(cname):
     if cname == "@":
         return False
     else:
@@ -38,7 +38,7 @@ def cname_content_validation(cname):
             return True
 
 
-def txt_content_validation(txt):
+def is_valid_txt(txt):
     if txt == "@" or txt == "*":
         return False
     else:
@@ -49,7 +49,7 @@ def txt_content_validation(txt):
             return True
 
 
-def zone_validation(zone):
+def is_valid_zone(zone):
     pattern = re.compile(
         "^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$"
     )
@@ -59,14 +59,14 @@ def zone_validation(zone):
         return True
 
 
-def record_validation(record):
-    if record == "@" or record == "*":
+def is_valid_rtype(rtype):
+    if rtype == "@" or rtype == "*":
         return False
     else:
         pattern = re.compile(
             "^(([\*a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[_A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
         )
-        if pattern.match(record):
+        if pattern.match(rtype):
             return False
         else:
             return True
@@ -89,22 +89,18 @@ def count_character(name):
         return False
 
 
-def content_validation(record, content):
-    valid = False
-    try:
-        data_record = model.get_by_condition("record", record)
-        data_type = model.get_by_condition("type", data_record["type"])
-    except Exception:
-        pass
+def is_valid_rdata(rtype, rdata):
+    is_valid = False
+
+    if rtype == "A":
+        is_valid = is_valid_a(rdata)
+    elif rtype == "MX":
+        is_valid = is_valid_mx(rdata)
+    elif rtype == "CNAME":
+        is_valid = is_valid_cname(rdata)
+    elif rtype == "TXT":
+        is_valid = is_valid_txt(rdata)
     else:
-        if data_type["value"] == "A":
-            valid = a_content_validation(content)
-        elif data_type["value"] == "MX":
-            valid = mx_content_validation(content)
-        elif data_type["value"] == "CNAME":
-            valid = cname_content_validation(content)
-        elif data_type["value"] == "TXT":
-            valid = txt_content_validation(content)
-        else:
-            valid = False
-    return valid
+        return False
+
+    return is_valid

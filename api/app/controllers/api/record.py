@@ -74,10 +74,12 @@ class RecordAdd(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        if validation.record_validation(rtype):
-            return response(401, message="Named Error")
+        if validation.is_valid_rtype(rtype):
+            return response(401, message="Unrecognized Record Type")
         if validation.count_character(rtype):
-            return response(401, message="Count Character Error")
+            return response(401, message="Character Length Exceeded")
+        if validation.is_valid_rdata(rtype, rdata):
+            return response(401, message="Invalid Record Data")
 
         if rtype == "mx" or rtype == "cname":
             if is_duplicate(rtype, zone_id):
@@ -125,10 +127,12 @@ class RecordEdit(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        if validation.record_validation(rtype):
-            return response(401, message="Named Error")
+        if validation.is_valid_rtype(rtype):
+            return response(401, message="Unrecognized Record Type")
         if validation.count_character(rtype):
-            return response(401, message="Count Character Error")
+            return response(401, message="Character Length Exceeded")
+        if validation.is_valid_rdata(rtype, rdata):
+            return response(401, message="Invalid Record Data")
 
         if rtype == "mx" or rtype == "cname":
             if is_duplicate(rtype, zone_id):
