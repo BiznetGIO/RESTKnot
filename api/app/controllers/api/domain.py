@@ -270,17 +270,3 @@ class AddDomain(Resource):
             # just for feedback return value
             zone_data = {"zone": zone, "project_id": project_id}
             return response(200, data=zone_data, message="Inserted")
-
-
-class ViewCommand(Resource):
-    @auth.auth_required
-    def get(self, zone_id):
-        zone_data = model.read_by_id("zone", zone_id)["value"]
-        command_data = command.config_zone(zone_data, zone_id)
-        try:
-            test = producer.send(command_data)
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
-            data = {"send_status": test, "command": command_data}
-            return response(200, data=data, message=test)
