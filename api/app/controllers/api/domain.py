@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 
 from app.helpers.rest import response
 from app.models import model
+from app.models import zone as zone_model
 from app.libs import utils
 from app.libs import validation
 from app.helpers import command
@@ -40,53 +41,54 @@ def insert_soa_rdata(record_id):
     default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
     default_soa_ttl = os.environ.get("DEFAULT_SOA_TTL")
 
-    content = f"{default_soa_content} {serial} {default_soa_ttl}"
-    content_data = {"content": content, "record_id": record_id}
+    rdata = f"{default_soa_content} {serial} {default_soa_ttl}"
+    content_data = {"rdata": rdata, "record_id": record_id}
 
-    model.insert(table="content", data=content_data)
+    model.insert(table="rdata", data=content_data)
 
 
-def insert_soa_default(zone_id):
+def insert_soa(zone_id):
+    """Insert default SOA record"""
     record_id = insert_soa_record(zone_id)
-    insert_soa_content(record_id)
+    insert_soa_rdata(record_id)
     return record_id
 
 
 def insert_ns_record(zone_id):
-    record_data = {"record": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
+    record_data = {"owner": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_ns_content(record_id):
+def insert_ns_rdata(record_id):
     default_ns = os.environ.get("DEFAULT_NS")
     nameserver = default_ns.split(" ")
 
     for name in nameserver:
-        content_data = {"content": name, "record_id": record_id}
-        model.insert(table="content", data=content_data)
+        data = {"rdata": name, "record_id": record_id}
+        model.insert(table="rdata", data=data)
 
 
-def insert_ns_default(zone_id):
+def insert_ns(zone_id):
     record_id = insert_ns_record(zone_id)
-    insert_ns_content(record_id)
+    insert_ns_rdata(record_id)
     return record_id
 
 
 def insert_cname_record(zone_id):
-    record_data = {"record": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
+    record_data = {"owner": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_cname_content(zone, record_id):
-    content_data = {"content": f"{zone}.", "record_id": record_id}
-    model.insert(table="content", data=content_data)
+def insert_cname_rdata(zone, record_id):
+    data = {"rdata": f"{zone}.", "record_id": record_id}
+    model.insert(table="rdata", data=data)
 
 
 def insert_cname(zone_id, zone):
     record_id = insert_cname_record(zone_id)
-    insert_cname_content(zone, record_id)
+    insert_cname_rdata(zone, record_id)
     return record_id
 
 
@@ -98,7 +100,7 @@ def get_record_datum(data):
     for d in data:
         datum = {
             "id": str(d["id"]),
-            "record": d["record"],
+            "owner": d["owner"],
             "type_id": d["type_id"],
             "ttl_id": d["ttl_id"],
         }
@@ -202,9 +204,7 @@ class DeleteDomain(Resource):
         zone = args["zone"]
 
         try:
-            zones = model.get_by_condition(table="zone", field="zone", value=f"{zone}")
-            zone_id = zones[0]["id"]
-
+            zone_id = zone_model.get_zone_id(zone)
             records = model.get_by_condition(
                 table="record", field="zone_id", value=zone_id
             )
@@ -254,8 +254,8 @@ class AddDomain(Resource):
             # add zone config
             command.send_config(zone, zone_id, "conf-set")
 
-            soa_record_id = insert_soa_default(zone_id)
-            ns_record_id = insert_ns_default(zone_id)
+            soa_record_id = insert_soa(zone_id)
+            ns_record_id = insert_ns(zone_id)
             cname_record_id = insert_cname(zone_id, zone)
             command.send_zone(soa_record_id, "zone-set")
             command.send_zone(ns_record_id, "zone-set")

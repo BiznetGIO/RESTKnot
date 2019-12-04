@@ -16,10 +16,10 @@ def get_other_data(record_id):
         zone = model.get_by_condition(table="zone", field="id", value=zone_id)
         type_ = model.get_by_condition(table="type", field="id", value=type_id)
         ttl = model.get_by_condition(table="ttl", field="id", value=ttl_id)
-        content = model.get_by_condition(
-            table="content", field="record_id", value=record_id
+        rdata = model.get_by_condition(
+            table="rdata", field="record_id", value=record_id
         )
-        return (record, zone, type_, ttl, content)
+        return (record, zone, type_, ttl, rdata)
     except Exception as e:
         raise e
 
@@ -31,7 +31,7 @@ def generate_command(**kwargs):
     owner = kwargs.get("owner")
     rtype = kwargs.get("rtype")
     ttl = kwargs.get("ttl")
-    data = kwargs.get("data")
+    rdata = kwargs.get("rdata")
     command = kwargs.get("command")
 
     cmd = {
@@ -46,7 +46,7 @@ def generate_command(**kwargs):
                     "owner": owner,
                     "rtype": rtype,
                     "ttl": ttl,
-                    "data": data,
+                    "data": rdata,
                 },
                 "receive": {"type": "block"},
             },
@@ -76,18 +76,18 @@ def send_config(zone, zone_id, command):
 
 
 def send_zone(record_id, command):
-    record, zone, type_, ttl, content = get_other_data(record_id)
+    record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    for item in content:
+    for item in rdata:
         cmd = generate_command(
             zone_id=zone_id,
             zone_name=zone_name,
-            owner=record[0]["record"],
+            owner=record[0]["owner"],
             rtype=type_[0]["type"],
             ttl=ttl[0]["ttl"],
-            data=item["content"],
+            rdata=item["rdata"],
             command=command,
         )
         producer.send(cmd)
@@ -112,7 +112,7 @@ def get_clusters():
 
 
 def cluster_command(record_id):
-    record, zone, type_, _, content = get_other_data(record_id)
+    record, zone, type_, _, rdata = get_other_data(record_id)
 
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
