@@ -131,41 +131,58 @@ class RecordEdit(Resource):
     @auth.auth_required
     def put(self, record_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("record", type=str, required=True)
-        parser.add_argument("zone_id", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("owner", type=str, required=True)
+        parser.add_argument("rtype", type=str, required=True)
+        parser.add_argument("rdata", type=str, required=True)
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
-
-        record = args["record"].lower()
-        zone_id = args["zone_id"]
+        owner = args["owner"].lower()
+        rtype = args["rtype"].lower()
+        rdata = args["rdata"]
+        zone = args["zone"]
         ttl_id = args["ttl_id"]
 
-        type_id = get_typeid(record)
-
-        if validation.record_validation(record):
-            return response(401, message="Named Error")
-        if validation.count_character(record):
-            return response(401, message="Count Character Error")
-
-        if record == "mx" or record == "cname":
-            if is_duplicate(record, zone_id):
-                return response(401, message="Duplicate Record found")
-        data = {
-            "where": {"id": record_id},
-            "data": {
-                "owner": record,
-                "zone_id": zone_id,
-                "type_id": type_id,
-                "ttl_id": ttl_id,
-            },
-        }
+        type_id = get_typeid(rtype)
 
         try:
-            model.update("record", data=data)
+            zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
             return response(401, message=str(e))
-        else:
+
+        if validation.record_validation(rtype):
+            return response(401, message="Named Error")
+        if validation.count_character(rtype):
+            return response(401, message="Count Character Error")
+
+        if rtype == "mx" or rtype == "cname":
+            if is_duplicate(rtype, zone_id):
+                return response(401, message="Duplicate Record found")
+        try:
+            data = {
+                "where": {"id": record_id},
+                "data": {
+                    "owner": owner,
+                    "zone_id": zone_id,
+                    "type_id": type_id,
+                    "ttl_id": ttl_id,
+                },
+            }
+            content_data = {
+                "where": {"record_id": record_id},
+                "data": {"rdata": rdata, "record_id": record_id},
+            }
+
+            command.send_zone(record_id, "zone-unset")
+
+            model.update("rdata", data=content_data)
+            model.update("record", data=data)
+
+            command.send_zone(record_id, "zone-set")
+
             return response(200, data=data, message="Edited")
+        except Exception as e:
+            return response(401, message=str(e))
 
 
 class RecordDelete(Resource):
