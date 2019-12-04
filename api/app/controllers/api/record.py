@@ -1,27 +1,10 @@
-from flask_restful import Resource, reqparse, inputs
+from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
 from app.libs import validation
 from app.middlewares import auth
-
-
-def get_datum(data):
-    if data is None:
-        return
-
-    results = []
-    for d in data:
-        # FIXME add created_at?
-        datum = {
-            "id": str(d["id"]),
-            "owner": d["record"],
-            "zone_id": d["zone_id"],
-            "type_id": d["type_id"],
-            "ttl_id": d["ttl_id"],
-        }
-        results.append(datum)
-    return results
+from app.helpers import command
 
 
 def is_duplicate(owner, zone_id):
@@ -43,51 +26,54 @@ def get_typeid(record):
         return response(401, message="Record Unrecognized")
 
 
+def get_other_data(records):
+    results = []
+
+    for record in records:
+        rdata = model.get_by_condition(
+            table="rdata", field="record_id", value=record["id"]
+        )
+        zone = model.get_by_condition(table="zone", field="id", value=record["zone_id"])
+        ttl = model.get_by_condition(table="ttl", field="id", value=record["ttl_id"])
+        type_ = model.get_by_condition(
+            table="type", field="id", value=record["type_id"]
+        )
+
+        data = {
+            "id": record["id"],
+            "owner": record["owner"],
+            "rdata": rdata,
+            "zone": zone,
+            "type": type_,
+            "ttl": ttl,
+        }
+        results.append(data)
+
+    return results
+
+
 class GetRecordData(Resource):
     @auth.auth_required
     def get(self):
         try:
             records = model.get_all("record")
+            data = get_other_data(records)
+            return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
-
-        results = []
-        for record in records:
-            zone = model.get_by_condition(
-                table="zone", field="id", value=record["zone_id"]
-            )
-            ttl = model.get_by_condition(
-                table="ttl", field="id", value=record["ttl_id"]
-            )
-            type_ = model.get_by_condition(
-                table="type", field="id", value=record["type_id"]
-            )
-
-            data = {
-                "id": record["id"],
-                "owner": record["owner"],
-                "zone": zone,
-                "type": type_,
-                "ttl": ttl,
-            }
-            results.append(data)
-
-        return response(200, data=results)
 
 
 class GetRecordDataId(Resource):
     @auth.auth_required
     def get(self, record_id):
         try:
-            # data_record = model.read_by_id("record", key)
             records = model.get_by_condition(
                 table="record", field="id", value=record_id
             )
+            data = get_other_data(records)
+            return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            data = get_datum(records)
-            return response(200, data=data)
 
 
 class RecordAdd(Resource):
@@ -102,6 +88,7 @@ class RecordAdd(Resource):
         args = parser.parse_args()
         owner = args["owner"].lower()
         rtype = args["rtype"].lower()
+        rdata = args["rdata"]
         zone = args["zone"]
         ttl_id = args["ttl_id"]
 
@@ -128,7 +115,12 @@ class RecordAdd(Resource):
                 "type_id": type_id,
                 "ttl_id": ttl_id,
             }
-            model.insert(table="record", data=data)
+            record_id = model.insert(table="record", data=data)
+
+            content_data = {"rdata": rdata, "record_id": record_id}
+            model.insert(table="rdata", data=content_data)
+
+            command.send_zone(record_id, "zone-set")
         except Exception as e:
             return response(401, message=str(e))
         else:
@@ -180,8 +172,13 @@ class RecordDelete(Resource):
     @auth.auth_required
     def delete(self, record_id):
         try:
+            record = model.get_by_condition(table="record", field="id", value=record_id)
+            if not record:
+                return response(401, message=f"Record Not Found")
+
+            command.send_zone(record_id, "zone-unset")
+
             data = model.delete(table="record", field="id", value=record_id)
+            return response(200, data=data, message="Deleted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")
