@@ -215,7 +215,7 @@ class AddDomain(Resource):
         # Validation
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
-        if validation.zone_validation(zone):
+        if validation.is_valid_zone(zone):
             return response(401, message="Named Error")
 
         try:
