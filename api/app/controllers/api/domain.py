@@ -33,15 +33,16 @@ def insert_soa_rdata(record_id):
     """Insert default SOA record.
 
     Notes:
-    `default_soa_content` contains: MNAME, RNAME
-    `default_soa_ttl` contains: REFRESH, RETRY, EXPIRE, MINIMUM
+    <MNAME> <RNAME> <serial> <refresh> <retry> <expire> <minimum>
     See: https://tools.ietf.org/html/rfc1035 (3.3.13. SOA RDATA format)
     """
     serial = utils.soa_time_set() + "01"
-    default_soa_content = os.environ.get("DEFAULT_SOA_CONTENT")
-    default_soa_ttl = os.environ.get("DEFAULT_SOA_TTL")
+    default_soa_content = os.environ.get("DEFAULT_SOA_RDATA")
+    rdatas = default_soa_content.split(" ")
+    mname_and_rname = " ".join(rdatas[0:2])
+    ttls = " ".join(rdatas[2:])
 
-    rdata = f"{default_soa_content} {serial} {default_soa_ttl}"
+    rdata = f"{mname_and_rname} {serial} {ttls}"
     content_data = {"rdata": rdata, "record_id": record_id}
 
     model.insert(table="rdata", data=content_data)
