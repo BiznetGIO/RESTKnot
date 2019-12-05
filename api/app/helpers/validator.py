@@ -63,37 +63,12 @@ def is_valid_zone(domain_name):
         raise ValueError("Bad Domain Name")
 
 
-def is_valid_rtype(rtype):
-    types = model.get_by_condition(table="type", field="type", value=rtype.upper())
-    if types == []:
-        raise ValueError("Unrecognized Record Type")
-
-
-def count_character(name):
-    if name.find("."):
-        spl_name = name.split(".")
-        total = 0
-        for i in spl_name:
-            if len(i) >= 64:
-                pass
-            else:
-                total = total + len(i)
-        if total >= 255:
-            pass
-        else:
-            raise ValueError("Character Length Exceeded")
-    else:
-        raise ValueError("Character Length Exceeded")
-
-
 functions = {
     "A": is_valid_ip,
     "MX": is_valid_mx,
     "CNAME": is_valid_cname,
     "EMAIL": is_valid_email,
     "ZONE": is_valid_zone,
-    "RTYPE": is_valid_rtype,
-    "COUNT": count_character,
 }
 
 
