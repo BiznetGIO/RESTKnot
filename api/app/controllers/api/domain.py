@@ -179,19 +179,10 @@ class DeleteDomain(Resource):
 
         try:
             zone_id = zone_model.get_zone_id(zone)
-            records = model.get_by_condition(
-                table="record", field="zone_id", value=zone_id
-            )
-            soa_record_id, ns_record_id, cname_record_id = self.get_record_ids(records)
 
-            # unset conf
+            # no need to perform unset for clusering and records. All the record
+            # deleted automatically after `conf-unset`
             command.send_config(zone, zone_id, "conf-unset")
-            # unset zone
-            command.send_zone(soa_record_id, "zone-unset")
-            command.send_zone(ns_record_id, "zone-unset")
-            command.send_zone(cname_record_id, "zone-unset")
-            # no need to perform unset for clusering, the necessary file deleted
-            # automatically after the above operation
 
             # other data (e.g record) deleted automatically
             # by cockroach when no PK existed
