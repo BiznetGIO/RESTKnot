@@ -80,17 +80,16 @@ def send_zone(record_id, command):
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
 
-    for item in rdata:
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["owner"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            rdata=item["rdata"],
-            command=command,
-        )
-        producer.send(cmd)
+    cmd = generate_command(
+        zone_id=zone_id,
+        zone_name=zone_name,
+        owner=record[0]["owner"],
+        rtype=type_[0]["type"],
+        ttl=ttl[0]["ttl"],
+        rdata=rdata[0]["rdata"],
+        command=command,
+    )
+    producer.send(cmd)
 
 
 def cluster_file():

@@ -45,11 +45,11 @@ def insert_soa_rdata(record_id):
     model.insert(table="rdata", data=content_data)
 
 
-def insert_soa(zone_id):
-    """Insert default SOA record"""
+def create_soa_default(zone_id):
+    """Create default SOA record"""
     record_id = insert_soa_record(zone_id)
     insert_soa_rdata(record_id)
-    return record_id
+    command.send_zone(record_id, "zone-set")
 
 
 def insert_ns_record(zone_id):
@@ -58,19 +58,20 @@ def insert_ns_record(zone_id):
     return record_id
 
 
-def insert_ns_rdata(record_id):
+def insert_ns_rdata(name, record_id):
+    data = {"rdata": name, "record_id": record_id}
+    model.insert(table="rdata", data=data)
+
+
+def create_ns_default(zone_id):
+    """Create default NS record"""
     default_ns = os.environ.get("DEFAULT_NS")
     nameserver = default_ns.split(" ")
 
     for name in nameserver:
-        data = {"rdata": name, "record_id": record_id}
-        model.insert(table="rdata", data=data)
-
-
-def insert_ns(zone_id):
-    record_id = insert_ns_record(zone_id)
-    insert_ns_rdata(record_id)
-    return record_id
+        record_id = insert_ns_record(zone_id)
+        insert_ns_rdata(name, record_id)
+        command.send_zone(record_id, "zone-set")
 
 
 def insert_cname_record(zone_id):
@@ -84,9 +85,10 @@ def insert_cname_rdata(zone, record_id):
     model.insert(table="rdata", data=data)
 
 
-def insert_cname(zone_id, zone):
+def create_cname_default(zone_id, zone):
     record_id = insert_cname_record(zone_id)
     insert_cname_rdata(zone, record_id)
+    command.send_zone(record_id, "zone-set")
     return record_id
 
 
@@ -226,18 +228,16 @@ class AddDomain(Resource):
         except Exception:
             return response(401, message="Project ID not found")
         else:
-            # add zone config
+            # create zone config
             command.send_config(zone, zone_id, "conf-set")
 
-            soa_record_id = insert_soa(zone_id)
-            ns_record_id = insert_ns(zone_id)
-            cname_record_id = insert_cname(zone_id, zone)
-            command.send_zone(soa_record_id, "zone-set")
-            command.send_zone(ns_record_id, "zone-set")
-            command.send_zone(cname_record_id, "zone-set")
+            # create default records
+            create_soa_default(zone_id)
+            create_ns_default(zone_id)
+            create_cname_default(zone_id, zone)
 
             try:
-                command.cluster_command(cname_record_id)
+                command.cluster_command(zone_id)
             except Exception as e:
                 return response(401, message=str(e))
 
