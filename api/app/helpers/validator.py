@@ -65,6 +65,7 @@ def is_valid_zone(domain_name):
 
 functions = {
     "A": is_valid_ip,
+    "AAAA": is_valid_ip,
     "MX": is_valid_mx,
     "CNAME": is_valid_cname,
     "EMAIL": is_valid_email,
@@ -73,4 +74,5 @@ functions = {
 
 
 def validate(rtype, rdata):
-    functions[rtype](rdata)
+    if rtype in functions.keys():
+        functions[rtype](rdata)
