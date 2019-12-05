@@ -8,14 +8,6 @@ from app.middlewares import auth
 from app.helpers import command
 
 
-def is_duplicate(owner, zone_id):
-    query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "owner"=%(owner)s'
-    value = {"zone_id": zone_id, "owner": owner}
-    mx_records = model.plain_get(query, value)
-    if len(mx_records) >= 1:
-        raise ValueError("Duplicate Record found")
-
-
 def get_typeid(record):
     try:
         type_ = model.get_by_condition(table="type", field="type", value=record.upper())
