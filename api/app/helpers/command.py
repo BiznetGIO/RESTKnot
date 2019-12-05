@@ -110,8 +110,8 @@ def get_clusters():
     return clusters
 
 
-def cluster_command(record_id):
-    record, zone, type_, _, rdata = get_other_data(record_id)
+def cluster_command(zone_id):
+    zone = model.get_by_condition(table="zone", field="id", value=zone_id)
 
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]
