@@ -237,7 +237,7 @@ class AddDomain(Resource):
             create_cname_default(zone_id, zone)
 
             try:
-                command.cluster_command(zone_id)
+                command.send_cluster(zone_id)
             except Exception as e:
                 return response(401, message=str(e))
 
