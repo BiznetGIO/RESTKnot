@@ -7,7 +7,7 @@ from app.models import zone as zone_model
 from app.models import user as user_model
 from app.models import record as record_model
 from app.libs import utils
-from app.libs import validation
+from app.helpers import validator
 from app.helpers import command
 from app.middlewares import auth
 
@@ -215,8 +215,11 @@ class AddDomain(Resource):
         # Validation
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
-        if validation.is_valid_zone(zone):
-            return response(401, message="Named Error")
+
+        try:
+            validator.validate("ZONE", zone)
+        except Exception as e:
+            return response(401, message=str(e))
 
         try:
             zone_id = insert_zone(zone, project_id)

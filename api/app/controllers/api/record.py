@@ -3,7 +3,7 @@ from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
 from app.models import record as record_model
-from app.libs import validation
+from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
 
@@ -13,9 +13,7 @@ def is_duplicate(owner, zone_id):
     value = {"zone_id": zone_id, "owner": owner}
     mx_records = model.plain_get(query, value)
     if len(mx_records) >= 1:
-        return True
-
-    return False
+        raise ValueError("Duplicate Record found")
 
 
 def get_typeid(record):
@@ -24,7 +22,7 @@ def get_typeid(record):
         type_id = type_[0]["id"]
         return type_id
     except Exception:
-        return response(401, message="Record Unrecognized")
+        raise ValueError("Unrecognized Record Type")
 
 
 class GetRecordData(Resource):
@@ -67,23 +65,25 @@ class RecordAdd(Resource):
         zone = args["zone"]
         ttl_id = args["ttl_id"]
 
-        type_id = get_typeid(rtype)
-
         try:
+            type_id = get_typeid(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
             return response(401, message=str(e))
 
-        if validation.is_valid_rtype(rtype):
-            return response(401, message="Unrecognized Record Type")
-        if validation.count_character(rtype):
-            return response(401, message="Character Length Exceeded")
-        if validation.is_valid_rdata(rtype, rdata):
-            return response(401, message="Invalid Record Data")
+        try:
+            # rtype no need to be validated & no need to check its length
+            # `get_typeid` will raise error for non existing rtype
+            validator.validate(rtype.upper(), rdata)
 
-        if rtype == "mx" or rtype == "cname":
-            if is_duplicate(rtype, zone_id):
-                return response(401, message="Duplicate Record found")
+            # NOTE: in next iteration here we must handle the standards from
+            # https://tools.ietf.org/html/rfc1912
+            # e.g multiple CNAME with the same contents
+            # we allow it for now because knot didn't handle this too
+            # and let the user know the standards them self.
+
+        except Exception as e:
+            return response(401, message=str(e))
 
         try:
             data = {
@@ -120,23 +120,17 @@ class RecordEdit(Resource):
         zone = args["zone"]
         ttl_id = args["ttl_id"]
 
-        type_id = get_typeid(rtype)
-
         try:
+            type_id = get_typeid(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
             return response(401, message=str(e))
 
-        if validation.is_valid_rtype(rtype):
-            return response(401, message="Unrecognized Record Type")
-        if validation.count_character(rtype):
-            return response(401, message="Character Length Exceeded")
-        if validation.is_valid_rdata(rtype, rdata):
-            return response(401, message="Invalid Record Data")
+        try:
+            validator.validate(rtype.upper(), rdata)
+        except Exception as e:
+            return response(401, message=str(e))
 
-        if rtype == "mx" or rtype == "cname":
-            if is_duplicate(rtype, zone_id):
-                return response(401, message="Duplicate Record found")
         try:
             data = {
                 "where": {"id": record_id},

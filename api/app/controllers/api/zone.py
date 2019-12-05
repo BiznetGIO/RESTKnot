@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.libs import validation
+from app.helpers import validator
 from app.middlewares import auth
 
 
@@ -53,8 +53,10 @@ class ZoneAdd(Resource):
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
-        if validation.zone_validation(zone):
-            return response(401, message="Named Error")
+        try:
+            validator.validate("ZONE", zone)
+        except Exception as e:
+            return response(401, message=str(e))
 
         # FIXME "is_committed" should be added
         data = {"zone": zone, "user_id": user_id}
@@ -78,8 +80,10 @@ class ZoneEdit(Resource):
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
-        if validation.zone_validation(zone):
-            return response(401, message="Named Error")
+        try:
+            validator.validate("ZONE", zone)
+        except Exception as e:
+            return response(401, message=str(e))
 
         data = {
             "where": {"id": zone_id},
