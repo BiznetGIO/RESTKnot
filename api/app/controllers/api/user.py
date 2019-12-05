@@ -4,6 +4,7 @@ from app.models import model
 from app.models import user as user_model
 from app.helpers import helpers
 from app.middlewares import auth
+from app.helpers import validator
 
 
 class GetUserData(Resource):
@@ -59,6 +60,7 @@ class UserSignUp(Resource):
             "created_at": helpers.get_datetime(),
         }
         try:
+            validator.validate("EMAIL", email)
             model.insert(table="user", data=data)
         except Exception as e:
             return response(401, message=str(e))
@@ -84,6 +86,7 @@ class UserUpdate(Resource):
             "data": {"project_id": args["project_id"], "email": email},
         }
         try:
+            validator.validate("EMAIL", email)
             model.update("user", data=data)
         except Exception as e:
             return response(401, message=str(e))
