@@ -3,18 +3,10 @@ from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
 from app.models import record as record_model
+from app.models import type_ as type_model
 from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
-
-
-def get_typeid(record):
-    try:
-        type_ = model.get_by_condition(table="type", field="type", value=record.upper())
-        type_id = type_[0]["id"]
-        return type_id
-    except Exception:
-        raise ValueError("Unrecognized Record Type")
 
 
 class GetRecordData(Resource):
@@ -58,7 +50,7 @@ class RecordAdd(Resource):
         ttl_id = args["ttl_id"]
 
         try:
-            type_id = get_typeid(rtype)
+            type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
             return response(401, message=str(e))
@@ -113,7 +105,7 @@ class RecordEdit(Resource):
         ttl_id = args["ttl_id"]
 
         try:
-            type_id = get_typeid(rtype)
+            type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
             return response(401, message=str(e))
@@ -157,6 +149,10 @@ class RecordDelete(Resource):
             record = model.get_by_condition(table="record", field="id", value=record_id)
             if not record:
                 return response(401, message=f"Record Not Found")
+
+            rtype = type_model.get_type_by_recordid(record_id)
+            if rtype == "SOA":
+                return response(401, message=f"Can't Delete SOA Record")
 
             command.send_zone(record_id, "zone-unset")
 
