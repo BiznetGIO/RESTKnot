@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
 from app.models import user as user_model
-from app.libs import utils
+from app.helpers import helpers
 from app.middlewares import auth
 
 
@@ -56,7 +56,7 @@ class UserSignUp(Resource):
         data = {
             "email": email,
             "project_id": project_id,
-            "created_at": utils.get_datetime(),
+            "created_at": helpers.get_datetime(),
         }
         try:
             model.insert(table="user", data=data)
