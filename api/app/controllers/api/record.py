@@ -118,6 +118,7 @@ class RecordEdit(Resource):
             return response(401, message=str(e))
 
         try:
+            record_model.is_exists(record_id)
             data = {
                 "where": {"id": record_id},
                 "data": {
@@ -154,9 +155,7 @@ class RecordDelete(Resource):
         But it can be edited, see`record edit`.
         """
         try:
-            record = model.get_by_condition(table="record", field="id", value=record_id)
-            if not record:
-                return response(401, message=f"Record Not Found")
+            record_model.is_exists(record_id)
 
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype == "SOA":

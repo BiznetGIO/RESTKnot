@@ -25,3 +25,9 @@ def get_other_data(records):
         results.append(data)
 
     return results
+
+
+def is_exists(record_id):
+    record = model.get_by_condition(table="record", field="id", value=record_id)
+    if not record:
+        raise ValueError(f"Record Not Found")
