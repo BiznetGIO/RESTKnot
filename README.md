@@ -3,9 +3,9 @@
 
 Manage DNS records with simple APIs.
 
-Restknot provide an API to existing Knot DNS server. This project consists of
+RESTKnot provide a high-level asynchronous API to existing Knot DNS server. This project consists of
 three applications : RESTKnot agent, RESTKnot API, and RESTKnot CLI. A user can
-create dns record through web API provided by RESTKnot API, or as command line
+create DNS record through web API provided by RESTKnot API, or as command line
 app using RESTKnot CLI. Both of them send command to RESTKnot agent which will
 be translated into Knot DNS action.
 
