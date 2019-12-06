@@ -86,6 +86,7 @@ def insert_cname_rdata(zone, record_id):
 
 
 def create_cname_default(zone_id, zone):
+    """Create default CNAME record"""
     record_id = insert_cname_record(zone_id)
     insert_cname_rdata(zone, record_id)
     command.send_zone(record_id, "zone-set")
@@ -172,6 +173,7 @@ class DeleteDomain(Resource):
 
     @auth.auth_required
     def delete(self):
+        """Remove domain (zone) and all its related records."""
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
         args = parser.parse_args()
@@ -198,6 +200,11 @@ class DeleteDomain(Resource):
 class AddDomain(Resource):
     @auth.auth_required
     def post(self):
+        """Add new domain (zone) with additional default record.
+
+        note:
+        SOA, NS, and CNAME records are added automatically when adding new domain
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
         parser.add_argument("project_id", type=str, required=True)

@@ -36,6 +36,14 @@ class GetRecordDataId(Resource):
 class RecordAdd(Resource):
     @auth.auth_required
     def post(self):
+        """Add new record.
+
+        note:
+        Adding any record with other record is allowed. IETF best practice
+        is not handled automatically.  Knot didn't handle this too, and let the
+        user know the standards themselves.
+        See https://tools.ietf.org/html/rfc1912
+        """
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
         parser.add_argument("owner", type=str, required=True)
@@ -59,12 +67,6 @@ class RecordAdd(Resource):
             # rtype no need to be validated & no need to check its length
             # `get_typeid` will raise error for non existing rtype
             validator.validate(rtype.upper(), rdata)
-
-            # NOTE: in next iteration here we must handle the standards from
-            # https://tools.ietf.org/html/rfc1912
-            # e.g multiple CNAME with the same contents
-            # we allow it for now because knot didn't handle this too
-            # and let the user know the standards them self.
 
         except Exception as e:
             return response(401, message=str(e))
@@ -145,6 +147,12 @@ class RecordEdit(Resource):
 class RecordDelete(Resource):
     @auth.auth_required
     def delete(self, record_id):
+        """Delete specific record.
+
+        note:
+        SOA record can't be deleted. One zone must have minimum one SOA record at time.
+        But it can be edited, see`record edit`.
+        """
         try:
             record = model.get_by_condition(table="record", field="id", value=record_id)
             if not record:

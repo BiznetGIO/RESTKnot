@@ -74,6 +74,7 @@ def insert(table, data=None):
         column += row + ","
         value += f"{data[row]},"
         str_placeholer += "%s,"
+    # omit ',' at the end
     column = column[:-1]
     value = value[:-1]
     str_placeholer = str_placeholer[:-1]
@@ -134,6 +135,7 @@ def delete(table, field=None, value=None):
 
 
 def is_unique(table, field=None, value=None):
+    """Check if data only appear once."""
     unique = True
     data = get_by_condition(table=table, field=field, value=value)
 
@@ -145,6 +147,7 @@ def is_unique(table, field=None, value=None):
 
 
 def plain_get(query, value=None):
+    """Accept plain SQL to be sent as prepared statement."""
     results = []
     cursor, connection = get_db()
     try:

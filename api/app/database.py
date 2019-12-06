@@ -3,6 +3,7 @@ import os
 
 
 def connect():
+    """Connect to database."""
     try:
         connection = psycopg2.connect(
             database=os.environ.get("DB_NAME"),

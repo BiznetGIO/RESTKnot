@@ -18,6 +18,7 @@ def get_datum(users):
 
 
 def user_id_by_project(project_id):
+    """Get user id by project id."""
     try:
         user = model.get_by_condition(
             table="user", field="project_id", value=f"{project_id}"

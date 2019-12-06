@@ -8,7 +8,7 @@ class UserBehavior(TaskSet):
 
     @task(1)
     def create_user(self):
-
+        """Create multiple users with different email address and project id."""
         random_num = int("".join([f"{random.randint(0, 9)}" for num in range(0, 4)]))
 
         headers = {"X-API-Key": "123"}

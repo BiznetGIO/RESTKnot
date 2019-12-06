@@ -25,7 +25,6 @@ def get_other_data(record_id):
 
 
 def generate_command(**kwargs):
-
     zone_id = kwargs.get("zone_id")
     zone_name = kwargs.get("zone_name")
     owner = kwargs.get("owner")
@@ -56,6 +55,7 @@ def generate_command(**kwargs):
 
 
 def send_config(zone, zone_id, command):
+    """Send config command with JSON structure to broker."""
     cmd = {
         zone: {
             "id_zone": zone_id,
@@ -76,6 +76,7 @@ def send_config(zone, zone_id, command):
 
 
 def send_zone(record_id, command):
+    """Send zone command with JSON structure to broker."""
     record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_id = zone[0]["id"]
     zone_name = zone[0]["zone"]

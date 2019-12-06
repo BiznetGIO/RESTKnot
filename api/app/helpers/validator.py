@@ -1,9 +1,6 @@
 import re
 from ipaddress import ip_address
 
-from app.models import model
-
-
 """
 RE Email Credit: https://emailregex.com/
 RE ZONE Credit:
@@ -37,6 +34,8 @@ def is_valid_mx(mx_rdata):
     preference = mx_rdata.split(" ")[0]
 
     try:
+        # we need to improve this validation.
+        # this is a loose validation
         if (int(preference)).bit_length() <= 16 and len(mx_rdata.split(" ")) == 2:
             pass
         else:
@@ -58,6 +57,7 @@ def is_valid_cname(cname_rdata):
 
 
 def is_valid_zone(domain_name):
+    """Check if it's a valid domain name."""
     match = re.match(RE_ZONE, domain_name)
     if match is None:
         raise ValueError("Bad Domain Name")
