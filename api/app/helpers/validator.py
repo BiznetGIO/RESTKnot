@@ -63,13 +63,32 @@ def is_valid_zone(domain_name):
         raise ValueError("Bad Domain Name")
 
 
+def is_valid_soa(soa_rdata):
+    """Simple function to check SOA RDATA."""
+    rdatas = soa_rdata.split(" ")
+
+    try:
+        is_valid_cname(rdatas[0])
+        is_valid_cname(rdatas[1])
+    except Exception:
+        raise ValueError("Bad SOA RDATA")
+
+    for number in rdatas[2:]:
+        try:
+            int(number)
+        except ValueError:
+            raise ValueError("Bad SOA RDATA")
+
+
 functions = {
     "A": is_valid_ip,
     "AAAA": is_valid_ip,
     "MX": is_valid_mx,
     "CNAME": is_valid_cname,
+    "NS": is_valid_cname,
     "EMAIL": is_valid_email,
     "ZONE": is_valid_zone,
+    "SOA": is_valid_soa,
 }
 
 
