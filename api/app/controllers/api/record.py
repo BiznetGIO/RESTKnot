@@ -114,6 +114,7 @@ class RecordEdit(Resource):
 
         try:
             validator.validate(rtype.upper(), rdata)
+            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
         except Exception as e:
             return response(401, message=str(e))
 

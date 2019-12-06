@@ -31,3 +31,17 @@ def is_exists(record_id):
     record = model.get_by_condition(table="record", field="id", value=record_id)
     if not record:
         raise ValueError(f"Record Not Found")
+
+
+def is_duplicate_rdata(zone_id, type_id, rdata):
+    query = (
+        'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "type_id"=%(type_id)s'
+    )
+    value = {"zone_id": zone_id, "type_id": type_id}
+    records = model.plain_get("record", query, value)
+    for record in records:
+        rdatas = model.get_by_condition(
+            table="rdata", field="record_id", value=record["id"]
+        )
+        if rdata == rdatas[0]["rdata"]:
+            raise ValueError(f"Can't Have Multiple Record with Same Content")

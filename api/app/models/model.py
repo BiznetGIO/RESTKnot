@@ -13,6 +13,14 @@ def get_db():
         raise ValueError(f"{exc}")
 
 
+def to_dict(table, rows):
+    results = []
+    column = get_columns(table)
+    for row in rows:
+        results.append(dict(zip(column, row)))
+    return results
+
+
 def get_columns(table):
     column = None
     cursor, _ = get_db()
@@ -146,14 +154,15 @@ def is_unique(table, field=None, value=None):
     return unique
 
 
-def plain_get(query, value=None):
+def plain_get(table, query, value=None):
     """Accept plain SQL to be sent as prepared statement."""
     results = []
     cursor, connection = get_db()
     try:
         cursor.prepare(query)
         cursor.execute(value)
-        results = cursor.fetchall()
+        rows = cursor.fetchall()
+        results = to_dict(table, rows)
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
         raise error
