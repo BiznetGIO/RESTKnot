@@ -33,7 +33,8 @@ def insert_soa_rdata(record_id):
     <MNAME> <RNAME> <serial> <refresh> <retry> <expire> <minimum>
     See: https://tools.ietf.org/html/rfc1035 (3.3.13. SOA RDATA format)
     """
-    serial = helpers.soa_time_set() + "01"
+    current_time = helpers.soa_time_set()
+    serial = f"{str(current_time)}01"
     default_soa_content = os.environ.get("DEFAULT_SOA_RDATA")
     rdatas = default_soa_content.split(" ")
     mname_and_rname = " ".join(rdatas[0:2])
