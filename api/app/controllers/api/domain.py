@@ -183,8 +183,16 @@ class DeleteDomain(Resource):
         try:
             zone_id = zone_model.get_zone_id(zone)
 
-            # no need to perform unset for clusering and records. All the record
-            # deleted automatically after `conf-unset`
+            records = model.get_by_condition(
+                table="record", field="zone_id", value=zone_id
+            )
+            for record in records:
+                # zone-purge didn't work
+                # all the records must be unset one-by-one. otherwise old record
+                # will appear again if the same zone name crated.
+                command.send_zone(record["id"], "zone-unset")
+                print(record["id"])
+
             command.send_config(zone, zone_id, "conf-unset")
 
             # other data (e.g record) deleted automatically
