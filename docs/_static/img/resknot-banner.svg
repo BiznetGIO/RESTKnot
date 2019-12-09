@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg2"
+   width="1836"
+   height="444"
+   viewBox="0 0 1836 444"
+   sodipodi:docname="resknot-banner.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:export-filename="/home/azzamsya/Downloads/resknot-banner.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="674"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="0.27883731"
+     inkscape:cx="485.00069"
+     inkscape:cy="271.76562"
+     inkscape:window-x="0"
+     inkscape:window-y="66"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="-2.5359116,532.54144"
+       orientation="1,0"
+       id="guide4619"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="633.9779,48.182321"
+       orientation="0,1"
+       id="guide834"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="748.09393,159.76243"
+       orientation="0,1"
+       id="guide836"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="578.18785,803.88398"
+       orientation="1,0"
+       id="guide838"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="1313.6022,129.33149"
+       orientation="1,0"
+       id="guide840"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="251.05525,798.81216"
+       orientation="1,0"
+       id="guide842"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="819.09945,76.077348"
+       orientation="1,0"
+       id="guide844"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="273.55734"
+     y="393.2818"
+     id="text830"><tspan
+       sodipodi:role="line"
+       id="tspan828"
+       x="273.55734"
+       y="393.2818"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:60px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans'">Async and simple API making knot easier to use</tspan></text>
+  <g
+     id="g4623"
+     transform="matrix(0.55715189,0,0,0.55715189,318.84907,13.605733)"
+     style="stroke:none">
+    <circle
+       r="207.94475"
+       cy="274.09393"
+       cx="304.30939"
+       id="path914"
+       style="fill:#d42c37;fill-opacity:1;stroke:none;stroke-width:2.13543296;stroke-miterlimit:4;stroke-dasharray:2.13543296, 8.54173182999999980;stroke-dashoffset:0" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke-width:2.707515;stroke:none"
+       id="path2"
+       d="m 438.27041,376.04328 c 7.7032,-21.40769 12.0664,-56.98741 -10.3425,-105.38786 13.2022,-31.27165 16.3788,-63.49819 9.1312,-93.32459 -6.8123,-28.04895 -22.4344,-51.77645 -43.981,-66.81833 -2.3496,-1.63745 -4.8182,-3.17673 -7.3401,-4.56916 -38.8648,-21.458349 -98.60174,-13.414924 -145.04538,52.4919 -33.69018,4.20184 -63.18409,17.58036 -85.39645,38.771 -20.8821,19.92408 -33.62463,45.31647 -35.87332,71.49866 -3.06261,35.605 17.01935,69.85781 52.40223,89.39369 18.28401,10.09512 40.24903,16.34633 65.29757,18.6093 13.86601,18.33213 30.33207,32.85135 48.98105,43.14798 0,0 0,0 0,0 34.91829,19.27937 74.9736,21.79909 107.1428,6.73998 20.8059,-9.74143 36.7951,-27.69377 45.0195,-50.55499 z M 381.44891,113.4876 c 2.2564,1.24583 4.4651,2.62303 6.5672,4.08679 36.9677,25.80161 59.52,86.08646 31.1066,151.38953 -6.1788,14.19886 -14.5438,28.13393 -24.8576,41.41982 -7.492,9.64805 -15.8453,16.44216 -16.9952,17.35984 -3.59,2.20553 -18.6269,3.96404 -34.3961,-4.74256 -4.4063,-2.43284 -8.49701,-5.49866 -12.14896,-9.10161 -13.38924,-13.21321 -23.69737,-31.42423 -24.53686,-42.8826 12.92692,-8.42869 24.15035,-29.97733 28.84729,-47.97891 7.25963,-27.81347 -6.20905,-51.89531 -15.46723,-57.00701 -0.16353,-0.0903 -0.32851,-0.17795 -0.49345,-0.26011 l -0.2857,-0.12679 c -0.46837,-0.1936 -11.68806,-4.72133 -25.78381,-6.66171 -13.9668,-1.92176 -27.67549,-2.47937 -40.88119,-1.67367 42.61531,-55.96486 95.05841,-62.740524 129.32501,-43.82101 z m -205.5196,236.96465 c -32.34182,-17.85682 -50.71476,-48.91448 -47.95364,-81.055 3.85973,-44.91335 44.79056,-94.58969 115.55052,-102.63359 15.39045,-1.74892 31.63975,-1.47415 48.29993,0.81821 12.08453,1.66188 22.13081,5.48604 23.52627,6.03383 l 0.0263,0.0145 c 4.97042,2.7443 17.80547,22.16494 11.26682,47.22185 -4.74879,18.20181 -15.36944,36.23893 -24.87203,42.68922 -13.79336,-6.96931 -38.38825,-5.83026 -55.97218,-0.99346 -28.19519,7.74919 -42.28078,32.11241 -41.61252,42.45253 l 0.0308,0.31392 c 0.0691,0.50208 1.75367,12.48579 7.12324,25.65978 5.32226,13.05817 11.68981,25.20895 18.99242,36.243 -20.74086,-2.63716 -39.00398,-8.26095 -54.40574,-16.76469 z m 213.5477,68.23862 c -29.6624,13.88548 -66.77572,11.46535 -99.27275,-6.48027 -18.08013,-9.98255 -34.02022,-24.2052 -47.38429,-42.27564 -9.21034,-12.45232 -17.09827,-26.66108 -23.44356,-42.23567 -4.61043,-11.31669 -6.31751,-21.94893 -6.53819,-23.39759 -0.16696,-5.67466 10.17588,-26.49093 35.26053,-33.39052 18.09378,-4.97592 38.97833,-4.845 49.40391,0.19682 0.83802,15.41015 13.8863,35.9011 27.12628,48.97004 4.22037,4.16421 8.95096,7.70703 14.05167,10.52326 17.8265,9.84252 36.7322,8.81283 43.5241,4.28651 l 0.2546,-0.18106 c 0.4018,-0.31323 9.9331,-7.76209 18.6631,-19.00285 8.652,-11.1385 15.9871,-22.73191 21.8938,-34.57272 17.7252,42.19589 13.7852,73.05463 6.9978,91.91848 -7.4383,20.67562 -21.8367,36.88365 -40.537,45.64121 z"
+       inkscape:connector-curvature="0" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+     x="609.47906"
+     y="251.27072"
+     id="text832"><tspan
+       sodipodi:role="line"
+       id="tspan830"
+       x="609.47906"
+       y="251.27072"
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:192px;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans Ultra-Bold'">RESTKnot</tspan></text>
+</svg>
