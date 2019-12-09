@@ -121,20 +121,6 @@ class GetDomainDataId(Resource):
 
 
 class DeleteDomain(Resource):
-    def get_record_ids(self, records):
-        soa_record_id = None
-        ns_record_id = None
-        cname_record_id = None
-
-        for item in records:
-            if item.get("type_id") == 1:
-                soa_record_id = item.get("id")
-            if item.get("type_id") == 4:
-                ns_record_id = item.get("id")
-            if item.get("type_id") == 5:
-                cname_record_id = item.get("id")
-        return soa_record_id, ns_record_id, cname_record_id
-
     @auth.auth_required
     def delete(self):
         """Remove domain (zone) and all its related records."""
