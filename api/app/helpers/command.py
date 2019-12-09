@@ -7,18 +7,16 @@ from app.helpers import producer
 
 def get_other_data(record_id):
     try:
-        record = model.get_by_condition(table="record", field="id", value=record_id)
+        record = model.get_one(table="record", field="id", value=record_id)
 
-        zone_id = record[0]["zone_id"]
-        type_id = record[0]["type_id"]
-        ttl_id = record[0]["ttl_id"]
+        zone_id = record["zone_id"]
+        type_id = record["type_id"]
+        ttl_id = record["ttl_id"]
 
-        zone = model.get_by_condition(table="zone", field="id", value=zone_id)
-        type_ = model.get_by_condition(table="type", field="id", value=type_id)
-        ttl = model.get_by_condition(table="ttl", field="id", value=ttl_id)
-        rdata = model.get_by_condition(
-            table="rdata", field="record_id", value=record_id
-        )
+        zone = model.get_one(table="zone", field="id", value=zone_id)
+        type_ = model.get_one(table="type", field="id", value=type_id)
+        ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+        rdata = model.get_one(table="rdata", field="record_id", value=record_id)
         return (record, zone, type_, ttl, rdata)
     except Exception as e:
         raise e
@@ -78,16 +76,16 @@ def send_config(zone, zone_id, command):
 def send_zone(record_id, command):
     """Send zone command with JSON structure to broker."""
     record, zone, type_, ttl, rdata = get_other_data(record_id)
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
+    zone_id = zone["id"]
+    zone_name = zone["zone"]
 
     cmd = generate_command(
         zone_id=zone_id,
         zone_name=zone_name,
-        owner=record[0]["owner"],
-        rtype=type_[0]["type"],
-        ttl=ttl[0]["ttl"],
-        rdata=rdata[0]["rdata"],
+        owner=record["owner"],
+        rtype=type_["type"],
+        ttl=ttl["ttl"],
+        rdata=rdata["rdata"],
         command=command,
     )
     producer.send(cmd)
@@ -112,10 +110,10 @@ def get_clusters():
 
 
 def send_cluster(zone_id):
-    zone = model.get_by_condition(table="zone", field="id", value=zone_id)
+    zone = model.get_one(table="zone", field="id", value=zone_id)
 
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
+    zone_id = zone["id"]
+    zone_name = zone["zone"]
     zone_tld = zone_name.split(".")[-1]
     filename = f"{zone_name}_{zone_id}.{zone_tld}.zone"
 

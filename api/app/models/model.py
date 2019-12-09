@@ -52,7 +52,7 @@ def get_all(table):
         return results
 
 
-def get_by_condition(table, field=None, value=None):
+def get_one(table, field=None, value=None):
     results = []
     cursor, connection = get_db()
     column = get_columns(table)
@@ -60,9 +60,8 @@ def get_by_condition(table, field=None, value=None):
         query = f'SELECT * FROM "{table}" WHERE "{field}"=%(value)s'
         cursor.prepare(query)
         cursor.execute({"value": value})
-        rows = cursor.fetchall()
-        for row in rows:
-            results.append(dict(zip(column, row)))
+        rows = cursor.fetchone()
+        results = dict(zip(column, list(rows)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
         raise error
@@ -144,14 +143,18 @@ def delete(table, field=None, value=None):
 
 def is_unique(table, field=None, value=None):
     """Check if data only appear once."""
-    unique = True
-    data = get_by_condition(table=table, field=field, value=value)
+    cursor, connection = get_db()
 
-    if data:  # initial database will return None
-        if len(data) != 0:
-            unique = False
+    query = f'SELECT * FROM "{table}" WHERE "{field}"=%(value)s'
+    cursor.prepare(query)
+    cursor.execute({"value": value})
+    rows = cursor.fetchall()
 
-    return unique
+    if rows:  # initial database will return None
+        if len(rows) != 0:
+            return False
+
+    return True
 
 
 def plain_get(table, query, value=None):

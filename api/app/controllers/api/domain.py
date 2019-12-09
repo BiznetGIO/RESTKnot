@@ -6,6 +6,7 @@ from app.models import model
 from app.models import zone as zone_model
 from app.models import user as user_model
 from app.models import record as record_model
+from app.models import domain as domain_model
 from app.helpers import helpers
 from app.helpers import validator
 from app.helpers import command
@@ -94,30 +95,6 @@ def create_cname_default(zone_id, zone):
     return record_id
 
 
-def get_other_data(zones):
-    results = []
-
-    if zones is None:
-        return
-
-    for zone in zones:
-        users = model.get_by_condition(table="user", field="id", value=zone["user_id"])
-        records = model.get_by_condition(
-            table="record", field="zone_id", value=zone["id"]
-        )
-        user_datum = user_model.get_datum(users)
-        record_datum = record_model.get_other_data(records)
-
-        datum = {
-            "zone_id": zone["id"],
-            "zone": zone["zone"],
-            "user": user_datum,
-            "record": record_datum,
-        }
-        results.append(datum)
-    return results
-
-
 class GetDomainData(Resource):
     @auth.auth_required
     def get(self):
@@ -126,34 +103,23 @@ class GetDomainData(Resource):
         except Exception as e:
             return response(401, message=str(e))
 
-        data = get_other_data(zones)
-        return response(200, data=data)
+        domains_detail = []
+        for zone in zones:
+            detail = domain_model.get_other_data(zone)
+            domains_detail.append(detail)
+
+        return response(200, data=domains_detail)
 
 
 class GetDomainDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zones = model.get_by_condition(table="zone", field="id", value=zone_id)
+            zone = model.get_one(table="zone", field="id", value=zone_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            data = get_other_data(zones)
-            return response(200, data=data)
-
-
-class GetDomainDataByProjectId(Resource):
-    @auth.auth_required
-    def get(self, project_id):
-
-        try:
-            user_id = user_model.user_id_by_project(project_id)
-
-            zones = model.get_by_condition(table="zone", field="user_id", value=user_id)
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
-            data = get_other_data(zones)
+            data = domain_model.get_other_data(zone)
             return response(200, data=data)
 
 
@@ -183,15 +149,12 @@ class DeleteDomain(Resource):
         try:
             zone_id = zone_model.get_zone_id(zone)
 
-            records = model.get_by_condition(
-                table="record", field="zone_id", value=zone_id
-            )
+            records = record_model.get_records_by_zone(zone)
             for record in records:
                 # zone-purge didn't work
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
                 command.send_zone(record["id"], "zone-unset")
-                print(record["id"])
 
             command.send_config(zone, zone_id, "conf-unset")
 

@@ -11,9 +11,8 @@ class GetUserData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("user")
-            user_data = user_model.get_datum(data)
-            return response(200, data=user_data)
+            users = model.get_all("user")
+            return response(200, data=users)
         except Exception as e:
             return response(401, message=str(e))
 
@@ -22,12 +21,11 @@ class GetUserDataId(Resource):
     @auth.auth_required
     def get(self, user_id):
         try:
-            data = model.get_by_condition(table="user", field="id", value=user_id)
+            user = model.get_one(table="user", field="id", value=user_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            user_data = user_model.get_datum(data)
-            return response(200, data=user_data)
+            return response(200, data=user)
 
 
 class UserDelete(Resource):

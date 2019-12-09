@@ -1,20 +1,9 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
+from app.helpers import helpers
 from app.models import model
-from app.models import user as user_model
 from app.helpers import validator
 from app.middlewares import auth
-
-
-def get_datum(data):
-    if data is None:
-        return
-
-    results = []
-    for d in data:
-        datum = {"id": str(d["id"]), "zone": d["zone"], "user_id": d["user_id"]}
-        results.append(datum)
-    return results
 
 
 class GetZoneData(Resource):
@@ -22,23 +11,20 @@ class GetZoneData(Resource):
     def get(self):
         try:
             zones = model.get_all("zone")
+            return response(200, data=zones)
         except Exception as e:
             return response(401, message=str(e))
-
-        data = get_datum(zones)
-        return response(200, data=data)
 
 
 class GetZoneDataId(Resource):
     @auth.auth_required
     def get(self, zone_id):
         try:
-            zone = model.get_by_condition(table="zone", field="id", value=zone_id)
+            zone = model.get_one(table="zone", field="id", value=zone_id)
+            zone = helpers.exclude_keys(zone, {"is_committed"})
+            return response(200, data=zone)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            data = get_datum(zone)
-            return response(200, data=data)
 
 
 class ZoneAdd(Resource):

@@ -1,5 +1,15 @@
 from flask import Response
 import json
+from datetime import date, datetime
+
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+
+    raise TypeError("Type %s not serializable" % type(obj))
 
 
 def response(status_code, message=None, data=None):
@@ -54,7 +64,9 @@ def response(status_code, message=None, data=None):
         status["message"] = message if message else failure_status[400]
 
     response = Response(
-        response=json.dumps(status), status=status_code, mimetype="application/json"
+        response=json.dumps(status, default=json_serial),
+        status=status_code,
+        mimetype="application/json",
     )
 
     return response

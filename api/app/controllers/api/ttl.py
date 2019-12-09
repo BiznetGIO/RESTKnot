@@ -20,11 +20,11 @@ class GetTtlDataId(Resource):
     @auth.auth_required
     def get(self, ttl_id):
         try:
-            data = model.get_by_condition(table="ttl", field="id", value=ttl_id)
+            ttl = model.get_one(table="ttl", field="id", value=ttl_id)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data)
+            return response(200, data=ttl)
 
 
 class TtlAdd(Resource):

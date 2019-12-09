@@ -14,8 +14,12 @@ class GetRecordData(Resource):
     def get(self):
         try:
             records = model.get_all("record")
-            data = record_model.get_other_data(records)
-            return response(200, data=data)
+            records_detail = []
+            for record in records:
+                detail = record_model.get_other_data(record)
+                records_detail.append(detail)
+
+            return response(200, data=records_detail)
         except Exception as e:
             return response(401, message=str(e))
 
@@ -24,10 +28,8 @@ class GetRecordDataId(Resource):
     @auth.auth_required
     def get(self, record_id):
         try:
-            records = model.get_by_condition(
-                table="record", field="id", value=record_id
-            )
-            data = record_model.get_other_data(records)
+            record = model.get_one(table="record", field="id", value=record_id)
+            data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
