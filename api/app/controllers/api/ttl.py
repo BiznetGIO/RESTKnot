@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
+from app.models import ttl as ttl_model
 from app.middlewares import auth
 
 
@@ -51,14 +52,14 @@ class TtlEdit(Resource):
         args = parser.parse_args()
         ttl = args["ttl"]
 
-        data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
-
         try:
+            ttl_model.is_exists(ttl_id)
+            data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
             model.update("ttl", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data, message="Edited")
+            return response(200, data=data.get("data"), message="Edited")
 
 
 class TtlDelete(Resource):

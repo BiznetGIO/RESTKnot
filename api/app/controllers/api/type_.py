@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
+from app.models import type_ as type_model
 from app.middlewares import auth
 
 
@@ -51,20 +52,21 @@ class TypeEdit(Resource):
         parser.add_argument("type", type=str, required=True)
         args = parser.parse_args()
 
-        data = {"where": {"id": type_id}, "data": {"type": args["type"]}}
-
         try:
+            type_model.is_exists(type_id)
+            data = {"where": {"id": type_id}, "data": {"type": args["type"]}}
             model.update("type", data=data)
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data, message="Edited")
+            return response(200, data=data.get("data"), message="Edited")
 
 
 class TypeDelete(Resource):
     @auth.auth_required
     def delete(self, type_id):
         try:
+            type_model.is_exists(type_id)
             data = model.delete(table="type", field="id", value=type_id)
         except Exception as e:
             return response(401, message=str(e))

@@ -21,3 +21,9 @@ def get_type_by_recordid(record_id):
         return type_[0]["type"]
     except Exception:
         raise ValueError("Unrecognized Record Type")
+
+
+def is_exists(type_id):
+    type_ = model.get_by_condition(table="type", field="id", value=type_id)
+    if not type_:
+        raise ValueError(f"Type Not Found")
