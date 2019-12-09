@@ -10,10 +10,9 @@ class GetTtlData(Resource):
     def get(self):
         try:
             data = model.get_all("ttl")
+            return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data)
 
 
 class GetTtlDataId(Resource):
@@ -21,10 +20,9 @@ class GetTtlDataId(Resource):
     def get(self, ttl_id):
         try:
             ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+            return response(200, data=ttl)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=ttl)
 
 
 class TtlAdd(Resource):
@@ -38,10 +36,9 @@ class TtlAdd(Resource):
         data = {"ttl": ttl}
         try:
             model.insert(table="ttl", data=data)
+            return response(200, data=data, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
 
 
 class TtlEdit(Resource):
@@ -56,10 +53,9 @@ class TtlEdit(Resource):
             ttl_model.is_exists(ttl_id)
             data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
             model.update("ttl", data=data)
+            return response(200, data=data.get("data"), message="Edited")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data.get("data"), message="Edited")
 
 
 class TtlDelete(Resource):
@@ -67,7 +63,6 @@ class TtlDelete(Resource):
     def delete(self, ttl_id):
         try:
             data = model.delete(table="ttl", field="id", value=ttl_id)
+            return response(200, data=data, message="Deleted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")

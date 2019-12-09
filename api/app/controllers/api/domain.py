@@ -187,14 +187,9 @@ class AddDomain(Resource):
 
         try:
             validator.validate("ZONE", zone)
-        except Exception as e:
-            return response(401, message=str(e))
 
-        try:
             zone_id = insert_zone(zone, user_id)
-        except Exception:
-            return response(401, message="Project ID not found")
-        else:
+
             # create zone config
             command.send_config(zone, zone_id, "conf-set")
 
@@ -203,11 +198,9 @@ class AddDomain(Resource):
             create_ns_default(zone_id)
             create_cname_default(zone_id, zone)
 
-            try:
-                command.send_cluster(zone_id)
-            except Exception as e:
-                return response(401, message=str(e))
+            command.send_cluster(zone_id)
 
-            # just for feedback return value
             zone_data = {"zone": zone, "user_id": user_id}
             return response(200, data=zone_data, message="Inserted")
+        except Exception as e:
+            return response(401, message=f"{e}")

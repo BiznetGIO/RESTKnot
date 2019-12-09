@@ -21,10 +21,9 @@ class GetUserDataId(Resource):
     def get(self, user_id):
         try:
             user = model.get_one(table="user", field="id", value=user_id)
+            return response(200, data=user)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=user)
 
 
 class UserDelete(Resource):
@@ -32,10 +31,9 @@ class UserDelete(Resource):
     def delete(self, user_id):
         try:
             data = model.delete(table="user", field="id", value=user_id)
+            return response(200, data=data, message="Deleted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")
 
 
 class UserSignUp(Resource):
@@ -53,10 +51,9 @@ class UserSignUp(Resource):
         try:
             validator.validate("EMAIL", email)
             model.insert(table="user", data=data)
+            return response(200, data=data, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
 
 
 class UserUpdate(Resource):
@@ -75,7 +72,6 @@ class UserUpdate(Resource):
         try:
             validator.validate("EMAIL", email)
             model.update("user", data=data)
+            return response(200, data=data.get("data"), message="Updated")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data.get("data"), message="Update Success")

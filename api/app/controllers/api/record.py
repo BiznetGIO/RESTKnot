@@ -86,10 +86,9 @@ class RecordAdd(Resource):
             model.insert(table="rdata", data=content_data)
 
             command.send_zone(record_id, "zone-set")
+            return response(200, data=data, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
 
 
 class RecordEdit(Resource):

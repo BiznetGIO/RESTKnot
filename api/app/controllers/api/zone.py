@@ -49,10 +49,9 @@ class ZoneAdd(Resource):
         try:
             data = {"zone": zone, "user_id": user_id}
             model.insert(table="zone", data=data)
+            return response(200, data=data, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
 
 
 class ZoneEdit(Resource):
@@ -79,10 +78,9 @@ class ZoneEdit(Resource):
                 "data": {"zone": args["zone"], "user_id": user_id},
             }
             model.update("zone", data=data)
+            return response(200, data=data.get("data"), message="Edited")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data.get("data"), message="Edited")
 
 
 class ZoneDelete(Resource):
@@ -90,7 +88,6 @@ class ZoneDelete(Resource):
     def delete(self, zone_id):
         try:
             data = model.delete(table="zone", field="id", value=zone_id)
+            return response(200, data=data, message="Deleted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")

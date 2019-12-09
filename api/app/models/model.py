@@ -28,8 +28,8 @@ def get_columns(table):
         query = f"SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name='{table}'"
         cursor.execute(query)
         column = [row[0] for row in cursor.fetchall()]
-    except (Exception, psycopg2.DatabaseError) as e:
-        column = str(e)
+    except (Exception, psycopg2.DatabaseError) as error:
+        raise ValueError(f"{error}")
     return column
 
 
@@ -46,7 +46,7 @@ def get_all(table):
             results.append(dict(zip(column, row)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
-        raise error
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         return results
@@ -64,7 +64,7 @@ def get_one(table, field=None, value=None):
         results = dict(zip(column, list(rows)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
-        raise error
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         return results
@@ -93,9 +93,9 @@ def insert(table, data=None):
         value_as_tuple = tuple(value.split(","))
         cursor.prepare(query)
         cursor.execute((value_as_tuple))
-    except (Exception, psycopg2.DatabaseError) as e:
+    except (Exception, psycopg2.DatabaseError) as error:
         connection.rollback()
-        raise e
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         id_of_new_row = cursor.fetchone()[0]
@@ -116,9 +116,9 @@ def update(table, data=None):
         query = f'UPDATE "{table}" SET {_set} WHERE {field}=%(field_data)s'
         cursor.prepare(query)
         cursor.execute({"field_data": field_data})
-    except (Exception, psycopg2.DatabaseError) as e:
+    except (Exception, psycopg2.DatabaseError) as error:
         connection.rollback()
-        raise e
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         status = True
@@ -134,7 +134,7 @@ def delete(table, field=None, value=None):
         cursor.execute({"value": value})
     except (Exception, psycopg2.DatabaseError) as error:
         connection.rollback()
-        raise error
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         rows_deleted = cursor.rowcount
@@ -168,7 +168,7 @@ def plain_get(table, query, value=None):
         results = to_dict(table, rows)
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
-        raise error
+        raise ValueError(f"{error}")
     else:
         connection.commit()
         return results

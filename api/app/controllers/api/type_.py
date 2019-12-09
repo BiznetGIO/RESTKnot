@@ -10,10 +10,9 @@ class GetTypeData(Resource):
     def get(self):
         try:
             data = model.get_all("type")
+            return response(200, data=data)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data)
 
 
 class GetTypeDataId(Resource):
@@ -21,10 +20,9 @@ class GetTypeDataId(Resource):
     def get(self, type_id):
         try:
             type_ = model.get_one(table="type", field="id", value=type_id)
+            return response(200, data=type_)
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=type_)
 
 
 class TypeAdd(Resource):
@@ -39,10 +37,9 @@ class TypeAdd(Resource):
 
         try:
             model.insert(table="type", data=data)
+            return response(200, data=data, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
 
 
 class TypeEdit(Resource):
@@ -56,10 +53,9 @@ class TypeEdit(Resource):
             type_model.is_exists(type_id)
             data = {"where": {"id": type_id}, "data": {"type": args["type"]}}
             model.update("type", data=data)
+            return response(200, data=data.get("data"), message="Edited")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data.get("data"), message="Edited")
 
 
 class TypeDelete(Resource):
@@ -68,7 +64,6 @@ class TypeDelete(Resource):
         try:
             type_model.is_exists(type_id)
             data = model.delete(table="type", field="id", value=type_id)
+            return response(200, data=data, message="Deleted")
         except Exception as e:
             return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")
