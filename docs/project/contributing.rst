@@ -51,6 +51,7 @@ sure you have set them. Example:
   export DEFAULT_SOA_RDATA='satu.examplens.id. hostmaster.examplens.id. 10800 3600 604800 38400'
   export RESTKNOT_CLUSTER_FILE=/home/user/.config/restknot/servers.yaml
   export RESTKNOT_API_KEY=123
+  RESTKNOT_KAFKA_TOPIC=domaindata
 
 
 Then run the app:
