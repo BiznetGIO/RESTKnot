@@ -141,7 +141,7 @@ class RecordEdit(Resource):
 
             command.send_zone(record_id, "zone-set")
 
-            return response(200, data=data, message="Edited")
+            return response(200, data=data.get("data"), message="Edited")
         except Exception as e:
             return response(401, message=str(e))
 

@@ -91,4 +91,4 @@ class UserUpdate(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data, message="Update Success")
+            return response(200, data=data.get("data"), message="Update Success")

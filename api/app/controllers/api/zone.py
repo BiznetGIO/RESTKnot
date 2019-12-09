@@ -100,7 +100,7 @@ class ZoneEdit(Resource):
         except Exception as e:
             return response(401, message=str(e))
         else:
-            return response(200, data=data, message="Edited")
+            return response(200, data=data.get("data"), message="Edited")
 
 
 class ZoneDelete(Resource):
