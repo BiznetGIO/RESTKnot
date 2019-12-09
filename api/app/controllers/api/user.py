@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.models import user as user_model
 from app.helpers import helpers
 from app.middlewares import auth
 from app.helpers import validator
@@ -44,19 +43,13 @@ class UserSignUp(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("email", type=str, required=True)
-        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
-        project_id = args["project_id"]
         email = args["email"]
 
         if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
-        data = {
-            "email": email,
-            "project_id": project_id,
-            "created_at": helpers.get_datetime(),
-        }
+        data = {"email": email, "created_at": helpers.get_datetime()}
         try:
             validator.validate("EMAIL", email)
             model.insert(table="user", data=data)
@@ -71,7 +64,6 @@ class UserUpdate(Resource):
     def put(self, user_id):
         parser = reqparse.RequestParser()
         parser.add_argument("email", type=str, required=True)
-        parser.add_argument("project_id", type=str, required=True)
         args = parser.parse_args()
         email = args["email"]
         args = parser.parse_args()
@@ -79,10 +71,7 @@ class UserUpdate(Resource):
         if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(401, message="Duplicate email Detected")
 
-        data = {
-            "where": {"id": user_id},
-            "data": {"project_id": args["project_id"], "email": email},
-        }
+        data = {"where": {"id": user_id}, "data": {"email": email}}
         try:
             validator.validate("EMAIL", email)
             model.update("user", data=data)

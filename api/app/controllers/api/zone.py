@@ -32,10 +32,10 @@ class ZoneAdd(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("project_id", type=str, required=True)
+        parser.add_argument("user_id", type=int, required=True)
         args = parser.parse_args()
         zone = args["zone"].lower()
-        project_id = args["project_id"]
+        user_id = args["user_id"]
 
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
@@ -47,8 +47,6 @@ class ZoneAdd(Resource):
 
         # FIXME "is_committed" should be added
         try:
-            user_id = user_model.user_id_by_project(project_id)
-
             data = {"zone": zone, "user_id": user_id}
             model.insert(table="zone", data=data)
         except Exception as e:
@@ -62,10 +60,10 @@ class ZoneEdit(Resource):
     def put(self, zone_id):
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("project_id", type=str, required=True)
+        parser.add_argument("user_id", type=int, required=True)
         args = parser.parse_args()
         zone = args["zone"].lower()
-        project_id = args["project_id"]
+        user_id = args["user_id"]
 
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
@@ -76,8 +74,6 @@ class ZoneEdit(Resource):
             return response(401, message=str(e))
 
         try:
-            user_id = user_model.user_id_by_project(project_id)
-
             data = {
                 "where": {"id": zone_id},
                 "data": {"zone": args["zone"], "user_id": user_id},

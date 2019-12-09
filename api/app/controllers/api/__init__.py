@@ -6,13 +6,7 @@ from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
 from .zone import GetZoneData, GetZoneDataId, ZoneAdd, ZoneEdit, ZoneDelete
 from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
-from .domain import (
-    GetDomainData,
-    GetDomainDataId,
-    GetDomainDataByProjectId,
-    DeleteDomain,
-    AddDomain,
-)
+from .domain import GetDomainData, GetDomainDataId, DeleteDomain, AddDomain
 
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
@@ -26,7 +20,6 @@ api.add_resource(RecordDelete, "/record/delete/<record_id>")
 
 api.add_resource(GetDomainData, "/domain/list")
 api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
-api.add_resource(GetDomainDataByProjectId, "/domain/list/user/<project_id>")
 api.add_resource(DeleteDomain, "/domain/delete")
 api.add_resource(AddDomain, "/domain/add")
 

@@ -4,7 +4,6 @@ from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
 from app.models import zone as zone_model
-from app.models import user as user_model
 from app.models import record as record_model
 from app.models import domain as domain_model
 from app.helpers import helpers
@@ -13,9 +12,7 @@ from app.helpers import command
 from app.middlewares import auth
 
 
-def insert_zone(zone, project_id):
-    user_id = user_model.user_id_by_project(project_id)
-
+def insert_zone(zone, user_id):
     data = {"zone": zone, "user_id": user_id}
     zone_id = model.insert(table="zone", data=data)
     return zone_id
@@ -179,10 +176,10 @@ class AddDomain(Resource):
         """
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("project_id", type=str, required=True)
+        parser.add_argument("user_id", type=int, required=True)
         args = parser.parse_args()
         zone = args["zone"]
-        project_id = args["project_id"]
+        user_id = args["user_id"]
 
         # Validation
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
@@ -194,7 +191,7 @@ class AddDomain(Resource):
             return response(401, message=str(e))
 
         try:
-            zone_id = insert_zone(zone, project_id)
+            zone_id = insert_zone(zone, user_id)
         except Exception:
             return response(401, message="Project ID not found")
         else:
@@ -212,5 +209,5 @@ class AddDomain(Resource):
                 return response(401, message=str(e))
 
             # just for feedback return value
-            zone_data = {"zone": zone, "project_id": project_id}
+            zone_data = {"zone": zone, "user_id": user_id}
             return response(200, data=zone_data, message="Inserted")

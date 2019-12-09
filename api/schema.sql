@@ -1,7 +1,6 @@
 CREATE TABLE "user" (
 	id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
 	email STRING NOT NULL,
-	project_id STRING(100) NOT NULL,
 	created_at TIMESTAMP NULL DEFAULT current_timestamp():::TIMESTAMP
 );
 
