@@ -18,8 +18,8 @@ def get_other_data(record_id):
         ttl = model.get_one(table="ttl", field="id", value=ttl_id)
         rdata = model.get_one(table="rdata", field="record_id", value=record_id)
         return (record, zone, type_, ttl, rdata)
-    except Exception as e:
-        raise e
+    except Exception as error:
+        raise ValueError(f"{error}")
 
 
 def generate_command(**kwargs):
