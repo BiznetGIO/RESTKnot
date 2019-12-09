@@ -13,7 +13,7 @@ def get_db():
         raise ValueError(f"{exc}")
 
 
-def to_dict(table, rows):
+def zip_column_name(table, rows):
     results = []
     column = get_columns(table)
     for row in rows:
@@ -35,15 +35,13 @@ def get_columns(table):
 
 def get_all(table):
     results = []
-    column = get_columns(table)
     cursor, connection = get_db()
     try:
         query = f'SELECT * FROM "{table}"'
         cursor.prepare(query)
         cursor.execute()
         rows = cursor.fetchall()
-        for row in rows:
-            results.append(dict(zip(column, row)))
+        results = zip_column_name(table, rows)
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
         raise ValueError(f"{error}")
@@ -110,7 +108,6 @@ def update(table, data=None):
         value += row + "='%s'," % str(rows[row])
     _set = value[:-1]
     field = list(data["where"].keys())[0]
-    status = None
     try:
         field_data = data["where"][field]
         query = f'UPDATE "{table}" SET {_set} WHERE {field}=%(field_data)s'
@@ -121,8 +118,7 @@ def update(table, data=None):
         raise ValueError(f"{error}")
     else:
         connection.commit()
-        status = True
-        return status
+        return True
 
 
 def delete(table, field=None, value=None):
@@ -165,7 +161,7 @@ def plain_get(table, query, value=None):
         cursor.prepare(query)
         cursor.execute(value)
         rows = cursor.fetchall()
-        results = to_dict(table, rows)
+        results = zip_column_name(table, rows)
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
         raise ValueError(f"{error}")
