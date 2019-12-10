@@ -1,13 +1,34 @@
-master:
-  master:
-    - 'master1'
-  notify:
-      - 'slave1'
-  acl:
-      - 'slave1'
 slave:
-  master:
-      - 'master1'
-      - 'master1'
-  acl:
-      - 'master1'
+    remote:
+        - id: slave1
+          address: 192.168.1.3
+
+        - id: slave2
+          address: 192.168.1.4
+
+    acl:
+        - id: acl_slave1
+          address: 192.168.1.3
+          action: notify
+
+        - id: acl_slave2
+          address: 192.168.1.4
+          action: notify
+
+
+master:
+    remote:
+        - id: master1
+          address: 192.168.1.1
+
+        - id: master2
+          address: 192.168.1.2
+
+    acl:
+        - id: acl_master1
+          address: 192.168.1.1
+          action: transfer
+
+        - id: acl_master2
+          address: 192.168.1.2
+          action: transfer

@@ -96,30 +96,30 @@ def get_clusters():
 
 def send_cluster(zone, zone_id, command):
     clusters = get_clusters()
-    print("A")
-    print(clusters)
     slave = clusters["slave"]
-    master = clusters["master"]
+    # master = clusters["master"]
     cmds = []
 
     file_cmd = {"item": "file", "data": f"{zone}.zone", "identifier": zone}
     cmds.append(file_cmd)
 
-    # # master
-    for master_ in master["master"]:
-        master_cmd = {"item": "master", "data": master_}
+    # master zone
+    for remote in slave["remote"]:
+        master_cmd = {"item": "notify", "data": remote.get("id")}
         cmds.append(master_cmd)
 
-    # FIXME
-    # notify (only for master)
-    for notify in master["notify"]:
-        notify_cmd = {"item": "notify", "data": notify}
-        cmds.append(notify_cmd)
+    for acl in slave["acl"]:
+        master_cmd = {"item": "acl", "data": acl.get("id")}
+        cmds.append(master_cmd)
 
-    # acl
-    for acl in master["acl"]:
-        cmd = {"item": "acl", "data": acl}
-        cmds.append(notify_cmd)
+    # slave zone
+    # for master in master["remote"]:
+    #     master_cmd = {"item": "master", "data": master.get("id")}
+    #     cmds.append(master_cmd)
+
+    # for master in master["acl"]:
+    #     master_cmd = {"item": "acl", "data": master.get('id')}
+    #     cmds.append(master_cmd)
 
     serial_cmd = {"item": "serial-policy", "data": "dateserial"}
     cmds.append(serial_cmd)
