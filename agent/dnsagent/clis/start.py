@@ -9,8 +9,7 @@ from dnsagent.libs import utils
 class Start(Base):
     """
         usage:
-            start slave
-            start master
+            start
 
         Command :
 
@@ -37,35 +36,16 @@ class Start(Base):
             utils.log_err(f"Can't Connect to broker: {e}")
             exit()
 
-    def parse_message(self, consumer):
+    def take_message(self, consumer):
         flag = os.environ.get("RESTKNOT_KAFKA_FLAGS")
-        command_type = None
 
         try:
             for message in consumer:
                 message = message.value
-                for i in message:
-                    try:
-                        command_type = message[i]["type"]
-                    except Exception as e:
-                        utils.log_err(f"Can't find command type: {e}")
-
-                if command_type == "general":
-                    knot_lib.execute_general(message)
-                elif command_type == "cluster":
-                    knot_lib.execute_cluster(message, flags=flag)
-                else:
-                    utils.log_err(f"Unrecognized command type: {command_type}")
+                knot_lib.execute(message)
         except KeyboardInterrupt:
             print("Stopping dnsagent. Press Ctrl+C again to exit")
 
     def execute(self):
         consumer = self.connect_kafka()
-        self.parse_message(consumer)
-
-        if self.args["slave"]:
-            self.parse_message(consumer)
-
-        if self.args["master"]:
-            self.parse_message(consumer)
-            self.parse_message(consumer)
+        self.take_message(consumer)

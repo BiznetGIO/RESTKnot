@@ -184,7 +184,7 @@ class AddDomain(Resource):
             create_ns_default(zone_id)
             create_cname_default(zone_id, zone)
 
-            command.send_cluster(zone_id)
+            command.send_cluster(zone, zone_id, "conf-set")
 
             zone_data = {"zone": zone, "user_id": user_id}
             return response(200, data=zone_data, message="Inserted")
