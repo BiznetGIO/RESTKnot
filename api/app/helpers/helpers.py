@@ -7,9 +7,8 @@ def soa_time_set():
 
 
 def get_datetime():
-    # FIXME use global UTC time. not local
-    now = datetime.datetime.now()
-    return str(now)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    return f"{now:%Y-%m-%d %H:%M:%S %z}"
 
 
 def exclude_keys(dict_, keys):
