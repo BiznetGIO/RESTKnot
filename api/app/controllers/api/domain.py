@@ -171,6 +171,10 @@ class AddDomain(Resource):
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
             return response(401, message="Duplicate zone Detected")
 
+        user = model.get_one(table="user", field="id", value=user_id)
+        if not user:
+            return response(401, message=f"User Not Found")
+
         try:
             validator.validate("ZONE", zone)
 

@@ -59,6 +59,8 @@ def get_one(table, field=None, value=None):
         cursor.prepare(query)
         cursor.execute({"value": value})
         rows = cursor.fetchone()
+        if not rows:
+            return
         results = dict(zip(column, list(rows)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()

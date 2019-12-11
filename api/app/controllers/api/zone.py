@@ -21,6 +21,9 @@ class GetZoneDataId(Resource):
     def get(self, zone_id):
         try:
             zone = model.get_one(table="zone", field="id", value=zone_id)
+            if not zone:
+                return response(200, data=None)
+
             zone = helpers.exclude_keys(zone, {"is_committed"})
             return response(200, data=zone)
         except Exception as e:

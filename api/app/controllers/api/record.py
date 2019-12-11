@@ -29,6 +29,9 @@ class GetRecordDataId(Resource):
     def get(self, record_id):
         try:
             record = model.get_one(table="record", field="id", value=record_id)
+            if not record:
+                return response(200, data=None)
+
             data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
