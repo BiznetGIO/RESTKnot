@@ -98,19 +98,15 @@ def send_cluster(zone, zone_id, command):
     clusters = get_clusters()
     slave = clusters["slave"]
     # master = clusters["master"]
-    cmds = []
-
-    file_cmd = {"item": "file", "data": f"{zone}.zone", "identifier": zone}
-    cmds.append(file_cmd)
-
-    # master zone
-    for remote in slave["remote"]:
-        master_cmd = {"item": "notify", "data": remote.get("id")}
-        cmds.append(master_cmd)
-
-    for acl in slave["acl"]:
-        master_cmd = {"item": "acl", "data": acl.get("id")}
-        cmds.append(master_cmd)
+    cmds = [
+        {"item": "file", "data": f"{zone}.zone", "identifier": zone},
+        {"item": "serial-policy", "data": "dateserial"},
+        {"item": "module", "data": "mod-stats/default"},
+    ]
+    cmds.extend(
+        [{"item": "notify", "data": remote.get("id")} for remote in slave["remote"]]
+    )
+    cmds.extend([{"item": "acl", "data": acl.get("id")} for acl in slave["acl"]])
 
     # slave zone
     # for master in master["remote"]:
@@ -120,12 +116,6 @@ def send_cluster(zone, zone_id, command):
     # for master in master["acl"]:
     #     master_cmd = {"item": "acl", "data": master.get('id')}
     #     cmds.append(master_cmd)
-
-    serial_cmd = {"item": "serial-policy", "data": "dateserial"}
-    cmds.append(serial_cmd)
-
-    module_cmd = {"item": "module", "data": "mod-stats/default"}
-    cmds.append(module_cmd)
 
     conf_begin = {"cmd": "conf-begin"}
     producer.send(conf_begin)
