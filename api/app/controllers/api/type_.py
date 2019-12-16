@@ -40,6 +40,9 @@ class TypeAdd(Resource):
 
         data = {"type": type_}
 
+        if not type_:
+            return response(422)
+
         try:
             inserted_id = model.insert(table="type", data=data)
 
@@ -55,9 +58,13 @@ class TypeEdit(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("type", type=str, required=True)
         args = parser.parse_args()
+        type_ = args["type"]
+
+        if not type_:
+            return response(422)
 
         try:
-            data = {"where": {"id": type_id}, "data": {"type": args["type"]}}
+            data = {"where": {"id": type_id}, "data": {"type": type_}}
             row_count = model.update("type", data=data)
             if not row_count:
                 return response(404)

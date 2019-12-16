@@ -39,6 +39,9 @@ class TtlAdd(Resource):
         ttl = args["ttl"]
 
         data = {"ttl": ttl}
+        if not ttl:
+            return response(422)
+
         try:
             inserted_id = model.insert(table="ttl", data=data)
             data_ = {"id": inserted_id, **data}
@@ -55,6 +58,9 @@ class TtlEdit(Resource):
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         ttl = args["ttl"]
+
+        if not ttl:
+            return response(422)
 
         try:
             data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
