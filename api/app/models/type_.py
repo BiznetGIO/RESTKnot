@@ -3,12 +3,12 @@ from app.models import model
 
 def get_typeid_by_rtype(rtype):
     """Get type id by record record type."""
-    try:
-        type_ = model.get_one(table="type", field="type", value=rtype.upper())
-        type_id = type_["id"]
-        return type_id
-    except Exception:
-        raise ValueError("Unrecognized Record Type")
+    type_ = model.get_one(table="type", field="type", value=rtype.upper())
+    if not type_:
+        raise ValueError("Type Not Found")
+
+    type_id = type_["id"]
+    return type_id
 
 
 def get_type_by_recordid(record_id):

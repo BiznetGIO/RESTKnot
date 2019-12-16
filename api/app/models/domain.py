@@ -13,7 +13,7 @@ def get_other_data(zone):
 
     records_detail = []
     for record in records:
-        record_detail = record_model.get_other_data2(record)
+        record_detail = record_model.get_other_data(record)
         record_detail = helpers.exclude_keys(record_detail, {"zone"})
         records_detail.append(record_detail)
 
