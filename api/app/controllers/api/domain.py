@@ -190,7 +190,7 @@ class AddDomain(Resource):
 
             command.send_cluster(zone, zone_id, "conf-set")
 
-            zone_data = {"zone": zone, "user_id": user_id}
-            return response(200, data=zone_data, message="Inserted")
+            data_ = {"id": zone_id, "zone": zone}
+            return response(200, data=data_, message="Inserted")
         except Exception as e:
             return response(401, message=f"{e}")

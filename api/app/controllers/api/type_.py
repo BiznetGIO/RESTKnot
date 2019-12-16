@@ -36,8 +36,10 @@ class TypeAdd(Resource):
         data = {"type": type_}
 
         try:
-            model.insert(table="type", data=data)
-            return response(200, data=data, message="Inserted")
+            inserted_id = model.insert(table="type", data=data)
+
+            data_ = {"id": inserted_id, **data}
+            return response(200, data=data_, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
 

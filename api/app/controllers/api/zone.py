@@ -51,8 +51,10 @@ class ZoneAdd(Resource):
         # FIXME "is_committed" should be added
         try:
             data = {"zone": zone, "user_id": user_id}
-            model.insert(table="zone", data=data)
-            return response(200, data=data, message="Inserted")
+            inserted_id = model.insert(table="zone", data=data)
+
+            data_ = {"id": inserted_id, "zone": zone}
+            return response(200, data=data_, message="Inserted")
         except Exception as e:
             return response(401, message=str(e))
 

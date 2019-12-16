@@ -98,8 +98,8 @@ def insert(table, data=None):
         raise ValueError(f"{error}")
     else:
         connection.commit()
-        id_of_new_row = cursor.fetchone()[0]
-        return str(id_of_new_row)
+        inserted_data_id = cursor.fetchone()[0]
+        return inserted_data_id
 
 
 def update(table, data=None):
