@@ -59,16 +59,16 @@ class RecordAdd(Resource):
         parser.add_argument("rtype", type=str, required=True)
         parser.add_argument("rdata", type=str, required=True)
         # FIXME don't use ID?
-        parser.add_argument("ttl_id", type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         owner = args["owner"].lower()
         rtype = args["rtype"].lower()
         rdata = args["rdata"]
         zone = args["zone"]
-        ttl_id = args["ttl_id"]
+        ttl = args["ttl"]
 
         try:
-            ttl_model.is_exists(ttl_id)
+            ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
 
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
@@ -112,17 +112,17 @@ class RecordEdit(Resource):
         parser.add_argument("owner", type=str, required=True)
         parser.add_argument("rtype", type=str, required=True)
         parser.add_argument("rdata", type=str, required=True)
-        parser.add_argument("ttl_id", type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         owner = args["owner"].lower()
         rtype = args["rtype"].lower()
         rdata = args["rdata"]
         zone = args["zone"]
-        ttl_id = args["ttl_id"]
+        ttl = args["ttl"]
 
         try:
+            ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
             record_model.is_exists(record_id)
-            ttl_model.is_exists(ttl_id)
 
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
