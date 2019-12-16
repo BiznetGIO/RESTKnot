@@ -4,6 +4,7 @@ from app.models import model
 from app.models import zone as zone_model
 from app.models import record as record_model
 from app.models import type_ as type_model
+from app.models import ttl as ttl_model
 from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
@@ -67,6 +68,8 @@ class RecordAdd(Resource):
         ttl_id = args["ttl_id"]
 
         try:
+            ttl_model.is_exists(ttl_id)
+
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
@@ -115,6 +118,9 @@ class RecordEdit(Resource):
         ttl_id = args["ttl_id"]
 
         try:
+            record_model.is_exists(record_id)
+            ttl_model.is_exists(ttl_id)
+
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
@@ -129,11 +135,6 @@ class RecordEdit(Resource):
             validator.validate(rtype.upper(), rdata)
         except Exception as e:
             return response(422, message=f"{e}")
-
-        try:
-            record_model.is_exists(record_id)
-        except Exception:
-            return response(404)
 
         try:
             data = {
