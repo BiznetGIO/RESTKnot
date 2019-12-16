@@ -76,6 +76,11 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
+            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
+        except Exception as e:
+            return response(409, message=f"{e}")
+
+        try:
             # rtype no need to be validated & no need to check its length
             # `get_typeid` will raise error for non existing rtype
             validator.validate(rtype.upper(), rdata)
