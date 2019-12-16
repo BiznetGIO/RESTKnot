@@ -130,9 +130,6 @@ def send_cluster(zone, zone_id, command):
     conf_begin = {"cmd": "conf-begin"}
     producer.send(conf_begin)
 
-    conf_set = {"cmd": "conf-set", "data": zone, "section": "zone", "item": "domain"}
-    producer.send(conf_set)
-
     for cmd in cmds:
         cmd["cmd"] = command
         cmd["section"] = "zone"
