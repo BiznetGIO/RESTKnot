@@ -78,7 +78,7 @@ class RecordAdd(Resource):
             validator.validate(rtype.upper(), rdata)
 
         except Exception as e:
-            return response(422, message=str(e))
+            return response(422, message=f"{e}")
 
         try:
             data = {
@@ -121,10 +121,14 @@ class RecordEdit(Resource):
             return response(404, message=str(e))
 
         try:
-            validator.validate(rtype.upper(), rdata)
             record_model.is_duplicate_rdata(zone_id, type_id, rdata)
         except Exception as e:
-            return response(422, message=str(e))
+            return response(409, message=f"{e}")
+
+        try:
+            validator.validate(rtype.upper(), rdata)
+        except Exception as e:
+            return response(422, message=f"{e}")
 
         try:
             record_model.is_exists(record_id)

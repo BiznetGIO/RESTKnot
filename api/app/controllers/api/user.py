@@ -45,8 +45,8 @@ class UserSignUp(Resource):
 
         try:
             validator.validate("EMAIL", email)
-        except Exception:
-            return response(422)
+        except Exception as e:
+            return response(422, message=f"{e}")
 
         try:
             data = {"email": email, "created_at": helpers.get_datetime()}
@@ -72,8 +72,8 @@ class UserUpdate(Resource):
 
         try:
             validator.validate("EMAIL", email)
-        except Exception:
-            return response(422)
+        except Exception as e:
+            return response(422, message=f"{e}")
 
         try:
             data = {"where": {"id": user_id}, "data": {"email": email}}

@@ -149,8 +149,8 @@ class AddDomain(Resource):
 
         try:
             validator.validate("ZONE", zone)
-        except Exception:
-            return response(422)
+        except Exception as e:
+            return response(422, message=f"{e}")
 
         try:
             zone_id = insert_zone(zone, user_id)
@@ -182,7 +182,10 @@ class DeleteDomain(Resource):
 
         try:
             zone_id = zone_model.get_zone_id(zone)
+        except Exception:
+            return response(404, message=f"Zone Not Found")
 
+        try:
             records = record_model.get_records_by_zone(zone)
             for record in records:
                 # zone-purge didn't work
@@ -197,7 +200,5 @@ class DeleteDomain(Resource):
             model.delete(table="zone", field="id", value=zone_id)
 
             return response(204, data=zone)
-        except IndexError:
-            return response(404, message=f"Zone Not Found")
         except Exception:
             return response(500)
