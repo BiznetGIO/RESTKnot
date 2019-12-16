@@ -106,8 +106,8 @@ class GetDomainData(Resource):
                 domains_detail.append(detail)
 
             return response(200, data=domains_detail)
-        except Exception:
-            return response(500)
+        except Exception as e:
+            return response(500, f"{e}")
 
 
 class GetDomainDataId(Resource):
@@ -122,6 +122,53 @@ class GetDomainDataId(Resource):
             return response(200, data=data)
         except Exception:
             return response(500)
+
+
+class AddDomain(Resource):
+    @auth.auth_required
+    def post(self):
+        """Add new domain (zone) with additional default record.
+
+        note:
+        SOA, NS, and CNAME records are added automatically when adding new domain
+        """
+        parser = reqparse.RequestParser()
+        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("user_id", type=int, required=True)
+        args = parser.parse_args()
+        zone = args["zone"]
+        user_id = args["user_id"]
+
+        # Validation
+        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
+            return response(409, message="Duplicate Zone")
+
+        user = model.get_one(table="user", field="id", value=user_id)
+        if not user:
+            return response(404, message=f"User Not Found")
+
+        try:
+            validator.validate("ZONE", zone)
+        except Exception:
+            return response(422)
+
+        try:
+            zone_id = insert_zone(zone, user_id)
+
+            # create zone config
+            command.send_config(zone, zone_id, "conf-set")
+
+            # create default records
+            create_soa_default(zone_id)
+            create_ns_default(zone_id)
+            create_cname_default(zone_id, zone)
+
+            command.send_cluster(zone, zone_id, "conf-set")
+
+            data_ = {"id": zone_id, "zone": zone}
+            return response(201, data=data_)
+        except Exception as e:
+            return response(500, message=f"{e}")
 
 
 class DeleteDomain(Resource):
@@ -154,47 +201,3 @@ class DeleteDomain(Resource):
             return response(404, message=f"Zone Not Found")
         except Exception:
             return response(500)
-
-
-class AddDomain(Resource):
-    @auth.auth_required
-    def post(self):
-        """Add new domain (zone) with additional default record.
-
-        note:
-        SOA, NS, and CNAME records are added automatically when adding new domain
-        """
-        parser = reqparse.RequestParser()
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("user_id", type=int, required=True)
-        args = parser.parse_args()
-        zone = args["zone"]
-        user_id = args["user_id"]
-
-        # Validation
-        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
-            return response(409, message="Duplicate Zone")
-
-        user = model.get_one(table="user", field="id", value=user_id)
-        if not user:
-            return response(404, message=f"User Not Found")
-
-        try:
-            validator.validate("ZONE", zone)
-
-            zone_id = insert_zone(zone, user_id)
-
-            # create zone config
-            command.send_config(zone, zone_id, "conf-set")
-
-            # create default records
-            create_soa_default(zone_id)
-            create_ns_default(zone_id)
-            create_cname_default(zone_id, zone)
-
-            command.send_cluster(zone, zone_id, "conf-set")
-
-            data_ = {"id": zone_id, "zone": zone}
-            return response(201, data=data_)
-        except Exception as e:
-            return response(500, message=f"{e}")

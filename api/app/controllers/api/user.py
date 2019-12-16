@@ -32,19 +32,6 @@ class GetUserDataId(Resource):
             return response(500)
 
 
-class UserDelete(Resource):
-    @auth.auth_required
-    def delete(self, user_id):
-        try:
-            row_count = model.delete(table="user", field="id", value=user_id)
-            if not row_count:
-                return response(404)
-
-            return response(204)
-        except Exception:
-            return response(500)
-
-
 class UserSignUp(Resource):
     @auth.auth_required
     def post(self):
@@ -56,12 +43,16 @@ class UserSignUp(Resource):
         if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(409, message="Duplicate Email")
 
-        data = {"email": email, "created_at": helpers.get_datetime()}
         try:
             validator.validate("EMAIL", email)
+        except Exception:
+            return response(422)
+
+        try:
+            data = {"email": email, "created_at": helpers.get_datetime()}
+
             inserted_id = model.insert(table="user", data=data)
             data_ = {"id": inserted_id, **data}
-
             return response(201, data=data_)
         except Exception:
             return response(500)
@@ -79,10 +70,30 @@ class UserUpdate(Resource):
         if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(409, message="Duplicate Email")
 
-        data = {"where": {"id": user_id}, "data": {"email": email}}
         try:
             validator.validate("EMAIL", email)
-            model.update("user", data=data)
+        except Exception:
+            return response(422)
+
+        try:
+            data = {"where": {"id": user_id}, "data": {"email": email}}
+            row_count = model.update("user", data=data)
+            if not row_count:
+                return response(404)
+
             return response(200, data=data.get("data"))
+        except Exception:
+            return response(500)
+
+
+class UserDelete(Resource):
+    @auth.auth_required
+    def delete(self, user_id):
+        try:
+            row_count = model.delete(table="user", field="id", value=user_id)
+            if not row_count:
+                return response(404)
+
+            return response(204)
         except Exception:
             return response(500)
