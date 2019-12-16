@@ -96,6 +96,9 @@ class RecordAdd(Resource):
             model.insert(table="rdata", data=content_data)
 
             command.send_zone(record_id, "zone-set")
+
+            record = model.get_one(table="record", field="id", value=record_id)
+            data = record_model.get_other_data(record)
             return response(201, data=data)
         except Exception as e:
             return response(500, message=f"{e}")
@@ -158,7 +161,9 @@ class RecordEdit(Resource):
 
             command.send_zone(record_id, "zone-set")
 
-            return response(200, data=data.get("data"))
+            record = model.get_one(table="record", field="id", value=record_id)
+            data_ = record_model.get_other_data(record)
+            return response(200, data=data_)
         except Exception as e:
             return response(500, message=f"{e}")
 
