@@ -18,14 +18,85 @@ Response:
 
   Status: 200 OK
   ----
+  [
+      {
+        "zone_id": 512564293182357505,
+        "zone": "example.com",
+        "user": {
+            "id": 512552858177372161,
+            "email": "john@example.com"
+        },
+        "records": [
+            {
+                "id": 512564294432948225,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400"
+                },
+                "type": {
+                    "id": 1,
+                    "type": "SOA"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564295907311617,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "satu.mydns.id."
+                },
+                "type": {
+                    "id": 4,
+                    "type": "NS"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564297375940609,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "dua.mydns.id."
+                },
+                "type": {
+                    "id": 4,
+                    "type": "NS"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564298888708097,
+                "owner": "www",
+                "rdata": {
+                    "rdata": "example.com."
+                },
+                "type": {
+                    "id": 5,
+                    "type": "CNAME"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            }
+        ]
+    }
+  ]
 
-Get a domain by
----------------
+Get a domain by Zone
+--------------------
 
 .. code-block:: bash
 
   GET domain/list/zone/:zoneid
-  GET domain/list/user/:projectid
 
 Response:
 
@@ -34,6 +105,76 @@ Response:
 
   Status: 200 OK
   ----
+   {
+        "zone_id": 512564293182357505,
+        "zone": "example.com",
+        "user": {
+            "id": 512552858177372161,
+            "email": "john@example.com"
+        },
+        "records": [
+            {
+                "id": 512564294432948225,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400"
+                },
+                "type": {
+                    "id": 1,
+                    "type": "SOA"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564295907311617,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "satu.mydns.id."
+                },
+                "type": {
+                    "id": 4,
+                    "type": "NS"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564297375940609,
+                "owner": "@",
+                "rdata": {
+                    "rdata": "dua.mydns.id."
+                },
+                "type": {
+                    "id": 4,
+                    "type": "NS"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            },
+            {
+                "id": 512564298888708097,
+                "owner": "www",
+                "rdata": {
+                    "rdata": "example.com."
+                },
+                "type": {
+                    "id": 5,
+                    "type": "CNAME"
+                },
+                "ttl": {
+                    "id": 6,
+                    "ttl": "3600"
+                }
+            }
+        ]
+    }
 
 
 Create domain
@@ -49,7 +190,7 @@ Request body:
 ===========  =======   ===========================
 Name         Type      Description
 ===========  =======   ===========================
-project_id   string    The project id of the domain
+user_id      int       The user id of the user
 zone         string    The zone name
 ===========  =======   ===========================
 
@@ -58,7 +199,12 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 201 CREATED
+  ----
+   {
+    "id": 512564293182357505,
+    "zone": "example.com"
+   }
 
 
 Delete domain
@@ -82,4 +228,4 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 204 NO CONTENT

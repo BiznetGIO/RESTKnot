@@ -20,12 +20,24 @@ Response:
   Status: 200 OK
   ----
   [
-   {
-    "id": "509436247274160129",
-    "email": "john@example.com",
-    "project_id": "001",
-    "created_at": "2019-12-05 16:26:44.757773"
-   }
+     {
+        "id": 512565507407773697,
+        "owner": "@",
+        "rdata": {
+            "rdata": "10 mail.example.com."
+        },
+        "zone": {
+            "zone": "example.com"
+        },
+        "type": {
+            "id": 6,
+            "type": "MX"
+        },
+        "ttl": {
+            "id": 5,
+            "ttl": "7200"
+        }    
+     }
   ]
 
 
@@ -44,10 +56,22 @@ Response:
   Status: 200 OK
   ----
    {
-    "id": "509436247274160129",
-    "email": "john@example.com",
-    "project_id": "001",
-    "created_at": "2019-12-05 16:26:44.757773"
+        "id": 512565507407773697,
+        "owner": "@",
+        "rdata": {
+            "rdata": "10 mail.example.com."
+        },
+        "zone": {
+            "zone": "example.com"
+        },
+        "type": {
+            "id": 6,
+            "type": "MX"
+        },
+        "ttl": {
+            "id": 5,
+            "ttl": "7200"
+        }    
    }
 
 
@@ -81,12 +105,25 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 201 CREATED
   ----
    {
-    "email": "john@example.com",
-    "project_id": "001",
-    "created_at": "2019-12-05 16:26:44.757773"
+        "id": 512565507407773697,
+        "owner": "@",
+        "rdata": {
+            "rdata": "10 mail.example.com."
+        },
+        "zone": {
+            "zone": "example.com"
+        },
+        "type": {
+            "id": 6,
+            "type": "MX"
+        },
+        "ttl": {
+            "id": 5,
+            "ttl": "7200"
+        }    
    }
 
 
@@ -113,7 +150,7 @@ zone          string    The zone name
 owner         string    The owner of the record
 rtype         string    The record type
 rdata         string    The record RDATA
-ttl_id        string    The id of ttl
+ttl           string    The choice of preserved tll values
 ===========  =======   ===========================
 
 Response:
@@ -123,9 +160,23 @@ Response:
 
   Status: 200 OK
   ----
-   {
-    "project_id": "001",
-    "email": "john@example.com",
+  {
+        "id": 512565507407773697,
+        "owner": "@",
+        "rdata": {
+            "rdata": "10 mail.example.com."
+        },
+        "zone": {
+            "zone": "example.com"
+        },
+        "type": {
+            "id": 6,
+            "type": "MX"
+        },
+        "ttl": {
+            "id": 5,
+            "ttl": "7200"
+        }
    }
 
 
@@ -143,4 +194,4 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 204 NO CONTENT

@@ -10,4 +10,5 @@ Table of contents
 
    overview.rst
    restapi.rst
+   deploy.rst
    project.rst

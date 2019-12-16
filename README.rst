@@ -45,7 +45,7 @@ Create New Zone
   curl -X POST \
     http://localhost:5000/api/domain/add \
     -H 'X-API-key: 123' \
-    -F project_id=001 \
+    -F user_id=001 \
     -F zone=example.com
 
 Edit a Single Record
@@ -60,7 +60,7 @@ Edit a Single Record
     -F owner=@ \
     -F rtype=NS \
     -F rdata=one.exampledns.com. \
-    -F ttl_id=7
+    -F ttl=3600
 
 Delete a Zone
 ^^^^^^^^^^^^^

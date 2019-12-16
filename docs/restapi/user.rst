@@ -22,8 +22,7 @@ Response:
    {
     "id": "509436247274160129",
     "email": "john@example.com",
-    "project_id": "001",
-    "created_at": "2019-12-05 16:26:44.757773"
+    "created_at": ""2019-12-16T08:12:27"
    }
   ]
 
@@ -45,8 +44,7 @@ Response:
    {
     "id": "509436247274160129",
     "email": "john@example.com",
-    "project_id": "001",
-    "created_at": "2019-12-05 16:26:44.757773"
+    "created_at": ""2019-12-16T08:12:27"
    }
 
 
@@ -65,7 +63,6 @@ Request body:
 Name         Type      Description
 ===========  =======   ===========================
 email        string    The email of the user
-project_id   string    The project id of the user
 ===========  =======   ===========================
 
 Response:
@@ -73,11 +70,11 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 201 CREATED
   ----
    {
+    "id": "509436247274160129",
     "email": "john@example.com",
-    "project_id": "001",
     "created_at": "2019-12-05 16:26:44.757773"
    }
 
@@ -97,7 +94,6 @@ Request body:
 Name         Type      Description
 ===========  =======   ===========================
 email        string    The email of the user
-project_id   string    The project id of the user
 ===========  =======   ===========================
 
 Response:
@@ -108,7 +104,6 @@ Response:
   Status: 200 OK
   ----
    {
-    "project_id": "001",
     "email": "john@example.com",
    }
 
@@ -127,4 +122,4 @@ Response:
 .. code-block:: bash
 
 
-  Status: 200 OK
+  Status: 204 NO CONTENT
