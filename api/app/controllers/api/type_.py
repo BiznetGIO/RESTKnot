@@ -9,10 +9,13 @@ class GetTypeData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("type")
-            return response(200, data=data)
-        except Exception as e:
-            return response(401, message=str(e))
+            types = model.get_all("type")
+            if not types:
+                return response(404)
+
+            return response(200, data=types)
+        except Exception:
+            return response(500)
 
 
 class GetTypeDataId(Resource):
@@ -20,9 +23,12 @@ class GetTypeDataId(Resource):
     def get(self, type_id):
         try:
             type_ = model.get_one(table="type", field="id", value=type_id)
+            if not type_:
+                return response(404)
+
             return response(200, data=type_)
-        except Exception as e:
-            return response(401, message=str(e))
+        except Exception:
+            return response(500)
 
 
 class TypeAdd(Resource):
@@ -39,9 +45,9 @@ class TypeAdd(Resource):
             inserted_id = model.insert(table="type", data=data)
 
             data_ = {"id": inserted_id, **data}
-            return response(200, data=data_, message="Inserted")
-        except Exception as e:
-            return response(401, message=str(e))
+            return response(201, data=data_)
+        except Exception:
+            return response(500)
 
 
 class TypeEdit(Resource):
@@ -55,9 +61,9 @@ class TypeEdit(Resource):
             type_model.is_exists(type_id)
             data = {"where": {"id": type_id}, "data": {"type": args["type"]}}
             model.update("type", data=data)
-            return response(200, data=data.get("data"), message="Edited")
-        except Exception as e:
-            return response(401, message=str(e))
+            return response(200, data=data.get("data"))
+        except Exception:
+            return response(500)
 
 
 class TypeDelete(Resource):
@@ -65,7 +71,7 @@ class TypeDelete(Resource):
     def delete(self, type_id):
         try:
             type_model.is_exists(type_id)
-            data = model.delete(table="type", field="id", value=type_id)
-            return response(200, data=data, message="Deleted")
-        except Exception as e:
-            return response(401, message=str(e))
+            model.delete(table="type", field="id", value=type_id)
+            return response(204)
+        except Exception:
+            return response(500)

@@ -136,7 +136,7 @@ def delete(table, field=None, value=None):
     else:
         connection.commit()
         rows_deleted = cursor.rowcount
-        return str(rows_deleted)
+        return rows_deleted
 
 
 def is_unique(table, field=None, value=None):

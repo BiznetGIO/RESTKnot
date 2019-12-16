@@ -11,9 +11,12 @@ class GetUserData(Resource):
     def get(self):
         try:
             users = model.get_all("user")
+            if not users:
+                return response(404)
+
             return response(200, data=users)
-        except Exception as e:
-            return response(401, message=str(e))
+        except Exception:
+            return response(500)
 
 
 class GetUserDataId(Resource):
@@ -21,19 +24,25 @@ class GetUserDataId(Resource):
     def get(self, user_id):
         try:
             user = model.get_one(table="user", field="id", value=user_id)
+            if not user:
+                return response(404)
+
             return response(200, data=user)
-        except Exception as e:
-            return response(401, message=str(e))
+        except Exception:
+            return response(500)
 
 
 class UserDelete(Resource):
     @auth.auth_required
     def delete(self, user_id):
         try:
-            data = model.delete(table="user", field="id", value=user_id)
-            return response(200, data=data, message="Deleted")
-        except Exception as e:
-            return response(401, message=str(e))
+            row_count = model.delete(table="user", field="id", value=user_id)
+            if not row_count:
+                return response(404)
+
+            return response(204)
+        except Exception:
+            return response(500)
 
 
 class UserSignUp(Resource):
@@ -45,7 +54,7 @@ class UserSignUp(Resource):
         email = args["email"]
 
         if not model.is_unique(table="user", field="email", value=f"{email}"):
-            return response(401, message="Duplicate email Detected")
+            return response(409, message="Duplicate Email")
 
         data = {"email": email, "created_at": helpers.get_datetime()}
         try:
@@ -53,9 +62,9 @@ class UserSignUp(Resource):
             inserted_id = model.insert(table="user", data=data)
             data_ = {"id": inserted_id, **data}
 
-            return response(200, data=data_, message="Inserted")
-        except Exception as e:
-            return response(401, message=str(e))
+            return response(201, data=data_)
+        except Exception:
+            return response(500)
 
 
 class UserUpdate(Resource):
@@ -68,12 +77,12 @@ class UserUpdate(Resource):
         args = parser.parse_args()
 
         if not model.is_unique(table="user", field="email", value=f"{email}"):
-            return response(401, message="Duplicate email Detected")
+            return response(409, message="Duplicate Email")
 
         data = {"where": {"id": user_id}, "data": {"email": email}}
         try:
             validator.validate("EMAIL", email)
             model.update("user", data=data)
-            return response(200, data=data.get("data"), message="Updated")
-        except Exception as e:
-            return response(401, message=str(e))
+            return response(200, data=data.get("data"))
+        except Exception:
+            return response(500)

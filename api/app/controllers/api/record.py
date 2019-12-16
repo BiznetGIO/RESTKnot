@@ -14,6 +14,9 @@ class GetRecordData(Resource):
     def get(self):
         try:
             records = model.get_all("record")
+            if not records:
+                return response(404)
+
             records_detail = []
             for record in records:
                 detail = record_model.get_other_data(record)
@@ -21,7 +24,7 @@ class GetRecordData(Resource):
 
             return response(200, data=records_detail)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class GetRecordDataId(Resource):
@@ -30,12 +33,12 @@ class GetRecordDataId(Resource):
         try:
             record = model.get_one(table="record", field="id", value=record_id)
             if not record:
-                return response(200, data=None)
+                return response(404)
 
             data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class RecordAdd(Resource):
@@ -54,6 +57,7 @@ class RecordAdd(Resource):
         parser.add_argument("owner", type=str, required=True)
         parser.add_argument("rtype", type=str, required=True)
         parser.add_argument("rdata", type=str, required=True)
+        # FIXME don't use ID?
         parser.add_argument("ttl_id", type=str, required=True)
         args = parser.parse_args()
         owner = args["owner"].lower()
@@ -66,7 +70,7 @@ class RecordAdd(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(422, message=str(e))
 
         try:
             # rtype no need to be validated & no need to check its length
@@ -74,7 +78,7 @@ class RecordAdd(Resource):
             validator.validate(rtype.upper(), rdata)
 
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
         try:
             data = {
@@ -89,9 +93,9 @@ class RecordAdd(Resource):
             model.insert(table="rdata", data=content_data)
 
             command.send_zone(record_id, "zone-set")
-            return response(200, data=data, message="Inserted")
+            return response(201, data=data)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class RecordEdit(Resource):
@@ -114,13 +118,13 @@ class RecordEdit(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(422, message=str(e))
 
         try:
             validator.validate(rtype.upper(), rdata)
             record_model.is_duplicate_rdata(zone_id, type_id, rdata)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(422, message=str(e))
 
         try:
             record_model.is_exists(record_id)
@@ -147,7 +151,7 @@ class RecordEdit(Resource):
 
             return response(200, data=data.get("data"), message="Edited")
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class RecordDelete(Resource):
@@ -168,7 +172,7 @@ class RecordDelete(Resource):
 
             command.send_zone(record_id, "zone-unset")
 
-            data = model.delete(table="record", field="id", value=record_id)
-            return response(200, data=data, message="Deleted")
+            model.delete(table="record", field="id", value=record_id)
+            return response(204)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))

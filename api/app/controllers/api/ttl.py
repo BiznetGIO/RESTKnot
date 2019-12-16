@@ -9,10 +9,13 @@ class GetTtlData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("ttl")
-            return response(200, data=data)
+            ttls = model.get_all("ttl")
+            if not ttls:
+                return response(404)
+
+            return response(200, data=ttls)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class GetTtlDataId(Resource):
@@ -20,9 +23,12 @@ class GetTtlDataId(Resource):
     def get(self, ttl_id):
         try:
             ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+            if not ttl:
+                return response(404)
+
             return response(200, data=ttl)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class TtlAdd(Resource):
@@ -38,9 +44,9 @@ class TtlAdd(Resource):
             inserted_id = model.insert(table="ttl", data=data)
             data_ = {"id": inserted_id, **data}
 
-            return response(200, data=data_, message="Inserted")
+            return response(201, data=data_)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class TtlEdit(Resource):
@@ -55,16 +61,16 @@ class TtlEdit(Resource):
             ttl_model.is_exists(ttl_id)
             data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
             model.update("ttl", data=data)
-            return response(200, data=data.get("data"), message="Edited")
+            return response(200, data=data.get("data"))
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class TtlDelete(Resource):
     @auth.auth_required
     def delete(self, ttl_id):
         try:
-            data = model.delete(table="ttl", field="id", value=ttl_id)
-            return response(200, data=data, message="Deleted")
+            model.delete(table="ttl", field="id", value=ttl_id)
+            return response(204)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))

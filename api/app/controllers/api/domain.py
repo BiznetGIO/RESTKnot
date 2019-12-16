@@ -97,15 +97,17 @@ class GetDomainData(Resource):
     def get(self):
         try:
             zones = model.get_all("zone")
-        except Exception as e:
-            return response(401, message=str(e))
+            if not zones:
+                return response(404)
 
-        domains_detail = []
-        for zone in zones:
-            detail = domain_model.get_other_data(zone)
-            domains_detail.append(detail)
+            domains_detail = []
+            for zone in zones:
+                detail = domain_model.get_other_data(zone)
+                domains_detail.append(detail)
 
-        return response(200, data=domains_detail)
+            return response(200, data=domains_detail)
+        except Exception:
+            return response(500)
 
 
 class GetDomainDataId(Resource):
@@ -113,11 +115,13 @@ class GetDomainDataId(Resource):
     def get(self, zone_id):
         try:
             zone = model.get_one(table="zone", field="id", value=zone_id)
-        except Exception as e:
-            return response(401, message=str(e))
-        else:
+            if not zone:
+                return response(404)
+
             data = domain_model.get_other_data(zone)
             return response(200, data=data)
+        except Exception:
+            return response(500)
 
 
 class DeleteDomain(Resource):
@@ -145,11 +149,11 @@ class DeleteDomain(Resource):
             # by cockroach when no PK existed
             model.delete(table="zone", field="id", value=zone_id)
 
-            return response(200, data=zone, message="Deleted")
+            return response(204, data=zone)
         except IndexError:
-            return response(401, message=f"Zone Not Found")
-        except Exception as e:
-            return response(401, message=str(e))
+            return response(404, message=f"Zone Not Found")
+        except Exception:
+            return response(500)
 
 
 class AddDomain(Resource):
@@ -169,11 +173,11 @@ class AddDomain(Resource):
 
         # Validation
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
-            return response(401, message="Duplicate zone Detected")
+            return response(409, message="Duplicate Zone")
 
         user = model.get_one(table="user", field="id", value=user_id)
         if not user:
-            return response(401, message=f"User Not Found")
+            return response(404, message=f"User Not Found")
 
         try:
             validator.validate("ZONE", zone)
@@ -191,6 +195,6 @@ class AddDomain(Resource):
             command.send_cluster(zone, zone_id, "conf-set")
 
             data_ = {"id": zone_id, "zone": zone}
-            return response(200, data=data_, message="Inserted")
+            return response(201, data=data_)
         except Exception as e:
-            return response(401, message=f"{e}")
+            return response(500, message=f"{e}")

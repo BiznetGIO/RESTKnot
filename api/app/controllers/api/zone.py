@@ -11,9 +11,12 @@ class GetZoneData(Resource):
     def get(self):
         try:
             zones = model.get_all("zone")
+            if not zones:
+                return response(404)
+
             return response(200, data=zones)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class GetZoneDataId(Resource):
@@ -22,12 +25,12 @@ class GetZoneDataId(Resource):
         try:
             zone = model.get_one(table="zone", field="id", value=zone_id)
             if not zone:
-                return response(200, data=None)
+                return response(404)
 
             zone = helpers.exclude_keys(zone, {"is_committed"})
             return response(200, data=zone)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class ZoneAdd(Resource):
@@ -41,12 +44,12 @@ class ZoneAdd(Resource):
         user_id = args["user_id"]
 
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
-            return response(401, message="Duplicate zone Detected")
+            return response(204, message="Duplicate Zone")
 
         try:
             validator.validate("ZONE", zone)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(422, message=str(e))
 
         # FIXME "is_committed" should be added
         try:
@@ -54,9 +57,9 @@ class ZoneAdd(Resource):
             inserted_id = model.insert(table="zone", data=data)
 
             data_ = {"id": inserted_id, "zone": zone}
-            return response(200, data=data_, message="Inserted")
+            return response(201, data=data_)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class ZoneEdit(Resource):
@@ -70,12 +73,12 @@ class ZoneEdit(Resource):
         user_id = args["user_id"]
 
         if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
-            return response(401, message="Duplicate zone Detected")
+            return response(409, message="Duplicate Zone")
 
         try:
             validator.validate("ZONE", zone)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(422, message=str(e))
 
         try:
             data = {
@@ -83,16 +86,16 @@ class ZoneEdit(Resource):
                 "data": {"zone": args["zone"], "user_id": user_id},
             }
             model.update("zone", data=data)
-            return response(200, data=data.get("data"), message="Edited")
+            return response(200, data=data.get("data"))
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
 
 
 class ZoneDelete(Resource):
     @auth.auth_required
     def delete(self, zone_id):
         try:
-            data = model.delete(table="zone", field="id", value=zone_id)
-            return response(200, data=data, message="Deleted")
+            model.delete(table="zone", field="id", value=zone_id)
+            return response(204)
         except Exception as e:
-            return response(401, message=str(e))
+            return response(500, message=str(e))
