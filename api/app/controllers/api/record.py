@@ -70,7 +70,7 @@ class RecordAdd(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(422, message=str(e))
+            return response(404, message=str(e))
 
         try:
             # rtype no need to be validated & no need to check its length
@@ -78,7 +78,7 @@ class RecordAdd(Resource):
             validator.validate(rtype.upper(), rdata)
 
         except Exception as e:
-            return response(500, message=str(e))
+            return response(422, message=str(e))
 
         try:
             data = {
@@ -118,7 +118,7 @@ class RecordEdit(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(422, message=str(e))
+            return response(404, message=str(e))
 
         try:
             validator.validate(rtype.upper(), rdata)
@@ -128,6 +128,10 @@ class RecordEdit(Resource):
 
         try:
             record_model.is_exists(record_id)
+        except Exception:
+            return response(404)
+
+        try:
             data = {
                 "where": {"id": record_id},
                 "data": {
@@ -149,7 +153,7 @@ class RecordEdit(Resource):
 
             command.send_zone(record_id, "zone-set")
 
-            return response(200, data=data.get("data"), message="Edited")
+            return response(200, data=data.get("data"))
         except Exception as e:
             return response(500, message=str(e))
 
@@ -165,10 +169,13 @@ class RecordDelete(Resource):
         """
         try:
             record_model.is_exists(record_id)
+        except Exception:
+            return response(404)
 
+        try:
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype == "SOA":
-                return response(401, message=f"Can't Delete SOA Record")
+                return response(403, message=f"Can't Delete SOA Record")
 
             command.send_zone(record_id, "zone-unset")
 

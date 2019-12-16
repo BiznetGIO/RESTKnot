@@ -1,7 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.helpers.rest import response
 from app.models import model
-from app.models import ttl as ttl_model
 from app.middlewares import auth
 
 
@@ -58,9 +57,11 @@ class TtlEdit(Resource):
         ttl = args["ttl"]
 
         try:
-            ttl_model.is_exists(ttl_id)
             data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
-            model.update("ttl", data=data)
+            row_count = model.update("ttl", data=data)
+            if not row_count:
+                return response(404)
+
             return response(200, data=data.get("data"))
         except Exception as e:
             return response(500, message=str(e))
@@ -70,7 +71,10 @@ class TtlDelete(Resource):
     @auth.auth_required
     def delete(self, ttl_id):
         try:
-            model.delete(table="ttl", field="id", value=ttl_id)
+            row_count = model.delete(table="ttl", field="id", value=ttl_id)
+            if not row_count:
+                return response(404)
+
             return response(204)
         except Exception as e:
             return response(500, message=str(e))

@@ -120,7 +120,8 @@ def update(table, data=None):
         raise ValueError(f"{error}")
     else:
         connection.commit()
-        return True
+        rows_edited = cursor.rowcount
+        return rows_edited
 
 
 def delete(table, field=None, value=None):
