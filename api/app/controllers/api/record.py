@@ -24,7 +24,7 @@ class GetRecordData(Resource):
 
             return response(200, data=records_detail)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class GetRecordDataId(Resource):
@@ -38,7 +38,7 @@ class GetRecordDataId(Resource):
             data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class RecordAdd(Resource):
@@ -70,7 +70,7 @@ class RecordAdd(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(404, message=str(e))
+            return response(404, message=f"{e}")
 
         try:
             # rtype no need to be validated & no need to check its length
@@ -95,7 +95,7 @@ class RecordAdd(Resource):
             command.send_zone(record_id, "zone-set")
             return response(201, data=data)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class RecordEdit(Resource):
@@ -118,7 +118,7 @@ class RecordEdit(Resource):
             type_id = type_model.get_typeid_by_rtype(rtype)
             zone_id = zone_model.get_zone_id(zone)
         except Exception as e:
-            return response(404, message=str(e))
+            return response(404, message=f"{e}")
 
         try:
             record_model.is_duplicate_rdata(zone_id, type_id, rdata)
@@ -159,7 +159,7 @@ class RecordEdit(Resource):
 
             return response(200, data=data.get("data"))
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class RecordDelete(Resource):
@@ -186,4 +186,4 @@ class RecordDelete(Resource):
             model.delete(table="record", field="id", value=record_id)
             return response(204)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")

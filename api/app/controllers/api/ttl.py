@@ -14,7 +14,7 @@ class GetTtlData(Resource):
 
             return response(200, data=ttls)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class GetTtlDataId(Resource):
@@ -27,7 +27,7 @@ class GetTtlDataId(Resource):
 
             return response(200, data=ttl)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class TtlAdd(Resource):
@@ -45,7 +45,7 @@ class TtlAdd(Resource):
 
             return response(201, data=data_)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class TtlEdit(Resource):
@@ -64,7 +64,7 @@ class TtlEdit(Resource):
 
             return response(200, data=data.get("data"))
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
 
 
 class TtlDelete(Resource):
@@ -77,4 +77,4 @@ class TtlDelete(Resource):
 
             return response(204)
         except Exception as e:
-            return response(500, message=str(e))
+            return response(500, message=f"{e}")
