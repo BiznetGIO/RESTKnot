@@ -8,22 +8,26 @@ class GetTtlData(Resource):
     @auth.auth_required
     def get(self):
         try:
-            data = model.get_all("ttl")
+            ttls = model.get_all("ttl")
+            if not ttls:
+                return response(404)
+
+            return response(200, data=ttls)
         except Exception as e:
-            return response(401, message=str(e))
-        else:
-            return response(200, data=data)
+            return response(500, message=f"{e}")
 
 
 class GetTtlDataId(Resource):
     @auth.auth_required
     def get(self, ttl_id):
         try:
-            data = model.get_by_condition(table="ttl", field="id", value=ttl_id)
+            ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+            if not ttl:
+                return response(404)
+
+            return response(200, data=ttl)
         except Exception as e:
-            return response(401, message=str(e))
-        else:
-            return response(200, data=data)
+            return response(500, message=f"{e}")
 
 
 class TtlAdd(Resource):
@@ -35,12 +39,16 @@ class TtlAdd(Resource):
         ttl = args["ttl"]
 
         data = {"ttl": ttl}
+        if not ttl:
+            return response(422)
+
         try:
-            model.insert(table="ttl", data=data)
+            inserted_id = model.insert(table="ttl", data=data)
+            data_ = {"id": inserted_id, **data}
+
+            return response(201, data=data_)
         except Exception as e:
-            return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Inserted")
+            return response(500, message=f"{e}")
 
 
 class TtlEdit(Resource):
@@ -51,22 +59,28 @@ class TtlEdit(Resource):
         args = parser.parse_args()
         ttl = args["ttl"]
 
-        data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
+        if not ttl:
+            return response(422)
 
         try:
-            model.update("ttl", data=data)
+            data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
+            row_count = model.update("ttl", data=data)
+            if not row_count:
+                return response(404)
+
+            return response(200, data=data.get("data"))
         except Exception as e:
-            return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Edited")
+            return response(500, message=f"{e}")
 
 
 class TtlDelete(Resource):
     @auth.auth_required
     def delete(self, ttl_id):
         try:
-            data = model.delete(table="ttl", field="id", value=ttl_id)
+            row_count = model.delete(table="ttl", field="id", value=ttl_id)
+            if not row_count:
+                return response(404)
+
+            return response(204)
         except Exception as e:
-            return response(401, message=str(e))
-        else:
-            return response(200, data=data, message="Deleted")
+            return response(500, message=f"{e}")

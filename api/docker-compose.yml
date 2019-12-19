@@ -20,9 +20,8 @@ services:
             - KAFKA_PORT=9092
             - RESTKNOT_KAFKA_TOPIC=domaindata
             # don't add quote, otherwise it will not work
-            - DEFAULT_SOA_CONTENT=satu.neodns.id. hostmaster.neodns.id.
-            # soa ttl: <refresh> <retry> <expire> <minimum>
-            - DEFAULT_SOA_TTL=3600 1800 604800 86400
+            # <MNAME> <RNAME> <without serial!> <refresh> <retry> <expire> <minimum>
+            - DEFAULT_SOA_RDATA=satu.neodns.id. hostmaster.neodns.id. 3600 1800 604800 86400
             - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml

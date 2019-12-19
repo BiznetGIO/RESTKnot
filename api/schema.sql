@@ -1,7 +1,6 @@
 CREATE TABLE "user" (
 	id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
 	email STRING NOT NULL,
-	project_id STRING(100) NOT NULL,
 	created_at TIMESTAMP NULL DEFAULT current_timestamp():::TIMESTAMP
 );
 
@@ -25,15 +24,15 @@ CREATE TABLE zone (
 
 CREATE TABLE record (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	record STRING(100) NULL,
+	owner STRING(100) NULL,
         zone_id INT8 NOT NULL REFERENCES zone (id) ON DELETE CASCADE ON UPDATE CASCADE,
         type_id INT8 NOT NULL REFERENCES "type" (id) ON DELETE CASCADE ON UPDATE CASCADE,
         ttl_id INT8 NOT NULL REFERENCES ttl (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE content (
+CREATE TABLE rdata (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-        content STRING(100) NULL,
+        rdata STRING(100) NULL,
         record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

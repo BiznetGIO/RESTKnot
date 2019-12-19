@@ -41,7 +41,7 @@ def main():
             command[1] for command in dnsagent.clis if command[0] != "Base"
         ][0]
     except AttributeError as e:
-        print(e)
+        raise ValueError(f"{e}")
         raise DocoptExit()
 
     command = command_class(options, args)

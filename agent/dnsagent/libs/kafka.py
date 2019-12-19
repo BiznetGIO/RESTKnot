@@ -13,4 +13,4 @@ def get_kafka_consumer(broker, topic, group_id):
         )
         return consumer
     except Exception as e:
-        raise ValueError(e)
+        raise ValueError(f"{e}")

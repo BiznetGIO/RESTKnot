@@ -7,90 +7,73 @@ from app.helpers import producer
 
 def get_other_data(record_id):
     try:
-        record = model.get_by_condition(table="record", field="id", value=record_id)
+        record = model.get_one(table="record", field="id", value=record_id)
 
-        zone_id = record[0]["zone_id"]
-        type_id = record[0]["type_id"]
-        ttl_id = record[0]["ttl_id"]
+        zone_id = record["zone_id"]
+        type_id = record["type_id"]
+        ttl_id = record["ttl_id"]
 
-        zone = model.get_by_condition(table="zone", field="id", value=zone_id)
-        type_ = model.get_by_condition(table="type", field="id", value=type_id)
-        ttl = model.get_by_condition(table="ttl", field="id", value=ttl_id)
-        content = model.get_by_condition(
-            table="content", field="record_id", value=record_id
-        )
-        return (record, zone, type_, ttl, content)
-    except Exception as e:
-        raise e
+        zone = model.get_one(table="zone", field="id", value=zone_id)
+        type_ = model.get_one(table="type", field="id", value=type_id)
+        ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+        rdata = model.get_one(table="rdata", field="record_id", value=record_id)
+        return (record, zone, type_, ttl, rdata)
+    except Exception as error:
+        raise ValueError(f"{error}")
 
 
 def generate_command(**kwargs):
-
-    zone_id = kwargs.get("zone_id")
-    zone_name = kwargs.get("zone_name")
+    zone = kwargs.get("zone_name")
     owner = kwargs.get("owner")
     rtype = kwargs.get("rtype")
     ttl = kwargs.get("ttl")
-    data = kwargs.get("data")
+    rdata = kwargs.get("rdata")
     command = kwargs.get("command")
 
     cmd = {
-        zone_name: {
-            "id_zone": zone_id,
-            "type": "general",
-            "command": "zone",
-            "general": {
-                "sendblock": {
-                    "cmd": command,
-                    "zone": zone_name,
-                    "owner": owner,
-                    "rtype": rtype,
-                    "ttl": ttl,
-                    "data": data,
-                },
-                "receive": {"type": "block"},
-            },
-        }
+        "cmd": command,
+        "zone": zone,
+        "owner": owner,
+        "rtype": rtype,
+        "ttl": ttl,
+        "data": rdata,
     }
+
     return cmd
 
 
 def send_config(zone, zone_id, command):
-    cmd = {
-        zone: {
-            "id_zone": zone_id,
-            "type": "general",
-            "command": "config",
-            "general": {
-                "sendblock": {
-                    "cmd": command,
-                    "section": "zone",
-                    "item": "domain",
-                    "data": zone,
-                },
-                "receive": {"type": "block"},
-            },
-        }
-    }
-    producer.send(cmd)
+    """Send config command with JSON structure to broker."""
+
+    # there are two option to put conf-begin and conf-commit
+    # either here (api) or in (agent)
+    # I'd rather choose to put it here for finer tuning
+    conf_begin = {"cmd": "conf-begin", "zone": zone}
+    conf_set = {"cmd": command, "section": "zone", "item": "domain", "data": zone}
+    conf_commit = {"cmd": "conf-commit", "zone": zone}
+
+    for query in [conf_begin, conf_set, conf_commit]:
+        producer.send(query)
 
 
 def send_zone(record_id, command):
-    record, zone, type_, ttl, content = get_other_data(record_id)
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
+    """Send zone command with JSON structure to broker."""
+    record, zone, type_, ttl, rdata = get_other_data(record_id)
+    zone_name = zone["zone"]
 
-    for item in content:
-        cmd = generate_command(
-            zone_id=zone_id,
-            zone_name=zone_name,
-            owner=record[0]["record"],
-            rtype=type_[0]["type"],
-            ttl=ttl[0]["ttl"],
-            data=item["content"],
-            command=command,
-        )
-        producer.send(cmd)
+    zone_begin = {"cmd": "zone-begin", "zone": zone_name}
+    zone_set = generate_command(
+        zone=zone_name,
+        owner=record["owner"],
+        rtype=type_["type"],
+        ttl=ttl["ttl"],
+        rdata=rdata["rdata"],
+        command=command,
+    )
+    zone_commit = {"cmd": "zone-commit", "zone": zone_name}
+
+    for query in [zone_begin, zone_set, zone_commit]:
+        producer.send(query)
 
 
 def cluster_file():
@@ -111,43 +94,37 @@ def get_clusters():
     return clusters
 
 
-def cluster_command(record_id):
-    record, zone, type_, _, content = get_other_data(record_id)
-
-    zone_id = zone[0]["id"]
-    zone_name = zone[0]["zone"]
-    zone_tld = zone_name.split(".")[-1]
-    filename = f"{zone_name}_{zone_id}.{zone_tld}.zone"
-
-    data = "test"  # FIXME
-
+def send_cluster(zone, zone_id, command):
     clusters = get_clusters()
-    master = clusters["master"]
     slave = clusters["slave"]
+    # master = clusters["master"]
+    cmds = [
+        {"item": "file", "data": f"{zone}.zone", "identifier": zone},
+        {"item": "serial-policy", "data": "dateserial"},
+        {"item": "module", "data": "mod-stats/default"},
+    ]
+    cmds.extend(
+        [{"item": "notify", "data": remote.get("id")} for remote in slave["remote"]]
+    )
+    cmds.extend([{"item": "acl", "data": acl.get("id")} for acl in slave["acl"]])
 
-    command = {
-        zone_name: {
-            "id_zone": zone_id,
-            "type": "cluster",
-            "cluster": {
-                "master": {
-                    "file": filename,
-                    "data": data,
-                    "master": master["master"],
-                    "notify": master["notify"],
-                    "acl": master["acl"],
-                    "serial-policy": "dateserial",
-                    "module": "mod-stats/default",
-                },
-                "slave": {
-                    "file": filename,
-                    "master": slave["master"],
-                    "acl": slave["acl"],
-                    "serial-policy": "dateserial",
-                    "module": "mod-stats/default",
-                },
-            },
-        }
-    }
+    # slave zone
+    # for master in master["remote"]:
+    #     master_cmd = {"item": "master", "data": master.get("id")}
+    #     cmds.append(master_cmd)
 
-    producer.send(command)
+    # for master in master["acl"]:
+    #     master_cmd = {"item": "acl", "data": master.get('id')}
+    #     cmds.append(master_cmd)
+
+    conf_begin = {"cmd": "conf-begin"}
+    producer.send(conf_begin)
+
+    for cmd in cmds:
+        cmd["cmd"] = command
+        cmd["section"] = "zone"
+        cmd["zone"] = zone
+        producer.send(cmd)
+
+    conf_commit = {"cmd": "conf-commit"}
+    producer.send(conf_commit)
