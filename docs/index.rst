@@ -12,3 +12,4 @@ Table of contents
    restapi.rst
    deploy.rst
    project.rst
+   howto.rst
