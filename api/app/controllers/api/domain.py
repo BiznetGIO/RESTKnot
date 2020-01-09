@@ -163,7 +163,8 @@ class AddDomain(Resource):
             create_ns_default(zone_id)
             create_cname_default(zone_id, zone)
 
-            command.send_cluster(zone, zone_id, "conf-set")
+            command.send_cluster(zone, zone_id, "conf-set", "master")
+            command.send_cluster(zone, zone_id, "conf-set", "slave")
 
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)

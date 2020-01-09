@@ -3,6 +3,7 @@ services:
   restknot-agent:
     image: restknot-agent:0.7.0
     environment:
+      - RESTKNOT_AGENT_TYPE=master
       - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
       - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
       # using 127.0.0.1 or localhost won't make it work
