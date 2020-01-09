@@ -25,7 +25,7 @@ services:
             - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
-            - RESTKNOT_API_KEY='123'
+            - RESTKNOT_API_KEY=123
         command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
             - ~/.config/restknot/:/rknt
