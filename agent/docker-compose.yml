@@ -9,8 +9,6 @@ services:
       - RESTKNOT_KAFKA_BROKER=172.17.0.1
       - RESTKNOT_KAFKA_PORTS=9092
       - RESTKNOT_KAFKA_TOPIC=domaindata
-      - RESTKNOT_KAFKA_FLAGS=master
-      - RESTKNOT_KAFKA_GROUP=cmgz_master
     entrypoint: dnsagent start
     volumes:
         - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
