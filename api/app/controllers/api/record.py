@@ -11,7 +11,7 @@ from app.helpers import command
 from app.helpers import helpers
 
 
-def update_serial(zone, is_send=True):
+def update_serial(zone):
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
@@ -27,11 +27,6 @@ def update_serial(zone, is_send=True):
     }
 
     model.update("rdata", data=content_data)
-
-    if is_send:
-        # no need to unset SOA record first
-        # zone will never contains more than one SOA record
-        command.send_zone(soa_record["id"], "zone-set")
 
 
 class GetRecordData(Resource):
@@ -228,11 +223,7 @@ class RecordDelete(Resource):
             if rtype != "SOA":
                 zone = zone_model.get_zone_by_record(record_id)
                 zone_name = zone["zone"]
-
-                # There is a knot bug where the SOA serial increment
-                # will be doubled if we try to increment manually after
-                # deletion, so we only update the serial in our db
-                update_serial(zone_name, is_send=False)
+                update_serial(zone_name)
 
             command.send_zone(record_id, "zone-unset")
 
