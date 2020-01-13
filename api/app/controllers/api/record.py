@@ -119,7 +119,7 @@ class RecordAdd(Resource):
             content_data = {"rdata": rdata, "record_id": record_id}
             model.insert(table="rdata", data=content_data)
 
-            command.send_zone(record_id, "zone-set")
+            command.set_zone(record_id, "zone-set")
 
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
@@ -183,12 +183,12 @@ class RecordEdit(Resource):
                 "data": {"rdata": rdata, "record_id": record_id},
             }
 
-            command.send_zone(record_id, "zone-unset")
+            command.set_zone(record_id, "zone-unset")
 
             model.update("rdata", data=content_data)
             model.update("record", data=data)
 
-            command.send_zone(record_id, "zone-set")
+            command.set_zone(record_id, "zone-set")
 
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
@@ -225,7 +225,7 @@ class RecordDelete(Resource):
                 zone_name = zone["zone"]
                 update_serial(zone_name)
 
-            command.send_zone(record_id, "zone-unset")
+            command.set_zone(record_id, "zone-unset")
 
             model.delete(table="record", field="id", value=record_id)
             return response(204)

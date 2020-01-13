@@ -198,7 +198,7 @@ class DeleteDomain(Resource):
                 # zone-purge didn't work
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
-                command.send_zone(record["id"], "zone-unset")
+                command.set_zone(record["id"], "zone-unset")
 
             command.send_config(zone, zone_id, "conf-unset")
 
