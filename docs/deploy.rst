@@ -15,8 +15,8 @@ Export image to tar
 .. code-block:: bash
 
 
-  $ docker save restknot-agent:0.7.0 > restknot-agent-0.7.0.tar
   $ docker save restknot-api:0.7.0 > restknot-api-0.7.0.tar
+  $ docker save restknot-agent:0.7.0 > restknot-agent-0.7.0.tar
 
 
 Update the playbook value to corresponds you tar locations.
