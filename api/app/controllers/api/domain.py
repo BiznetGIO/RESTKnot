@@ -173,6 +173,9 @@ class AddDomain(Resource):
             # So we need to refine it manually
             record_ctl.update_serial(zone)
 
+            command.delegate(zone, zone_id, "conf-set", "master")
+            command.delegate(zone, zone_id, "conf-set", "slave")
+
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
         except Exception as e:

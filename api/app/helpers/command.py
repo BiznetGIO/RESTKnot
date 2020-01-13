@@ -108,7 +108,8 @@ def get_clusters():
     return clusters
 
 
-def send_cluster(zone, zone_id, command, agent_type):
+def delegate(zone, zone_id, command, agent_type):
+    """Delegation config"""
     clusters = get_clusters()
     cluster = clusters[agent_type]
 
