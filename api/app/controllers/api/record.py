@@ -11,14 +11,14 @@ from app.helpers import command
 from app.helpers import helpers
 
 
-def update_serial(zone):
+def update_serial(zone, increment="01"):
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
     )
     rdatas = rdata_record["rdata"].split(" ")
     serial = rdatas[2]  # serial MUST be in this position
-    new_serial = helpers.increment_serial(serial)
+    new_serial = helpers.increment_serial(serial, increment)
     new_rdata = helpers.replace_serial(rdata_record["rdata"], new_serial)
 
     content_data = {
@@ -193,7 +193,7 @@ class RecordEdit(Resource):
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                update_serial(zone)
+                update_serial(zone, "02")
 
             record = model.get_one(table="record", field="id", value=record_id)
             data_ = record_model.get_other_data(record)
