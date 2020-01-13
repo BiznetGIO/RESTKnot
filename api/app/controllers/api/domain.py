@@ -46,11 +46,11 @@ def insert_soa_rdata(record_id):
     model.insert(table="rdata", data=content_data)
 
 
-def create_soa_default(zone_id):
+def insert_soa_default(zone_id):
     """Create default SOA record"""
     record_id = insert_soa_record(zone_id)
     insert_soa_rdata(record_id)
-    command.send_zone(record_id, "zone-set")
+    return record_id
 
 
 def insert_ns_record(zone_id):
@@ -64,15 +64,18 @@ def insert_ns_rdata(name, record_id):
     model.insert(table="rdata", data=data)
 
 
-def create_ns_default(zone_id):
+def insert_ns_default(zone_id):
     """Create default NS record"""
     default_ns = os.environ.get("DEFAULT_NS")
     nameserver = default_ns.split(" ")
+    record_ids = []
 
     for name in nameserver:
         record_id = insert_ns_record(zone_id)
         insert_ns_rdata(name, record_id)
-        command.send_zone(record_id, "zone-set")
+        record_ids.append(record_id)
+
+    return record_ids
 
 
 def insert_cname_record(zone_id):
@@ -86,11 +89,10 @@ def insert_cname_rdata(zone, record_id):
     model.insert(table="rdata", data=data)
 
 
-def create_cname_default(zone_id, zone):
+def insert_cname_default(zone_id, zone):
     """Create default CNAME record"""
     record_id = insert_cname_record(zone_id)
     insert_cname_rdata(zone, record_id)
-    command.send_zone(record_id, "zone-set")
     return record_id
 
 
@@ -158,20 +160,14 @@ class AddDomain(Resource):
             zone_id = insert_zone(zone, user_id)
 
             # create zone config
-            command.send_config(zone, zone_id, "conf-set")
+            command.set_config(zone, zone_id, "conf-set")
 
             # create default records
-            create_soa_default(zone_id)
-            create_ns_default(zone_id)
-            create_cname_default(zone_id, zone)
-
-            command.send_cluster(zone, zone_id, "conf-set", "master")
-            command.send_cluster(zone, zone_id, "conf-set", "slave")
-
-            # There is a knot bug where the SOA serial will become
-            # `YYYYMMDD04` even though we set it to `YYYYMMDD01` at first.
-            # So we need to refine it manually
-            record_ctl.update_serial(zone)
+            soa_record_id = insert_soa_default(zone_id)
+            ns_record_ids = insert_ns_default(zone_id)
+            cname_record_id = insert_cname_default(zone_id, zone)
+            record_ids = [soa_record_id, *ns_record_ids, cname_record_id]
+            command.set_default_zone(record_ids)
 
             command.delegate(zone, zone_id, "conf-set", "master")
             command.delegate(zone, zone_id, "conf-set", "slave")
