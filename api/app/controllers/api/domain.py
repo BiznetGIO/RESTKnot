@@ -128,6 +128,24 @@ class GetDomainDataId(Resource):
             return response(500)
 
 
+class GetDomainByUser(Resource):
+    @auth.auth_required
+    def get(self, user_id):
+        try:
+            zones = zone_model.get_zones_by_user(user_id)
+            if not zones:
+                return response(404)
+
+            domains_detail = []
+            for zone in zones:
+                detail = domain_model.get_other_data(zone)
+                domains_detail.append(detail)
+
+            return response(200, data=domains_detail)
+        except Exception as e:
+            return response(500, f"{e}")
+
+
 class AddDomain(Resource):
     @auth.auth_required
     def post(self):
