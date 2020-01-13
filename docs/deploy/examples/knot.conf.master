@@ -4,7 +4,7 @@
 server:
     rundir: "/run/knot"
     user: knot:knot
-    listen: [ 127.0.0.1@53, ::1@53 ]
+    listen: "0.0.0.0@53"
 
 log:
   - target: syslog
@@ -12,40 +12,22 @@ log:
 
 remote:
  - id: slave1
-   address: 10.10.10.10@53
-
- - id: master1
-   address: 11.11.11.11@53
+   address: <slaveip>@53
 
 acl:
- - id: slave1
-   address: 10.10.10.10
+ - id: slave1_acl
+   address: <slaveip>
    action: transfer
-
- - id: master1
-   address: 11.11.11.11
-   action: notify
-
-# remote:
-#  - id: slave
-#    address: 192.168.1.1@53
-#
-#  - id: master
-#    address: 192.168.2.1@53
-
-# acl:
-#  - id: acl_slave
-#    address: 192.168.1.1
-#    action: transfer
-
-#  - id: acl_master
-#    address: 192.168.2.1
-#    action: notify
 
 template:
   - id: default
     storage: "/var/lib/knot"
     file: "%s.zone"
+
+mod-stats:
+  - id: "default"
+    edns-presence: "on"
+    query-type: "on"
 
 zone:
 #    # Master zone

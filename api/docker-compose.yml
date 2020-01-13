@@ -7,12 +7,12 @@ services:
         environment:
             - FLASK_APP=autoapp.py
             - FLASK_ENV=production
-            - GUNICORN_WORKERS= 4
+            - GUNICORN_WORKERS=4
             - FLASK_DEBUG=0
             - APP_HOST=0.0.0.0
             - APP_PORT=5000
             - DB_NAME=knotdb # don't add whitespace beetween =
-            - DB_HOST=roach1
+            - DB_HOST=roach
             - DB_PORT=26257
             - DB_USER=root
             - DB_SSL=disable
@@ -25,7 +25,7 @@ services:
             - DEFAULT_NS=satu.neodns.id. dua.neodns.id.
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
-            - RESTKNOT_API_KEY='123'
+            - RESTKNOT_API_KEY=123
         command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
             - ~/.config/restknot/:/rknt
@@ -41,10 +41,11 @@ services:
         environment:
             KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
             KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-    roach1:
+    roach:
         image: cockroachdb/cockroach:v19.1.5
         command: start --insecure
         ports:
           - "26257:26257"
         volumes:
-          - /cockroach-data/roach1:/cockroach/cockroach-data
+          - /cockroach-data:/cockroach/cockroach-data
+

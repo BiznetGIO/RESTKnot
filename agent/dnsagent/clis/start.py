@@ -22,7 +22,6 @@ class Start(Base):
         broker_port = os.environ.get("RESTKNOT_KAFKA_PORTS")
         broker = f"{broker_host}:{broker_port}"
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
-        group = os.environ.get("RESTKNOT_KAFKA_GROUP")
 
         if (broker_host and broker_port) is None:
             utils.log_err("Can't find kafka host and port")
@@ -30,19 +29,26 @@ class Start(Base):
 
         try:
             utils.log_info("Connecting to broker : " + broker)
-            consumer = kafka_lib.get_kafka_consumer(broker, topic, group)
+            consumer = kafka_lib.get_kafka_consumer(broker, topic)
             return consumer
         except Exception as e:
             utils.log_err(f"Can't Connect to broker: {e}")
             exit()
 
     def take_message(self, consumer):
-        flag = os.environ.get("RESTKNOT_KAFKA_FLAGS")
+        agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
 
         try:
             for message in consumer:
                 message = message.value
-                knot_lib.execute(message)
+
+                agent_type_msg = message["agent"]["agent_type"]
+                if agent_type in agent_type_msg:
+
+                    knot_queries = message["knot"]
+                    for query in knot_queries:
+                        knot_lib.execute(query)
+
         except KeyboardInterrupt:
             print("Stopping dnsagent. Press Ctrl+C again to exit")
 

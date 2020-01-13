@@ -97,7 +97,7 @@ zone          string    The zone name
 owner         string    The owner of the record
 rtype         string    The record type
 rdata         string    The record RDATA
-ttl_id        string    The id of ttl
+ttl           int       The choice of preserved tll values
 ===========  =======   ===========================
 
 Response:
@@ -150,7 +150,7 @@ zone          string    The zone name
 owner         string    The owner of the record
 rtype         string    The record type
 rdata         string    The record RDATA
-ttl           string    The choice of preserved tll values
+ttl           int       The choice of preserved tll values
 ===========  =======   ===========================
 
 Response:

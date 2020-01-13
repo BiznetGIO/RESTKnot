@@ -1,0 +1,41 @@
+# This is a sample of a minimal configuration file for Knot DNS.
+# See knot.conf(5) or refer to the server documentation.
+
+server:
+    rundir: "/run/knot"
+    user: knot:knot
+    listen: "0.0.0.0@53"
+
+log:
+  - target: syslog
+    any: info
+
+remote:
+ - id: master1
+   address: <masterip>@53
+
+acl:
+ - id: master1_acl
+   address: <masterip>
+   action: notify
+
+template:
+  - id: default
+    storage: "/var/lib/knot"
+    file: "%s.zone"
+
+mod-stats:
+  - id: "default"
+    edns-presence: "on"
+    query-type: "on"
+
+zone:
+#    # Master zone
+#  - domain: example.com
+#    notify: slave
+#    acl: acl_slave
+
+#    # Slave zone
+#  - domain: example.net
+#    master: master
+#    acl: acl_master

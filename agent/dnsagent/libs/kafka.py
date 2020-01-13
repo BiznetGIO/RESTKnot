@@ -2,7 +2,7 @@ from kafka import KafkaConsumer
 from json import loads
 
 
-def get_kafka_consumer(broker, topic, group_id):
+def get_kafka_consumer(broker, topic):
     try:
         consumer = KafkaConsumer(
             topic,

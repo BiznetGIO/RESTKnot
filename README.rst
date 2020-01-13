@@ -2,13 +2,13 @@
 
     <p align="center">
         <a href="#readme">
-            <img alt="RESTKnot logo" src="docs/_static/img/resknot-banner.svg" height="150" width="500">
+            <img alt="RESTKnot logo" src="https://github.com/BiznetGIO/RESTKnot/blob/master/docs/_static/img/resknot-banner.svg" height="150" width="500">
         </a>
     </p>
 
     <p align="center">
       <a href="https://RESTKnot.readthedocs.io/en/latest/"><img alt="Documentation" src="https://img.shields.io/readthedocs/RESTKnot.svg"></a>
-      <a href="https://travis-ci.org/BiznetGIO/RESTKnot/"><img alt="Build status" src="https://img.shields.io/travis/BiznetGIO/RESTKnot.svg"></a>
+      <!-- <a href="https://travis-ci.org/BiznetGIO/RESTKnot/"><img alt="Build status" src="https://img.shields.io/travis/BiznetGIO/RESTKnot.svg"></a> -->
       <a href="https://github.com/python/black"><img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
     </p>
 

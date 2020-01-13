@@ -47,14 +47,22 @@ Prepare application configs
 
 You need :code:`servers.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains of server and slave configuration for knot clustering, see
+:code:`servers.yml` contains list of your masters and slaves name, see
 :download:`deploy/examples/servers.yaml` example, and :code:`knot.conf` serve as a
-config for you knot app, see :download:`deploy/examples/knot.conf`
+config for you knot app, see :download:`deploy/examples/knot.conf.master` for
+master config and :download:`deploy/examples/knot.conf.slave` for slave config.
 
-Prepare the docker-compose fill
--------------------------------
+Prepare the docker-compose
+--------------------------
 
 Replace the example value with the real one in the docker-compose.yml
+Most important things you have to pay attention to:
+
+- `RESTKNOT_KAFKA_BROKER`
+- `RESTKNOT_KNOT_LIB`
+- `RESTKNOT_KNOT_SOCKET`
+- `KAFKA_ADVERTISED_HOST_NAME`
+- `RESTKNOT_API_KEY`
 
 Get the keys of you machines
 ----------------------------
@@ -80,8 +88,12 @@ Play the Playbook
 .. code-block:: bash
 
   $ ansible-playbook initial-setups.yml -f 10 -v
-  $ ansible-playbook deploy-images-api.yml -f 10 -v
-  $ ansible-playbook deploy-images-agent.yml -f 10 -v
+  $ ansible-playbook setup-api.yml -f 10 -v
+  # for master servers
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master"
+  # for slave servers
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=slave"
 
   # to stop the container
-  $ ansible-playbook stop-containers.yml -f 10 -v
+  $ ansible-playbook stop-containers-api.yml -f 10 -v
+  $ ansible-playbook stop-containers-agent.yml -f 10 -v

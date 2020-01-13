@@ -52,8 +52,15 @@ def send_config(zone, zone_id, command):
     conf_set = {"cmd": command, "section": "zone", "item": "domain", "data": zone}
     conf_commit = {"cmd": "conf-commit", "zone": zone}
 
+    queries = []
     for query in [conf_begin, conf_set, conf_commit]:
-        producer.send(query)
+        queries.append(query)
+
+    # agent_type: master, slave
+    # because config created both in  master and slave
+    message = {"agent": {"agent_type": ["master", "slave"]}, "knot": queries}
+
+    producer.send(message)
 
 
 def send_zone(record_id, command):
@@ -72,8 +79,15 @@ def send_zone(record_id, command):
     )
     zone_commit = {"cmd": "zone-commit", "zone": zone_name}
 
+    queries = []
     for query in [zone_begin, zone_set, zone_commit]:
-        producer.send(query)
+        queries.append(query)
+
+    # agent_type: master
+    # because zone only created in master, slave will get zone via axfr
+    message = {"agent": {"agent_type": ["master"]}, "knot": queries}
+
+    producer.send(message)
 
 
 def cluster_file():
@@ -94,37 +108,38 @@ def get_clusters():
     return clusters
 
 
-def send_cluster(zone, zone_id, command):
+def send_cluster(zone, zone_id, command, agent_type):
     clusters = get_clusters()
-    slave = clusters["slave"]
-    # master = clusters["master"]
-    cmds = [
+    cluster = clusters[agent_type]
+
+    # default for master
+    cluster_type = "notify"
+    cluster_type_item = "notify"
+    if agent_type == "slave":
+        cluster_type = "master"
+        cluster_type_item = "master"
+
+    queries = [
         {"item": "file", "data": f"{zone}.zone", "identifier": zone},
         {"item": "serial-policy", "data": "dateserial"},
         {"item": "module", "data": "mod-stats/default"},
     ]
-    cmds.extend(
-        [{"item": "notify", "data": remote.get("id")} for remote in slave["remote"]]
+    queries.extend(
+        [{"item": cluster_type_item, "data": item} for item in cluster[cluster_type]]
     )
-    cmds.extend([{"item": "acl", "data": acl.get("id")} for acl in slave["acl"]])
 
-    # slave zone
-    # for master in master["remote"]:
-    #     master_cmd = {"item": "master", "data": master.get("id")}
-    #     cmds.append(master_cmd)
+    queries.extend([{"item": "acl", "data": acl} for acl in cluster["acl"]])
 
-    # for master in master["acl"]:
-    #     master_cmd = {"item": "acl", "data": master.get('id')}
-    #     cmds.append(master_cmd)
+    queries_ = []
+    for query in queries:
+        query["cmd"] = command
+        query["section"] = "zone"
+        query["zone"] = zone
+        queries_.append(query)
 
-    conf_begin = {"cmd": "conf-begin"}
-    producer.send(conf_begin)
+    message = {
+        "agent": {"agent_type": [agent_type]},
+        "knot": [{"cmd": "conf-begin"}, *queries_, {"cmd": "conf-commit"}],
+    }
 
-    for cmd in cmds:
-        cmd["cmd"] = command
-        cmd["section"] = "zone"
-        cmd["zone"] = zone
-        producer.send(cmd)
-
-    conf_commit = {"cmd": "conf-commit"}
-    producer.send(conf_commit)
+    producer.send(message)
