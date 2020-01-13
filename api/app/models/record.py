@@ -1,6 +1,7 @@
 from app.models import model
 from app.helpers import helpers
 from app.models import zone as zone_model
+from app.models import type_ as type_model
 
 
 def get_other_data(record):
@@ -49,3 +50,12 @@ def get_records_by_zone(zone):
     value = {"zone_id": zone_id}
     records = model.plain_get("record", query, value)
     return records
+
+
+def get_soa_record(zone):
+    records = get_records_by_zone(zone)
+
+    for record in records:
+        rtype = type_model.get_type_by_recordid(record["id"])
+        if rtype == "SOA":
+            return record

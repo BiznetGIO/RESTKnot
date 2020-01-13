@@ -8,6 +8,30 @@ from app.models import ttl as ttl_model
 from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
+from app.helpers import helpers
+
+
+def update_serial(zone, is_send=True):
+    soa_record = record_model.get_soa_record(zone)
+    rdata_record = model.get_one(
+        table="rdata", field="record_id", value=soa_record["id"]
+    )
+    rdatas = rdata_record["rdata"].split(" ")
+    serial = rdatas[2]  # serial MUST be in this position
+    new_serial = helpers.increment_serial(serial)
+    new_rdata = helpers.replace_serial(rdata_record["rdata"], new_serial)
+
+    content_data = {
+        "where": {"record_id": soa_record["id"]},
+        "data": {"rdata": new_rdata, "record_id": soa_record["id"]},
+    }
+
+    model.update("rdata", data=content_data)
+
+    if is_send:
+        # no need to unset SOA record first
+        # zone will never contains more than one SOA record
+        command.send_zone(soa_record["id"], "zone-set")
 
 
 class GetRecordData(Resource):
@@ -102,6 +126,11 @@ class RecordAdd(Resource):
 
             command.send_zone(record_id, "zone-set")
 
+            # increment serial after adding new record
+            rtype = type_model.get_type_by_recordid(record_id)
+            if rtype != "SOA":
+                update_serial(zone)
+
             record = model.get_one(table="record", field="id", value=record_id)
             data = record_model.get_other_data(record)
             return response(201, data=data)
@@ -166,6 +195,11 @@ class RecordEdit(Resource):
 
             command.send_zone(record_id, "zone-set")
 
+            # increment serial after adding new record
+            rtype = type_model.get_type_by_recordid(record_id)
+            if rtype != "SOA":
+                update_serial(zone)
+
             record = model.get_one(table="record", field="id", value=record_id)
             data_ = record_model.get_other_data(record)
             return response(200, data=data_)
@@ -191,6 +225,14 @@ class RecordDelete(Resource):
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype == "SOA":
                 return response(403, message=f"Can't Delete SOA Record")
+            if rtype != "SOA":
+                zone = zone_model.get_zone_by_record(record_id)
+                zone_name = zone["zone"]
+
+                # There is a knot bug where the SOA serial increment
+                # will be doubled if we try to increment manually after
+                # deletion, so we only update the serial in our db
+                update_serial(zone_name, is_send=False)
 
             command.send_zone(record_id, "zone-unset")
 

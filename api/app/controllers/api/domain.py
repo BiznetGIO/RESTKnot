@@ -10,6 +10,7 @@ from app.helpers import helpers
 from app.helpers import validator
 from app.helpers import command
 from app.middlewares import auth
+from app.controllers.api import record as record_ctl
 
 
 def insert_zone(zone, user_id):
@@ -35,6 +36,7 @@ def insert_soa_rdata(record_id):
     serial = f"{str(current_time)}01"
     default_soa_content = os.environ.get("DEFAULT_SOA_RDATA")
     rdatas = default_soa_content.split(" ")
+    # rdata doesn't contains serial
     mname_and_rname = " ".join(rdatas[0:2])
     ttls = " ".join(rdatas[2:])
 
@@ -165,6 +167,11 @@ class AddDomain(Resource):
 
             command.send_cluster(zone, zone_id, "conf-set", "master")
             command.send_cluster(zone, zone_id, "conf-set", "slave")
+
+            # There is a knot bug where the SOA serial will become
+            # `YYYYMMDD04` even though we set it to `YYYYMMDD01` at first.
+            # So we need to refine it manually
+            record_ctl.update_serial(zone)
 
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
