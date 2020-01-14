@@ -31,16 +31,14 @@ def is_exists(record_id):
         raise ValueError(f"Record Not Found")
 
 
-def is_duplicate_rdata(zone_id, type_id, rdata):
-    query = (
-        'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "type_id"=%(type_id)s'
-    )
-    value = {"zone_id": zone_id, "type_id": type_id}
+def is_duplicate_owner(zone_id, type_id, owner):
+    query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "type_id"=%(type_id)s AND "owner"=%(owner)s'
+    value = {"zone_id": zone_id, "type_id": type_id, "owner": owner}
     records = model.plain_get("record", query, value)
-    for record in records:
-        rdata_ = model.get_one(table="rdata", field="record_id", value=record["id"])
-        if rdata == rdata_["rdata"]:
-            raise ValueError(f"Can't Have Multiple Record with Same Content")
+
+    if records:  # initial database will return None
+        if len(records) != 0:
+            raise ValueError(f"Can't Have Multiple Record with Same Owner")
 
 
 def get_records_by_zone(zone):

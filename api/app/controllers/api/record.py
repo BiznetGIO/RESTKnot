@@ -95,7 +95,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
+            record_model.is_duplicate_owner(zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -159,7 +159,7 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
+            record_model.is_duplicate_owner(zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
