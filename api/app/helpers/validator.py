@@ -80,6 +80,12 @@ def is_valid_soa(soa_rdata):
             raise ValueError("Bad SOA RDATA")
 
 
+def is_valid_owner(owner):
+    """Check if it's a valid owner."""
+    if owner.endswith("."):
+        raise ValueError("Bad OWNER Name")
+
+
 functions = {
     "A": is_valid_ip,
     "AAAA": is_valid_ip,
@@ -89,9 +95,11 @@ functions = {
     "EMAIL": is_valid_email,
     "ZONE": is_valid_zone,
     "SOA": is_valid_soa,
+    "OWNER": is_valid_owner,
 }
 
 
 def validate(rtype, rdata):
+    rtype = rtype.upper()
     if rtype in functions.keys():
         functions[rtype](rdata)

@@ -103,7 +103,7 @@ class RecordAdd(Resource):
             # rtype no need to be validated & no need to check its length
             # `get_typeid` will raise error for non existing rtype
             validator.validate(rtype.upper(), rdata)
-
+            validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
 
@@ -165,6 +165,7 @@ class RecordEdit(Resource):
 
         try:
             validator.validate(rtype.upper(), rdata)
+            validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
 
