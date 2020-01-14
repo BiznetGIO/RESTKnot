@@ -12,6 +12,7 @@ from app.helpers import helpers
 
 
 def update_serial(zone, increment="01"):
+    # TODO max increment is 99
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
@@ -77,7 +78,6 @@ class RecordAdd(Resource):
         parser.add_argument("owner", type=str, required=True)
         parser.add_argument("rtype", type=str, required=True)
         parser.add_argument("rdata", type=str, required=True)
-        # FIXME don't use ID?
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         owner = args["owner"].lower()
