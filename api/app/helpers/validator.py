@@ -82,8 +82,16 @@ def is_valid_soa(soa_rdata):
 
 def is_valid_owner(owner):
     """Check if it's a valid owner."""
-    if owner.endswith("."):
-        raise ValueError("Bad OWNER Name")
+    if any((owner.endswith("."), owner.endswith("-"), owner.startswith("-"))):
+        raise ValueError("Bad OWNER")
+
+    if len(owner) > 255:
+        raise ValueError("Bad OWNER")
+
+    if "." in owner:
+        for part in owner.split("."):
+            if len(part) > 63:
+                raise ValueError("Bad OWNER")
 
 
 functions = {
