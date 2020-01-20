@@ -31,14 +31,30 @@ def is_exists(record_id):
         raise ValueError(f"Record Not Found")
 
 
-def is_duplicate_owner(zone_id, type_id, owner):
+def is_unique(zone_id, type_id, owner):
     query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "type_id"=%(type_id)s AND "owner"=%(owner)s'
     value = {"zone_id": zone_id, "type_id": type_id, "owner": owner}
     records = model.plain_get("record", query, value)
 
     if records:  # initial database will return None
-        if len(records) != 0:
-            raise ValueError(f"Can't Have Multiple Record with Same Owner")
+        if len(records) == 0:
+            return True
+        return False
+
+    return True  # also if None
+
+
+def is_coexist(zone_id, types, owner):
+    query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND "type_id" IN (%(type1)s,%(type2)s) AND "owner"=%(owner)s'
+    value = {"zone_id": zone_id, "type1": types[0], "type2": types[1], "owner": owner}
+    records = model.plain_get("record", query, value)
+    print(f"co: {records}")
+
+    if records:
+        if len(records) > 0:
+            return True
+
+    return False
 
 
 def get_records_by_zone(zone):

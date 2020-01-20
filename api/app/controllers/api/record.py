@@ -9,6 +9,7 @@ from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
 from app.helpers import helpers
+from app.helpers import rules
 
 
 def update_serial(zone, increment="01"):
@@ -95,7 +96,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_owner(zone_id, type_id, owner)
+            rules.check(rtype, zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -159,7 +160,7 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_owner(zone_id, type_id, owner)
+            rules.check(rtype, zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 

@@ -10,7 +10,6 @@ from app.helpers import helpers
 from app.helpers import validator
 from app.helpers import command
 from app.middlewares import auth
-from app.controllers.api import record as record_ctl
 
 
 def insert_zone(zone, user_id):
