@@ -1,11 +1,31 @@
+#  --------------------------------------------------------------------
+# RDATA Rules
+#
+# The rules for DNS RDATA:
+#
+# IP
+# EMAIL
+# MX
+# CNAME
+# ZONE
+# SOA
+#
+# OWNER
+# 1. maximum length is 255
+# 2. maximum of each part (separated by .) is 63
+# 3. can't starts/ends with -
+# 4. can't ends with .
+#
+#
+# Credits:
+# RE Email Credit: https://emailregex.com/
+# RE ZONE Credit:
+# RE CNAME Credit: https://www.regextester.com/106386
+# --------------------------------------------------------------------
+
 import re
 from ipaddress import ip_address
 
-"""
-RE Email Credit: https://emailregex.com/
-RE ZONE Credit:
-RE CNAME Credit: https://www.regextester.com/106386
-"""
 
 RE_EMAIL = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 RE_ZONE = "^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$"
