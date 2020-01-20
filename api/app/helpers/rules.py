@@ -17,11 +17,12 @@ from app.models import type_ as type_model
 
 
 def is_allowed_cname(zone_id, type_id, owner):
-    # 1. CNAME owner must be unique
+    # 1. same owner NOT allowed
     is_unique = record_model.is_unique(zone_id, type_id, owner)
     if not is_unique:
         raise ValueError("A CNAME record already exist with that owner")
 
+    # 2. owner CAN'T coexist with the same A owner
     a_type_id = type_model.get_typeid_by_rtype("A")
     types = (type_id, a_type_id)
     is_coexist = record_model.is_coexist(zone_id, types, owner)
@@ -30,7 +31,7 @@ def is_allowed_cname(zone_id, type_id, owner):
 
 
 def is_allowed_a(zone_id, type_id, owner):
-    # 1. A  owner can't coexist with the same CNAME owner
+    # 2. owner CAN'T coexist with the same CNAME owner
     cname_type_id = type_model.get_typeid_by_rtype("CNAME")
     types = (type_id, cname_type_id)
     is_coexist = record_model.is_coexist(zone_id, types, owner)
