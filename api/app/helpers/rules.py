@@ -50,7 +50,7 @@ def is_allowed_a(zone_id, type_id, owner):
 
 
 # function based on rtype input when adding record
-functions = {"CNAME": is_allowed_cname, "A": is_allowed_a}
+functions = {"CNAME": is_allowed_cname, "A": is_allowed_a, "AAAA": is_allowed_a}
 
 
 def check(rtype, zone_id, type_id, owner):
