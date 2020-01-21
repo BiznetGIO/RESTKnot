@@ -102,15 +102,23 @@ def is_valid_soa(soa_rdata):
 
 def is_valid_owner(owner):
     """Check if it's a valid owner."""
-    if any((owner.endswith("."), owner.endswith("-"), owner.startswith("-"))):
-        raise ValueError("Bad OWNER")
+
+    def check_hypen(label):
+        if any((label.endswith("."), label.endswith("-"), label.startswith("-"))):
+            raise ValueError("Bad OWNER")
+
+    check_hypen(owner)
+
+    if "." in owner:
+        for label in owner.split("."):
+            check_hypen(label)
 
     if len(owner) > 255:
         raise ValueError("Bad OWNER")
 
     if "." in owner:
-        for part in owner.split("."):
-            if len(part) > 63:
+        for label in owner.split("."):
+            if len(label) > 63:
                 raise ValueError("Bad OWNER")
 
 
