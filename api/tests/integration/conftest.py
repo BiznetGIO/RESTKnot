@@ -25,7 +25,7 @@ def client():
     client = app.test_client()
 
     current_path = pathlib.Path(__file__)
-    dotenv_path = current_path.parents[2].joinpath(".env")
+    dotenv_path = current_path.parents[1].joinpath("test_env.env")
     load_dotenv(dotenv_path)
     yield client
 
