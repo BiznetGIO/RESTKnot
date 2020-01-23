@@ -1,4 +1,5 @@
 import pytest
+import pathlib
 from dotenv import load_dotenv
 
 from app import create_app
@@ -22,7 +23,10 @@ def clean_users():
 def client():
     app = create_app()
     client = app.test_client()
-    load_dotenv()
+
+    current_path = pathlib.Path(__file__)
+    dotenv_path = current_path.parents[2].joinpath(".env")
+    load_dotenv(dotenv_path)
     yield client
 
     # FIXME data can't removed using delete/truncate
