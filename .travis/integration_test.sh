@@ -1,14 +1,8 @@
 #!/bin/bash
 
-# setup cockroach
-sudo apt-get install -y wget
-wget -qO- https://binaries.cockroachdb.com/cockroach-v19.2.2.linux-amd64.tgz | tar  xvz
-sudo cp -i cockroach-v19.2.2.linux-amd64/cockroach /usr/local/bin/
-
-# start cockroach
-cockroach start --insecure --host=127.0.0.1 --background
-cockroach sql --insecure --host=127.0.0.1 --execute="CREATE DATABASE knotdb"
-cockroach sql --insecure --host=127.0.0.1 --database=knotdb < api/schema.sql
+# start db
+psql -c 'create database knotdb;' -U postgres
+psql knotdb < api/schema.sql
 
 pip install -r api/requirements.txt
 pip install -r api/requirements-dev.txt
