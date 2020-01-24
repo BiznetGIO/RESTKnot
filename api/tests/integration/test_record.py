@@ -92,3 +92,35 @@ class TestRecord:
 
         assert list_record_data["code"] == 200
         assert edited_record_data["rdata"] == "company_edited.com"
+
+    def test_delete_record(self, client, mocker):
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        # edit record
+        records = list_record_data["data"][0]["records"]
+        cname_record = self.get_record(records, "CNAME")
+        cname_record_id = cname_record["id"]
+        delete_res = client.delete(
+            f"/api/record/delete/{cname_record_id}", headers=headers
+        )
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        records = list_record_data["data"][0]["records"]
+
+        assert delete_res.status_code == 204
+        # it must be 3 after deletion
+        assert len(records) == 3
