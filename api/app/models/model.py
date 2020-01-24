@@ -1,7 +1,7 @@
 import psycopg2
 
 from app import database
-from app.models.prepare import PreparingCursor
+from app.vendors.prepare import PreparingCursor
 
 
 def get_db():
