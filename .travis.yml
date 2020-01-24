@@ -6,7 +6,7 @@ services:
   - postgresql
 jobs:
   include:
-    - stage: unittest
+    - stage: "Unit Tests"
       script: bash .travis/unit_test.sh
-    - stage: integration
+    - stage: "Integration Tests"
       script: bash .travis/integration_test.sh
