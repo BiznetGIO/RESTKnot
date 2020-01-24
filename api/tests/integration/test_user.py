@@ -6,7 +6,7 @@ class TestUser:
 
         assert json_data["code"] == 404
 
-    def test_crate_user(self, client, clean_users):
+    def test_crate_user(self, client):
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -15,7 +15,6 @@ class TestUser:
 
         res = client.get("/api/user/list", headers=headers)
         db_data = res.get_json()
-        clean_users()
 
         # assert response
         assert response_data["code"] == 201
@@ -23,7 +22,7 @@ class TestUser:
         # assert db value
         assert "first@company.com" in db_data["data"][0].values()
 
-    def test_edit_user(self, client, clean_users):
+    def test_edit_user(self, client):
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -37,13 +36,12 @@ class TestUser:
 
         res = client.get("/api/user/list", headers=headers)
         db_data = res.get_json()
-        clean_users()
 
         assert res_data["code"] == 200
         assert res_data["data"]["email"] == "first_edited@company.com"
         assert "first_edited@company.com" in db_data["data"][0].values()
 
-    def test_delete_user(self, client, clean_users):
+    def test_delete_user(self, client):
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -55,7 +53,6 @@ class TestUser:
 
         res = client.get("/api/user/list", headers=headers)
         db_data = res.get_json()
-        clean_users()
 
         assert delete_res.status_code == 204
         assert db_data["code"] == 404

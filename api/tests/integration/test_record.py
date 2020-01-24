@@ -11,7 +11,7 @@ class TestRecord:
 
         assert json_data["code"] == 404
 
-    def test_add_record(self, client, clean_users, mocker):
+    def test_add_record(self, client, mocker):
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -38,7 +38,6 @@ class TestRecord:
         # list record
         res = client.get("/api/domain/list", headers=headers)
         list_record_data = res.get_json()
-        clean_users()
 
         assert create_domain_data["code"] == 201
         assert create_domain_data["data"]["zone"] == "company.com"
@@ -51,7 +50,7 @@ class TestRecord:
         assert list_record_data["data"][0]["zone"] == "company.com"
         assert list_record_data["data"][0]["user"]["email"] == "first@company.com"
 
-    def test_edit_record(self, client, clean_users, mocker):
+    def test_edit_record(self, client, mocker):
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -87,7 +86,6 @@ class TestRecord:
         list_record_data = res.get_json()
         records = list_record_data["data"][0]["records"]
         edited_record_data = self.get_record(records, "CNAME")
-        clean_users()
 
         assert edit_record_data["code"] == 200
         assert edit_record_data["data"]["owner"] == "www_edit"

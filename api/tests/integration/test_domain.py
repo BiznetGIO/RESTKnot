@@ -9,7 +9,7 @@ class TestDomain:
 
         assert json_data["code"] == 404
 
-    def test_domain(self, client, clean_users, mocker):
+    def test_domain(self, client, mocker):
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -31,7 +31,6 @@ class TestDomain:
         delete_domain_data = client.delete(
             "/api/domain/delete", data=data, headers=headers
         )
-        clean_users()
 
         assert create_domain_data["code"] == 201
         assert create_domain_data["data"]["zone"] == "company.com"
