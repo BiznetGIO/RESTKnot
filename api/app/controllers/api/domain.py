@@ -216,8 +216,7 @@ class DeleteDomain(Resource):
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
                 command.set_zone(record["id"], "zone-unset")
-
-            command.send_config(zone, zone_id, "conf-unset")
+            command.set_config(zone, zone_id, "conf-unset")
 
             # other data (e.g record) deleted automatically
             # by cockroach when no PK existed
