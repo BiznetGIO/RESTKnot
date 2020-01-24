@@ -56,3 +56,16 @@ class TestUser:
 
         assert delete_res.status_code == 204
         assert db_data["code"] == 404
+
+    def test_duplicate_email(self, client):
+        headers = {"X-Api-Key": "123"}
+
+        data = {"email": "first@company.com"}
+        client.post("/api/user/add", data=data, headers=headers)
+
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+
+        assert post_res.status_code == 409
+        assert json_data["message"] == "Duplicate Email"
