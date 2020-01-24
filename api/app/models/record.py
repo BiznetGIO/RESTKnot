@@ -16,10 +16,10 @@ def get_other_data(record):
     data = {
         "id": record["id"],
         "owner": record["owner"],
-        "rdata": rdata,
-        "zone": zone,
-        "type": type_,
-        "ttl": ttl,
+        "rdata": rdata["rdata"],
+        "zone": zone["zone"],
+        "type": type_["type"],
+        "ttl": ttl["ttl"],
     }
 
     return data

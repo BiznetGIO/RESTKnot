@@ -23,20 +23,10 @@ Response:
      {
         "id": 512565507407773697,
         "owner": "@",
-        "rdata": {
-            "rdata": "10 mail.example.com."
-        },
-        "zone": {
-            "zone": "example.com"
-        },
-        "type": {
-            "id": 6,
-            "type": "MX"
-        },
-        "ttl": {
-            "id": 5,
-            "ttl": "7200"
-        }    
+        "rdata": "10 mail.example.com.",
+        "zone": "example.com",
+        "type": "MX",
+        "ttl": "7200"
      }
   ]
 
@@ -58,20 +48,10 @@ Response:
    {
         "id": 512565507407773697,
         "owner": "@",
-        "rdata": {
-            "rdata": "10 mail.example.com."
-        },
-        "zone": {
-            "zone": "example.com"
-        },
-        "type": {
-            "id": 6,
-            "type": "MX"
-        },
-        "ttl": {
-            "id": 5,
-            "ttl": "7200"
-        }    
+        "rdata": "10 mail.example.com.",
+        "zone": "example.com",
+        "type": "MX",
+        "ttl":"ttl": "7200"
    }
 
 
@@ -110,20 +90,10 @@ Response:
    {
         "id": 512565507407773697,
         "owner": "@",
-        "rdata": {
-            "rdata": "10 mail.example.com."
-        },
-        "zone": {
-            "zone": "example.com"
-        },
-        "type": {
-            "id": 6,
-            "type": "MX"
-        },
-        "ttl": {
-            "id": 5,
-            "ttl": "7200"
-        }    
+        "rdata": "10 mail.example.com.",
+        "zone": "example.com",
+        "type":  "MX",
+        "ttl": "ttl": "7200"
    }
 
 
@@ -163,20 +133,10 @@ Response:
   {
         "id": 512565507407773697,
         "owner": "@",
-        "rdata": {
-            "rdata": "10 mail.example.com."
-        },
-        "zone": {
-            "zone": "example.com"
-        },
-        "type": {
-            "id": 6,
-            "type": "MX"
-        },
-        "ttl": {
-            "id": 5,
-            "ttl": "7200"
-        }
+        "rdata": "10 mail.example.com.",
+        "zone": "example.com",
+        "type": "MX",
+        "ttl": "7200"
    }
 
 

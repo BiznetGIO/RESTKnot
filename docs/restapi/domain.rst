@@ -30,62 +30,30 @@ Response:
             {
                 "id": 512564294432948225,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400"
-                },
-                "type": {
-                    "id": 1,
-                    "type": "SOA"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400",
+                "type": "SOA",
+                "ttl": "3600"
             },
             {
                 "id": 512564295907311617,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "satu.mydns.id."
-                },
-                "type": {
-                    "id": 4,
-                    "type": "NS"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "satu.mydns.id.",
+                "type": "NS",
+                "ttl": "3600"
             },
             {
                 "id": 512564297375940609,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "dua.mydns.id."
-                },
-                "type": {
-                    "id": 4,
-                    "type": "NS"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "dua.mydns.id.",
+                "type": "NS",
+                "ttl": "3600"
             },
             {
                 "id": 512564298888708097,
                 "owner": "www",
-                "rdata": {
-                    "rdata": "example.com."
-                },
-                "type": {
-                    "id": 5,
-                    "type": "CNAME"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "example.com.",
+                "type": "CNAME",
+                "ttl": "3600"
             }
         ]
     }
@@ -116,62 +84,30 @@ Response:
             {
                 "id": 512564294432948225,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400"
-                },
-                "type": {
-                    "id": 1,
-                    "type": "SOA"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400",
+                "type": "SOA",
+                "ttl": "3600"
             },
             {
                 "id": 512564295907311617,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "satu.mydns.id."
-                },
-                "type": {
-                    "id": 4,
-                    "type": "NS"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "satu.mydns.id.",
+                "type": "NS",
+                "ttl": "3600"
             },
             {
                 "id": 512564297375940609,
                 "owner": "@",
-                "rdata": {
-                    "rdata": "dua.mydns.id."
-                },
-                "type": {
-                    "id": 4,
-                    "type": "NS"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "dua.mydns.id.",
+                "type": "NS",
+                "ttl": "3600"
             },
             {
                 "id": 512564298888708097,
                 "owner": "www",
-                "rdata": {
-                    "rdata": "example.com."
-                },
-                "type": {
-                    "id": 5,
-                    "type": "CNAME"
-                },
-                "ttl": {
-                    "id": 6,
-                    "ttl": "3600"
-                }
+                "rdata": "example.com.",
+                "type": "CNAME",
+                "ttl":  "3600"
             }
         ]
     }
