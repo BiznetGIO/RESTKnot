@@ -5,7 +5,13 @@ from .user import UserSignUp, GetUserData, GetUserDataId, UserUpdate, UserDelete
 from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
 from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
-from .domain import GetDomainData, GetDomainDataId, DeleteDomain, AddDomain
+from .domain import (
+    GetDomainData,
+    GetDomainDataId,
+    DeleteDomain,
+    AddDomain,
+    GetDomainByUser,
+)
 
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
@@ -19,6 +25,7 @@ api.add_resource(RecordDelete, "/record/delete/<record_id>")
 
 api.add_resource(GetDomainData, "/domain/list")
 api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
+api.add_resource(GetDomainByUser, "/domain/list/user/<user_id>")
 api.add_resource(DeleteDomain, "/domain/delete")
 api.add_resource(AddDomain, "/domain/add")
 

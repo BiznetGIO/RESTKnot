@@ -15,3 +15,10 @@ def get_zone_by_record(record_id):
     zone_id = record["zone_id"]
     zone = model.get_one(table="zone", field="id", value=f"{zone_id}")
     return zone
+
+
+def get_zones_by_user(user_id):
+    query = 'SELECT * FROM "zone" WHERE "user_id"=%(user_id)s'
+    value = {"user_id": user_id}
+    zones = model.plain_get("zone", query, value)
+    return zones

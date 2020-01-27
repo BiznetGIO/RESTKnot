@@ -16,11 +16,11 @@ def replace_serial(rdata, serial):
     return f"{mname_and_rname} {serial} {ttls}"
 
 
-def increment_serial(serial):
+def increment_serial(serial, increment="01"):
     # The 10-digit serial (YYYYMMDDnn) is incremented, the first
     # 8 digits match the current iso-date
     nn = serial[-2:]
-    increment = add_str(nn, "01")
+    increment = add_str(nn, increment)
     current_time = soa_time_set()
     return f"{current_time}{increment}"
 

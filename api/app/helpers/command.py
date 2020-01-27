@@ -42,7 +42,7 @@ def generate_command(**kwargs):
     return cmd
 
 
-def send_config(zone, zone_id, command):
+def set_config(zone, zone_id, command):
     """Send config command with JSON structure to broker."""
 
     # there are two option to put conf-begin and conf-commit
@@ -63,7 +63,7 @@ def send_config(zone, zone_id, command):
     producer.send(message)
 
 
-def send_zone(record_id, command):
+def set_zone(record_id, command):
     """Send zone command with JSON structure to broker."""
     record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_name = zone["zone"]
@@ -81,6 +81,39 @@ def send_zone(record_id, command):
 
     queries = []
     for query in [zone_begin, zone_set, zone_commit]:
+        queries.append(query)
+
+    # agent_type: master
+    # because zone only created in master, slave will get zone via axfr
+    message = {"agent": {"agent_type": ["master"]}, "knot": queries}
+
+    producer.send(message)
+
+
+def set_default_zone(record_ids):
+    """Send zone command with JSON structure to broker."""
+    # We can use `send_zone` but it will be slow since each zone will be sent
+    # separately
+
+    zone_sets = []
+    for record_id in record_ids:
+        record, zone, type_, ttl, rdata = get_other_data(record_id)
+        zone_name = zone["zone"]
+        zone_set = generate_command(
+            zone=zone_name,
+            owner=record["owner"],
+            rtype=type_["type"],
+            ttl=ttl["ttl"],
+            rdata=rdata["rdata"],
+            command="zone-set",
+        )
+        zone_sets.append(zone_set)
+
+    zone_begin = {"cmd": "zone-begin", "zone": zone_name}
+    zone_commit = {"cmd": "zone-commit", "zone": zone_name}
+
+    queries = []
+    for query in [zone_begin, *zone_sets, zone_commit]:
         queries.append(query)
 
     # agent_type: master
@@ -108,7 +141,8 @@ def get_clusters():
     return clusters
 
 
-def send_cluster(zone, zone_id, command, agent_type):
+def delegate(zone, zone_id, command, agent_type):
+    """Delegation config"""
     clusters = get_clusters()
     cluster = clusters[agent_type]
 

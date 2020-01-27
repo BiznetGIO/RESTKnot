@@ -10,7 +10,6 @@ from app.helpers import helpers
 from app.helpers import validator
 from app.helpers import command
 from app.middlewares import auth
-from app.controllers.api import record as record_ctl
 
 
 def insert_zone(zone, user_id):
@@ -46,11 +45,11 @@ def insert_soa_rdata(record_id):
     model.insert(table="rdata", data=content_data)
 
 
-def create_soa_default(zone_id):
+def insert_soa_default(zone_id):
     """Create default SOA record"""
     record_id = insert_soa_record(zone_id)
     insert_soa_rdata(record_id)
-    command.send_zone(record_id, "zone-set")
+    return record_id
 
 
 def insert_ns_record(zone_id):
@@ -64,15 +63,18 @@ def insert_ns_rdata(name, record_id):
     model.insert(table="rdata", data=data)
 
 
-def create_ns_default(zone_id):
+def insert_ns_default(zone_id):
     """Create default NS record"""
     default_ns = os.environ.get("DEFAULT_NS")
     nameserver = default_ns.split(" ")
+    record_ids = []
 
     for name in nameserver:
         record_id = insert_ns_record(zone_id)
         insert_ns_rdata(name, record_id)
-        command.send_zone(record_id, "zone-set")
+        record_ids.append(record_id)
+
+    return record_ids
 
 
 def insert_cname_record(zone_id):
@@ -86,11 +88,10 @@ def insert_cname_rdata(zone, record_id):
     model.insert(table="rdata", data=data)
 
 
-def create_cname_default(zone_id, zone):
+def insert_cname_default(zone_id, zone):
     """Create default CNAME record"""
     record_id = insert_cname_record(zone_id)
     insert_cname_rdata(zone, record_id)
-    command.send_zone(record_id, "zone-set")
     return record_id
 
 
@@ -126,6 +127,24 @@ class GetDomainDataId(Resource):
             return response(500)
 
 
+class GetDomainByUser(Resource):
+    @auth.auth_required
+    def get(self, user_id):
+        try:
+            zones = zone_model.get_zones_by_user(user_id)
+            if not zones:
+                return response(404)
+
+            domains_detail = []
+            for zone in zones:
+                detail = domain_model.get_other_data(zone)
+                domains_detail.append(detail)
+
+            return response(200, data=domains_detail)
+        except Exception as e:
+            return response(500, f"{e}")
+
+
 class AddDomain(Resource):
     @auth.auth_required
     def post(self):
@@ -158,20 +177,17 @@ class AddDomain(Resource):
             zone_id = insert_zone(zone, user_id)
 
             # create zone config
-            command.send_config(zone, zone_id, "conf-set")
+            command.set_config(zone, zone_id, "conf-set")
 
             # create default records
-            create_soa_default(zone_id)
-            create_ns_default(zone_id)
-            create_cname_default(zone_id, zone)
+            soa_record_id = insert_soa_default(zone_id)
+            ns_record_ids = insert_ns_default(zone_id)
+            cname_record_id = insert_cname_default(zone_id, zone)
+            record_ids = [soa_record_id, *ns_record_ids, cname_record_id]
+            command.set_default_zone(record_ids)
 
-            command.send_cluster(zone, zone_id, "conf-set", "master")
-            command.send_cluster(zone, zone_id, "conf-set", "slave")
-
-            # There is a knot bug where the SOA serial will become
-            # `YYYYMMDD04` even though we set it to `YYYYMMDD01` at first.
-            # So we need to refine it manually
-            record_ctl.update_serial(zone)
+            command.delegate(zone, zone_id, "conf-set", "master")
+            command.delegate(zone, zone_id, "conf-set", "slave")
 
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
@@ -199,7 +215,7 @@ class DeleteDomain(Resource):
                 # zone-purge didn't work
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
-                command.send_zone(record["id"], "zone-unset")
+                command.set_zone(record["id"], "zone-unset")
 
             command.send_config(zone, zone_id, "conf-unset")
 

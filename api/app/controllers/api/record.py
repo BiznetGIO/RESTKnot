@@ -9,16 +9,18 @@ from app.helpers import validator
 from app.middlewares import auth
 from app.helpers import command
 from app.helpers import helpers
+from app.helpers import rules
 
 
-def update_serial(zone, is_send=True):
+def update_serial(zone, increment="01"):
+    # TODO max increment is 99
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
     )
     rdatas = rdata_record["rdata"].split(" ")
     serial = rdatas[2]  # serial MUST be in this position
-    new_serial = helpers.increment_serial(serial)
+    new_serial = helpers.increment_serial(serial, increment)
     new_rdata = helpers.replace_serial(rdata_record["rdata"], new_serial)
 
     content_data = {
@@ -27,11 +29,6 @@ def update_serial(zone, is_send=True):
     }
 
     model.update("rdata", data=content_data)
-
-    if is_send:
-        # no need to unset SOA record first
-        # zone will never contains more than one SOA record
-        command.send_zone(soa_record["id"], "zone-set")
 
 
 class GetRecordData(Resource):
@@ -82,7 +79,6 @@ class RecordAdd(Resource):
         parser.add_argument("owner", type=str, required=True)
         parser.add_argument("rtype", type=str, required=True)
         parser.add_argument("rdata", type=str, required=True)
-        # FIXME don't use ID?
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
         owner = args["owner"].lower()
@@ -100,7 +96,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
+            rules.check(rtype, zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -108,7 +104,7 @@ class RecordAdd(Resource):
             # rtype no need to be validated & no need to check its length
             # `get_typeid` will raise error for non existing rtype
             validator.validate(rtype.upper(), rdata)
-
+            validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
 
@@ -124,7 +120,7 @@ class RecordAdd(Resource):
             content_data = {"rdata": rdata, "record_id": record_id}
             model.insert(table="rdata", data=content_data)
 
-            command.send_zone(record_id, "zone-set")
+            command.set_zone(record_id, "zone-set")
 
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
@@ -164,12 +160,13 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            record_model.is_duplicate_rdata(zone_id, type_id, rdata)
+            rules.check(rtype, zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
         try:
             validator.validate(rtype.upper(), rdata)
+            validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
 
@@ -188,17 +185,17 @@ class RecordEdit(Resource):
                 "data": {"rdata": rdata, "record_id": record_id},
             }
 
-            command.send_zone(record_id, "zone-unset")
+            command.set_zone(record_id, "zone-unset")
 
             model.update("rdata", data=content_data)
             model.update("record", data=data)
 
-            command.send_zone(record_id, "zone-set")
+            command.set_zone(record_id, "zone-set")
 
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                update_serial(zone)
+                update_serial(zone, "02")
 
             record = model.get_one(table="record", field="id", value=record_id)
             data_ = record_model.get_other_data(record)
@@ -228,13 +225,9 @@ class RecordDelete(Resource):
             if rtype != "SOA":
                 zone = zone_model.get_zone_by_record(record_id)
                 zone_name = zone["zone"]
+                update_serial(zone_name)
 
-                # There is a knot bug where the SOA serial increment
-                # will be doubled if we try to increment manually after
-                # deletion, so we only update the serial in our db
-                update_serial(zone_name, is_send=False)
-
-            command.send_zone(record_id, "zone-unset")
+            command.set_zone(record_id, "zone-unset")
 
             model.delete(table="record", field="id", value=record_id)
             return response(204)
