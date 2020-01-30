@@ -20,6 +20,10 @@ def increment_serial(serial, increment="01"):
     # The 10-digit serial (YYYYMMDDnn) is incremented, the first
     # 8 digits match the current iso-date
     nn = serial[-2:]
+    if int(nn) > 97:  # knot maximum of nn is 99
+        # 97 was chosen because serial
+        #  increment can be twice at time
+        raise ValueError("Zone Change Limit Reached")
     increment = add_str(nn, increment)
     current_time = soa_time_set()
     return f"{current_time}{increment}"
