@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from app.helpers.rest import response
+from app.vendors.rest import response
 from app.models import model
 from app.models import zone as zone_model
 from app.models import record as record_model
@@ -96,7 +96,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check(rtype, zone_id, type_id, owner)
+            rules.check_add(rtype, zone_id, type_id, owner)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -160,7 +160,7 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check(rtype, zone_id, type_id, owner)
+            rules.check_edit(rtype, zone_id, type_id, owner, record_id)
         except Exception as e:
             return response(409, message=f"{e}")
 

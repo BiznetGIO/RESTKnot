@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api
 
+from .health import HealthCheck
 from .user import UserSignUp, GetUserData, GetUserDataId, UserUpdate, UserDelete
 from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
@@ -16,6 +17,9 @@ from .domain import (
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)
+
+
+api.add_resource(HealthCheck, "/health")
 
 api.add_resource(GetRecordData, "/record/list")
 api.add_resource(GetRecordDataId, "/record/list/<record_id>")

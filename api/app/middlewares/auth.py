@@ -1,6 +1,6 @@
 import os
 from flask import request
-from app.helpers.rest import response
+from app.vendors.rest import response
 from functools import wraps
 
 

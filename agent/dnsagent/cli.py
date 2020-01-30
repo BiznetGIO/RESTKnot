@@ -42,7 +42,6 @@ def main():
         ][0]
     except AttributeError as e:
         raise ValueError(f"{e}")
-        raise DocoptExit()
 
     command = command_class(options, args)
     command.execute()
