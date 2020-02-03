@@ -93,6 +93,8 @@ Play the Playbook
   $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master"
   # for slave servers
   $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=slave"
+  # or both
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master,slave"
 
   # to stop the container
   $ ansible-playbook stop-containers-api.yml -f 10 -v
