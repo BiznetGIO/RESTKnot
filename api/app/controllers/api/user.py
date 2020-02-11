@@ -1,3 +1,4 @@
+from flask import request
 from flask_restful import Resource, reqparse
 from app.vendors.rest import response
 from app.models import model
@@ -21,9 +22,17 @@ class GetUserData(Resource):
 
 class GetUserDataId(Resource):
     @auth.auth_required
-    def get(self, user_id):
+    def get(self):
+        user_id = request.args.get("id")
+        email = request.args.get("email")
         try:
-            user = model.get_one(table="user", field="id", value=user_id)
+            if not any((user_id, email)):
+                return response(422, "Problems parsing parameters")
+
+            if user_id:
+                user = model.get_one(table="user", field="id", value=user_id)
+            if email:
+                user = model.get_one(table="user", field="email", value=email)
             if not user:
                 return response(404)
 

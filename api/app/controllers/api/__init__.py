@@ -35,7 +35,7 @@ api.add_resource(AddDomain, "/domain/add")
 
 api.add_resource(UserSignUp, "/user/add")
 api.add_resource(GetUserData, "/user/list")
-api.add_resource(GetUserDataId, "/user/list/<user_id>")
+api.add_resource(GetUserDataId, "/user/list/")
 api.add_resource(UserUpdate, "/user/edit/<user_id>")
 api.add_resource(UserDelete, "/user/delete/<user_id>")
 
