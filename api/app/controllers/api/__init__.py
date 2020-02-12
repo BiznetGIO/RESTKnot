@@ -28,7 +28,7 @@ api.add_resource(RecordEdit, "/record/edit/<record_id>")
 api.add_resource(RecordDelete, "/record/delete/<record_id>")
 
 api.add_resource(GetDomainData, "/domain/list")
-api.add_resource(GetDomainDataId, "/domain/list/zone/<zone_id>")
+api.add_resource(GetDomainDataId, "/domain/list/zone/")
 api.add_resource(GetDomainByUser, "/domain/list/user/<user_id>")
 api.add_resource(DeleteDomain, "/domain/delete")
 api.add_resource(AddDomain, "/domain/add")

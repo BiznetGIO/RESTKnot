@@ -1,4 +1,5 @@
 import os
+from flask import request
 from flask_restful import Resource, reqparse
 
 from app.vendors.rest import response
@@ -115,9 +116,20 @@ class GetDomainData(Resource):
 
 class GetDomainDataId(Resource):
     @auth.auth_required
-    def get(self, zone_id):
+    def get(self):
+        zone_id = request.args.get("id")
+        zone_name = request.args.get("name")
+
+        if not any((zone_id, zone_name)):
+            return response(422, "Problems parsing parameters")
+
         try:
-            zone = model.get_one(table="zone", field="id", value=zone_id)
+            if zone_id:
+                zone = model.get_one(table="zone", field="id", value=zone_id)
+
+            if zone_name:
+                zone = model.get_one(table="zone", field="zone", value=zone_name)
+
             if not zone:
                 return response(404)
 
