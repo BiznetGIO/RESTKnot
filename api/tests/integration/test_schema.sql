@@ -7,25 +7,25 @@ CREATE TABLE "user" (
 
 CREATE TABLE "type" (
         id SERIAL UNIQUE,
-	"type" VARCHAR(100) NULL
+	"type" VARCHAR NULL
 );
 
 
 CREATE TABLE ttl (
         id SERIAL UNIQUE,
-	ttl VARCHAR(100) NULL
+	ttl VARCHAR NULL
 );
 
 CREATE TABLE zone (
         id SERIAL UNIQUE,
-	zone VARCHAR(100) NULL,
+	zone VARCHAR NULL,
         is_committed BOOL NULL,
         user_id SERIAL REFERENCES "user" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE record (
         id SERIAL UNIQUE,
-	owner VARCHAR(255) NULL,
+	owner VARCHAR NULL,
         zone_id INT8 NOT NULL REFERENCES zone (id) ON DELETE CASCADE ON UPDATE CASCADE,
         type_id INT8 NOT NULL REFERENCES "type" (id) ON DELETE CASCADE ON UPDATE CASCADE,
         ttl_id SERIAL REFERENCES ttl (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -33,7 +33,7 @@ CREATE TABLE record (
 
 CREATE TABLE rdata (
         id SERIAL UNIQUE,
-        rdata VARCHAR(100) NULL,
+        rdata VARCHAR NULL,
         record_id SERIAL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

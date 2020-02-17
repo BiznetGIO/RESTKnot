@@ -6,25 +6,25 @@ CREATE TABLE "user" (
 
 CREATE TABLE "type" (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	"type" STRING(100) NULL
+	"type" STRING NULL
 );
 
 
 CREATE TABLE ttl (
         id INT NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	ttl STRING(100) NULL
+	ttl STRING NULL
 );
 
 CREATE TABLE zone (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	zone STRING(100) NULL,
+	zone STRING NULL,
         is_committed BOOL NULL,
         user_id INT8 NOT NULL REFERENCES "user" (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE record (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-	owner STRING(255) NULL,
+	owner STRING NULL,
         zone_id INT8 NOT NULL REFERENCES zone (id) ON DELETE CASCADE ON UPDATE CASCADE,
         type_id INT8 NOT NULL REFERENCES "type" (id) ON DELETE CASCADE ON UPDATE CASCADE,
         ttl_id INT8 NOT NULL REFERENCES ttl (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -32,7 +32,7 @@ CREATE TABLE record (
 
 CREATE TABLE rdata (
         id INT8 NOT NULL PRIMARY KEY DEFAULT unique_rowid(),
-        rdata STRING(100) NULL,
+        rdata STRING NULL,
         record_id INT8 NOT NULL REFERENCES record (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
