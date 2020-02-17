@@ -1,4 +1,7 @@
 import datetime
+from functools import wraps
+from app.helpers import producer
+from app.vendors.rest import response
 
 
 def soa_time_set():
@@ -46,3 +49,18 @@ def add_str(x, y):
     add_str('11', '01') => '12'
     """
     return str(int(x) + int(y)).zfill(len(x))
+
+
+def check_producer(f):
+    """Check producer availability"""
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            producer.kafka_producer()
+        except Exception as e:
+            return response(500, message=f"{e}")
+        else:
+            return f(*args, **kwargs)
+
+    return decorated_function

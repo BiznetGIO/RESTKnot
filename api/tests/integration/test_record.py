@@ -12,6 +12,7 @@ class TestRecord:
         assert json_data["code"] == 404
 
     def test_add_record(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -51,6 +52,7 @@ class TestRecord:
         assert list_record_data["data"][0]["user"]["email"] == "first@company.com"
 
     def test_edit_record(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -94,6 +96,7 @@ class TestRecord:
         assert edited_record_data["rdata"] == "company_edited.com"
 
     def test_delete_record(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 

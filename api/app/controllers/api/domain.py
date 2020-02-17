@@ -158,6 +158,7 @@ class GetDomainByUser(Resource):
 
 
 class AddDomain(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def post(self):
         """Add new domain (zone) with additional default record.
@@ -208,6 +209,7 @@ class AddDomain(Resource):
 
 
 class DeleteDomain(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def delete(self):
         """Remove domain (zone) and all its related records."""

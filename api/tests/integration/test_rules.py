@@ -1,6 +1,8 @@
 class TestCNAMERules:
     def test_unique_host(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
+
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -28,6 +30,7 @@ class TestCNAMERules:
         assert add_record_data["data"]["owner"] == "www1"
 
     def test_not_unique_host(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -57,6 +60,7 @@ class TestCNAMERules:
         )
 
     def test_clash_with_A_owner(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -95,6 +99,7 @@ class TestCNAMERules:
 
 class TestARules:
     def test_not_unique_owner(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -132,6 +137,7 @@ class TestARules:
         assert add_record_data["data"]["owner"] == "host"
 
     def test_clash_with_cname_owner(self, client, mocker):
+        mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
