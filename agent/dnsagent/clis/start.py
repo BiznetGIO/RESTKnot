@@ -49,6 +49,8 @@ class Start(Base):
                     for query in knot_queries:
                         knot_lib.execute(query)
 
+            consumer.close()
+
         except KeyboardInterrupt:
             print("Stopping dnsagent. Press Ctrl+C again to exit")
 
