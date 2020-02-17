@@ -78,6 +78,12 @@ def is_valid_zone(domain_name):
         raise ValueError("Bad Domain Name")
 
 
+def is_valid_txt(txt_rdata):
+    """Check if it's a valid TXT rdata."""
+    if len(txt_rdata) > 255:
+        raise ValueError("Bad TXT RDATA")
+
+
 def is_valid_soa(soa_rdata):
     """Simple function to check SOA RDATA."""
     rdatas = soa_rdata.split(" ")
@@ -138,6 +144,7 @@ functions = {
     "ZONE": is_valid_zone,
     "SOA": is_valid_soa,
     "OWNER": is_valid_owner,
+    "TXT": is_valid_txt,
 }
 
 

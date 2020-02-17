@@ -75,6 +75,14 @@ def test_valid_soa():
         )
 
 
+def test_valid_txt():
+    validator.is_valid_txt("this is sample text")
+    validator.is_valid_txt("a" * 255)
+
+    with pytest.raises(Exception):
+        validator.is_valid_txt("a" * 256)
+
+
 def test_valid_owner():
     validator.is_valid_owner("@")
     validator.is_valid_owner("*")
