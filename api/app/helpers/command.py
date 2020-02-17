@@ -6,6 +6,7 @@ from app.helpers import producer
 
 
 def get_other_data(record_id):
+    """Return other record data from given record id."""
     try:
         record = model.get_one(table="record", field="id", value=record_id)
 
@@ -23,6 +24,7 @@ def get_other_data(record_id):
 
 
 def generate_command(**kwargs):
+    """Return dictionary of given keywords & values."""
     zone = kwargs.get("zone_name")
     owner = kwargs.get("owner")
     rtype = kwargs.get("rtype")
@@ -124,6 +126,7 @@ def set_default_zone(record_ids):
 
 
 def cluster_file():
+    """Return cluster file path."""
     path = os.environ.get("RESTKNOT_CLUSTER_FILE")
     if not path:
         raise ValueError(f"RESTKNOT_CLUSTER_FILE is not set")
@@ -136,13 +139,14 @@ def cluster_file():
 
 
 def get_clusters():
+    """Return cluster file content."""
     file_ = cluster_file()
     clusters = yaml.safe_load(open(file_))
     return clusters
 
 
 def delegate(zone, zone_id, command, agent_type):
-    """Delegation config"""
+    """Send delegation config command with JSON structure to broker."""
     clusters = get_clusters()
     cluster = clusters[agent_type]
 

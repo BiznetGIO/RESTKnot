@@ -9,6 +9,12 @@ class TestMessages:
         self._messages.append(messages)
 
     def test_messages(self, client, monkeypatch):
+        """Test if the command sent to broker created appropriately.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Assert the sent command
+        """
         monkeypatch.setattr(app.helpers.producer, "send", self.fake_send)
         headers = {"X-Api-Key": "123"}
 

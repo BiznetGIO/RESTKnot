@@ -17,6 +17,12 @@ from app.models import type_ as type_model
 
 
 def is_allowed_cname(zone_id, type_id, owner, rdata):
+    """Check is given CNAME record is allowed.
+
+    1. Check for duplicate record
+    2. Check for the same owner
+    3. Check for the same A owner
+    """
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
     rules.is_duplicate(zone_id, type_id, owner, rdata)
@@ -42,6 +48,11 @@ def is_allowed_cname(zone_id, type_id, owner, rdata):
 
 
 def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
+    """Check is given A record is allowed.
+
+    1. Check for duplicate record
+    2. Check for the same CNAME owner
+    """
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
     rules.is_duplicate(zone_id, type_id, owner, rdata)
@@ -58,12 +69,16 @@ def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
 
 
 def is_allowed_cname_edit(zone_id, type_id, owner, rdata, record_id=None):
+    """Check is given CNAME record is allowed.
+
+    This function separated from `cname_add` because it needs to exclude its id
+    while searching for other records.
+    """
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
     rules.is_duplicate(zone_id, type_id, owner, rdata)
 
-    # owner not needed cause same owner already
-    # rejected in `add` operation
+    # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "id"<>%(record_id)s'
     value = {
         "zone_id": zone_id,
@@ -110,6 +125,11 @@ def check_add(rtype, zone_id, type_id, owner, rdata):
 
 
 def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
+    """Return function when user editing A record.
+
+    Some function need dummy `record_id` parameters to match with other function
+    parameter length
+    """
     rtype = rtype.upper()
     if rtype in functions_edit.keys():
         functions_edit[rtype](zone_id, type_id, owner, rdata, record_id)

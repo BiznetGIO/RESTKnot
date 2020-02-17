@@ -5,6 +5,7 @@ from loguru import logger
 
 
 def kafka_producer():
+    """Create Kafka producer."""
     host = os.environ.get("KAFKA_HOST")
     port = os.environ.get("KAFKA_PORT")
     broker = f"{host}:{port}"
@@ -17,6 +18,7 @@ def kafka_producer():
 
 
 def send(message):
+    """Send given message to Kafka broker."""
     producer = None
     try:
         producer = kafka_producer()

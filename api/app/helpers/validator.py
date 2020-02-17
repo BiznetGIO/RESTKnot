@@ -10,11 +10,6 @@
 # ZONE
 # SOA
 #
-# OWNER
-# 1. maximum length is 255
-# 2. maximum of each part (separated by .) is 63
-# 3. can't starts/ends with -
-# 4. can't ends with .
 #
 #
 # Credits:
@@ -101,7 +96,15 @@ def is_valid_soa(soa_rdata):
 
 
 def is_valid_owner(owner):
-    """Check if it's a valid owner."""
+    """Check if it's a valid owner.
+
+    Rules:
+    - owner label can't end with dot (".")
+    - owner label can't ends/starts with dash ("-")
+    - owner can't exceed 255 characters
+    - owner label can't exceed 63 characters
+    - owner can't contains parens ("()")
+    """
 
     def check_hypen(label):
         if any((label.endswith("."), label.endswith("-"), label.startswith("-"))):

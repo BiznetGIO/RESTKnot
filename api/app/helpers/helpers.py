@@ -10,6 +10,7 @@ def soa_time_set():
 
 
 def replace_serial(rdata, serial):
+    """Replace serial value in  given rdata."""
     rdatas = rdata.split(" ")
     # `mname_and_rname` contains such 'one.dns.id. two.dns.id.'
     # `ttls` contains such '10800 3600 604800 38400'
@@ -20,6 +21,11 @@ def replace_serial(rdata, serial):
 
 
 def increment_serial(serial, increment="01"):
+    """Increment serial value with given str value.
+
+    Keyword arguments:
+    increment -- the increment value (default "01")
+    """
     # The 10-digit serial (YYYYMMDDnn) is incremented, the first
     # 8 digits match the current iso-date
     nn = serial[-2:]

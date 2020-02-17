@@ -1,5 +1,12 @@
 class TestCNAMERules:
     def test_unique_host(self, client, mocker):
+        """Create multiple CNAME record with different owner/host.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - # default CNAME owner is `www`
+        - Add CNAME record with `www1` as owner -> must be SUCCESS
+        """
         mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
 
@@ -30,6 +37,13 @@ class TestCNAMERules:
         assert add_record_data["data"]["owner"] == "www1"
 
     def test_not_unique_host(self, client, mocker):
+        """Create multiple CNAME record with same owner/host.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - # default CNAME owner is `www`
+        - Add CNAME record with `www` as owner -> must be FAIL
+        """
         mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
@@ -60,6 +74,13 @@ class TestCNAMERules:
         )
 
     def test_clash_with_A_owner(self, client, mocker):
+        """Create CNAME record with same A owner.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add A record with `host` as owner
+        - Add CNAME record with `host` as owner -> must be FAIL
+        """
         mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
@@ -99,6 +120,13 @@ class TestCNAMERules:
 
 class TestARules:
     def test_not_unique_owner(self, client, mocker):
+        """Create A record with same owner.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add A record with `host` as owner
+        - Add A record with `host` as owner -> must be SUCCESS
+        """
         mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
@@ -137,6 +165,13 @@ class TestARules:
         assert add_record_data["data"]["owner"] == "host"
 
     def test_clash_with_cname_owner(self, client, mocker):
+        """Create A record with same CNAME owner.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add CNAME record with `host` as owner
+        - Add A record with `host` as owner -> must be FAIL
+        """
         mocker.patch("app.helpers.helpers.check_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}

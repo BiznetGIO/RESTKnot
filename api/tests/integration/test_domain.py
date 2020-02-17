@@ -3,6 +3,7 @@ import app.helpers.producer
 
 class TestDomain:
     def test_list_no_domain(self, client):
+        """Test if db contains no domain."""
         headers = {"X-Api-Key": "123"}
         res = client.get("/api/domain/list", headers=headers)
         json_data = res.get_json()
@@ -10,6 +11,13 @@ class TestDomain:
         assert json_data["code"] == 404
 
     def test_domain(self, client, mocker):
+        """Test domain happy path.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - List the domain
+        - Delete the domain
+        """
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
