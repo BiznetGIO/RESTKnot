@@ -1,6 +1,7 @@
 import os
 import json
 from kafka import KafkaProducer
+from loguru import logger
 
 
 def kafka_producer():
@@ -15,13 +16,16 @@ def kafka_producer():
     return producer
 
 
-def send(command):
+def send(message):
+    producer = None
     try:
         producer = kafka_producer()
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
-        respons = producer.send(topic, command)
+        producer.send(topic, message)
+        producer.flush()
     except Exception as e:
-        raise e
-    else:
-        respons.get(timeout=60)
-        return respons.is_done
+        logger.debug(e)
+        raise ValueError(f"{e}")
+    finally:
+        if producer:
+            producer.close()
