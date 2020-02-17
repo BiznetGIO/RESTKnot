@@ -18,6 +18,7 @@ class TestDomain:
         - List the domain
         - Delete the domain
         """
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 

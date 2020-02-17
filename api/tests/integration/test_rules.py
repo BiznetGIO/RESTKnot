@@ -7,7 +7,7 @@ class TestCNAMERules:
         - # default CNAME owner is `www`
         - Add CNAME record with `www` as owner -> must be FAIL (duplicate record)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
 
         headers = {"X-Api-Key": "123"}
@@ -44,7 +44,7 @@ class TestCNAMERules:
         - Add CNAME record with `www1` as owner.
         - Edit CNAME record with `wwww` as owner and `company.com.` as rdata -> must be FAIL (duplicate record)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
 
         headers = {"X-Api-Key": "123"}
@@ -93,7 +93,7 @@ class TestCNAMERules:
         - # default CNAME owner is `www`
         - Add CNAME record with `www1` as owner -> must be SUCCESS (unique allowed)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
 
         headers = {"X-Api-Key": "123"}
@@ -130,7 +130,7 @@ class TestCNAMERules:
         - # default CNAME owner is `www`
         - Add CNAME record with `www` as owner -> must be FAIL (duplicate owner)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -167,7 +167,7 @@ class TestCNAMERules:
         - Add A record with `host` as owner
         - Add CNAME record with `host` as owner -> must be FAIL (clash with A owner)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -213,7 +213,7 @@ class TestARules:
         - Add A record with `a1` as owner and `1.1.1.1` as rdata
         - Add A record with `a1` as owner and `1.1.1.1` as rdata -> must be FAIL (duplicate record)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
 
         headers = {"X-Api-Key": "123"}
@@ -260,7 +260,7 @@ class TestARules:
         - Add A record with `a1` as owner and `2.2.2.2` as rdata
         - Edit A record with `a1` as owner and `1.1.1.1` as rdata -> must be FAIL (duplicate record)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
 
         headers = {"X-Api-Key": "123"}
@@ -318,7 +318,7 @@ class TestARules:
         - Add A record with `host` as owner
         - Add A record with `host` as owner -> must be SUCCESS (same owner allowed)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -363,7 +363,7 @@ class TestARules:
         - Add CNAME record with `host` as owner
         - Add A record with `host` as owner -> must be FAIL (clash with CNAME owner)
         """
-        mocker.patch("app.helpers.helpers.check_producer")
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
