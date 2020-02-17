@@ -121,7 +121,7 @@ class TestARules:
             "zone": "company.com",
             "owner": "host",
             "rtype": "A",
-            "rdata": "1.1.1.1",
+            "rdata": "2.2.2.2",
             "ttl": 7200,
         }
         res = client.post("/api/record/add", data=data, headers=headers)

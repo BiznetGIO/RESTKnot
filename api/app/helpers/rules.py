@@ -16,7 +16,11 @@ from app.models import rules as rules_model
 from app.models import type_ as type_model
 
 
-def is_allowed_cname(zone_id, type_id, owner):
+def is_allowed_cname(zone_id, type_id, owner, rdata):
+    #  duplicate record NOT allowed
+    rules = rules_model.Rules()
+    rules.is_duplicate(zone_id, type_id, owner, rdata)
+
     # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
     value = {"zone_id": zone_id, "type_id": type_id, "owner": owner}
@@ -37,7 +41,11 @@ def is_allowed_cname(zone_id, type_id, owner):
         raise ValueError("An A record already exist with that owner")
 
 
-def is_allowed_a(zone_id, type_id, owner, record_id=None):
+def is_allowed_a(zone_id, type_id, owner, rdata):
+    #  duplicate record NOT allowed
+    rules = rules_model.Rules()
+    rules.is_duplicate(zone_id, type_id, owner, rdata)
+
     # 2. owner CAN'T coexist with the same CNAME owner
     cname_type_id = type_model.get_typeid_by_rtype("CNAME")
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
@@ -93,10 +101,10 @@ functions_edit = {
 }
 
 
-def check_add(rtype, zone_id, type_id, owner):
+def check_add(rtype, zone_id, type_id, owner, rdata):
     rtype = rtype.upper()
     if rtype in functions_add.keys():
-        functions_add[rtype](zone_id, type_id, owner)
+        functions_add[rtype](zone_id, type_id, owner, rdata)
 
 
 def check_edit(rtype, zone_id, type_id, owner, record_id=None):

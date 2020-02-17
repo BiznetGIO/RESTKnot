@@ -13,7 +13,6 @@ from app.helpers import rules
 
 
 def update_serial(zone, increment="01"):
-    # TODO max increment is 99
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
@@ -96,7 +95,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_add(rtype, zone_id, type_id, owner)
+            rules.check_add(rtype, zone_id, type_id, owner, rdata)
         except Exception as e:
             return response(409, message=f"{e}")
 
