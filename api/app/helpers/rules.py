@@ -41,7 +41,7 @@ def is_allowed_cname(zone_id, type_id, owner, rdata):
         raise ValueError("An A record already exist with that owner")
 
 
-def is_allowed_a(zone_id, type_id, owner, rdata):
+def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
     rules.is_duplicate(zone_id, type_id, owner, rdata)
@@ -57,8 +57,10 @@ def is_allowed_a(zone_id, type_id, owner, rdata):
         raise ValueError("A CNAME record already exist with that owner")
 
 
-def is_allowed_cname_edit(zone_id, type_id, owner, record_id):
-    # 1. same owner NOT allowed
+def is_allowed_cname_edit(zone_id, type_id, owner, rdata, record_id=None):
+    #  duplicate record NOT allowed
+    rules = rules_model.Rules()
+    rules.is_duplicate(zone_id, type_id, owner, rdata)
 
     # owner not needed cause same owner already
     # rejected in `add` operation
@@ -107,7 +109,7 @@ def check_add(rtype, zone_id, type_id, owner, rdata):
         functions_add[rtype](zone_id, type_id, owner, rdata)
 
 
-def check_edit(rtype, zone_id, type_id, owner, record_id=None):
+def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
     rtype = rtype.upper()
     if rtype in functions_edit.keys():
-        functions_edit[rtype](zone_id, type_id, owner, record_id)
+        functions_edit[rtype](zone_id, type_id, owner, rdata, record_id)

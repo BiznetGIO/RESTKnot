@@ -63,6 +63,7 @@ class GetRecordDataId(Resource):
 
 
 class RecordAdd(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def post(self):
         """Add new record.
@@ -134,6 +135,7 @@ class RecordAdd(Resource):
 
 
 class RecordEdit(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def put(self, record_id):
         parser = reqparse.RequestParser()
@@ -159,7 +161,7 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_edit(rtype, zone_id, type_id, owner, record_id)
+            rules.check_edit(rtype, zone_id, type_id, owner, rdata, record_id)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -204,6 +206,7 @@ class RecordEdit(Resource):
 
 
 class RecordDelete(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def delete(self, record_id):
         """Delete specific record.
