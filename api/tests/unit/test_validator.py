@@ -98,6 +98,12 @@ def test_valid_owner():
     with pytest.raises(Exception):
         validator.is_valid_owner("ns.ns-.ns")
     with pytest.raises(Exception):
+        validator.is_valid_owner("ns()ns")
+    with pytest.raises(Exception):
+        validator.is_valid_owner("ns(ns")
+    with pytest.raises(Exception):
+        validator.is_valid_owner("ns)ns")
+    with pytest.raises(Exception):
         # label more than 64
         validator.is_valid_owner(f"ns.ns.ns.{'a' * 64}")
     with pytest.raises(Exception):

@@ -121,6 +121,9 @@ def is_valid_owner(owner):
             if len(label) > 63:
                 raise ValueError("Bad OWNER")
 
+    if any(char in "()" for char in owner):
+        raise ValueError("Bad OWNER")
+
 
 functions = {
     "A": is_valid_ip,
