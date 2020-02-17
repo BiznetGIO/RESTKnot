@@ -11,6 +11,10 @@ def test_valid_ip():
         validator.is_valid_ip("2001:db8:10::2::")
     with pytest.raises(Exception):
         validator.is_valid_ip("192.0.2")
+    with pytest.raises(Exception):
+        validator.is_valid_ip("270.0.0.2")
+    with pytest.raises(Exception):
+        validator.is_valid_ip("localhost")
 
 
 def test_valid_mx():
@@ -24,18 +28,35 @@ def test_valid_mx():
 
 
 def test_valid_cname():
-    validator.is_valid_cname("example.com.")
     validator.is_valid_cname("example.com")
+    validator.is_valid_cname("example.com.")
+    validator.is_valid_cname("example-one.com")
 
+    with pytest.raises(Exception):
+        validator.is_valid_cname("-example")
+    with pytest.raises(Exception):
+        validator.is_valid_cname("example-")
+    with pytest.raises(Exception):
+        validator.is_valid_cname("example.-one")
+    with pytest.raises(Exception):
+        validator.is_valid_cname("example-.one")
     with pytest.raises(Exception):
         validator.is_valid_cname("--example.com.")
     with pytest.raises(Exception):
         validator.is_valid_cname(".example.")
+    with pytest.raises(Exception):
+        validator.is_valid_cname("*")
+    with pytest.raises(Exception):
+        validator.is_valid_cname("*.abc")
 
 
 def test_valid_zone():
     validator.is_valid_zone("example.com")
-    validator.is_valid_zone("foo.example.com")
+    validator.is_valid_zone("example-one.com")
+    validator.is_valid_zone("example-one-two.com")
+    validator.is_valid_zone("mail.example-one.com")
+    validator.is_valid_zone("mail.example-one-1.com")
+    validator.is_valid_zone("mail.example.com")
 
     with pytest.raises(Exception):
         validator.is_valid_zone("--example.com.")
@@ -56,7 +77,11 @@ def test_valid_soa():
 
 def test_valid_owner():
     validator.is_valid_owner("@")
+    validator.is_valid_owner("*")
+    validator.is_valid_owner("n")
     validator.is_valid_owner("ns")
+    validator.is_valid_owner("a.b.c")
+    validator.is_valid_owner("ns-ns-1")
     validator.is_valid_owner("ns1_")
     validator.is_valid_owner("_ns1_")
     validator.is_valid_owner(f"ns.ns.ns.{'a' * 63}")
