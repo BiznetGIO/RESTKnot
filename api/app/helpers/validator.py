@@ -152,3 +152,5 @@ def validate(rtype, rdata):
     rtype = rtype.upper()
     if rtype in functions.keys():
         functions[rtype](rdata)
+    else:
+        raise ValueError(f"Unsupported Record Type")

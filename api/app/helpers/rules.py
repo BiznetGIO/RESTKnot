@@ -122,6 +122,8 @@ def check_add(rtype, zone_id, type_id, owner, rdata):
     rtype = rtype.upper()
     if rtype in functions_add.keys():
         functions_add[rtype](zone_id, type_id, owner, rdata)
+    else:
+        raise ValueError(f"Unsupported Record Type")
 
 
 def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
@@ -133,3 +135,5 @@ def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
     rtype = rtype.upper()
     if rtype in functions_edit.keys():
         functions_edit[rtype](zone_id, type_id, owner, rdata, record_id)
+    else:
+        raise ValueError(f"Unsupported Record Type")

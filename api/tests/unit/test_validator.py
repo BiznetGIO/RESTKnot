@@ -28,6 +28,7 @@ def test_valid_mx():
 
 
 def test_valid_cname():
+    validator.is_valid_cname("example")
     validator.is_valid_cname("example.com")
     validator.is_valid_cname("example.com.")
     validator.is_valid_cname("example-one.com")
@@ -122,5 +123,7 @@ def test_valid_owner():
 def test_validate_func():
     # validator exists
     validator.validate("A", "192.0.2.1")
-    # validator not exists
-    validator.validate("SRV", "dummy")
+
+    with pytest.raises(Exception):
+        # validator not exists
+        validator.validate("SRV", "dummy")
