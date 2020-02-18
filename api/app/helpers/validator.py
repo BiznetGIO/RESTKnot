@@ -47,6 +47,7 @@ def is_valid_mx(mx_rdata):
     msg = "Bad MX RDATA"
 
     preference = mx_rdata.split(" ")[0]
+    hostname = mx_rdata.split(" ")[1]
 
     try:
         # we need to improve this validation.
@@ -55,6 +56,11 @@ def is_valid_mx(mx_rdata):
             pass
         else:
             raise ValueError(msg)
+    except Exception:
+        raise ValueError(msg)
+
+    try:
+        is_valid_cname(hostname)
     except Exception:
         raise ValueError(msg)
 
@@ -143,8 +149,8 @@ functions = {
     "EMAIL": is_valid_email,
     "ZONE": is_valid_zone,
     "SOA": is_valid_soa,
-    "OWNER": is_valid_owner,
     "TXT": is_valid_txt,
+    "OWNER": is_valid_owner,
 }
 
 

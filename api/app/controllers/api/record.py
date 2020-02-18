@@ -166,7 +166,7 @@ class RecordEdit(Resource):
             return response(409, message=f"{e}")
 
         try:
-            validator.validate(rtype.upper(), rdata)
+            validator.validate(rtype, rdata)
             validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
