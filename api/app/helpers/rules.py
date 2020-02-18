@@ -16,6 +16,16 @@ from app.models import rules as rules_model
 from app.models import type_ as type_model
 
 
+def is_allowed(zone_id, type_id, owner, rdata, record_id=None):
+    """A Generic function to check is given record is allowed.
+
+    1. Check for duplicate record
+    """
+    #  duplicate record NOT allowed
+    rules = rules_model.Rules()
+    rules.is_duplicate(zone_id, type_id, owner, rdata)
+
+
 def is_allowed_cname(zone_id, type_id, owner, rdata):
     """Check is given CNAME record is allowed.
 
@@ -24,8 +34,7 @@ def is_allowed_cname(zone_id, type_id, owner, rdata):
     3. Check for the same A owner
     """
     #  duplicate record NOT allowed
-    rules = rules_model.Rules()
-    rules.is_duplicate(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata)
 
     # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
@@ -54,8 +63,7 @@ def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
     2. Check for the same CNAME owner
     """
     #  duplicate record NOT allowed
-    rules = rules_model.Rules()
-    rules.is_duplicate(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata)
 
     # 2. owner CAN'T coexist with the same CNAME owner
     cname_type_id = type_model.get_typeid_by_rtype("CNAME")
@@ -75,8 +83,7 @@ def is_allowed_cname_edit(zone_id, type_id, owner, rdata, record_id=None):
     while searching for other records.
     """
     #  duplicate record NOT allowed
-    rules = rules_model.Rules()
-    rules.is_duplicate(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata)
 
     # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "id"<>%(record_id)s'
@@ -110,11 +117,23 @@ def is_allowed_cname_edit(zone_id, type_id, owner, rdata, record_id=None):
 
 
 # function based on rtype input when adding record
-functions_add = {"CNAME": is_allowed_cname, "A": is_allowed_a, "AAAA": is_allowed_a}
+functions_add = {
+    "CNAME": is_allowed_cname,
+    "A": is_allowed_a,
+    "AAAA": is_allowed_a,
+    "SOA": is_allowed,
+    "NS": is_allowed,
+    "MX": is_allowed,
+    "TXT": is_allowed,
+}
 functions_edit = {
     "CNAME": is_allowed_cname_edit,
     "A": is_allowed_a,
     "AAAA": is_allowed_a,
+    "SOA": is_allowed,
+    "NS": is_allowed,
+    "MX": is_allowed,
+    "TXT": is_allowed,
 }
 
 
