@@ -1,5 +1,6 @@
 import yaml
 import os
+import json
 
 from app.models import model
 from app.helpers import producer
@@ -70,13 +71,18 @@ def set_zone(record_id, command):
     record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_name = zone["zone"]
 
+    # escape space and double quote in txt rdata
+    rdata = rdata["rdata"]
+    if type_["type"] == "TXT":
+        rdata = json.dumps(rdata)
+
     zone_begin = {"cmd": "zone-begin", "zone": zone_name}
     zone_set = generate_command(
         zone=zone_name,
         owner=record["owner"],
         rtype=type_["type"],
         ttl=ttl["ttl"],
-        rdata=rdata["rdata"],
+        rdata=rdata,
         command=command,
     )
     zone_commit = {"cmd": "zone-commit", "zone": zone_name}
@@ -100,13 +106,19 @@ def set_default_zone(record_ids):
     zone_sets = []
     for record_id in record_ids:
         record, zone, type_, ttl, rdata = get_other_data(record_id)
+
+        # escape space and double quote in txt rdata
+        rdata = rdata["rdata"]
+        if type_["type"] == "TXT":
+            rdata = json.dumps(rdata)
+
         zone_name = zone["zone"]
         zone_set = generate_command(
             zone=zone_name,
             owner=record["owner"],
             rtype=type_["type"],
             ttl=ttl["ttl"],
-            rdata=rdata["rdata"],
+            rdata=rdata,
             command="zone-set",
         )
         zone_sets.append(zone_set)
