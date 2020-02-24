@@ -1,3 +1,4 @@
+import json
 from flask_restful import Resource, reqparse
 from app.vendors.rest import response
 from app.models import model
@@ -87,6 +88,10 @@ class RecordAdd(Resource):
         zone = args["zone"]
         ttl = args["ttl"]
 
+        # escape space and double quote in txt rdata
+        if rtype.upper() == "TXT":
+            rdata = json.dumps(rdata)
+
         try:
             ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
 
@@ -150,6 +155,10 @@ class RecordEdit(Resource):
         rdata = args["rdata"]
         zone = args["zone"]
         ttl = args["ttl"]
+
+        # escape space and double quote in txt rdata
+        if rtype.upper() == "TXT":
+            rdata = json.dumps(rdata)
 
         try:
             ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
