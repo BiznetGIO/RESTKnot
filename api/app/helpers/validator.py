@@ -19,6 +19,7 @@
 # --------------------------------------------------------------------
 
 import re
+import string
 from ipaddress import ip_address
 
 
@@ -88,6 +89,10 @@ def is_valid_txt(txt_rdata):
     """Check if it's a valid TXT rdata."""
     if len(txt_rdata) > 255:
         raise ValueError("Bad TXT RDATA")
+
+    for char in txt_rdata:
+        if char not in string.printable:
+            raise ValueError("Bad TXT RDATA")
 
 
 def is_valid_soa(soa_rdata):

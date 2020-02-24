@@ -82,6 +82,10 @@ def test_valid_txt():
 
     with pytest.raises(Exception):
         validator.is_valid_txt("a" * 256)
+    with pytest.raises(Exception):
+        validator.is_valid_txt("®€")
+    with pytest.raises(Exception):
+        validator.is_valid_txt("€")
 
 
 def test_valid_owner():
