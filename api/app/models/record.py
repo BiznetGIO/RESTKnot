@@ -1,3 +1,4 @@
+import json
 from app.models import model
 from app.helpers import helpers
 from app.models import zone as zone_model
@@ -13,10 +14,15 @@ def get_other_data(record):
     rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
     zone = helpers.exclude_keys(zone, {"id", "is_committed", "user_id", "record_id"})
 
+    # avoid multiple dumps
+    # it will be dumped again in `response()`
+    if type_["type"] == "TXT":
+        rdata = json.loads(rdata["rdata"])
+
     data = {
         "id": record["id"],
         "owner": record["owner"],
-        "rdata": rdata["rdata"],
+        "rdata": rdata,
         "zone": zone["zone"],
         "type": type_["type"],
         "ttl": ttl["ttl"],
