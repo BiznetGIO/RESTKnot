@@ -22,6 +22,7 @@ def execute(message):
         filter_=message.get("filter"),
     )
 
-    if response != "{}":
+    if response:
         utils.log_err(f"Failed: {response}")
+
     utils.log_info(f"Created: {cmd} {zone or ''} {item or ''} {data or ''}")
