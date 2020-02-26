@@ -1,5 +1,6 @@
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource, reqparse
+
 from app.vendors.rest import response
 from app.models import model
 from app.helpers import helpers
@@ -16,7 +17,8 @@ class GetUserData(Resource):
                 return response(404)
 
             return response(200, data=users)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -37,7 +39,8 @@ class GetUserDataId(Resource):
                 return response(404)
 
             return response(200, data=user)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -63,7 +66,8 @@ class UserSignUp(Resource):
             inserted_id = model.insert(table="user", data=data)
             data_ = {"id": inserted_id, **data}
             return response(201, data=data_)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -91,7 +95,8 @@ class UserUpdate(Resource):
                 return response(404)
 
             return response(200, data=data.get("data"))
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -104,5 +109,6 @@ class UserDelete(Resource):
                 return response(404)
 
             return response(204)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)

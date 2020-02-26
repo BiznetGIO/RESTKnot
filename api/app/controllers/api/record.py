@@ -1,4 +1,6 @@
+from flask import current_app
 from flask_restful import Resource, reqparse
+
 from app.vendors.rest import response
 from app.models import model
 from app.models import zone as zone_model
@@ -45,7 +47,8 @@ class GetRecordData(Resource):
 
             return response(200, data=records_detail)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class GetRecordDataId(Resource):
@@ -59,7 +62,8 @@ class GetRecordDataId(Resource):
             data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordAdd(Resource):
@@ -131,7 +135,8 @@ class RecordAdd(Resource):
             data = record_model.get_other_data(record)
             return response(201, data=data)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordEdit(Resource):
@@ -202,7 +207,8 @@ class RecordEdit(Resource):
             data_ = record_model.get_other_data(record)
             return response(200, data=data_)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordDelete(Resource):
@@ -234,4 +240,5 @@ class RecordDelete(Resource):
             model.delete(table="record", field="id", value=record_id)
             return response(204)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)

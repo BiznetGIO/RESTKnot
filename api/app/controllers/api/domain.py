@@ -1,5 +1,5 @@
 import os
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource, reqparse
 
 from app.vendors.rest import response
@@ -111,7 +111,8 @@ class GetDomainData(Resource):
 
             return response(200, data=domains_detail)
         except Exception as e:
-            return response(500, f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class GetDomainDataId(Resource):
@@ -135,7 +136,8 @@ class GetDomainDataId(Resource):
 
             data = domain_model.get_other_data(zone)
             return response(200, data=data)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -154,7 +156,8 @@ class GetDomainByUser(Resource):
 
             return response(200, data=domains_detail)
         except Exception as e:
-            return response(500, f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class AddDomain(Resource):
@@ -205,7 +208,8 @@ class AddDomain(Resource):
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class DeleteDomain(Resource):
@@ -237,5 +241,6 @@ class DeleteDomain(Resource):
             model.delete(table="zone", field="id", value=zone_id)
 
             return response(204, data=zone)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)

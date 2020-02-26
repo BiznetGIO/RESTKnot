@@ -1,7 +1,7 @@
 import os
 import json
 from kafka import KafkaProducer
-from loguru import logger
+from flask import current_app
 
 
 def kafka_producer():
@@ -26,7 +26,7 @@ def send(message):
         producer.send(topic, message)
         producer.flush()
     except Exception as e:
-        logger.debug(e)
+        current_app.logger.error(f"{e}")
         raise ValueError(f"{e}")
     finally:
         if producer:
