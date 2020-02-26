@@ -1,7 +1,8 @@
-import os
 import json
-from kafka import KafkaProducer
+import os
+
 from flask import current_app
+from kafka import KafkaProducer
 
 
 def kafka_producer():

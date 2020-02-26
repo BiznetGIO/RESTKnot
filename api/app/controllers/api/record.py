@@ -1,17 +1,14 @@
 from flask import current_app
 from flask_restful import Resource, reqparse
 
-from app.vendors.rest import response
-from app.models import model
-from app.models import zone as zone_model
-from app.models import record as record_model
-from app.models import type_ as type_model
-from app.models import ttl as ttl_model
-from app.helpers import validator
+from app.helpers import command, helpers, rules, validator
 from app.middlewares import auth
-from app.helpers import command
-from app.helpers import helpers
-from app.helpers import rules
+from app.models import model
+from app.models import record as record_model
+from app.models import ttl as ttl_model
+from app.models import type_ as type_model
+from app.models import zone as zone_model
+from app.vendors.rest import response
 
 
 def update_serial(zone, increment="01"):

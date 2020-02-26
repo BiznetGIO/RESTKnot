@@ -1,19 +1,18 @@
 from flask import Blueprint
 from flask_restful import Api
 
-from .health import HealthCheck
-from .user import UserSignUp, GetUserData, GetUserDataId, UserUpdate, UserDelete
-from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlEdit, TtlDelete
-from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeEdit, TypeDelete
-from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordEdit, RecordDelete
 from .domain import (
+    AddDomain,
+    DeleteDomain,
+    GetDomainByUser,
     GetDomainData,
     GetDomainDataId,
-    DeleteDomain,
-    AddDomain,
-    GetDomainByUser,
 )
-
+from .health import HealthCheck
+from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordDelete, RecordEdit
+from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlDelete, TtlEdit
+from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeDelete, TypeEdit
+from .user import GetUserData, GetUserDataId, UserDelete, UserSignUp, UserUpdate
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_blueprint)

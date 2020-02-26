@@ -1,9 +1,10 @@
-import yaml
-import os
 import json
+import os
 
-from app.models import model
+import yaml
+
 from app.helpers import producer
+from app.models import model
 
 
 def get_other_data(record_id):

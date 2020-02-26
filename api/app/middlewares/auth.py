@@ -1,7 +1,9 @@
 import os
-from flask import request
-from app.vendors.rest import response
 from functools import wraps
+
+from flask import request
+
+from app.vendors.rest import response
 
 
 def auth_required(f):

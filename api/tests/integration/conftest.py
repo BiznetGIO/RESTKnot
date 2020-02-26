@@ -1,5 +1,6 @@
-import pytest
 import pathlib
+
+import pytest
 from dotenv import load_dotenv
 
 from app import create_app

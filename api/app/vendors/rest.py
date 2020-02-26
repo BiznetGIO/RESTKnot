@@ -1,6 +1,7 @@
-from flask import Response
 import json
 from datetime import date, datetime
+
+from flask import Response
 
 
 def json_serial(obj):
