@@ -131,3 +131,7 @@ def test_validate_func():
     with pytest.raises(Exception):
         # validator not exists
         validator.validate("SRV", "dummy")
+
+    with pytest.raises(Exception):
+        # empty rdata
+        validator.validate("TXT", "")
