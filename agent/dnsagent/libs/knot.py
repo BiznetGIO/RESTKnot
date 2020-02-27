@@ -1,5 +1,8 @@
+import logging
+
 from dnsagent.libs import control
-from dnsagent.libs import utils
+
+logger = logging.getLogger(__name__)
 
 
 def execute(message):
@@ -23,6 +26,7 @@ def execute(message):
     )
 
     if response:
-        utils.log_err(f"Failed: {response}")
+        logger.error(f"{response}")
+        logger.info(f"Fail: {response}")
 
-    utils.log_info(f"Created: {cmd} {zone or ''} {item or ''} {data or ''}")
+    logger.info(f"Success: {cmd} {zone or ''} {item or ''} {data or ''}")

@@ -26,9 +26,11 @@ services:
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
             - RESTKNOT_API_KEY=123
+            - RESTKNOT_LOG_FILE=/restknot-data/restknot-api.log
         command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
             - ~/.config/restknot/:/rknt
+            - /restknot-data/:/restknot-data/
         links:
             - zookeeper
             - kafka

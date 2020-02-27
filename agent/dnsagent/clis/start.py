@@ -1,9 +1,12 @@
 import os
+import logging
 
 from dnsagent.clis.base import Base
-from dnsagent.libs import knot as knot_lib
 from dnsagent.libs import kafka as kafka_lib
-from dnsagent.libs import utils
+from dnsagent.libs import knot as knot_lib
+
+
+logger = logging.getLogger(__name__)
 
 
 class Start(Base):
@@ -24,15 +27,15 @@ class Start(Base):
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
 
         if (broker_host and broker_port) is None:
-            utils.log_err("Can't find kafka host and port")
+            logger.info("Can't find kafka host and port")
             exit()
 
         try:
-            utils.log_info("Connecting to broker : " + broker)
+            logger.info("Connecting to broker : " + broker)
             consumer = kafka_lib.get_kafka_consumer(broker, topic)
             return consumer
         except Exception as e:
-            utils.log_err(f"Can't Connect to broker: {e}")
+            logger.info(f"Can't Connect to broker: {e}")
             exit()
 
     def take_message(self, consumer):

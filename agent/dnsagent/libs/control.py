@@ -1,8 +1,7 @@
-import os
 import json
+import os
 
 from dnsagent.vendor.libknot import control as knotlib
-from dnsagent.libs import utils
 
 
 def connect_knot():
@@ -57,7 +56,6 @@ def send_block(
     except knotlib.KnotCtlError as knot_error:
         # most of the time, after removing a zone
         # socket connection will be time out
-        utils.log_err(f"Control Error: {knot_error}")
         resp = str(knot_error.data)
     finally:
         ctl.send(knotlib.KnotCtlType.END)
