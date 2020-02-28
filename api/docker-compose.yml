@@ -49,5 +49,6 @@ services:
         ports:
           - "26257:26257"
         volumes:
+          # on CentOS family sometimes you need to add `:Z`
           - /cockroach-data:/cockroach/cockroach-data
 
