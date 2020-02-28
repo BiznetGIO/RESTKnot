@@ -32,27 +32,8 @@ Go to the API directory
 
 
 RESTKnot API consume the configuration from OS environment variables. So make
-sure you have set them. Example:
-
-
-.. code-block:: bash
-
-  export FLASK_DEBUG=1
-  export APP_HOST=0.0.0.0
-  export APP_PORT=5000
-  export DB_NAME=knotdb
-  export DB_HOST=localhost
-  export DB_PORT=26257
-  export DB_USER=root
-  export DB_SSL=disable
-  export KAFKA_HOST=127.0.01
-  export KAFKA_PORT=9092
-  export DEFAULT_NS='satu.examplens.id. dua.examplens.id.'
-  export DEFAULT_SOA_RDATA='satu.examplens.id. hostmaster.examplens.id. 10800 3600 604800 38400'
-  export RESTKNOT_CLUSTER_FILE=/home/user/.config/restknot/servers.yaml
-  export RESTKNOT_API_KEY=123
-  RESTKNOT_KAFKA_TOPIC=domaindata
-
+sure you have set them. Take a look into `.env.example` and change the default
+values according to your situation.
 
 Then run the app:
 
@@ -94,20 +75,12 @@ Go to the Agent directory
 
   $ cd agent/
 
-Set appropriate configurations. Example:
-
-.. code-block:: bash
-
-  export RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
-  export RESTKNOT_KNOT_SOCKET=/run/knot/knot.sock
-  export RESTKNOT_KAFKA_BROKER=localhost
-  export RESTKNOT_KAFKA_PORTS=9092
-  export RESTKNOT_KAFKA_TOPIC=domaindata
-  export RESTKNOT_KAFKA_FLAGS=master
-  export RESTKNOT_KAFKA_GROUP=cmgz_master
+Set appropriate configurations. Take a look at `.env.example` in agent directory
+and run them manually. At this moment RESTKNOT Agent doesn't load them automatically.
 
 You can run the Agent in user mode, but some OS need superuser in order for knot
-to create DNS records.
+to create DNS records. `-E` argument is used to supply regular user OS
+environment to sudo user.
 
 .. code-block:: bash
 
