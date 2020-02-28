@@ -66,6 +66,15 @@ Get a domain by Zone
 
   GET domain/list/zone/:zoneid
 
+Query Params:
+
+===========  =======   ===========================
+Name         Type      Description
+===========  =======   ===========================
+id           int       The id of the zone
+name         string    The name of the zone
+===========  =======   ===========================
+
 Response:
 
 .. code-block:: bash
@@ -112,6 +121,17 @@ Response:
         ]
     }
 
+
+Get a domain by User
+--------------------
+
+.. code-block:: bash
+
+  GET domain/list/user/:userid
+
+Response:
+
+It has the same response as get a domain by Zone
 
 Create domain
 -------------
