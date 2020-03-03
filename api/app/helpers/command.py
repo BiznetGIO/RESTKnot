@@ -1,5 +1,6 @@
 import json
 import os
+import pathlib
 
 import yaml
 
@@ -142,7 +143,8 @@ def cluster_file():
     """Return cluster file path."""
     path = os.environ.get("RESTKNOT_CLUSTER_FILE")
     if not path:
-        raise ValueError(f"RESTKNOT_CLUSTER_FILE is not set")
+        current_path = pathlib.Path(__file__)
+        path = current_path.parents[2].joinpath("servers.yml")
 
     is_exists = os.path.exists(path)
     if is_exists:
