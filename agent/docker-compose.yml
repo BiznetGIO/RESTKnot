@@ -4,7 +4,7 @@ services:
     image: restknot-agent:0.7.0
     environment:
       - RESTKNOT_AGENT_TYPE=master
-      # the libknot.so location is Distro dependant.
+      # the libknot.so location is distro dependant.
       # e.g in CentOS it is `/usr/lib64/libknot.so.10.0.0`
       - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
       - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
@@ -16,10 +16,10 @@ services:
       - RESTKNOT_LOG_FILE=/restknot-data/restknot-agent.log
     entrypoint: dnsagent start
     volumes:
-        # on CentOS family sometimes you need to add `:Z`
+        # on CentOS family you need to add `:Z`
         # .e.g `/var/run/knot/:/var/run/knot/:Z`
-        - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/
-        - /etc/knot/:/etc/knot/
-        - /var/run/knot/:/var/run/knot/
-        - /var/lib/knot/:/var/lib/knot/
-        - /restknot-data/:/restknot-data/
+        - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
+        - /etc/knot/:/etc/knot/ #ro
+        - /var/run/knot/:/var/run/knot/:Z
+        - /var/lib/knot/:/var/lib/knot/:Z
+        - ~/restknot-data/:/restknot-data:Z
