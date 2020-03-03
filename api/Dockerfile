@@ -14,4 +14,4 @@ RUN pip3 install -r /restknotapi/requirements.txt
 COPY . /restknotapi
 
 EXPOSE 5000
-CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]
+CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000", "-w", "4"]
