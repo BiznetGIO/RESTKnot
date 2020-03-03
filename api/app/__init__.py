@@ -1,6 +1,5 @@
 import logging
-import os
-from logging.handlers import RotatingFileHandler
+import sys
 
 from flask import Flask
 from flask_cors import CORS
@@ -29,16 +28,10 @@ def register_blueprints(app):
 
 def configure_logger(app):
     """Configure loggers."""
-    log_path = os.environ.get("RESTKNOT_LOG_FILE")
-    if not log_path:
-        raise ValueError(f"RESTKNOT_LOG_FILE is not set")
+    stdout_handler = logging.StreamHandler(sys.stdout)
 
-    file_handler = RotatingFileHandler(log_path, maxBytes=1000000, backupCount=3)
-    file_handler.setLevel(logging.INFO)
-
-    file_format = logging.Formatter(
+    stdout_format = logging.Formatter(
         "[%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
     )
-    file_handler.setFormatter(file_format)
-
-    app.logger.addHandler(file_handler)
+    stdout_handler.setFormatter(stdout_format)
+    app.logger.addHandler(stdout_handler)
