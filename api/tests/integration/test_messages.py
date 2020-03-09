@@ -8,7 +8,14 @@ class TestMessages:
     def fake_send(self, messages):
         self._messages.append(messages)
 
-    def test_messages(self, client, monkeypatch):
+    def test_messages(self, client, monkeypatch, mocker):
+        """Test if the command sent to broker created appropriately.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Assert the sent command
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
         monkeypatch.setattr(app.helpers.producer, "send", self.fake_send)
         headers = {"X-Api-Key": "123"}
 

@@ -34,6 +34,15 @@ Get a single user
 
   GET /user/list/:id
 
+Query Params:
+
+===========  =======   ===========================
+Name         Type      Description
+===========  =======   ===========================
+id           int       The user id of the user
+email        string    The email of the user
+===========  =======   ===========================
+
 Response:
 
 .. code-block:: bash

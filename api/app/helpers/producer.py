@@ -1,9 +1,12 @@
-import os
 import json
+import os
+
+from flask import current_app
 from kafka import KafkaProducer
 
 
 def kafka_producer():
+    """Create Kafka producer."""
     host = os.environ.get("KAFKA_HOST")
     port = os.environ.get("KAFKA_PORT")
     broker = f"{host}:{port}"
@@ -15,13 +18,17 @@ def kafka_producer():
     return producer
 
 
-def send(command):
+def send(message):
+    """Send given message to Kafka broker."""
+    producer = None
     try:
         producer = kafka_producer()
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
-        respons = producer.send(topic, command)
+        producer.send(topic, message)
+        producer.flush()
     except Exception as e:
-        raise e
-    else:
-        respons.get(timeout=60)
-        return respons.is_done
+        current_app.logger.error(f"{e}")
+        raise ValueError(f"{e}")
+    finally:
+        if producer:
+            producer.close()

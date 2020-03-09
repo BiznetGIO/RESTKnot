@@ -5,6 +5,7 @@ class TestRecord:
                 return record
 
     def test_list_no_Record(self, client):
+        """Test if db contains no record."""
         headers = {"X-Api-Key": "123"}
         res = client.get("/api/domain/list", headers=headers)
         json_data = res.get_json()
@@ -12,6 +13,14 @@ class TestRecord:
         assert json_data["code"] == 404
 
     def test_add_record(self, client, mocker):
+        """Test adding record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add a record
+        - Query the db to assure it's created
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -51,6 +60,15 @@ class TestRecord:
         assert list_record_data["data"][0]["user"]["email"] == "first@company.com"
 
     def test_edit_record(self, client, mocker):
+        """Test editing record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add a record
+        - Edit a record
+        - Query the db to assure it's edited
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
@@ -94,6 +112,15 @@ class TestRecord:
         assert edited_record_data["rdata"] == "company_edited.com"
 
     def test_delete_record(self, client, mocker):
+        """Test deleting record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - List the default records
+        - Delete one of the record
+        - Query the db to assure it's deleted
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
         mocker.patch("app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 

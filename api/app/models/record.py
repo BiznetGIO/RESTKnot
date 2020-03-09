@@ -1,28 +1,35 @@
-from app.models import model
+from flask import current_app
+
 from app.helpers import helpers
-from app.models import zone as zone_model
+from app.models import model
 from app.models import type_ as type_model
+from app.models import zone as zone_model
 
 
 def get_other_data(record):
-    rdata = model.get_one(table="rdata", field="record_id", value=record["id"])
-    zone = model.get_one(table="zone", field="id", value=record["zone_id"])
-    ttl = model.get_one(table="ttl", field="id", value=record["ttl_id"])
-    type_ = model.get_one(table="type", field="id", value=record["type_id"])
+    try:
+        rdata = model.get_one(table="rdata", field="record_id", value=record["id"])
+        zone = model.get_one(table="zone", field="id", value=record["zone_id"])
+        ttl = model.get_one(table="ttl", field="id", value=record["ttl_id"])
+        type_ = model.get_one(table="type", field="id", value=record["type_id"])
 
-    rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
-    zone = helpers.exclude_keys(zone, {"id", "is_committed", "user_id", "record_id"})
+        rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
+        zone = helpers.exclude_keys(
+            zone, {"id", "is_committed", "user_id", "record_id"}
+        )
 
-    data = {
-        "id": record["id"],
-        "owner": record["owner"],
-        "rdata": rdata["rdata"],
-        "zone": zone["zone"],
-        "type": type_["type"],
-        "ttl": ttl["ttl"],
-    }
+        data = {
+            "id": record["id"],
+            "owner": record["owner"],
+            "rdata": rdata["rdata"],
+            "zone": zone["zone"],
+            "type": type_["type"],
+            "ttl": ttl["ttl"],
+        }
 
-    return data
+        return data
+    except Exception as e:
+        current_app.logger.error(f"{e}")
 
 
 def is_exists(record_id):

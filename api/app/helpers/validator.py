@@ -10,11 +10,6 @@
 # ZONE
 # SOA
 #
-# OWNER
-# 1. maximum length is 255
-# 2. maximum of each part (separated by .) is 63
-# 3. can't starts/ends with -
-# 4. can't ends with .
 #
 #
 # Credits:
@@ -24,8 +19,8 @@
 # --------------------------------------------------------------------
 
 import re
+import string
 from ipaddress import ip_address
-
 
 RE_EMAIL = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 RE_ZONE = "^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$"
@@ -52,6 +47,7 @@ def is_valid_mx(mx_rdata):
     msg = "Bad MX RDATA"
 
     preference = mx_rdata.split(" ")[0]
+    hostname = mx_rdata.split(" ")[1]
 
     try:
         # we need to improve this validation.
@@ -60,6 +56,11 @@ def is_valid_mx(mx_rdata):
             pass
         else:
             raise ValueError(msg)
+    except Exception:
+        raise ValueError(msg)
+
+    try:
+        is_valid_cname(hostname)
     except Exception:
         raise ValueError(msg)
 
@@ -83,6 +84,16 @@ def is_valid_zone(domain_name):
         raise ValueError("Bad Domain Name")
 
 
+def is_valid_txt(txt_rdata):
+    """Check if it's a valid TXT rdata."""
+    if len(txt_rdata) > 255:
+        raise ValueError("Bad TXT RDATA")
+
+    for char in txt_rdata:
+        if char not in string.printable:
+            raise ValueError("Bad TXT RDATA")
+
+
 def is_valid_soa(soa_rdata):
     """Simple function to check SOA RDATA."""
     rdatas = soa_rdata.split(" ")
@@ -101,7 +112,15 @@ def is_valid_soa(soa_rdata):
 
 
 def is_valid_owner(owner):
-    """Check if it's a valid owner."""
+    """Check if it's a valid owner.
+
+    Rules:
+    - owner label can't end with dot (".")
+    - owner label can't ends/starts with dash ("-")
+    - owner can't exceed 255 characters
+    - owner label can't exceed 63 characters
+    - owner can't contains parens ("()")
+    """
 
     def check_hypen(label):
         if any((label.endswith("."), label.endswith("-"), label.startswith("-"))):
@@ -121,6 +140,9 @@ def is_valid_owner(owner):
             if len(label) > 63:
                 raise ValueError("Bad OWNER")
 
+    if any(char in "()" for char in owner):
+        raise ValueError("Bad OWNER")
+
 
 functions = {
     "A": is_valid_ip,
@@ -131,11 +153,17 @@ functions = {
     "EMAIL": is_valid_email,
     "ZONE": is_valid_zone,
     "SOA": is_valid_soa,
+    "TXT": is_valid_txt,
     "OWNER": is_valid_owner,
 }
 
 
 def validate(rtype, rdata):
+    if not rdata:
+        raise ValueError(f"RDATA can't be empty")
+
     rtype = rtype.upper()
     if rtype in functions.keys():
         functions[rtype](rdata)
+    else:
+        raise ValueError(f"Unsupported Record Type")

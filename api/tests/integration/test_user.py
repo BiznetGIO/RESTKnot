@@ -1,5 +1,6 @@
 class TestUser:
     def test_list_no_user(self, client):
+        """Test if db contains no user."""
         headers = {"X-Api-Key": "123"}
         res = client.get("/api/user/list", headers=headers)
         json_data = res.get_json()
@@ -7,6 +8,12 @@ class TestUser:
         assert json_data["code"] == 404
 
     def test_crate_user(self, client):
+        """Create user from its endpoint.
+
+        Then:
+        - Check if the response appropriate
+        - Query the db to assure it's created
+        """
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -23,6 +30,12 @@ class TestUser:
         assert "first@company.com" in db_data["data"][0].values()
 
     def test_edit_user(self, client):
+        """Edit user from its endpoint.
+
+        Then:
+        - Check if the response appropriate
+        - Query the db to assure it's edited
+        """
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -42,6 +55,12 @@ class TestUser:
         assert "first_edited@company.com" in db_data["data"][0].values()
 
     def test_delete_user(self, client):
+        """Delete user from its endpoint.
+
+        Then:
+        - Check if the response appropriate
+        - Query the db to assure it's deleted
+        """
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}
@@ -58,6 +77,10 @@ class TestUser:
         assert db_data["code"] == 404
 
     def test_duplicate_email(self, client):
+        """Create multiple user with the same email.
+
+        Must be failed.
+        """
         headers = {"X-Api-Key": "123"}
 
         data = {"email": "first@company.com"}

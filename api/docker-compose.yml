@@ -26,9 +26,12 @@ services:
             # change according to your yaml server config location
             - RESTKNOT_CLUSTER_FILE=/rknt/servers.yaml
             - RESTKNOT_API_KEY=123
+            - RESTKNOT_LOG_FILE=/restknot-data/restknot-api.log
         command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
-            - ~/.config/restknot/:/rknt
+            # on CentOS family you need to add `:Z`
+            - ~/.config/restknot/:/rknt:Z
+            - ~/restknot-data/:/restknot-data:Z
         links:
             - zookeeper
             - kafka
@@ -47,5 +50,5 @@ services:
         ports:
           - "26257:26257"
         volumes:
-          - /cockroach-data:/cockroach/cockroach-data
+          - /cockroach-data:/cockroach/cockroach-data:Z
 

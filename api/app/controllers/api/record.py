@@ -1,19 +1,17 @@
+from flask import current_app
 from flask_restful import Resource, reqparse
-from app.vendors.rest import response
-from app.models import model
-from app.models import zone as zone_model
-from app.models import record as record_model
-from app.models import type_ as type_model
-from app.models import ttl as ttl_model
-from app.helpers import validator
+
+from app.helpers import command, helpers, rules, validator
 from app.middlewares import auth
-from app.helpers import command
-from app.helpers import helpers
-from app.helpers import rules
+from app.models import model
+from app.models import record as record_model
+from app.models import ttl as ttl_model
+from app.models import type_ as type_model
+from app.models import zone as zone_model
+from app.vendors.rest import response
 
 
 def update_serial(zone, increment="01"):
-    # TODO max increment is 99
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
@@ -46,7 +44,8 @@ class GetRecordData(Resource):
 
             return response(200, data=records_detail)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class GetRecordDataId(Resource):
@@ -60,10 +59,12 @@ class GetRecordDataId(Resource):
             data = record_model.get_other_data(record)
             return response(200, data=data)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordAdd(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def post(self):
         """Add new record.
@@ -96,14 +97,14 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_add(rtype, zone_id, type_id, owner)
+            rules.check_add(rtype, zone_id, type_id, owner, rdata)
         except Exception as e:
             return response(409, message=f"{e}")
 
         try:
             # rtype no need to be validated & no need to check its length
             # `get_typeid` will raise error for non existing rtype
-            validator.validate(rtype.upper(), rdata)
+            validator.validate(rtype, rdata)
             validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
@@ -131,10 +132,12 @@ class RecordAdd(Resource):
             data = record_model.get_other_data(record)
             return response(201, data=data)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordEdit(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def put(self, record_id):
         parser = reqparse.RequestParser()
@@ -160,12 +163,12 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_edit(rtype, zone_id, type_id, owner, record_id)
+            rules.check_edit(rtype, zone_id, type_id, owner, rdata, record_id)
         except Exception as e:
             return response(409, message=f"{e}")
 
         try:
-            validator.validate(rtype.upper(), rdata)
+            validator.validate(rtype, rdata)
             validator.validate("owner", owner)
         except Exception as e:
             return response(422, message=f"{e}")
@@ -201,10 +204,12 @@ class RecordEdit(Resource):
             data_ = record_model.get_other_data(record)
             return response(200, data=data_)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class RecordDelete(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def delete(self, record_id):
         """Delete specific record.
@@ -232,4 +237,5 @@ class RecordDelete(Resource):
             model.delete(table="record", field="id", value=record_id)
             return response(204)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)

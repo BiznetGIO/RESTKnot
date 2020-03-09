@@ -1,11 +1,14 @@
-import yaml
+import json
 import os
 
-from app.models import model
+import yaml
+
 from app.helpers import producer
+from app.models import model
 
 
 def get_other_data(record_id):
+    """Return other record data from given record id."""
     try:
         record = model.get_one(table="record", field="id", value=record_id)
 
@@ -23,6 +26,7 @@ def get_other_data(record_id):
 
 
 def generate_command(**kwargs):
+    """Return dictionary of given keywords & values."""
     zone = kwargs.get("zone_name")
     owner = kwargs.get("owner")
     rtype = kwargs.get("rtype")
@@ -68,13 +72,18 @@ def set_zone(record_id, command):
     record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_name = zone["zone"]
 
+    # escape space and double quote in txt rdata
+    rdata = rdata["rdata"]
+    if type_["type"] == "TXT":
+        rdata = json.dumps(rdata)
+
     zone_begin = {"cmd": "zone-begin", "zone": zone_name}
     zone_set = generate_command(
         zone=zone_name,
         owner=record["owner"],
         rtype=type_["type"],
         ttl=ttl["ttl"],
-        rdata=rdata["rdata"],
+        rdata=rdata,
         command=command,
     )
     zone_commit = {"cmd": "zone-commit", "zone": zone_name}
@@ -98,13 +107,19 @@ def set_default_zone(record_ids):
     zone_sets = []
     for record_id in record_ids:
         record, zone, type_, ttl, rdata = get_other_data(record_id)
+
+        # escape space and double quote in txt rdata
+        rdata = rdata["rdata"]
+        if type_["type"] == "TXT":
+            rdata = json.dumps(rdata)
+
         zone_name = zone["zone"]
         zone_set = generate_command(
             zone=zone_name,
             owner=record["owner"],
             rtype=type_["type"],
             ttl=ttl["ttl"],
-            rdata=rdata["rdata"],
+            rdata=rdata,
             command="zone-set",
         )
         zone_sets.append(zone_set)
@@ -124,6 +139,7 @@ def set_default_zone(record_ids):
 
 
 def cluster_file():
+    """Return cluster file path."""
     path = os.environ.get("RESTKNOT_CLUSTER_FILE")
     if not path:
         raise ValueError(f"RESTKNOT_CLUSTER_FILE is not set")
@@ -136,13 +152,14 @@ def cluster_file():
 
 
 def get_clusters():
+    """Return cluster file content."""
     file_ = cluster_file()
     clusters = yaml.safe_load(open(file_))
     return clusters
 
 
 def delegate(zone, zone_id, command, agent_type):
-    """Delegation config"""
+    """Send delegation config command with JSON structure to broker."""
     clusters = get_clusters()
     cluster = clusters[agent_type]
 

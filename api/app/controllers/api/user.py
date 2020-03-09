@@ -1,9 +1,10 @@
+from flask import current_app, request
 from flask_restful import Resource, reqparse
-from app.vendors.rest import response
-from app.models import model
-from app.helpers import helpers
+
+from app.helpers import helpers, validator
 from app.middlewares import auth
-from app.helpers import validator
+from app.models import model
+from app.vendors.rest import response
 
 
 class GetUserData(Resource):
@@ -15,20 +16,30 @@ class GetUserData(Resource):
                 return response(404)
 
             return response(200, data=users)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
 class GetUserDataId(Resource):
     @auth.auth_required
-    def get(self, user_id):
+    def get(self):
+        user_id = request.args.get("id")
+        email = request.args.get("email")
         try:
-            user = model.get_one(table="user", field="id", value=user_id)
+            if not any((user_id, email)):
+                return response(422, "Problems parsing parameters")
+
+            if user_id:
+                user = model.get_one(table="user", field="id", value=user_id)
+            if email:
+                user = model.get_one(table="user", field="email", value=email)
             if not user:
                 return response(404)
 
             return response(200, data=user)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -54,7 +65,8 @@ class UserSignUp(Resource):
             inserted_id = model.insert(table="user", data=data)
             data_ = {"id": inserted_id, **data}
             return response(201, data=data_)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -82,7 +94,8 @@ class UserUpdate(Resource):
                 return response(404)
 
             return response(200, data=data.get("data"))
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -95,5 +108,6 @@ class UserDelete(Resource):
                 return response(404)
 
             return response(204)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)

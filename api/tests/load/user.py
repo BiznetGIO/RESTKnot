@@ -1,5 +1,6 @@
 import random
-from locust import HttpLocust, TaskSet, task, between
+
+from locust import HttpLocust, TaskSet, between, task
 
 
 class UserBehavior(TaskSet):

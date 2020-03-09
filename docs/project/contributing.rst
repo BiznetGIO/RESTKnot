@@ -32,27 +32,8 @@ Go to the API directory
 
 
 RESTKnot API consume the configuration from OS environment variables. So make
-sure you have set them. Example:
-
-
-.. code-block:: bash
-
-  export FLASK_DEBUG=1
-  export APP_HOST=0.0.0.0
-  export APP_PORT=5000
-  export DB_NAME=knotdb
-  export DB_HOST=localhost
-  export DB_PORT=26257
-  export DB_USER=root
-  export DB_SSL=disable
-  export KAFKA_HOST=127.0.01
-  export KAFKA_PORT=9092
-  export DEFAULT_NS='satu.examplens.id. dua.examplens.id.'
-  export DEFAULT_SOA_RDATA='satu.examplens.id. hostmaster.examplens.id. 10800 3600 604800 38400'
-  export RESTKNOT_CLUSTER_FILE=/home/user/.config/restknot/servers.yaml
-  export RESTKNOT_API_KEY=123
-  RESTKNOT_KAFKA_TOPIC=domaindata
-
+sure you have set them. Take a look into :code:`.env.example` and change the default
+values according to your situation.
 
 Then run the app:
 
@@ -94,21 +75,44 @@ Go to the Agent directory
 
   $ cd agent/
 
-Set appropriate configurations. Example:
-
-.. code-block:: bash
-
-  export RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
-  export RESTKNOT_KNOT_SOCKET=/run/knot/knot.sock
-  export RESTKNOT_KAFKA_BROKER=localhost
-  export RESTKNOT_KAFKA_PORTS=9092
-  export RESTKNOT_KAFKA_TOPIC=domaindata
-  export RESTKNOT_KAFKA_FLAGS=master
-  export RESTKNOT_KAFKA_GROUP=cmgz_master
+Set appropriate configurations. Take a look at :code:`.env.example` in agent directory
+and run them manually. At this moment RESTKNOT Agent doesn't load them automatically.
 
 You can run the Agent in user mode, but some OS need superuser in order for knot
-to create DNS records.
+to create DNS records. `-E` argument is used to supply regular user OS
+environment to sudo user.
 
 .. code-block:: bash
 
   $ sudo -E ~/.virtualenvs/rest-knot/bin/dnsagent start master
+
+Runing the project using Docker
+-------------------------------
+
+In order to run the project using docker. First you need to build both `api` and
+`agent` image, then run them using docker compose. To see how to build them,
+take a look at `Deployment Steps` section.
+
+To run `api` (flask), `agent` (cli), and `broker` (kafka) container. You need to
+provide the bridged network in their respective docker compose file. e.g:
+
+.. code-block:: yaml
+
+     kafka:
+        image: wurstmeister/kafka
+        ports:
+            - '9092:9092'
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+        networks:  # <--- add the network to kafka
+            - agent_rknt-agent-net
+
+   # put at the bottom of the file
+   networks:
+       agent_rknt-agent-net:
+           external: true
+
+
+Always keep in mind that you can't use :code:`localhost` or :code:`127.0.0.1` in
+:code:`KAFKA_ADVERTISED_HOST_NAME` otherwise it won't work.

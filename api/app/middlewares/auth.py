@@ -1,10 +1,14 @@
 import os
-from flask import request
-from app.vendors.rest import response
 from functools import wraps
+
+from flask import request
+
+from app.vendors.rest import response
 
 
 def auth_required(f):
+    """Decorate given function with authentication check."""
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         user_key = request.headers.get("X-API-Key", None)

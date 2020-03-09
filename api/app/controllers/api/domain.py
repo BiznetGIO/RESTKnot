@@ -1,15 +1,15 @@
 import os
+
+from flask import current_app, request
 from flask_restful import Resource, reqparse
 
-from app.vendors.rest import response
-from app.models import model
-from app.models import zone as zone_model
-from app.models import record as record_model
-from app.models import domain as domain_model
-from app.helpers import helpers
-from app.helpers import validator
-from app.helpers import command
+from app.helpers import command, helpers, validator
 from app.middlewares import auth
+from app.models import domain as domain_model
+from app.models import model
+from app.models import record as record_model
+from app.models import zone as zone_model
+from app.vendors.rest import response
 
 
 def insert_zone(zone, user_id):
@@ -110,20 +110,33 @@ class GetDomainData(Resource):
 
             return response(200, data=domains_detail)
         except Exception as e:
-            return response(500, f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class GetDomainDataId(Resource):
     @auth.auth_required
-    def get(self, zone_id):
+    def get(self):
+        zone_id = request.args.get("id")
+        zone_name = request.args.get("name")
+
+        if not any((zone_id, zone_name)):
+            return response(422, "Problems parsing parameters")
+
         try:
-            zone = model.get_one(table="zone", field="id", value=zone_id)
+            if zone_id:
+                zone = model.get_one(table="zone", field="id", value=zone_id)
+
+            if zone_name:
+                zone = model.get_one(table="zone", field="zone", value=zone_name)
+
             if not zone:
                 return response(404)
 
             data = domain_model.get_other_data(zone)
             return response(200, data=data)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
 
 
@@ -142,10 +155,12 @@ class GetDomainByUser(Resource):
 
             return response(200, data=domains_detail)
         except Exception as e:
-            return response(500, f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class AddDomain(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def post(self):
         """Add new domain (zone) with additional default record.
@@ -192,10 +207,12 @@ class AddDomain(Resource):
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
         except Exception as e:
-            return response(500, message=f"{e}")
+            current_app.logger.error(f"{e}")
+            return response(500)
 
 
 class DeleteDomain(Resource):
+    @helpers.check_producer
     @auth.auth_required
     def delete(self):
         """Remove domain (zone) and all its related records."""
@@ -223,5 +240,6 @@ class DeleteDomain(Resource):
             model.delete(table="zone", field="id", value=zone_id)
 
             return response(204, data=zone)
-        except Exception:
+        except Exception as e:
+            current_app.logger.error(f"{e}")
             return response(500)
