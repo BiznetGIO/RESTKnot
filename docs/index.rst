@@ -13,3 +13,4 @@ Table of contents
    deploy.rst
    project.rst
    howto.rst
+   knotintro.rst
