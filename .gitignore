@@ -109,4 +109,3 @@ ENV/
 
 # RestKnot
 **/integration/schema.sql
-servers.yml
