@@ -1,0 +1,18 @@
+# The value here follows the knotc command, not knot.conf
+master:
+    notify:
+        - knot-slave-1
+        - knot-slave-2
+
+    acl:
+        - knot-slave-1
+        - knot-slave-2
+
+slave:
+    master:
+        - knot-master-1
+        - knot-master-2
+
+    acl:
+        - knot-master-1
+        - knot-master-2
