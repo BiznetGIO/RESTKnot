@@ -150,7 +150,7 @@ def cluster_file():
     if is_exists:
         return path
     else:
-        raise ValueError(f"Clustering File Not Found")
+        raise ValueError(f"Clustering File Not Found: {path}")
 
 
 def get_clusters():
