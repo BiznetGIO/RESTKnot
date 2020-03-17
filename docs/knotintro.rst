@@ -205,7 +205,7 @@ two data from different sources, you can put them together manually in your
     $ # in new machine
     $ sudo systemctl stop knot
     $ # import exiting config to the confdb
-    $ sudo -u knot knotc -C /var/lib/knot/confdb/ conf-import /path/to/old.conf
+    $ sudo -u knot knotc -f -C /var/lib/knot/confdb/ conf-import /path/to/old.conf
     $ sudo du -sh confdb/ # check if import run well
       60K     confdb/
 
