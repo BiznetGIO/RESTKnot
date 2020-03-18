@@ -13,7 +13,10 @@ def get_other_data(record):
         ttl = model.get_one(table="ttl", field="id", value=record["ttl_id"])
         type_ = model.get_one(table="type", field="id", value=record["type_id"])
 
-        rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
+        if rdata:
+            rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
+            rdata = rdata.get("rdata")
+
         zone = helpers.exclude_keys(
             zone, {"id", "is_committed", "user_id", "record_id"}
         )
@@ -21,7 +24,7 @@ def get_other_data(record):
         data = {
             "id": record["id"],
             "owner": record["owner"],
-            "rdata": rdata["rdata"],
+            "rdata": rdata,
             "zone": zone["zone"],
             "type": type_["type"],
             "ttl": ttl["ttl"],
