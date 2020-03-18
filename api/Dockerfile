@@ -13,5 +13,8 @@ COPY ./requirements.txt /restknotapi/requirements.txt
 RUN pip3 install -r /restknotapi/requirements.txt
 COPY . /restknotapi
 
+RUN apk del gcc linux-headers musl-dev && \
+    rm -rf /var/cache/apk/*
+
 EXPOSE 5000
 CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]
