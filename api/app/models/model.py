@@ -72,27 +72,23 @@ def get_one(table, field=None, value=None):
 
 def insert(table, data=None):
     cursor, connection = get_db()
-    value = ""
-    column = ""
-    str_placeholer = ""
+    rows = []
+    rows_value = []
 
-    # arrange column and values
+    # arrange row and values
     for row in data:
-        column += row + ","
-        value += f"{data[row]},"
-        str_placeholer += "%s,"
-    # omit ',' at the end
-    column = column[:-1]
-    value = value[:-1]
-    str_placeholer = str_placeholer[:-1]
+        rows.append(row)
+        rows_value.append(str(data[row]))
+
+    str_placeholer = ["%s"] * len(rows)
 
     try:
-        query = (
-            f'INSERT INTO "{table}" ({column}) VALUES ({str_placeholer}) RETURNING *'
-        )
-        value_as_tuple = tuple(value.split(","))
+        rows = ",".join(rows)
+        str_placeholer = ",".join(str_placeholer)
+
+        query = f'INSERT INTO "{table}" ({rows}) VALUES ({str_placeholer}) RETURNING *'
         cursor.prepare(query)
-        cursor.execute((value_as_tuple))
+        cursor.execute((tuple(rows_value)))
     except (Exception, psycopg2.DatabaseError) as error:
         connection.rollback()
         raise ValueError(f"{error}")
