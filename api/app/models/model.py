@@ -72,27 +72,23 @@ def get_one(table, field=None, value=None):
 
 def insert(table, data=None):
     cursor, connection = get_db()
-    value = ""
-    column = ""
-    str_placeholer = ""
+    rows = []
+    rows_value = []
 
-    # arrange column and values
+    # arrange row and values
     for row in data:
-        column += row + ","
-        value += f"{data[row]},"
-        str_placeholer += "%s,"
-    # omit ',' at the end
-    column = column[:-1]
-    value = value[:-1]
-    str_placeholer = str_placeholer[:-1]
+        rows.append(row)
+        rows_value.append(str(data[row]))
+
+    str_placeholer = ["%s"] * len(rows)
 
     try:
-        query = (
-            f'INSERT INTO "{table}" ({column}) VALUES ({str_placeholer}) RETURNING *'
-        )
-        value_as_tuple = tuple(value.split(","))
+        rows = ",".join(rows)
+        str_placeholer = ",".join(str_placeholer)
+
+        query = f'INSERT INTO "{table}" ({rows}) VALUES ({str_placeholer}) RETURNING *'
         cursor.prepare(query)
-        cursor.execute((value_as_tuple))
+        cursor.execute((tuple(rows_value)))
     except (Exception, psycopg2.DatabaseError) as error:
         connection.rollback()
         raise ValueError(f"{error}")
@@ -104,15 +100,21 @@ def insert(table, data=None):
 
 def update(table, data=None):
     cursor, connection = get_db()
-    value = ""
-    rows = data["data"]
-    for row in rows:
-        value += row + "='%s'," % str(rows[row])
-    _set = value[:-1]
-    field = list(data["where"].keys())[0]
+    data_ = data["data"]
+    rows = []
+    set_value = []
+
+    for row in data_:
+        rows.append(row)
+        row_value = str(data_[row])
+        set_value.append(f"{row}='{row_value}'")
+
+    field = list(data["where"].keys())[0]  # must be one
+    field_data = data["where"][field]
+
     try:
-        field_data = data["where"][field]
-        query = f'UPDATE "{table}" SET {_set} WHERE {field}=%(field_data)s'
+        set_ = ",".join(set_value)
+        query = f'UPDATE "{table}" SET {set_} WHERE {field}=%(field_data)s'
         cursor.prepare(query)
         cursor.execute({"field_data": field_data})
     except (Exception, psycopg2.DatabaseError) as error:
