@@ -111,6 +111,99 @@ class TestRecord:
         assert list_record_data["code"] == 200
         assert edited_record_data["rdata"] == "company_edited.com"
 
+    def test_edit_record_no_ttl_change(self, client, mocker):
+        """Test editing record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Edit a record with the same TTL
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        # edit record
+        records = list_record_data["data"][0]["records"]
+        cname_record = self.get_record(records, "CNAME")
+        cname_record_id = cname_record["id"]
+        data = {
+            "zone": "company.com",
+            "owner": "www",
+            "rtype": "CNAME",
+            "rdata": "company.com.",
+            "ttl": "3600",
+        }
+        res = client.put(
+            f"/api/record/edit/{cname_record_id}", data=data, headers=headers
+        )
+        edit_record_data = res.get_json()
+
+        assert edit_record_data["code"] == 409
+        assert edit_record_data["message"] == "The record already exists"
+
+    def test_edit_record_with_ttl_change(self, client, mocker):
+        """Test editing record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Edit a record with the different TTL
+        - Query the db to assure it's edited
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        # edit record
+        records = list_record_data["data"][0]["records"]
+        cname_record = self.get_record(records, "CNAME")
+        cname_record_id = cname_record["id"]
+        data = {
+            "zone": "company.com",
+            "owner": "www",
+            "rtype": "CNAME",
+            "rdata": "company.com.",
+            "ttl": "300",
+        }
+        res = client.put(
+            f"/api/record/edit/{cname_record_id}", data=data, headers=headers
+        )
+        edit_record_data = res.get_json()
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        records = list_record_data["data"][0]["records"]
+        edited_record_data = self.get_record(records, "CNAME")
+
+        assert edit_record_data["code"] == 200
+        assert edit_record_data["data"]["ttl"] == "300"
+
+        assert list_record_data["code"] == 200
+        assert edited_record_data["ttl"] == "300"
+
     def test_delete_record(self, client, mocker):
         """Test deleting record from its endpoint.
 
@@ -151,3 +244,110 @@ class TestRecord:
         assert delete_res.status_code == 204
         # it must be 3 after deletion
         assert len(records) == 3
+
+    def test_edit_record_no_ttl_change_MX(self, client, mocker):
+        """Test editing record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add MX record
+        - Edit a record with the same TTL
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+
+        # add record
+        data = {
+            "zone": "company.com",
+            "owner": "mx1",
+            "rtype": "MX",
+            "rdata": "10 mail.example.com.",
+            "ttl": 7200,
+        }
+        res = client.post("/api/record/add", data=data, headers=headers)
+        json_data = res.get_json()
+        record_id = json_data["data"]["id"]
+
+        # edit record
+        data = {
+            "zone": "company.com",
+            "owner": "mx1",
+            "rtype": "MX",
+            "rdata": "10 mail.example.com.",
+            "ttl": 7200,
+        }
+
+        res = client.put(f"/api/record/edit/{record_id}", data=data, headers=headers)
+        edit_record_data = res.get_json()
+
+        assert edit_record_data["code"] == 409
+        assert edit_record_data["message"] == "The record already exists"
+
+    def test_edit_record_with_ttl_change_MX(self, client, mocker):
+        """Test editing record from its endpoint.
+
+        - Create a User
+        - Create a domain (with default SOA,NS,CNAME created)
+        - Add MX record
+        - Edit a record with the different TTL
+        - Query the db to assure it's edited
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+
+        # add record
+        data = {
+            "zone": "company.com",
+            "owner": "mx1",
+            "rtype": "MX",
+            "rdata": "10 mail.example.com.",
+            "ttl": 7200,
+        }
+        res = client.post("/api/record/add", data=data, headers=headers)
+        json_data = res.get_json()
+        record_id = json_data["data"]["id"]
+
+        # edit record
+        data = {
+            "zone": "company.com",
+            "owner": "mx1",
+            "rtype": "MX",
+            "rdata": "10 mail.example.com.",
+            "ttl": 14400,
+        }
+        res = client.put(f"/api/record/edit/{record_id}", data=data, headers=headers)
+        edit_record_data = res.get_json()
+
+        # list record
+        res = client.get("/api/domain/list", headers=headers)
+        list_record_data = res.get_json()
+        records = list_record_data["data"][0]["records"]
+        edited_record_data = self.get_record(records, "MX")
+
+        assert edit_record_data["code"] == 200
+        assert edit_record_data["data"]["ttl"] == "14400"
+
+        assert list_record_data["code"] == 200
+        assert edited_record_data["ttl"] == "14400"

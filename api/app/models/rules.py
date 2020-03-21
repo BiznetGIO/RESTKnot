@@ -30,11 +30,19 @@ class Rules:
 
         return False
 
-    def is_duplicate(self, zone_id, type_id, owner, rdata):
+    def is_duplicate(self, zone_id, type_id, owner, rdata, ttl_id):
         """Check duplicate record exists."""
         base_query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND'
-        query = base_query + '"type_id"=%(type_id)s AND "owner"=%(owner)s'
-        value = {"zone_id": zone_id, "type_id": type_id, "owner": owner}
+        query = (
+            base_query
+            + '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "ttl_id"=%(ttl_id)s'
+        )
+        value = {
+            "zone_id": zone_id,
+            "type_id": type_id,
+            "owner": owner,
+            "ttl_id": ttl_id,
+        }
 
         records = model.plain_get("record", query, value)
         for record in records:

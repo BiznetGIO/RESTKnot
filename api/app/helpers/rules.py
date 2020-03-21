@@ -16,17 +16,17 @@ from app.models import rules as rules_model
 from app.models import type_ as type_model
 
 
-def is_allowed(zone_id, type_id, owner, rdata, record_id=None):
+def is_allowed(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
     """A Generic function to check is given record is allowed.
 
     1. Check for duplicate record
     """
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
-    rules.is_duplicate(zone_id, type_id, owner, rdata)
+    rules.is_duplicate(zone_id, type_id, owner, rdata, ttl_id)
 
 
-def is_allowed_cname(zone_id, type_id, owner, rdata):
+def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
     """Check is given CNAME record is allowed.
 
     1. Check for duplicate record
@@ -34,7 +34,7 @@ def is_allowed_cname(zone_id, type_id, owner, rdata):
     3. Check for the same A owner
     """
     #  duplicate record NOT allowed
-    is_allowed(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
@@ -56,14 +56,14 @@ def is_allowed_cname(zone_id, type_id, owner, rdata):
         raise ValueError("An A record already exist with that owner")
 
 
-def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
+def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
     """Check is given A record is allowed.
 
     1. Check for duplicate record
     2. Check for the same CNAME owner
     """
     #  duplicate record NOT allowed
-    is_allowed(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 2. owner CAN'T coexist with the same CNAME owner
     cname_type_id = type_model.get_typeid_by_rtype("CNAME")
@@ -76,14 +76,14 @@ def is_allowed_a(zone_id, type_id, owner, rdata, record_id=None):
         raise ValueError("A CNAME record already exist with that owner")
 
 
-def is_allowed_cname_edit(zone_id, type_id, owner, rdata, record_id=None):
+def is_allowed_cname_edit(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
     """Check is given CNAME record is allowed.
 
     This function separated from `cname_add` because it needs to exclude its id
     while searching for other records.
     """
     #  duplicate record NOT allowed
-    is_allowed(zone_id, type_id, owner, rdata)
+    is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 1. same owner NOT allowed
     query = '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "id"<>%(record_id)s'
@@ -137,15 +137,15 @@ functions_edit = {
 }
 
 
-def check_add(rtype, zone_id, type_id, owner, rdata):
+def check_add(rtype, zone_id, type_id, owner, rdata, ttl_id):
     rtype = rtype.upper()
     if rtype in functions_add.keys():
-        functions_add[rtype](zone_id, type_id, owner, rdata)
+        functions_add[rtype](zone_id, type_id, owner, rdata, ttl_id)
     else:
         raise ValueError(f"Unsupported Record Type")
 
 
-def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
+def check_edit(rtype, zone_id, type_id, owner, rdata, ttl_id, record_id=None):
     """Return function when user editing A record.
 
     Some function need dummy `record_id` parameters to match with other function
@@ -153,6 +153,6 @@ def check_edit(rtype, zone_id, type_id, owner, rdata, record_id=None):
     """
     rtype = rtype.upper()
     if rtype in functions_edit.keys():
-        functions_edit[rtype](zone_id, type_id, owner, rdata, record_id)
+        functions_edit[rtype](zone_id, type_id, owner, rdata, ttl_id, record_id)
     else:
         raise ValueError(f"Unsupported Record Type")
