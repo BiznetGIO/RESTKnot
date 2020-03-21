@@ -27,7 +27,7 @@ class TestCNAMERules:
             "owner": "www",
             "rtype": "CNAME",
             "rdata": "company.com.",
-            "ttl": 7200,
+            "ttl": 3600,
         }
         res = client.post("/api/record/add", data=data, headers=headers)
         add_record_data = res.get_json()
@@ -65,7 +65,7 @@ class TestCNAMERules:
             "owner": "www1",
             "rtype": "CNAME",
             "rdata": "company.com.",
-            "ttl": 7200,
+            "ttl": 3600,
         }
         res = client.post("/api/record/add", data=data, headers=headers)
         json_data = res.get_json()
@@ -77,7 +77,7 @@ class TestCNAMERules:
             "owner": "www",
             "rtype": "CNAME",
             "rdata": "company.com.",
-            "ttl": 7200,
+            "ttl": 3600,
         }
         res = client.put(f"/api/record/edit/{record_id}", data=data, headers=headers)
         edit_record_data = res.get_json()

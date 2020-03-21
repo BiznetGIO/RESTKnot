@@ -97,7 +97,7 @@ class RecordAdd(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_add(rtype, zone_id, type_id, owner, rdata)
+            rules.check_add(rtype, zone_id, type_id, owner, rdata, ttl_id)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -163,7 +163,7 @@ class RecordEdit(Resource):
             return response(404, message=f"{e}")
 
         try:
-            rules.check_edit(rtype, zone_id, type_id, owner, rdata, record_id)
+            rules.check_edit(rtype, zone_id, type_id, owner, rdata, ttl_id, record_id)
         except Exception as e:
             return response(409, message=f"{e}")
 

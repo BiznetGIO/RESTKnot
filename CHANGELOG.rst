@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+0.7.1 (2020-03-22)
+==================
+
+- Fix: include TTL as a component of a zone change
+
 0.7.0 (2020-03-17)
 ==================
 
