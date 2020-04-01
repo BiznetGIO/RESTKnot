@@ -1,7 +1,7 @@
 version: '3'
 services:
   restknot-agent:
-    image: restknot-agent:0.7.0
+    image: biznetgio/restknot-agent:0.7.0
     environment:
       - RESTKNOT_AGENT_TYPE=master
       # the libknot.so location is distro dependant.

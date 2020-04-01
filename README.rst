@@ -76,16 +76,15 @@ Delete a Zone
 Quick Start
 -----------
 
-To deploy the project, read the `deployment guide
-<https://restknot.readthedocs.io/en/latest/project/contributing.html#runing-the-project-locally>`_.
-To run locally to make a contribution, read `how to run locally guide <https://restknot.readthedocs.io/en/latest/project/contributing.html#runing-the-project-locally>`_.
+To deploy the project, read the `deployment guide <https://restknot.readthedocs.io/en/stable/deploy.html>`_.
+To run locally to make a contribution, read `how to run locally guide <https://restknot.readthedocs.io/en/stable/project/contributing.html#runing-the-project-locally>`_.
 
 .. end-of-readme-usage
 
 Project information
 -------------------
 
-* `Documentation <https://restknot.readthedocs.io/en/latest/>`_
-* `Contributing <https://restknot.readthedocs.io/en/latest/project/contributing.html/>`_
-* `Changelog <CHANGELOG.rst>`_
-* `License <LICENSE>`_
+* `Documentation <https://restknot.readthedocs.io/en/stable/index.html>`_
+* `Contributing <https://restknot.readthedocs.io/en/stable/project/contributing.html>`_
+* `Changelog <https://restknot.readthedocs.io/en/stable/project/changelog.html>`_
+* `License <https://restknot.readthedocs.io/en/stable/project/license.html>`_

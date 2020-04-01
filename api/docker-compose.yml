@@ -1,7 +1,7 @@
 version: '3'
 services:
     restknot-api:
-        image: restknot-api:0.7.0
+        image: biznetgio/restknot-api:0.7.0
         ports:
             - '5000:5000'
         environment:
