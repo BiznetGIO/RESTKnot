@@ -1,31 +1,11 @@
 Deployment Steps
 ================
 
-Build docker images
--------------------
-
-.. code-block:: bash
-
-  $ docker build -f Dockerfile -t restknot-api:0.7.0 .
-  $ docker build -f Dockerfile -t restknot-agent:0.7.0 .
-
-Export image to tar
--------------------
-
-.. code-block:: bash
-
-
-  $ docker save restknot-api:0.7.0 > restknot-api-0.7.0.tar
-  $ docker save restknot-agent:0.7.0 > restknot-agent-0.7.0.tar
-
-
-Update the playbook value to corresponds you tar locations.
-
 Prepare the initial database
 ----------------------------
 
 We've use bootstrap script to initialize database on remote machine, but it's
-error prone and hard to maintain. so we come up with this simpler way
+error prone and hard to maintain. so we come up with this simpler way.
 
 .. code-block:: bash
 
@@ -39,18 +19,17 @@ error prone and hard to maintain. so we come up with this simpler way
   # create the table
   $ cockroach sql --insecure --database=knotdb < schema.sql
 
-
-Update the playbook value to corresponds you initial database locations.
+Create the initial database on your local side, then update the corresponding
+playbook tasks to mach your initial database locations.
 
 Prepare application configs
 ---------------------------
 
 You need :code:`servers.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains list of your masters and slaves name, see
-:download:`deploy/examples/servers.yaml` example, and :code:`knot.conf` serve as a
-config for you knot app, see :download:`deploy/examples/knot.conf.master` for
-master config and :download:`deploy/examples/knot.conf.slave` for slave config.
+:code:`servers.yml` contains list of your masters and slaves name, and
+:code:`knot.conf` serve as a configuration for you knot app. See more in
+examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
 
 Prepare the docker-compose
 --------------------------
@@ -67,7 +46,7 @@ Most important things you have to pay attention to:
 Get the keys of you machines
 ----------------------------
 
-- Put the key of your machine in one directory .e.g `~/vm-keys/`
+- Put the key of your machine in one directory .e.g `~/ssh-keys/`
 - Point the ansible to those keys .e.g
 
 .. code-block:: yaml
@@ -90,12 +69,12 @@ Play the Playbook
   $ ansible-playbook initial-setups.yml -f 10 -v
   $ ansible-playbook setup-api.yml -f 10 -v
   # for master servers
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master"
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master" -e "target_host=foo-master"
   # for slave servers
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=slave"
-  # or both
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master,slave"
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master" -e "target_host=bar-master"
 
   # to stop the container
   $ ansible-playbook stop-containers-api.yml -f 10 -v
-  $ ansible-playbook stop-containers-agent.yml -f 10 -v
+  $ ansible-playbook stop-containers-agent.yml -f 10 -v -e "target_host=bar-master"
+
+See more in playbook examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.

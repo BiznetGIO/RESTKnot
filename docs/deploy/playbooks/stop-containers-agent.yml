@@ -1,6 +1,13 @@
 ---
-- hosts: master, slave
+- hosts: "{{ target_host }}"
 
   tasks:
+      - name: Stop knot server
+        become: yes
+        systemd:
+            name: knot
+            state: stopped
+
       - name: stop containers
-        command:  docker-compose -f ~/docker-images/docker-compose-agent.yml stop
+        become: yes
+        command:  docker-compose -f /opt/knot/docker-compose.yml down
