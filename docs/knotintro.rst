@@ -247,3 +247,15 @@ Known Problems
   :code:`knot` as owner, e.g :code:`sudo -u knot conf-init`.
 
   For :code:`systemctl <cmd> knot` and :code:`knot` that has no side effect you can use normal :code:`root` user
+
+- Knot refused to start
+
+  Knot status stuck in ``activating``. Some of the errors of knot operation
+  you will get would be: ``failed to connect to socket (connection refused)`` or
+  ``failed to open configuration database (operation not permitted)``.
+
+  The workaround would be: 1) stop knot server 2) export existing zones using
+  ``conf-export`` 3) remove ``confdb`` directory 4) import using
+  ``conf-import`` 5) start the server
+
+  For more detailed information, read `Importing Existing Zones`_.
