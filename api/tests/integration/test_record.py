@@ -1,3 +1,8 @@
+import datetime
+
+import app.helpers.helpers
+
+
 class TestRecord:
     def get_record(self, records, type_):
         for record in records:
@@ -351,3 +356,77 @@ class TestRecord:
 
         assert list_record_data["code"] == 200
         assert edited_record_data["ttl"] == "14400"
+
+    def test_edit_record_respect_zone_limit(self, client, monkeypatch, mocker):
+        """Test edit record respecting zone limit of 99
+
+        - Create a User
+        - Create a domain (with default SOA, NS, CNAME created)
+        - Add TXT record
+        - Edit a record with the different TXT value until it reaches a limit
+        - Edit a record with tomorrows date
+        """
+        mocker.patch("app.helpers.producer.kafka_producer")
+        mocker.patch("app.helpers.producer.send")
+        headers = {"X-Api-Key": "123"}
+
+        # create user
+        data = {"email": "first@company.com"}
+        post_res = client.post("/api/user/add", data=data, headers=headers)
+        json_data = post_res.get_json()
+        user_id = json_data["data"]["id"]
+
+        # add domain
+        data = {"zone": "company.com", "user_id": user_id}
+        client.post("/api/domain/add", data=data, headers=headers)
+
+        # add record
+        data = {
+            "zone": "company.com",
+            "owner": "txt1",
+            "rtype": "TXT",
+            "rdata": "0",
+            "ttl": 7200,
+        }
+        res = client.post("/api/record/add", data=data, headers=headers)
+        json_data = res.get_json()
+        record_id = json_data["data"]["id"]
+
+        increment_serial = 0
+        # 50 times for edit record is enough to make serial > 99
+        # record edit increment serial twice at time
+        while increment_serial < 50:
+            data = {
+                "zone": "company.com",
+                "owner": "txt1",
+                "rtype": "TXT",
+                "rdata": f"{increment_serial}",
+                "ttl": 7200,
+            }
+            res = client.put(
+                f"/api/record/edit/{record_id}", data=data, headers=headers
+            )
+            edit_record_data = res.get_json()
+
+            increment_serial += 1
+
+        assert edit_record_data["code"] == 429
+        assert edit_record_data["message"] == "Zone Change Limit Reached"
+
+        # if user waits until tomorrow
+        def fake_soa_time_set():
+            tomorrow_date = datetime.datetime.now() + datetime.timedelta(days=1)
+            return tomorrow_date.strftime("%Y%m%d")
+
+        monkeypatch.setattr(app.helpers.helpers, "soa_time_set", fake_soa_time_set)
+        data = {
+            "zone": "company.com",
+            "owner": "txt1",
+            "rtype": "TXT",
+            "rdata": "random text",
+            "ttl": 7200,
+        }
+        res = client.put(f"/api/record/edit/{record_id}", data=data, headers=headers)
+        edit_record_data = res.get_json()
+
+        assert edit_record_data["code"] == 200
