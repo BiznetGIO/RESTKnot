@@ -27,18 +27,17 @@ def increment_serial(serial, increment="01"):
     Keyword arguments:
     increment -- the increment value (default "01")
     """
-    current_time = soa_time_set()
-    previous_time = serial[:-2]
+    today_date = soa_time_set()
+    record_date = serial[:-2]
     # The 10-digit serial (YYYYMMDDnn) is incremented, the first
     # 8 digits match the current iso-date
     nn = serial[-2:]
-    if int(nn) > 97 and previous_time == current_time:
-        # knot maximum of nn is 99
-        # 97 was chosen because serial
-        #  increment can be twice at time
-        raise ValueError("Zone Change Limit Reached")
+    if record_date != today_date:
+        # date changed, reset `nn`
+        nn = "01"
+
     increment = add_str(nn, increment)
-    return f"{current_time}{increment}"
+    return f"{today_date}{increment}"
 
 
 def get_datetime():

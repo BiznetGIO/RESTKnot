@@ -11,21 +11,49 @@ from app.models import zone as zone_model
 from app.vendors.rest import response
 
 
-def update_serial(zone, increment="01"):
+def get_serial_resource(zone):
     soa_record = record_model.get_soa_record(zone)
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
     )
     rdatas = rdata_record["rdata"].split(" ")
-    serial = rdatas[2]  # serial MUST be in this position
+    serial = rdatas[2]
+    # `serial_counter` is the last two digit of serial value (YYYYMMDDnn)
+    serial_counter = serial[-2:]
+    serial_date = serial[:-2]
+
+    return {
+        "soa_record": soa_record,
+        "rdata_record": rdata_record,
+        "serial": serial,
+        "serial_counter": serial_counter,
+        "serial_date": serial_date,
+    }
+
+
+def check_serial_limit(serial_resource):
+    serial_counter = serial_resource["serial_counter"]
+    serial_date = serial_resource["serial_date"]
+    today_date = helpers.soa_time_set()
+
+    if int(serial_counter) > 97 and serial_date == today_date:
+        # knot maximum of nn is 99
+        # 97 was chosen because serial
+        # increment can be twice at time
+        raise ValueError("Zone Change Limit Reached")
+
+
+def update_serial(serial_resource, increment="01"):
+    serial = serial_resource["serial"]
+    soa_record = serial_resource["soa_record"]
+    rdata_record = serial_resource["rdata_record"]
+
     new_serial = helpers.increment_serial(serial, increment)
     new_rdata = helpers.replace_serial(rdata_record["rdata"], new_serial)
-
     content_data = {
         "where": {"record_id": soa_record["id"]},
         "data": {"rdata": new_rdata, "record_id": soa_record["id"]},
     }
-
     model.update("rdata", data=content_data)
 
 
@@ -110,6 +138,12 @@ class RecordAdd(Resource):
             return response(422, message=f"{e}")
 
         try:
+            serial_resource = get_serial_resource(zone)
+            check_serial_limit(serial_resource)
+        except Exception as e:
+            return response(429, message=f"{e}")
+
+        try:
             data = {
                 "owner": owner,
                 "zone_id": zone_id,
@@ -126,10 +160,7 @@ class RecordAdd(Resource):
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                try:
-                    update_serial(zone)
-                except Exception as e:
-                    return response(429, message=f"{e}")
+                update_serial(serial_resource)
 
             record = model.get_one(table="record", field="id", value=record_id)
             data = record_model.get_other_data(record)
@@ -177,6 +208,12 @@ class RecordEdit(Resource):
             return response(422, message=f"{e}")
 
         try:
+            serial_resource = get_serial_resource(zone)
+            check_serial_limit(serial_resource)
+        except Exception as e:
+            return response(429, message=f"{e}")
+
+        try:
             data = {
                 "where": {"id": record_id},
                 "data": {
@@ -201,10 +238,7 @@ class RecordEdit(Resource):
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                try:
-                    update_serial(zone, "02")
-                except Exception as e:
-                    return response(429, message=f"{e}")
+                update_serial(serial_resource, "02")
 
             record = model.get_one(table="record", field="id", value=record_id)
             data_ = record_model.get_other_data(record)
@@ -229,17 +263,21 @@ class RecordDelete(Resource):
         except Exception:
             return response(404)
 
+        zone = zone_model.get_zone_by_record(record_id)
+        zone_name = zone["zone"]
+
+        try:
+            serial_resource = get_serial_resource(zone_name)
+            check_serial_limit(serial_resource)
+        except Exception as e:
+            return response(429, message=f"{e}")
+
         try:
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype == "SOA":
                 return response(403, message=f"Can't Delete SOA Record")
             if rtype != "SOA":
-                zone = zone_model.get_zone_by_record(record_id)
-                zone_name = zone["zone"]
-                try:
-                    update_serial(zone_name)
-                except Exception as e:
-                    return response(429, message=f"{e}")
+                update_serial(serial_resource)
 
             command.set_zone(record_id, "zone-unset")
 

@@ -1,6 +1,8 @@
 import datetime
 
 import app.helpers.helpers
+from app.controllers.api import record as record_api
+from app.helpers import helpers
 
 
 class TestRecord:
@@ -413,7 +415,17 @@ class TestRecord:
         assert edit_record_data["code"] == 429
         assert edit_record_data["message"] == "Zone Change Limit Reached"
 
+        # ensure correct serial
+        serial_resource = record_api.get_serial_resource("company.com")
+        today_date = helpers.soa_time_set()
+
+        assert serial_resource["serial_counter"] == "98"
+        assert serial_resource["serial_date"] == today_date
+        assert serial_resource["serial"] == f"{today_date}98"
+
+        #
         # if user waits until tomorrow
+        #
         def fake_soa_time_set():
             tomorrow_date = datetime.datetime.now() + datetime.timedelta(days=1)
             return tomorrow_date.strftime("%Y%m%d")
@@ -430,3 +442,11 @@ class TestRecord:
         edit_record_data = res.get_json()
 
         assert edit_record_data["code"] == 200
+
+        # ensure correct serial
+        serial_resource = record_api.get_serial_resource("company.com")
+        today_date = helpers.soa_time_set()
+
+        assert serial_resource["serial_counter"] == "03"
+        assert serial_resource["serial_date"] == today_date
+        assert serial_resource["serial"] == f"{today_date}03"

@@ -1,6 +1,12 @@
 Unreleased
 ==========
 
+0.7.3 (2020-05-14)
+==================
+
+- Add: check SOA serial limit before any operation
+- Fix: reset serial counter if day changed
+
 0.7.2 (2020-05-13)
 ==================
 
