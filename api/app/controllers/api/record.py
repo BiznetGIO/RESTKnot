@@ -126,7 +126,10 @@ class RecordAdd(Resource):
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                update_serial(zone)
+                try:
+                    update_serial(zone)
+                except Exception as e:
+                    return response(429, message=f"{e}")
 
             record = model.get_one(table="record", field="id", value=record_id)
             data = record_model.get_other_data(record)
@@ -198,7 +201,10 @@ class RecordEdit(Resource):
             # increment serial after adding new record
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype != "SOA":
-                update_serial(zone, "02")
+                try:
+                    update_serial(zone, "02")
+                except Exception as e:
+                    return response(429, message=f"{e}")
 
             record = model.get_one(table="record", field="id", value=record_id)
             data_ = record_model.get_other_data(record)
@@ -230,7 +236,10 @@ class RecordDelete(Resource):
             if rtype != "SOA":
                 zone = zone_model.get_zone_by_record(record_id)
                 zone_name = zone["zone"]
-                update_serial(zone_name)
+                try:
+                    update_serial(zone_name)
+                except Exception as e:
+                    return response(429, message=f"{e}")
 
             command.set_zone(record_id, "zone-unset")
 
