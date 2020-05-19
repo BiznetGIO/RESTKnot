@@ -5,6 +5,7 @@ services:
         ports:
             - '5000:5000'
         environment:
+            - TZ=Asia/Jakarta
             - FLASK_APP=autoapp.py
             - FLASK_ENV=production
             - GUNICORN_WORKERS=4

@@ -1,5 +1,8 @@
 FROM python:3.7-alpine
 
+# working with timezones
+RUN apk add tzdata
+
 # need these depedencies in order for psycopg2 to be installed via pip
 # Alpine can't use psycopg2-binary since it din't support manylinux
 RUN apk add gcc linux-headers postgresql-dev musl-dev && \
