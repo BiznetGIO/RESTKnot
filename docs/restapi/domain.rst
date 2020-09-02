@@ -131,7 +131,7 @@ Get a domain by User
 
 Response:
 
-It has the same response as get a domain by Zone
+It has the same response as getting a domain by Zone
 
 Create domain
 -------------

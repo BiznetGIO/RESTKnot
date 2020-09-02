@@ -4,8 +4,8 @@ REST API
 Authentication
 --------------
 
-To make a request you need to include :code:`X-API-Key` as a key in request header
-with appropriate value.
+To make a request you need to include :code:`X-API-Key` as a key in the request header
+with the appropriate value.
 
 
 Public APIs

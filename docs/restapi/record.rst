@@ -60,7 +60,7 @@ Create record
 -------------
 
 .. warning::
-   You can't have multiple record with the exact same content
+   You can't have multiple records with the same content
 
 
 .. code-block:: bash

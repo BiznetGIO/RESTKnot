@@ -4,13 +4,13 @@ Deployment Steps
 Prepare the initial database
 ----------------------------
 
-We've use bootstrap script to initialize database on remote machine, but it's
-error prone and hard to maintain. so we come up with this simpler way.
+We've used a bootstrap script to initialize the database on a remote machine, but it's
+error-prone and hard to maintain. So we come up with this simpler way.
 
 .. code-block:: bash
 
   # start the cockroach instance
-  $ cockroach start --insecure --host=localhost
+  $ cockroach start --insecure --listen-addr=localhost:26257 --http-addr=localhost:8090
 
   # create the db
   $ cockroach sql --insecure
@@ -20,15 +20,15 @@ error prone and hard to maintain. so we come up with this simpler way.
   $ cockroach sql --insecure --database=knotdb < schema.sql
 
 Create the initial database on your local side, then update the corresponding
-playbook tasks to mach your initial database locations.
+playbook tasks to match your initial database locations.
 
 Prepare application configs
 ---------------------------
 
 You need :code:`servers.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains list of your masters and slaves name, and
-:code:`knot.conf` serve as a configuration for you knot app. See more in
+:code:`servers.yml` contains a list of your masters and slaves name, and
+:code:`knot.conf` serve as a configuration for your knot app. See more in
 examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
 
 Prepare the docker-compose
@@ -43,7 +43,7 @@ Most important things you have to pay attention to:
 - `KAFKA_ADVERTISED_HOST_NAME`
 - `RESTKNOT_API_KEY`
 
-Get the keys of you machines
+Get the keys of your machines
 ----------------------------
 
 - Put the key of your machine in one directory .e.g `~/ssh-keys/`
