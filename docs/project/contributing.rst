@@ -17,7 +17,12 @@ Install and run `cockroachdb <https://cockroachlabs.com/>`_
 
 .. code-block:: bash
 
-  $ cockroach start --insecure --host=localhost
+  $ cockroach start --insecure --listen-addr=localhost:26257 --http-addr=localhost:8090
+
+It will store the log and data in current directory. Otherwise, you need to use
+``--store=foo`` to change the default. ``--http-addr`` is used for HTTP requests from the Admin UI. You can choose any
+port you want if the default is already in use.
+
 
 RESTKNOT API
 ^^^^^^^^^^^^
@@ -30,6 +35,9 @@ Go to the API directory
 
   $ cd api/
 
+  # create the virtualenv, then install the depedencies
+  $ pip install -r requirements.txt
+
 
 RESTKnot API consume the configuration from OS environment variables. So make
 sure you have set them. Take a look into :code:`.env.example` and change the default
@@ -41,6 +49,8 @@ Then run the app:
 
   $ flask run
 
+
+Ensure the app is running by checking the ``/api/health`` endpoint.
 
 Broker
 ^^^^^^
@@ -58,13 +68,16 @@ run them using :code:`docker-compose -f docker-compose-kafka.yml up`
     zookeeper:
       image: wurstmeister/zookeeper
     kafka:
-      image: wurstmeister/kafka
+      image: wurstmeister/kafka:2.12-2.4.0
       ports:
           - "9092:9092"
       environment:
           KAFKA_ADVERTISED_HOST_NAME: localhost
           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
+
+Ideally, you can choose any kafka-docker version. But we develop using
+``2.12-2.4.0``.
 
 RESTKNOT Agent
 ^^^^^^^^^^^^^^
@@ -74,6 +87,9 @@ Go to the Agent directory
 .. code-block:: bash
 
   $ cd agent/
+
+  # create the virtualenv, then install the depedencies
+  $ pip install -r requirements.txt
 
 Set appropriate configurations. Take a look at :code:`.env.example` in agent directory
 and run them manually. At this moment RESTKNOT Agent doesn't load them automatically.
@@ -116,3 +132,9 @@ provide the bridged network in their respective docker compose file. e.g:
 
 Always keep in mind that you can't use :code:`localhost` or :code:`127.0.0.1` in
 :code:`KAFKA_ADVERTISED_HOST_NAME` otherwise it won't work.
+
+Basic Workflow
+--------------
+
+To test that all component works toghether, or to get an insight of how knot
+works. See :ref:`howto:Basic Workflow`
