@@ -44,7 +44,7 @@ Most important things you have to pay attention to:
 - `RESTKNOT_API_KEY`
 
 Get the keys of your machines
-----------------------------
+-----------------------------
 
 - Put the key of your machine in one directory .e.g `~/ssh-keys/`
 - Point the ansible to those keys .e.g

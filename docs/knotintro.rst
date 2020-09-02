@@ -71,7 +71,7 @@ Dynamic configuration
 ---------------------
 .. warning::
      All changes made with the interactive tool (knotc) will be lost after the
-     server stop if no binary database created. With no binary database you also
+     server stop if no binary database is created. With no binary database you also
      can't run :code:`conf-export`
 
 Knot provides an interactive way to add a new zone using :code:`knotc`. :code:`knotc` is a user
@@ -108,7 +108,7 @@ we use :code:`conf-import`.
 
 At this point, we have created a new zone interactively. The next step is we have
 to make sure our new zone config saved into :code:`confdb` and the zone data saved
-into a corresponding zone file. Otherwise, it will be lost after we stop knot
+into a corresponding zone file. Otherwise, it will be lost after we stop the knot
 server.
 
 .. code-block:: bash
@@ -120,8 +120,7 @@ server.
       confdb  niu.com.zone
 
 
-If the size of :code:`confdb` incremented and a zone file created. Your newly created
-record will persists even after knot server stopped or restarted.
+If the size of :code:`confdb` incremented and a zone file created. Your newly created record will persist even after the knot server stopped or restarted.
 
 Let's prove it.
 
@@ -231,7 +230,7 @@ Known Problems
 
 - Knot can't load zone
 
-  Make sure the zone file owner and group is :code:`knot`. And make sure the zone
+  Make sure the zone file owner and group are :code:`knot`. And make sure the zone
   filename matches the zone configuration :code:`file` value.
 
 - Knot can't create timers database
@@ -248,14 +247,14 @@ Known Problems
       - knot:knot /var/run/knot.sock
 
   Make sure to execute :code:`knotc` that has a side effect (e.g database) with supplied
-  :code:`knot` as owner, e.g :code:`sudo -u knot conf-init`.
+  :code:`knot` as the owner, e.g :code:`sudo -u knot conf-init`.
 
   For :code:`systemctl <cmd> knot` and :code:`knot` that has no side effect you can use normal :code:`root` user
 
 - Knot refused to start
 
   Knot status stuck in ``activating``. Some of the errors of knot operation
-  you will get would be: ``failed to connect to socket (connection refused)`` or
+  you will get would be: ``failed to connect to the socket (connection refused)`` or
   ``failed to open configuration database (operation not permitted)``.
 
   The workaround would be: 1) stop knot server 2) export existing zones using

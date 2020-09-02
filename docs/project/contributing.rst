@@ -10,7 +10,7 @@ Contributing Guide <https://biznetgio.github.io/guide/contrib-guide/>`_
 .. _run-locally:
 
 Running the project locally
---------------------------
+---------------------------
 
 Cockroachdb
 ^^^^^^^^^^^
@@ -105,7 +105,7 @@ environment to sudo user.
   $ sudo -E ~/.virtualenvs/rest-knot/bin/dnsagent start master
 
 Running the project using Docker Compose
----------------------------------------
+----------------------------------------
 
 We have provided the images so you can run them easily with docker-compose.
 
