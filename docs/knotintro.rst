@@ -89,14 +89,18 @@ To create :code:`confdb` database, you can use :code:`conf-init` or :code:`conf-
 we use :code:`conf-import`.
 
 
-.. code-block:: bash
+.. code-block:: console
 
   $ sudo -u knot knotc conf-import /etc/knot/knot.conf # default conf
 
   $ sudo du -sh /var/lib/knot/confdb/ # check default size
     24K     confdb/
 
-  $ # then add the new zone using `conf-set` and `zone-set`
+  $ # add the new zone using `conf-set` and `zone-set`
+  $ knotc conf-begin; knotc conf-set 'zone[niu.com]'; knotc conf-commit
+  # knotc zone-begin niu.com
+  # knotc zone-set niu.com. 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+  # knotc zone-commit niu.com
 
   $ sudo knotc zone-read -- # new zone created interactively
     [niu.com.] niu.com. 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
@@ -259,3 +263,48 @@ Known Problems
   ``conf-import`` 5) start the server
 
   For more detailed information, read `Importing Existing Zones`_.
+
+Common Commands
+---------------
+
+These are common command operation to give you insight how to do things:
+
+.. code-block:: console
+
+    $ # start/stop the service
+    # systemctl start knot
+    # systemctl status knot
+    # systemctl stop knot
+
+    $ # create config
+    # knotc conf-begin
+    # knotc conf-set 'zone[niu.com]'
+    # knotc conf-set 'zone[niu.com].file' 'niu1.com.zone'
+    # knotc conf-set 'zone[niu.com].notify' 'slave1 slave2'
+    # knotc conf-set 'zone[niu.com].acl' 'slave1 slave2'
+    # knotc conf-commit
+
+    $ # create record
+    # knotc zone-begin niu.com
+    # knotc zone-set niu.com. @ 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+    # knotc zone-commit niu.com
+
+    $ # see current config
+    # knotc conf-read
+
+    $ # check is record created
+    # knotc zone-read --
+    # knotc zone-read niu.com
+    $ # or using kdig/dig
+    $ # use +tcp if your ISP provider annoys you
+    $ kdig @localhost niu.com SOA +short +tcp
+
+    $ # start everyting from scratch
+    # rm -rf * /var/lib/knot # remove all knot db
+    # rm -rf * /etc/knot # most of the time, it doesn't needed
+    # sudo knotc conf-init # initialize the confdb
+
+    $ # export/backup the current state (config + records)
+    # knotc conf-export /path/to/knot-backup.conf
+    $ # import
+    # knotc conf-import /path/to/knot-backup.conf
