@@ -263,6 +263,12 @@ Known Problems
 
   For more detailed information, read `Importing Existing Zones`_.
 
+- RESTKnot Agent always exits after the start
+
+  Producing `KnotCtlError: connection reset (data: None)`.
+  The workaround is to remove `timers` in `/var/lib/knot`.
+  Don't forget to make a backup. Then try to re-run the RESTKnot-agent.
+
 Common Commands
 ---------------
 
