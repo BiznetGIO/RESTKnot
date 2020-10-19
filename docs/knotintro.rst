@@ -71,7 +71,7 @@ Dynamic configuration
 ---------------------
 .. warning::
      All changes made with the interactive tool (knotc) will be lost after the
-     server stop if no binary database created. With no binary database you also
+     server stop if no binary database is created. With no binary database you also
      can't run :code:`conf-export`
 
 Knot provides an interactive way to add a new zone using :code:`knotc`. :code:`knotc` is a user
@@ -89,14 +89,18 @@ To create :code:`confdb` database, you can use :code:`conf-init` or :code:`conf-
 we use :code:`conf-import`.
 
 
-.. code-block:: bash
+.. code-block:: console
 
   $ sudo -u knot knotc conf-import /etc/knot/knot.conf # default conf
 
   $ sudo du -sh /var/lib/knot/confdb/ # check default size
     24K     confdb/
 
-  $ # then add the new zone using `conf-set` and `zone-set`
+  $ # add the new zone using `conf-set` and `zone-set`
+  $ knotc conf-begin; knotc conf-set 'zone[niu.com]'; knotc conf-commit
+  # knotc zone-begin niu.com
+  # knotc zone-set niu.com. 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+  # knotc zone-commit niu.com
 
   $ sudo knotc zone-read -- # new zone created interactively
     [niu.com.] niu.com. 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
@@ -104,7 +108,7 @@ we use :code:`conf-import`.
 
 At this point, we have created a new zone interactively. The next step is we have
 to make sure our new zone config saved into :code:`confdb` and the zone data saved
-into a corresponding zone file. Otherwise, it will be lost after we stop knot
+into a corresponding zone file. Otherwise, it will be lost after we stop the knot
 server.
 
 .. code-block:: bash
@@ -116,8 +120,7 @@ server.
       confdb  niu.com.zone
 
 
-If the size of :code:`confdb` incremented and a zone file created. Your newly created
-record will persists even after knot server stopped or restarted.
+If the size of :code:`confdb` incremented and a zone file created. Your newly created record will persist even after the knot server stopped or restarted.
 
 Let's prove it.
 
@@ -227,7 +230,7 @@ Known Problems
 
 - Knot can't load zone
 
-  Make sure the zone file owner and group is :code:`knot`. And make sure the zone
+  Make sure the zone file owner and group are :code:`knot`. And make sure the zone
   filename matches the zone configuration :code:`file` value.
 
 - Knot can't create timers database
@@ -244,14 +247,14 @@ Known Problems
       - knot:knot /var/run/knot.sock
 
   Make sure to execute :code:`knotc` that has a side effect (e.g database) with supplied
-  :code:`knot` as owner, e.g :code:`sudo -u knot conf-init`.
+  :code:`knot` as the owner, e.g :code:`sudo -u knot conf-init`.
 
   For :code:`systemctl <cmd> knot` and :code:`knot` that has no side effect you can use normal :code:`root` user
 
 - Knot refused to start
 
   Knot status stuck in ``activating``. Some of the errors of knot operation
-  you will get would be: ``failed to connect to socket (connection refused)`` or
+  you will get would be: ``failed to connect to the socket (connection refused)`` or
   ``failed to open configuration database (operation not permitted)``.
 
   The workaround would be: 1) stop knot server 2) export existing zones using
@@ -259,3 +262,54 @@ Known Problems
   ``conf-import`` 5) start the server
 
   For more detailed information, read `Importing Existing Zones`_.
+
+- RESTKnot Agent always exits after the start
+
+  Producing `KnotCtlError: connection reset (data: None)`.
+  The workaround is to remove `timers` in `/var/lib/knot`.
+  Don't forget to make a backup. Then try to re-run the RESTKnot-agent.
+
+Common Commands
+---------------
+
+These are common command operation to give you insight how to do things:
+
+.. code-block:: console
+
+    $ # start/stop the service
+    # systemctl start knot
+    # systemctl status knot
+    # systemctl stop knot
+
+    $ # create config
+    # knotc conf-begin
+    # knotc conf-set 'zone[niu.com]'
+    # knotc conf-set 'zone[niu.com].file' 'niu1.com.zone'
+    # knotc conf-set 'zone[niu.com].notify' 'slave1 slave2'
+    # knotc conf-set 'zone[niu.com].acl' 'slave1 slave2'
+    # knotc conf-commit
+
+    $ # create record
+    # knotc zone-begin niu.com
+    # knotc zone-set niu.com. @ 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+    # knotc zone-commit niu.com
+
+    $ # see current config
+    # knotc conf-read
+
+    $ # check is record created
+    # knotc zone-read --
+    # knotc zone-read niu.com
+    $ # or using kdig/dig
+    $ # use +tcp if your ISP provider annoys you
+    $ kdig @localhost niu.com SOA +short +tcp
+
+    $ # start everyting from scratch
+    # rm -rf * /var/lib/knot # remove all knot db
+    # rm -rf * /etc/knot # most of the time, it doesn't needed
+    # sudo knotc conf-init # initialize the confdb
+
+    $ # export/backup the current state (config + records)
+    # knotc conf-export /path/to/knot-backup.conf
+    $ # import
+    # knotc conf-import /path/to/knot-backup.conf

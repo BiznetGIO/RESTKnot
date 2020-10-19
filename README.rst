@@ -18,7 +18,7 @@
 Manage DNS records with asynchronous and simple APIs.
 
 RESTKnot provide a high-level asynchronous API to existing Knot DNS server. This project consists of
-three applications : RESTKnot agent, RESTKnot API, and RESTKnot CLI. A user can
+three applications: RESTKnot agent, RESTKnot API, and RESTKnot CLI. A user can
 create DNS record through web API provided by RESTKnot API, or as command line
 app using RESTKnot CLI. Both of them send command to RESTKnot agent which will
 be translated into Knot DNS action.
@@ -71,13 +71,6 @@ Delete a Zone
     http://localhost:5000/api/domain/delete \
     -H 'X-API-Key: 123' \
     -F zone=example.com
-
-
-Quick Start
------------
-
-To deploy the project, read the `deployment guide <https://restknot.readthedocs.io/en/stable/deploy.html>`_.
-To run locally to make a contribution, read `how to run locally guide <https://restknot.readthedocs.io/en/stable/project/contributing.html#runing-the-project-locally>`_.
 
 .. end-of-readme-usage
 
