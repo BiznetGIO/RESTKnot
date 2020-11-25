@@ -292,10 +292,25 @@ These are common command operation to give you insight how to do things:
     $ # create record
     # knotc zone-begin niu.com
     # knotc zone-set niu.com. @ 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+    # knotc zone-set niu.com. ns1 86400 NS one.dns.id
+    # knotc zone-set niu.com. @ 86400 CNAME niu.com.
+    # knotc zone-set niu.com. @ 86400 A 2.2.2.2
+    # knotc zone-set niu.com. @ 86400 MX mail.niu.com.
+    # knotc zone-set niu.com. @ 86400 TXT "foobar"
+    # knotc zone-commit niu.com
+
+    $ # delete record
+    # knotc zone-begin niu.com
+    # knotc zone-unset niu.com ns1 # with specific owner
+    # knotc zone-unset niu.com ns1 NS # with specific rrset
+    # knotc zone-unset niu.com ns1 NS one.dns.id # with specific rdata
     # knotc zone-commit niu.com
 
     $ # see current config
     # knotc conf-read
+    # knotc conf-read zone['niu.com']
+    $ or using grep
+    # knotc conf-read | grep niu.com
 
     $ # check is record created
     # knotc zone-read --
