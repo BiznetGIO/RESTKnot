@@ -292,6 +292,7 @@ These are common command operation to give you insight how to do things:
     $ # create record
     # knotc zone-begin niu.com
     # knotc zone-set niu.com. @ 86400 SOA one.dns.id. hostmaster.dns.id. 2020011301 3600 3600 604800 38400
+    $ # knotc zone-set <zone> <owner> <TTL> <rtype> <rdata>
     # knotc zone-set niu.com. ns1 86400 NS one.dns.id
     # knotc zone-set niu.com. @ 86400 CNAME niu.com.
     # knotc zone-set niu.com. @ 86400 A 2.2.2.2
