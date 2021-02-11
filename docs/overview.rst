@@ -9,5 +9,6 @@ Overview
 Installation
 ------------
 
-Read ref:`Running the project locally <run-locally>`, or go to ref:`deploy: Deployment Steps` to deploy the project.
+Read :ref:`project/contributing:Running the project locally`, or go to :ref:`deploy:Deployment Steps` to deploy the project.
+
 
