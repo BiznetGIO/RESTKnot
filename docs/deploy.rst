@@ -77,4 +77,4 @@ Play the Playbook
   $ ansible-playbook stop-containers-api.yml -f 10 -v
   $ ansible-playbook stop-containers-agent.yml -f 10 -v -e "target_host=bar-master"
 
-See more in playbook examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.
+See more in playbook examples `deploy <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.

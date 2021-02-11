@@ -7,8 +7,6 @@ General Contribution
 For general rule regarding contribution to BiznetGio projects. See `BiznetGio
 Contributing Guide <https://biznetgio.github.io/guide/contrib-guide/>`_
 
-.. _run-locally:
-
 Running the project locally
 ---------------------------
 
