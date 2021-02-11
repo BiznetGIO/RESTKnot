@@ -258,16 +258,21 @@ Known Problems
   ``failed to open configuration database (operation not permitted)``.
 
   The workaround would be: 1) stop knot server 2) export existing zones using
-  ``conf-export`` 3) remove ``confdb`` directory 4) import using
+  ``conf-export`` 3) remove ``confdb``, ``timers``, and ``journal`` directory 4) import using
   ``conf-import`` 5) start the server
 
   For more detailed information, read `Importing Existing Zones`_.
 
 - RESTKnot Agent always exits after the start
 
-  Producing `KnotCtlError: connection reset (data: None)`.
-  The workaround is to remove `timers` in `/var/lib/knot`.
+  Producing ``KnotCtlError: connection reset (data: None)``.
+  The workaround is to remove ``timers`` directory in ``/var/lib/knot``.
   Don't forget to make a backup. Then try to re-run the RESTKnot-agent.
+
+  At first, the Agent will always exit. Producing ``ValueError: Can't connect to knot socket`` or ``KnotCtlError: connection reset``.
+  This is expected. Currently, the Knot server has a socket issue, it can not handle a lot of requests in a second.
+  So try to stop the Agent and start again. Usually, it takes two or three times, according to the amount of data that the Knot server loads.
+
 
 Common Commands
 ---------------
