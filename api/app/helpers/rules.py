@@ -14,6 +14,7 @@
 
 from app.models import rules as rules_model
 from app.models import type_ as type_model
+from app.models import zone as zone_model
 
 
 def is_allowed(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
@@ -32,6 +33,7 @@ def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
     1. Check for duplicate record
     2. Check for the same owner
     3. Check for the same A owner
+    4. Check if the owner is root
     """
     #  duplicate record NOT allowed
     is_allowed(zone_id, type_id, owner, rdata, ttl_id)
@@ -54,6 +56,12 @@ def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
     is_coexist = rules.is_coexist()
     if is_coexist:
         raise ValueError("An A record already exist with that owner")
+
+    # 4. owner can't be root
+    # can't be `domainname.com.` and `@`
+    zone = zone_model.get_zone(zone_id)
+    if owner == f"{zone}." or owner == "@":
+        raise ValueError("A CNAME owner can't be root")
 
 
 def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
@@ -114,6 +122,11 @@ def is_allowed_cname_edit(zone_id, type_id, owner, rdata, ttl_id, record_id=None
     is_coexist = rules.is_coexist()
     if is_coexist:
         raise ValueError("An A record already exist with that owner")
+
+    # 3. owner can't be root
+    zone = zone_model.get_zone(zone_id)
+    if owner == f"{zone}." or owner == "@":
+        raise ValueError("A CNAME owner can't be root")
 
 
 # function based on rtype input when adding record
