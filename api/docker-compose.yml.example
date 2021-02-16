@@ -1,0 +1,45 @@
+version: '3'
+services:
+    restknot-api:
+        image: biznetgio/restknot-api:0.7.0
+        ports:
+            - '5000:5000'
+        environment:
+            - TZ=Asia/Jakarta
+            - FLASK_APP=autoapp.py
+            - FLASK_ENV=development
+            - GUNICORN_WORKERS=4
+            - FLASK_DEBUG=`
+            - APP_HOST=0.0.0.0
+            - APP_PORT=5000
+            - DB_NAME=knotdb # don't add whitespace beetween =
+            - DB_HOST=roach
+            - DB_PORT=26257
+            - DB_USER=root
+            - DB_SSL=disable
+            - KAFKA_HOST=10.10.10.10
+            - KAFKA_PORT=9092
+            - RESTKNOT_KAFKA_TOPIC=domaindata
+            # don't add quote, otherwise it will not work
+            # <MNAME> <RNAME> <without serial!> <refresh> <retry> <expire> <minimum>
+            - DEFAULT_SOA_RDATA=one.dns.id. hostmaster.dns.id. 3600 1800 604800 86400
+            - DEFAULT_NS=one.dns.id. two.dns.id.
+            - RESTKNOT_API_KEY=123
+        command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
+    zookeeper:
+        image: wurstmeister/zookeeper
+    kafka:
+        image: wurstmeister/kafka:2.12-2.4.0
+        ports:
+            - '9092:9092'
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 10.10.10.10
+            KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    roach:
+        image: cockroachdb/cockroach:v19.1.5
+        command: start --insecure
+        ports:
+          - "26257:26257"
+        volumes:
+          - /cockroach-data:/cockroach/cockroach-data:Z
+
