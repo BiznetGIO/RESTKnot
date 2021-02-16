@@ -14,8 +14,15 @@ remote:
  - id: slave1
    address: <slaveip>@53
 
+ - id: slave2
+   address: <slaveip>@53
+
 acl:
- - id: slave1_acl
+ - id: slave1
+   address: <slaveip>
+   action: transfer
+
+ - id: slave2
    address: <slaveip>
    action: transfer
 
