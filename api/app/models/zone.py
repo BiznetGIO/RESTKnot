@@ -1,6 +1,16 @@
 from app.models import model
 
 
+def get_zone(zone_id):
+    """Get zone name by ID"""
+    zone = model.get_one(table="zone", field="id", value=f"{zone_id}")
+    if not zone:
+        raise ValueError(f"Zone Not Found")
+
+    zone = zone["zone"]
+    return zone
+
+
 def get_zone_id(zone):
     zone = model.get_one(table="zone", field="zone", value=f"{zone}")
     if not zone:

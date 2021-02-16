@@ -1,6 +1,12 @@
 Unreleased
 ==========
 
+0.7.6 (2020-02-15)
+==================
+
+- Add: Reject CNAME with root as owner
+- Remove: TXT rdata 255 char validation. Knot will handle the split automatically
+
 0.7.4 (2020-05-19)
 ==================
 
