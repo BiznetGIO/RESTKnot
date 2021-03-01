@@ -1,0 +1,106 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+  schedule:
+    - cron: '00 01 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+        # container operations are only supported on Linux runners
+        os: [ubuntu-latest]
+
+    services:
+      # it is hard to setup locally installed postgres,
+      # such as setting the password.
+
+      # TravisCI and build.sr.ht use empty password as default
+      # but that doesn't work with Github action.
+      # you need to work with `pg_hba.conf` or using `sudo -u postgres`
+      # but the latter force you to install every dependency in in root PATH.
+      postgres:
+        image: postgres:11
+        env:
+          POSTGRES_USER: postgres
+          # set the password without messing with `pg_hba.conf`
+          POSTGRES_PASSWORD: postgres
+          # create default db
+          POSTGRES_DB: knotdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -r api/requirements.txt
+          python -m pip install -r api/requirements-dev.txt
+
+      - name: Unit tests
+        run: |
+          pytest -s api/tests/unit/
+
+      - name: Check DB version
+        # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
+        run: psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres --version
+        env:
+          # to avoid having password prompt
+          PGPASSWORD: postgres
+ 
+      - name: Create DB schema
+        run: |
+          psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres knotdb < api/tests/integration/test_schema.sql
+        env:
+          PGPASSWORD: postgres
+
+      - name: Integration tests
+        run: |
+          pytest -s api/tests/integration/
+
+  black:
+    name: black
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          fetch-depth: 1
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: '3.7'
+
+    - name: Install dependencies
+      # newer black version had breaking changes
+      run: |
+        python -m pip install black==19.10b0
+
+    - name: Check formatting
+      # currently cli is not-maintained
+      run: |
+        black --check api/
+        black --check agent/

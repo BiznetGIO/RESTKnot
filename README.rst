@@ -8,7 +8,7 @@
 
     <p align="center">
       <a href="https://restknot.readthedocs.io/en/latest/"><img alt="Documentation" src="https://img.shields.io/readthedocs/restknot.svg"></a>
-      <a href="https://travis-ci.org/BiznetGIO/RESTKnot/"><img alt="Build status" src="https://img.shields.io/travis/BiznetGIO/RESTKnot.svg"></a>
+      <a href="https://github.com/BiznetGIO/RESTKnot/actions/workflows/ci.yml"><img alt="Build status" src="https://github.com/BiznetGIO/RESTKnot/workflows/ci/badge.svg"></a>
       <a href="https://github.com/python/black"><img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
     </p>
 
