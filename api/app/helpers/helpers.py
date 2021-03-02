@@ -1,4 +1,5 @@
 import datetime
+import pathlib
 from functools import wraps
 
 from app.helpers import producer
@@ -72,3 +73,27 @@ def check_producer(f):
             return f(*args, **kwargs)
 
     return decorated_function
+
+
+def read_file(other_file_name, filename):
+    root_dir = pathlib.Path(other_file_name).resolve().parent
+    path = root_dir.joinpath(filename)
+
+    if path.is_file():
+        with open(path, "rb") as f:
+            content = f.read().decode("utf-8")
+            return content
+
+
+def read_version(other_file_name, filename):
+    """Read the the current version or build of the app"""
+    version = ""
+
+    version = read_file(other_file_name, filename)
+    if version:
+        version = version.rstrip()
+
+    if not version:
+        version = "__UNKNOWN__"
+
+    return version
