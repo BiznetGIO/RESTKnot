@@ -3,4 +3,4 @@ class TestHealth:
         res = client.get("/api/health")
         data = res.get_json()
 
-        assert "100" in data["data"]["check"]
+        assert "running" in data["data"]["status"]

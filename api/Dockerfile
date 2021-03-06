@@ -16,7 +16,13 @@ COPY ./requirements.txt /restknotapi/requirements.txt
 COPY ./servers.yml.example /restknotapi/servers.yml
 
 RUN pip3 install -r /restknotapi/requirements.txt
+
+ARG BUILD_VERSION
+RUN echo "$BUILD_VERSION" > build-version.txt
+
 COPY . /restknotapi
+# check build version
+RUN cat /restknotapi/build-version.txt
 
 RUN apk del gcc linux-headers musl-dev && \
     rm -rf /var/cache/apk/*
