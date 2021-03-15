@@ -16,10 +16,10 @@ services:
       - RESTKNOT_LOG_FILE=/restknot-data/restknot-agent.log
     entrypoint: dnsagent start
     volumes:
-        # on CentOS family you need to add `:Z`
-        # .e.g `/var/run/knot/:/var/run/knot/:Z`
+        # on CentOS family you need to add `:z`
+        # .e.g `/var/run/knot/:/var/run/knot/:z`
         - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
         - /etc/knot/:/etc/knot/ #ro
-        - /var/run/knot/:/var/run/knot/:Z
-        - /var/lib/knot/:/var/lib/knot/:Z
-        - ~/restknot-data/:/restknot-data:Z
+        - /var/run/knot/:/var/run/knot/:z
+        - /var/lib/knot/:/var/lib/knot/
+        - ~/restknot-data/:/restknot-data:z
