@@ -29,9 +29,9 @@ services:
             - RESTKNOT_API_KEY=123
         command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
         volumes:
-            # on CentOS family you need to add `:Z`
-            - ~/.config/restknot/:/rknt:Z
-            - ~/restknot-data/:/restknot-data:Z
+            # on CentOS family you need to add `:z`
+            - ~/.config/restknot/:/rknt:z
+            - ~/restknot-data/:/restknot-data:z
         links:
             - zookeeper
             - kafka
@@ -50,5 +50,5 @@ services:
         ports:
           - "26257:26257"
         volumes:
-          - /cockroach-data:/cockroach/cockroach-data:Z
+          - /cockroach-data:/cockroach/cockroach-data:z
 
