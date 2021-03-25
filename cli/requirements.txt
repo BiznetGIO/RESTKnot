@@ -6,4 +6,4 @@ keystoneauth1==3.8.0
 coloredlogs==9.0
 prompt_toolkit==2.0.7
 dill==0.2.7.1
-PyYAML==3.13
+PyYAML==5.4
