@@ -75,3 +75,22 @@ Play the Playbook
   $ ansible-playbook stop-containers-agent.yml -f 10 -v -e "target_host=bar-master"
 
 See more in playbook examples `deploy <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.
+
+Basic Deployment Architecture
+-----------------------------
+
+.. figure:: ./_static/img/basic-deployment.png
+   :scale: 50 %
+   :alt: Basic Architecture
+
+   A basic deployment architecture.
+
+There are many possible forms in the deployment. But the most basic is using a
+two-node (machine). The first node is going to host ``restknot-api``,
+``database``, and ``message broker``. The second node is hosting ``knot server
+(knotd)`` and ``restknot-agent``.
+
+The three components in the first node can be run using a docker container. You
+can use the ``api/docker-compose.yml.example`` as a starting point. For the
+second node, it's advised that you install the ``knot server`` locally, then you
+can use ``agent/docker-compose.yml.example`` for the ``agent``.
