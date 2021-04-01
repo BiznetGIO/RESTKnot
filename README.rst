@@ -2,7 +2,7 @@
 
     <p align="center">
         <a href="#readme">
-            <img alt="RESTKnot logo" src="https://github.com/BiznetGIO/RESTKnot/blob/master/docs/_static/img/resknot-banner.svg" height="150" width="500">
+            <img alt="RESTKnot logo" src="https://github.com/BiznetGIO/RESTKnot/blob/master/docs/img/resknot-banner.svg" height="150" width="500">
         </a>
     </p>
 

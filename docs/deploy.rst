@@ -79,14 +79,13 @@ See more in playbook examples `deploy <https://github.com/BiznetGIO/RESTKnot/tre
 Basic Deployment Architecture
 -----------------------------
 
-.. figure:: ./_static/img/basic-deployment.png
-   :scale: 50 %
+.. figure:: img/basic-deployment.png
    :alt: Basic Architecture
 
    A basic deployment architecture.
 
 There are many possible forms in the deployment. But the most basic is using a
-two-node (machine). The first node is going to host ``restknot-api``,
+two-node. The first node is going to host ``restknot-api``,
 ``database``, and ``message broker``. The second node is hosting ``knot server
 (knotd)`` and ``restknot-agent``.
 
