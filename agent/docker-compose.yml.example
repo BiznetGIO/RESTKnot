@@ -3,23 +3,30 @@ services:
   restknot-agent:
     image: biznetgio/restknot-agent:0.7.0
     environment:
+      # Pay attention to your agent type!
       - RESTKNOT_AGENT_TYPE=master
+
+
       # the libknot.so location is distro dependant.
       # e.g in CentOS it is `/usr/lib64/libknot.so.10.0.0`
       - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
       - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
+
+
       # using 127.0.0.1 or localhost won't make it work
       # set it to RESTKNOT API IP
-      - RESTKNOT_KAFKA_BROKER=172.17.0.1
+      - RESTKNOT_KAFKA_BROKER=10.10.10.10
       - RESTKNOT_KAFKA_PORTS=9092
+      # topic to suscribe
       - RESTKNOT_KAFKA_TOPIC=domaindata
-      - RESTKNOT_LOG_FILE=/restknot-data/restknot-agent.log
     entrypoint: dnsagent start
     volumes:
-        # on CentOS family you need to add `:z`
-        # .e.g `/var/run/knot/:/var/run/knot/:z`
+        # on CentOS family you need to add `:Z`
+        # .e.g `/var/run/knot/:/var/run/knot/:Z`
+
+        # on CentOS: `/usr/lib64/:/usr/lib64`
         - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
+
         - /etc/knot/:/etc/knot/ #ro
-        - /var/run/knot/:/var/run/knot/:z
-        - /var/lib/knot/:/var/lib/knot/
-        - ~/restknot-data/:/restknot-data:z
+        - /var/run/knot/:/var/run/knot/:Z
+        - /var/lib/knot/:/var/lib/knot/:Z
