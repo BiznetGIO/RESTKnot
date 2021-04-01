@@ -4,11 +4,11 @@ master:
         - slave1
 
     acl:
-        - slave1_acl
+        - slave1
 
 slave:
     master:
         - master1
 
     acl:
-        - master1_acl
+        - master1

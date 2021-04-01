@@ -15,7 +15,7 @@ remote:
    address: <masterip>@53
 
 acl:
- - id: master1_acl
+ - id: master1
    address: <masterip>
    action: notify
 
