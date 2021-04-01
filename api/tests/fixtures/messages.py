@@ -10,7 +10,7 @@ knot_zone_set_ns = {
     "owner": "@",
     "rtype": "NS",
     "ttl": "3600",
-    "data": "satu.neodns.id.",
+    "data": "one.dns.id.",
 }
 
 knot_delegate_file = {
