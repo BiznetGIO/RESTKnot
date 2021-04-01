@@ -289,7 +289,7 @@ These are common command operation to give you insight how to do things:
     $ # create config
     # knotc conf-begin
     # knotc conf-set 'zone[niu.com]'
-    # knotc conf-set 'zone[niu.com].file' 'niu1.com.zone'
+    # knotc conf-set 'zone[niu.com].file' 'niu.com.zone'
     # knotc conf-set 'zone[niu.com].notify' 'slave1 slave2'
     # knotc conf-set 'zone[niu.com].acl' 'slave1 slave2'
     # knotc conf-commit
