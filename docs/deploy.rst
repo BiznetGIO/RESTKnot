@@ -34,14 +34,11 @@ examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/depl
 Prepare the docker-compose
 --------------------------
 
-Replace the example value with the real one in the docker-compose.yml
-Most important things you have to pay attention to:
+Replace the example value with the real one in the ``docker-compose.yml``.
+Read the description of each value in the example files.
+The most important thing you have to pay attention to is ``RESTKNOT_AGENT_TYPE``,
+it will not work if you set it to ``slave`` but the app runs on the master node.
 
-- `RESTKNOT_KAFKA_BROKER`
-- `RESTKNOT_KNOT_LIB`
-- `RESTKNOT_KNOT_SOCKET`
-- `KAFKA_ADVERTISED_HOST_NAME`
-- `RESTKNOT_API_KEY`
 
 Get the keys of your machines
 -----------------------------
