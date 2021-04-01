@@ -14,3 +14,4 @@ Table of contents
    project.rst
    howto.rst
    knotintro.rst
+   architecture.rst
