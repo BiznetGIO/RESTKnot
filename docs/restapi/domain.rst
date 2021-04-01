@@ -30,21 +30,21 @@ Response:
             {
                 "id": 512564294432948225,
                 "owner": "@",
-                "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400",
+                "rdata": "one.dns.id. hostmaster.dns.id. 2019121601 10800 3600 604800 38400",
                 "type": "SOA",
                 "ttl": "3600"
             },
             {
                 "id": 512564295907311617,
                 "owner": "@",
-                "rdata": "satu.mydns.id.",
+                "rdata": "one.dns.id.",
                 "type": "NS",
                 "ttl": "3600"
             },
             {
                 "id": 512564297375940609,
                 "owner": "@",
-                "rdata": "dua.mydns.id.",
+                "rdata": "two.dns.id.",
                 "type": "NS",
                 "ttl": "3600"
             },
@@ -93,21 +93,21 @@ Response:
             {
                 "id": 512564294432948225,
                 "owner": "@",
-                "rdata": "satu.mydns.id. hostmaster.mydns.id. 2019121601 10800 3600 604800 38400",
+                "rdata": "one.dns.id. hostmaster.dns.id. 2019121601 10800 3600 604800 38400",
                 "type": "SOA",
                 "ttl": "3600"
             },
             {
                 "id": 512564295907311617,
                 "owner": "@",
-                "rdata": "satu.mydns.id.",
+                "rdata": "one.dns.id.",
                 "type": "NS",
                 "ttl": "3600"
             },
             {
                 "id": 512564297375940609,
                 "owner": "@",
-                "rdata": "dua.mydns.id.",
+                "rdata": "two.dns.id.",
                 "type": "NS",
                 "ttl": "3600"
             },
