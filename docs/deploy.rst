@@ -27,15 +27,16 @@ Prepare application configs
 
 You need :code:`servers.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains a list of your masters and slaves name, and
-:code:`knot.conf` serve as a configuration for your knot app. See more in
+:code:`servers.yml` contains a list of your masters and slaves hostname, and
+:code:`knot.conf` serve as a configuration for your knot app. See
+``servers.yml.example`` in ``/api`` directory, and ``knot.conf`` in
 examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
 
 Prepare the docker-compose
 --------------------------
 
 Replace the example value with the real one in the ``docker-compose.yml``.
-Read the description of each value in the example files.
+See more detailed information in ``.env.example`` or ``docker-compose.yml.example`` in ``/api`` directory.
 The most important thing you have to pay attention to is ``RESTKNOT_AGENT_TYPE``,
 it will not work if you set it to ``slave`` but the app runs on the master node.
 
