@@ -86,7 +86,7 @@ Basic Deployment Architecture
 
 There are many possible forms in the deployment. But the most basic is using a
 two-node. The first node is going to host ``restknot-api``,
-``database``, and ``message broker``. The second node is hosting ``knot server
+``database``, and ``message broker``. The second node is hosting ``Knot DNS server
 (knotd)`` and ``restknot-agent``.
 
 The three components in the first node can be run using a docker container. You
