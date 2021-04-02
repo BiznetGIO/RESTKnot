@@ -7,12 +7,14 @@ from dnsagent.vendor.libknot import control as knotlib
 def connect_knot():
     libknot_binary_path = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
     knot_socket_path = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
+    knot_socket_timeout = int(os.environ.get("RESTKNOT_SOCKET_TIMEOUT", 2000))
 
     knotlib.load_lib(libknot_binary_path)
     knot_ctl = knotlib.KnotCtl()
 
     try:
         knot_ctl.connect(knot_socket_path)
+        knot_ctl.set_timeout(knot_socket_timeout)
         return knot_ctl
     except knotlib.KnotCtlError as e:
         raise ValueError(f"Can't connect to knot socket: {e}")

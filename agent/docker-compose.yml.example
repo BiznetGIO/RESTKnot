@@ -11,6 +11,10 @@ services:
       - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
       - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
 
+      # Control socket timeout.
+      # Set to 0 for infinity.  Default is 2000 seconds
+      # - RESTKNOT_SOCKET_TIMEOUT=5000
+
       # using 127.0.0.1 or localhost won't make it work
       # set it to RESTKNOT API IP
       - RESTKNOT_KAFKA_BROKER=10.10.10.10
