@@ -315,20 +315,23 @@ These are common command operation to give you insight how to do things:
     $ # see current config
     # knotc conf-read
     # knotc conf-read zone['niu.com']
-    $ or using grep
+    $ # or using grep
     # knotc conf-read | grep niu.com
 
     $ # check is record created
     # knotc zone-read --
     # knotc zone-read niu.com
+    # knotc zone-read niu.com @ SOA
     $ # or using kdig/dig
     $ # use +tcp if your ISP provider annoys you
     $ kdig @localhost niu.com SOA +short +tcp
 
     $ # start everyting from scratch
+    $ # stop knotd and knot-agent
     # rm -rf * /var/lib/knot # remove all knot db
     # rm -rf * /etc/knot # most of the time, it doesn't needed
     # sudo knotc conf-init # initialize the confdb
+    $ # start knotd and knot-agent
 
     $ # export/backup the current state (config + records)
     # knotc conf-export /path/to/knot-backup.conf

@@ -17,5 +17,5 @@ master_doc = "index"
 pygments_style = "sphinx"
 html_theme = "alabaster"
 pygments_style = "sphinx"
-html_logo = "_static/img/restknot-logo.svg"
+html_logo = "img/restknot-logo.svg"
 html_static_path = ["_static"]

@@ -27,21 +27,19 @@ Prepare application configs
 
 You need :code:`servers.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains a list of your masters and slaves name, and
-:code:`knot.conf` serve as a configuration for your knot app. See more in
+:code:`servers.yml` contains a list of your masters and slaves hostname, and
+:code:`knot.conf` serve as a configuration for your knot app. See
+``servers.yml.example`` in ``/api`` directory, and ``knot.conf`` in
 examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
 
 Prepare the docker-compose
 --------------------------
 
-Replace the example value with the real one in the docker-compose.yml
-Most important things you have to pay attention to:
+Replace the example value with the real one in the ``docker-compose.yml``.
+See more detailed information in ``.env.example`` or ``docker-compose.yml.example`` in ``/api`` directory.
+The most important thing you have to pay attention to is ``RESTKNOT_AGENT_TYPE``,
+it will not work if you set it to ``slave`` but the app runs on the master node.
 
-- `RESTKNOT_KAFKA_BROKER`
-- `RESTKNOT_KNOT_LIB`
-- `RESTKNOT_KNOT_SOCKET`
-- `KAFKA_ADVERTISED_HOST_NAME`
-- `RESTKNOT_API_KEY`
 
 Get the keys of your machines
 -----------------------------
@@ -78,3 +76,21 @@ Play the Playbook
   $ ansible-playbook stop-containers-agent.yml -f 10 -v -e "target_host=bar-master"
 
 See more in playbook examples `deploy <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.
+
+Basic Deployment Architecture
+-----------------------------
+
+.. figure:: img/basic-deployment.png
+   :alt: Basic Architecture
+
+   A basic deployment architecture.
+
+There are many possible forms in the deployment. But the most basic is using a
+two-node. The first node is going to host ``restknot-api``,
+``database``, and ``message broker``. The second node is hosting ``Knot DNS server
+(knotd)`` and ``restknot-agent``.
+
+The three components in the first node can be run using a docker container. You
+can use the ``api/docker-compose.yml.example`` as a starting point. For the
+second node, it's advised that you install the ``knot server`` locally, then you
+can use ``agent/docker-compose.yml.example`` for the ``agent``.
