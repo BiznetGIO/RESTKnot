@@ -1,0 +1,53 @@
+version: '3'
+services:
+  zoo1:
+    image: confluentinc/cp-zookeeper:6.1.1
+    hostname: zoo1
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      # used to do heartbeats and the session timeout
+      ZOOKEEPER_TICK_TIME: 2000
+      # limit time to connect to a leader
+      ZOOKEEPER_INIT_LIMIT: 5
+      # how far out-of-date a server can be from a leader
+      ZOOKEEPER_SYNC_LIMIT: 2
+      # specify 0.0.0.0 for the current node.
+      # zookeper_server_id must match the order of the current node
+      # if the current zookeper id is 1, the `0.0.0.0:2888:3888` must be in the 1st order.
+      ZOOKEEPER_SERVERS: 0.0.0.0:2888:3888;20.20.20.20:2888:3888;30.30.30.30:2888:3888
+  kafka1:
+    image: confluentinc/cp-kafka:6.1.1
+    hostname: kafka1
+    depends_on:
+      - zoo1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: 10.10.10.10:2181,20.20.20.20:2181,30.30.30.30:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.10.10:9092
+  roach:
+    image: cockroachdb/cockroach:v19.1.5
+    command: start --insecure
+    ports:
+      - "26257:26257"
+    volumes:
+      - /cockroach-data:/cockroach/cockroach-data:z
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.3.0
+    hostname: kowl
+    depends_on:
+      # wait for broker to be ready
+      - kafka1
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config.yaml:/etc/kowl/config.yaml:z
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+

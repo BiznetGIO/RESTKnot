@@ -1,7 +1,9 @@
 version: '3'
 services:
   restknot-api:
-    image: biznetgio/restknot-api:0.7.0
+    image: biznetgio/restknot-api:0.7.8
+    # depends_on:
+    #   - kafka1
     ports:
       - '5000:5000'
     environment:
@@ -27,20 +29,3 @@ services:
 
       - RESTKNOT_API_KEY=123
     command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
-  zookeeper:
-    image: wurstmeister/zookeeper
-  kafka:
-    image: wurstmeister/kafka:2.12-2.4.0
-    ports:
-      - '9092:9092'
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 10.10.10.10
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-  roach:
-    image: cockroachdb/cockroach:v19.1.5
-    command: start --insecure
-    ports:
-      - "26257:26257"
-    volumes:
-      - /cockroach-data:/cockroach/cockroach-data:z
-
