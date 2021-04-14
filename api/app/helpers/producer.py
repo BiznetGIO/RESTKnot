@@ -4,15 +4,19 @@ import os
 from flask import current_app
 from kafka import KafkaProducer
 
+from app.helpers import helpers
+
 
 def kafka_producer():
     """Create Kafka producer."""
-    host = os.environ.get("KAFKA_HOST")
-    port = os.environ.get("KAFKA_PORT")
-    broker = f"{host}:{port}"
+    config = helpers.get_config()
+    try:
+        brokers = config["brokers"]
+    except KeyError:
+        raise ValueError("Can't find brokers list in config")
 
     producer = KafkaProducer(
-        bootstrap_servers=[broker],
+        bootstrap_servers=brokers,
         value_serializer=lambda m: json.dumps(m).encode("utf-8"),
     )
     return producer

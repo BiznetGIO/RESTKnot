@@ -75,8 +75,8 @@ jobs:
 
       - name: Prepare for Integration tests
         run: |
-          # use default location, instead setting the `RESTKNOT_CLUSTER_FILE`
-          cp  api/servers.example.yml api/servers.yml
+          # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
+          cp  api/config.example.yml api/config.yml
 
       - name: Integration tests
         run: |

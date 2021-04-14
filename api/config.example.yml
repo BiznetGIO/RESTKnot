@@ -1,0 +1,23 @@
+# list of knot servers
+
+# The value here follows the knotc command, not knot.conf
+knot_servers:
+  master:
+    notify:
+      - slave1
+      - slave2
+    acl:
+      - slave1
+      - slave2
+  slave:
+    master:
+      - master1
+    acl:
+      - master1
+
+
+# list of kafka brokers
+brokers:
+  - "10.10.10.10:9092"
+  - "20.20.20.20:9092"
+  - "30.30.30.30:9092"

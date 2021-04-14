@@ -18,8 +18,6 @@ services:
       - DB_PORT=26257
       - DB_USER=root
       - DB_SSL=disable
-      - KAFKA_HOST=10.10.10.10
-      - KAFKA_PORT=9092
       - RESTKNOT_KAFKA_TOPIC=domaindata
 
       # don't add quote, otherwise it will not work
@@ -28,4 +26,7 @@ services:
       - DEFAULT_NS=one.dns.id. two.dns.id.
 
       - RESTKNOT_API_KEY=123
+
+      # set config file location. `config.yml` is the default
+      # - RESTKNOT_CONFIG_FILE=
     command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4

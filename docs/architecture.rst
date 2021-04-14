@@ -193,7 +193,7 @@ created.
 The fourth message contains similar data as the third, but it's only geared
 toward ``slave``. Such ``notify`` keyword being changed to ``master``. These
 keyword differences also represented in ``knot.conf`` and
-``servers.yml``. To learn more, take a look at ``knot.conf.master`` and
+``config.yml``. To learn more, take a look at ``knot.conf.master`` and
 ``knot.conf.slave`` in ``/deploy/examples/``.
 
 

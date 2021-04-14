@@ -25,12 +25,12 @@ playbook tasks to match your initial database locations.
 Prepare application configs
 ---------------------------
 
-You need :code:`servers.yml` and :code:`knot.conf`.
+You need :code:`config.yml` and :code:`knot.conf`.
 
-:code:`servers.yml` contains a list of your masters and slaves hostname, and
-:code:`knot.conf` serve as a configuration for your knot app. See
-``servers.example.yml`` in ``/api`` directory, and ``knot.conf`` in
-examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
+:code:`config.yml` holds application configurations, mainly a list of Knot
+servers and a list of Kafka brokers. :code:`knot.conf` serve as a configuration
+for the Knot DNS server. See ``config.example.yml`` in ``/api`` directory, and
+``knot.conf`` in examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
 
 Prepare the docker-compose
 --------------------------
