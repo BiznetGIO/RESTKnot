@@ -40,7 +40,7 @@ Go to the API directory
 
 
 RESTKnot API consumes the configuration from OS environment variables. So make
-sure you have set them. Take a look into code:`.env.example` and change the default
+sure you have set them. Take a look into code:`.example.env` and change the default
 values according to your situation.
 
 Then run the app:
@@ -91,7 +91,7 @@ Go to the Agent directory
   # create the virtualenv, then install the dependencies
   $ pip install -r requirements.txt
 
-Set appropriate configurations. Take a look at :code:`.env.example` in the agent directory
+Set appropriate configurations. Take a look at :code:`.example.env` in the agent directory
 and run them manually. At this moment RESTKNOT Agent doesn't load them automatically.
 
 You can run the Agent in user mode, but some OS need a superuser for the knot

@@ -13,7 +13,7 @@ WORKDIR /restknotapi
 # leverage Docker cache
 COPY ./requirements.txt /restknotapi/requirements.txt
 
-COPY ./servers.yml.example /restknotapi/servers.yml
+COPY ./servers.example.yml /restknotapi/servers.yml
 
 RUN pip3 install -r /restknotapi/requirements.txt
 
