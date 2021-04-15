@@ -20,6 +20,8 @@ services:
     - RESTKNOT_KAFKA_BROKERS=10.10.10.10:9092,20.20.20.20:9092,30.30.30.30:9092
     # topic to suscribe
     - RESTKNOT_KAFKA_TOPIC=domaindata
+    # consumer group id
+    - RESTKNOT_KAFKA_GROUP_ID=
   entrypoint: dnsagent start
   volumes:
     # on CentOS family you need to add `:z`

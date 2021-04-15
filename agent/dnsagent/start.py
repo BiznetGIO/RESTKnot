@@ -11,19 +11,23 @@ from dnsagent.libs import knot as knot_lib
 def consume():
     brokers = os.environ.get("RESTKNOT_KAFKA_BROKERS")
     topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
+    group_id = os.environ.get("RESTKNOT_KAFKA_GROUP_ID")
     agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
 
     conf = {
         "bootstrap.servers": brokers,
+        "group.id": group_id,
         "auto.offset.reset": "earliest",
         "enable.auto.commit": True,
     }
     consumer = Consumer(conf)
-    consumer.suscribe(topic)
+    consumer.subscribe([topic])
 
     try:
         while True:
             message = consumer.poll(timeout=1.0)
+            if message is None:
+                continue
             if message.error():
                 raise KafkaException(message.error())
 
@@ -38,7 +42,7 @@ def consume():
                     knot_lib.execute(query)
 
     except KeyboardInterrupt:
-        print("Stopping dnsagent. Press Ctrl+C again to exit")
+        print(" Stopping dnsagent. Press Ctrl+C again to exit")
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()
