@@ -1,8 +1,12 @@
 # didn't work with apline
 FROM python:3.7-slim-buster
 
+RUN apt-get update
+
 # working with timezones
-RUN apt-get install -y tzdata
+RUN apt-get install --no-install-recommends --yes tzdata
+# confluent-kafka-python needs these
+RUN apt-get install --no-install-recommends --yes librdkafka-dev python3-dev
 
 WORKDIR /dnsagent
 

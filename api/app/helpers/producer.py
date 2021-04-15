@@ -2,7 +2,7 @@ import json
 import os
 
 from flask import current_app
-from kafka import KafkaProducer
+from confluent_kafka import Producer
 
 from app.helpers import helpers
 
@@ -15,11 +15,15 @@ def kafka_producer():
     except KeyError:
         raise ValueError("Can't find brokers list in config")
 
-    producer = KafkaProducer(
-        bootstrap_servers=brokers,
-        value_serializer=lambda m: json.dumps(m).encode("utf-8"),
-    )
+    brokers = ",".join(brokers)
+    conf = {"bootstrap.servers": brokers}
+    producer = Producer(**conf)
     return producer
+
+
+def _delivery_report(err, msg):
+    if err is not None:
+        raise ValueError(f"Message delivery failed: {err}")
 
 
 def send(message):
@@ -28,11 +32,13 @@ def send(message):
     try:
         producer = kafka_producer()
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
-        producer.send(topic, message)
-        producer.flush()
+        encoded_message = json.dumps(message).encode("utf-8")
+        producer.produce(topic, encoded_message, callback=_delivery_report)
     except Exception as e:
         current_app.logger.error(f"{e}")
         raise ValueError(f"{e}")
-    finally:
-        if producer:
-            producer.close()
+
+    # Serve delivery callback queue.
+    producer.poll(0)
+    # Wait until all messages have been delivered
+    producer.flush()

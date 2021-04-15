@@ -1,8 +1,10 @@
 import os
 import logging
+import json
+
+from confluent_kafka import Consumer, KafkaException
 
 from dnsagent.clis.base import Base
-from dnsagent.libs import kafka as kafka_lib
 from dnsagent.libs import knot as knot_lib
 
 
@@ -20,30 +22,27 @@ class Start(Base):
         -h --help                             Print usage
     """
 
-    def connect_kafka(self):
-        broker_host = os.environ.get("RESTKNOT_KAFKA_BROKER")
-        broker_port = os.environ.get("RESTKNOT_KAFKA_PORTS")
-        broker = f"{broker_host}:{broker_port}"
+    def consume(self):
+        brokers = os.environ.get("RESTKNOT_KAFKA_BROKERS")
         topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
-
-        if (broker_host and broker_port) is None:
-            logger.info("Can't find kafka host and port")
-            exit()
-
-        try:
-            logger.info("Connecting to broker : " + broker)
-            consumer = kafka_lib.get_kafka_consumer(broker, topic)
-            return consumer
-        except Exception as e:
-            logger.info(f"Can't Connect to broker: {e}")
-            exit()
-
-    def take_message(self, consumer):
         agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
 
+        conf = {
+            "bootstrap.servers": brokers,
+            "auto.offset.reset": "earliest",
+            "enable.auto.commit": True,
+        }
+        consumer = Consumer(conf)
+        consumer.suscribe(topic)
+
         try:
-            for message in consumer:
-                message = message.value
+            while True:
+                message = consumer.poll(timeout=1.0)
+                if message.error():
+                    raise KafkaException(message.error())
+
+                message = message.value()
+                message = json.loads(message.decode("utf-8"))
 
                 agent_type_msg = message["agent"]["agent_type"]
                 if agent_type in agent_type_msg:
@@ -52,11 +51,11 @@ class Start(Base):
                     for query in knot_queries:
                         knot_lib.execute(query)
 
-            consumer.close()
-
         except KeyboardInterrupt:
             print("Stopping dnsagent. Press Ctrl+C again to exit")
+        finally:
+            # Close down consumer to commit final offsets.
+            consumer.close()
 
     def execute(self):
-        consumer = self.connect_kafka()
-        self.take_message(consumer)
+        self.consume()

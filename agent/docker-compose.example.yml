@@ -17,8 +17,7 @@ services:
 
     # using 127.0.0.1 or localhost won't make it work
     # set it to RESTKNOT API IP
-    - RESTKNOT_KAFKA_BROKER=10.10.10.10
-    - RESTKNOT_KAFKA_PORTS=9092
+    - RESTKNOT_KAFKA_BROKERS=10.10.10.10:9092,20.20.20.20:9092,30.30.30.30:9092
     # topic to suscribe
     - RESTKNOT_KAFKA_TOPIC=domaindata
   entrypoint: dnsagent start
