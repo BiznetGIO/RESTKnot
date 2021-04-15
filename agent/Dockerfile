@@ -22,3 +22,4 @@ COPY . /dnsagent
 RUN cat /dnsagent/build-version.txt
 
 RUN pip3 install -e /dnsagent
+CMD ["python3", "dnsagent/start.py"]
