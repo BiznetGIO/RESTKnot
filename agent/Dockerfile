@@ -21,5 +21,5 @@ COPY . /dnsagent
 # check build version
 RUN cat /dnsagent/build-version.txt
 
-RUN pip3 install -e /dnsagent
+ENV PYTHONPATH "${PYTHONPATH}:/dnsagent"
 CMD ["python3", "dnsagent/start.py"]

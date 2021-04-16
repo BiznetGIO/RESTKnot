@@ -20,8 +20,12 @@ def consume():
         "auto.offset.reset": "earliest",
         "enable.auto.commit": True,
     }
+
+    def print_assignment(consumer, partitions):
+        print("Consumer assigned to:", partitions)
+
     consumer = Consumer(conf)
-    consumer.subscribe([topic])
+    consumer.subscribe([topic], on_assign=print_assignment)
 
     try:
         while True:
@@ -42,7 +46,7 @@ def consume():
                     knot_lib.execute(query)
 
     except KeyboardInterrupt:
-        print(" Stopping dnsagent. Press Ctrl+C again to exit")
+        print(" dnsagent stopped. Aborted by user")
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()

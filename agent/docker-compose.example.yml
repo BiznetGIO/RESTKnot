@@ -22,7 +22,6 @@ services:
     - RESTKNOT_KAFKA_TOPIC=domaindata
     # consumer group id
     - RESTKNOT_KAFKA_GROUP_ID=
-  entrypoint: dnsagent start
   volumes:
     # on CentOS family you need to add `:z`
     # .e.g `/var/run/knot/:/var/run/knot/:z`
