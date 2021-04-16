@@ -11,8 +11,11 @@ services:
       - FLASK_APP=autoapp.py
       - FLASK_ENV=production
       - FLASK_DEBUG=0
-      - APP_HOST=0.0.0.0
-      - APP_PORT=5000
+
+      # server
+      - APP_HOST=0.0.0.0 # default 0.0.0.0
+      - APP_PORT=5000 # default 8000
+
       - DB_NAME=knotdb # don't add whitespace beetween =
       - DB_HOST=roach
       - DB_PORT=26257
@@ -26,7 +29,8 @@ services:
       - DEFAULT_NS=one.dns.id. two.dns.id.
 
       - RESTKNOT_API_KEY=123
-
       # set config file location. `config.yml` is the default
       # - RESTKNOT_CONFIG_FILE=
-    command: gunicorn 'autoapp:app' -b '0.0.0.0:5000' -w 4
+
+    # default timeout:30
+    command: gunicorn 'autoapp:app' -c 'gunicorn.conf.py' --timeout 60
