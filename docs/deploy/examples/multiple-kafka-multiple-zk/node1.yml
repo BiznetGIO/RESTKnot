@@ -20,6 +20,10 @@ services:
       # zookeper_server_id must match the order of the current node
       # if the current zookeper id is 1, the `0.0.0.0:2888:3888` must be in the 1st order.
       ZOOKEEPER_SERVERS: 0.0.0.0:2888:3888;20.20.20.20:2888:3888;30.30.30.30:2888:3888
+    # uncomment to store data. If you get permission error, run `sudo chown -R 1000:1000 data`
+    # volumes:
+    #   - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
+    #   - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
   kafka1:
     image: confluentinc/cp-kafka:6.1.1
     hostname: kafka1
@@ -32,6 +36,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_ZOOKEEPER_CONNECT: 10.10.10.10:2181,20.20.20.20:2181,30.30.30.30:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.10.10:9092
+    # volumes:
+    #   - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
   roach:
     image: cockroachdb/cockroach:v19.1.5
     command: start --insecure

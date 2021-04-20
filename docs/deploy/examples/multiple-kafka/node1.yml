@@ -14,6 +14,10 @@ services:
       ZOOKEEPER_INIT_LIMIT: 5
       # how far out-of-date a server can be from a leader
       ZOOKEEPER_SYNC_LIMIT: 2
+    # uncomment to store data. If you get permission error, run `sudo chown -R 1000:1000 data`
+    # volumes:
+    #   - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
+    #   - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
   kafka1:
     image: confluentinc/cp-kafka:6.1.1
     hostname: kafka1
@@ -26,6 +30,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.10.10:9092
+    # volumes:
+    #   - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
   roach:
     image: cockroachdb/cockroach:v19.1.5
     command: start --insecure
