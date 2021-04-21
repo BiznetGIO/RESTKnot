@@ -19,7 +19,7 @@ services:
       # specify 0.0.0.0 for the current node.
       # zookeper_server_id must match the order of the current node
       # if the current zookeper id is 1, the `0.0.0.0:2888:3888` must be in the 1st order.
-      ZOOKEEPER_SERVERS: 10.10.10.10:2888:3888;20.20.20.20:2888:3888;0.0.0.0:2888:3888
+      ZOOKEEPER_SERVERS: 10.0.0.1:2888:3888;10.0.0.2:2888:3888;0.0.0.0:2888:3888
   kafka1:
     image: confluentinc/cp-kafka:6.1.1
     hostname: kafka2
@@ -30,5 +30,5 @@ services:
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_ZOOKEEPER_CONNECT: 10.10.10.10:2181,20.20.20.20:2181,30.30.30.30:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://30.30.30.30:9092
+      KAFKA_ZOOKEEPER_CONNECT: 10.0.0.1:2181,10.0.0.2:2181,10.0.0.3:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.3:9092

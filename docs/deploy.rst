@@ -50,7 +50,7 @@ Get the keys of your machines
 .. code-block:: yaml
 
   [api]
-  10.10.10.10 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
+  10.0.0.1 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
 
   [knot-master]
   11.11.11.11 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"

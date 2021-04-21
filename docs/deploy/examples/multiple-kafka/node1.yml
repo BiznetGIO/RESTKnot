@@ -29,7 +29,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.10.10.10:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.1:9092
     # volumes:
     #   - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
   roach:
