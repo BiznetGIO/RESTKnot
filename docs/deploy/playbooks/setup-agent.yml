@@ -1,48 +1,70 @@
 ---
-- hosts: "{{ target_host }}"
+- hosts: "{{ server_type }}"
+  vars:
+    owner: 'centos'
 
   tasks:
-      - name: Install knot DNS
-        become: yes
-        yum:
-            name: knot
-            state: present
+    - name: Create app directory
+      become: yes
+      file:
+        path: /opt/knot
+        state: directory
 
-      - name: Overwrite knot.conf file
-        become: yes
-        synchronize:
-            mode: push
-            src: "./configs/{{ item }}"
-            dest: "/etc/knot/{{ item }}"
-            recursive: yes
-        with_items:
-            - 'knot.conf.{{ server_type }}'
+    - name: Change ownership of knot
+      become: yes
+      file:
+        path: /opt/knot
+        owner: '{{ owner }}'
+        group: '{{ owner }}'
 
-      - name: Rename knot.conf file
-        become: yes
-        command: mv /etc/knot/knot.conf.{{ server_type }} /etc/knot/knot.conf
+    - name: Install knot DNS
+      become: yes
+      yum:
+        # name: knot-2.9.2
+        name: knot
+        state: present
 
-      - name: Restart knot daemon
-        become: yes
-        service:
-            name: knot
-            state: restarted
+    - name: Overwrite knot.conf file
+      become: yes
+      synchronize:
+        mode: push
+        # prepare the required files!
+        src: "./configs/knot/{{ server_type }}/{{ item }}"
+        dest: "/etc/knot/{{ item }}"
+        recursive: yes
+      with_items:
+        - "knot.conf"
 
-      - name: Copy docker compose file
-        become: yes
-        synchronize:
-            src: "~/docker-images/agent/{{ item }}"
-            dest: "/opt/knot/{{ item }}"
-        with_items:
-            - 'docker-compose.yml'
+    - name: Stop knot server
+      become: yes
+      systemd:
+        name: knot
+        state: stopped
 
-      - name: Set server type
-        become: yes
-        replace:
-            path: /opt/knot/docker-compose.yml
-            regexp: 'RESTKNOT_AGENT_TYPE=master'
-            replace: 'RESTKNOT_AGENT_TYPE={{ server_type }}'
+    - name: Create confdb if doesn't exists
+      become: yes
+      raw: sudo test -e /var/lib/knot/confdb  || sudo -u knot knotc conf-import /etc/knot/knot.conf
 
-      - name: start containers
-        become: yes
-        command: docker-compose -f /opt/knot/docker-compose.yml up -d
+    - name: Start knot server
+      become: yes
+      systemd:
+        name: knot
+        state: started
+
+    - name: Copy docker compose file
+      synchronize:
+        src: "./configs/agent/{{ item }}"
+        dest: "/opt/knot/{{ item }}"
+      with_items:
+        - "docker-compose.yml"
+
+    - name: Set server type
+      replace:
+        path: /opt/knot/docker-compose.yml
+        regexp: "RESTKNOT_AGENT_TYPE=master"
+        replace: "RESTKNOT_AGENT_TYPE={{ server_type }}"
+
+    - name: Start containers
+      command: ~/.local/bin/docker-compose up -d
+      args:
+        chdir: /opt/knot

@@ -1,35 +1,59 @@
 ---
 - hosts: api
+  vars:
+    owner: 'centos'
+    host_ip: '10.0.0.3'
 
   tasks:
-      - name: Copy cockroachdb initial database
-        become: yes
-        synchronize:
-            mode: push
-            src: "~/docker-images/cockroachdb/{{ item }}"
-            dest: "/{{ item }}"
-        with_items:
-            # append '/' unless it will created multiple
-            # directory
-            - 'cockroach-data/'
+    - name: Create app directory
+      become: yes
+      file:
+        path: /opt/knot
+        state: directory
 
-      - name: Copy docker compose files
-        become: yes
-        synchronize:
-            src: "./configs/{{ item }}"
-            dest: "/opt/knot/{{ item }}"
-        with_items:
-            - 'docker-compose-api.yml'
+    - name: Create data directory
+      become: yes
+      file:
+        path: /opt/knot/data
+        state: directory
 
-      - name: pull cockroach image
-        command:  docker pull cockroachdb/cockroach:v19.1.5
+    - name: Change ownership of knot
+      become: yes
+      file:
+        path: /opt/knot
+        owner: '{{ owner }}'
+        group: '{{ owner }}'
 
-      - name: pull kafka image
-        command:  docker pull wurstmeister/kafka:2.12-2.3.0
+    - name: Change ownership of data
+      become: yes
+      file:
+        path: /opt/knot/data
+        owner: 1000
+        group: 1000
 
-      - name: pull zookeper image
-        command:  docker pull wurstmeister/zookeeper:latest
+    - name: Copy required files
+      synchronize:
+        src: "./configs/api/{{ item }}"
+        dest: "/opt/knot/{{ item }}"
+      with_items:
+        - "docker-compose.yml"
+        - "kowl.yml"
+        - "schema.sql"
 
-      - name: start containers
-        become: yes
-        command: docker-compose -f /opt/knot/docker-compose-api.yml up -d
+    - name: Check if docker exists
+      # changing PATH is dangerous. it's bettter to
+      # just use a full path
+      command: ~/.local/bin/docker-compose -v
+      args:
+        chdir: /opt/knot
+
+    - name: Start containers
+      command: ~/.local/bin/docker-compose up -d
+      args:
+        chdir: /opt/knot
+
+    - name: Create database
+      command: docker run --rm cockroachdb/cockroach:v19.2.2 sql --host='{{ host_ip }}':26257 --insecure --execute "CREATE DATABASE IF NOT EXISTS knotdb;"
+
+    - name: Create table
+      command: cat /opt/knot/schema.sql | docker run -i --rm cockroachdb/cockroach:v19.2.2 sql --host='{{ host_ip }}':26257 --insecure --database=knotdb
