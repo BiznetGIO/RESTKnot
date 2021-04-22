@@ -13,7 +13,7 @@ new zone and default records.
 
 The second component is the ``agent``. It receives a JSON message from the
 broker, parses it then sends a command to the Knot server via
-``libknot.py``. It's a simple app and the main entry point is ``agent/dnsagent/clis/start.py``.
+``libknot.py``. It's a simple app and the main entry point is ``agent/dnsagent/start.py``.
 
 
 The Ecosystem

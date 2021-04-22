@@ -1,45 +1,40 @@
 Deployment Steps
 ================
 
-Prepare the initial database
+The complete steps of the deployment process available as Ansible playbooks in ``docs/examples``.
+
+Prepare the production image
 ----------------------------
 
-We've used a bootstrap script to initialize the database on a remote machine, but it's
-error-prone and hard to maintain. So we come up with this simpler way.
+``restknot-api`` needs a ``config.yml`` file to run. You can supply the file
+outside the image using docker volume. Or build the new image containing your
+production version of ``config.yml``.
 
 .. code-block:: bash
 
-  # start the cockroach instance
-  $ cockroach start --insecure --listen-addr=localhost:26257 --http-addr=localhost:8090
+    # Dockerfile
 
-  # create the db
-  $ cockroach sql --insecure
-  > create database knotdb;
+    FROM biznetgio/restknot-api:latest
 
-  # create the table
-  $ cockroach sql --insecure --database=knotdb < schema.sql
+    COPY config.yml /restknotapi
 
-Create the initial database on your local side, then update the corresponding
-playbook tasks to match your initial database locations.
 
-Prepare application configs
----------------------------
-
-You need :code:`config.yml` and :code:`knot.conf`.
-
-:code:`config.yml` holds application configurations, mainly a list of Knot
-servers and a list of Kafka brokers. :code:`knot.conf` serve as a configuration
-for the Knot DNS server. See ``config.example.yml`` in ``/api`` directory, and
-``knot.conf`` in examples `directory <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/examples>`_.
-
-Prepare the docker-compose
+Prepare the required files
 --------------------------
 
-Replace the example value with the real one in the ``docker-compose.yml``.
-See more detailed information in ``.example.env`` or ``docker-compose.example.yml`` in ``/api`` directory.
-The most important thing you have to pay attention to is ``RESTKNOT_AGENT_TYPE``,
-it will not work if you set it to ``slave`` but the app runs on the master node.
+Before running the playbooks you have to create a folder named ``configs`` with
+the required files. Namely the ``docker-compose.yml`` for both restknot-agent
+and restknot-api, ``schema.sql``, and the ``knot.conf`` for both master and
+slave files. All of them available in the example directory.
+Modify the value of those files to match your production environment.
 
+- ``config.yml`` holds application configurations, mainly a list of Knot servers and a list of Kafka brokers.
+- ``knot.conf`` serves as a configuration for the Knot DNS server.
+- ``schema.sql`` used to define the DB schema.
+- (Optional) ``kowl.yml`` file for Kafka viewer.
+
+The most important thing you have to pay attention to is ``RESTKNOT_AGENT_TYPE``,
+it will not work if you set it to ``slave`` but the app runs on the ``master`` node.
 
 Get the keys of your machines
 -----------------------------
@@ -53,29 +48,25 @@ Get the keys of your machines
   10.0.0.1 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
 
   [knot-master]
-  11.11.11.11 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
+  10.0.0.2 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
 
   [knot-slave]
-  12.12.12.12 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
+  10.0.0.3 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
 
 
 Play the Playbook
 -----------------
 
-.. code-block:: bash
+.. code-block:: console
 
+  $ # initial setup for machine
   $ ansible-playbook initial-setups.yml -f 10 -v
+  $ # prepare the machine for restknot-api
   $ ansible-playbook setup-api.yml -f 10 -v
-  # for master servers
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master" -e "target_host=foo-master"
-  # for slave servers
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master" -e "target_host=bar-master"
 
-  # to stop the container
-  $ ansible-playbook stop-containers-api.yml -f 10 -v
-  $ ansible-playbook stop-containers-agent.yml -f 10 -v -e "target_host=bar-master"
-
-See more in playbook examples `deploy <https://github.com/BiznetGIO/RESTKnot/tree/master/docs/deploy/playbooks>`_.
+  $ # prepare the machine for restknot-agent
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master"
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=slave"
 
 Basic Deployment Architecture
 -----------------------------
