@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   zoo1:
     image: confluentinc/cp-zookeeper:6.1.1
@@ -21,9 +21,9 @@ services:
       # if the current zookeper id is 1, the `0.0.0.0:2888:3888` must be in the 1st order.
       ZOOKEEPER_SERVERS: 0.0.0.0:2888:3888;10.0.0.2:2888:3888;10.0.0.3:2888:3888
     # uncomment to store data. If you get permission error, run `sudo chown -R 1000:1000 data`
-    # volumes:
-    #   - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
-    #   - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
+    volumes:
+      - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
+      - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
   kafka1:
     image: confluentinc/cp-kafka:6.1.1
     hostname: kafka1
@@ -36,15 +36,17 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_ZOOKEEPER_CONNECT: 10.0.0.1:2181,10.0.0.2:2181,10.0.0.3:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.1:9092
-    # volumes:
-    #   - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
+    volumes:
+      - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
   roach:
-    image: cockroachdb/cockroach:v19.1.5
-    command: start --insecure
+    hostname: roach
+    image: cockroachdb/cockroach:v19.2.2
+    command: start --insecure --listen-addr=roach:26257 --advertise-addr=roach:26257 --http-addr=roach:8090
     ports:
       - "26257:26257"
+      - "8090:8090"
     volumes:
-      - /cockroach-data:/cockroach/cockroach-data:z
+      - ./data/cockroach-data:/cockroach/cockroach-data:z
   kowl:
     image: quay.io/cloudhut/kowl:v1.3.0
     hostname: kowl
@@ -54,6 +56,5 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config.yaml:/etc/kowl/config.yaml:z
+      - ./kowl.yaml:/etc/kowl/config.yaml:z
     entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
-
