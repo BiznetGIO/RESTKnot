@@ -48,13 +48,12 @@ services:
     volumes:
       - ./data/cockroach-data:/cockroach/cockroach-data:z
   kowl:
-    image: quay.io/cloudhut/kowl:v1.3.0
+    image: quay.io/cloudhut/kowl:v1.3.1
     hostname: kowl
     depends_on:
       # wait for broker to be ready
       - kafka1
     ports:
       - "8080:8080"
-    volumes:
-      - ./kowl.yaml:/etc/kowl/config.yaml:z
-    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+    environment:
+      - KAFKA_BROKERS=10.0.0.1:9092,10.0.0.2:9092,10.0.0.3:9092
