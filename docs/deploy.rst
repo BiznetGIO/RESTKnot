@@ -44,14 +44,9 @@ Get the keys of your machines
 
 .. code-block:: yaml
 
-  [api]
-  10.0.0.1 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
-
-  [knot-master]
-  10.0.0.2 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
-
-  [knot-slave]
-  10.0.0.3 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
+   all:
+     vars:
+       ansible_private_key_file: "~/ssh-keys/vm-key.pem"
 
 
 Play the Playbook
@@ -61,12 +56,12 @@ Play the Playbook
 
   $ # initial setup for machine
   $ ansible-playbook initial-setups.yml -f 10 -v
+
   $ # prepare the machine for restknot-api
   $ ansible-playbook setup-api.yml -f 10 -v
 
   $ # prepare the machine for restknot-agent
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=master"
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "server_type=slave"
+  $ ansible-playbook setup-agent.yml -f 10 -v
 
 Basic Deployment Architecture
 -----------------------------

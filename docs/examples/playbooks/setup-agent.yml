@@ -1,7 +1,5 @@
 ---
-- hosts: "{{ server_type }}"
-  vars:
-    owner: 'centos'
+- hosts: master, slave
 
   tasks:
     - name: Create app directory

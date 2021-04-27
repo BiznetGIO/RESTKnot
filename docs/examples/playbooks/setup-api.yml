@@ -1,8 +1,5 @@
 ---
 - hosts: api
-  vars:
-    owner: 'centos'
-    host_ip: '10.0.0.3'
 
   tasks:
     - name: Create app directory

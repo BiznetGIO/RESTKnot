@@ -1,8 +1,0 @@
-[api]
-10.0.0.1 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
-
-[master]
-10.0.0.2 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
-
-[slave]
-10.0.0.3 ansible_user=centos ansible_private_key_file="~/ssh-keys/vm-key.pem"
