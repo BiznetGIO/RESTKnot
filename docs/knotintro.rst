@@ -168,7 +168,7 @@ You can play with the files inside that storage to give a closer look into how K
 .. code-block:: bash
 
     $ sudo systemctl stop knot # stop knot server
-    $ mv mv niu.com.zone foo # remove zone file temporarily
+    $ sudo mv niu.com.zone foo # remove zone file temporarily
     $ sudo systemctl start knot
     $ sudo knotc zone-read niu.com # no result (expected, after removing zone file)
 

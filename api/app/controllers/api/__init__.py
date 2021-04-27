@@ -9,6 +9,7 @@ from .domain import (
     GetDomainDataId,
 )
 from .health import HealthCheck
+from .meta import MetaVersion, MetaConfig
 from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordDelete, RecordEdit
 from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlDelete, TtlEdit
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeDelete, TypeEdit
@@ -19,6 +20,8 @@ api = Api(api_blueprint)
 
 
 api.add_resource(HealthCheck, "/health")
+api.add_resource(MetaVersion, "/meta/version")
+api.add_resource(MetaConfig, "/meta/config")
 
 api.add_resource(GetRecordData, "/record/list")
 api.add_resource(GetRecordDataId, "/record/list/<record_id>")

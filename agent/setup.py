@@ -36,5 +36,5 @@ setup(
     include_package_data=True,
     packages=["dnsagent"],
     install_requires=requirements,
-    entry_points={"console_scripts": ["dnsagent = dnsagent.cli:main"]},
+    entry_points={"console_scripts": ["dnsagent = dnsagent.start:main"]},
 )

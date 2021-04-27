@@ -1,0 +1,71 @@
+# tested againts CentOS 7.5
+
+---
+- hosts: all
+  vars:
+    docker_group_members:
+      - "centos"
+
+  tasks:
+    - name: Install docker
+      become: yes
+      yum:
+        name: docker
+        state: latest
+
+    - name: Install epl
+      become: yes
+      yum:
+        name: epel-release
+        state: latest
+
+    - name: Install pip
+      become: yes
+      yum:
+        name: python3-pip
+        state: latest
+
+    - name: Update pip
+      # upgrading pip solve its error
+      # for most cases
+      become: yes
+      pip:
+        executable: pip3
+        name: pip
+        state: latest
+
+    - name: Install docker compose
+      pip:
+        executable: pip3
+        name: docker-compose
+        state: latest
+        extra_args: --user
+
+    - name: Make ssh login faster
+      # only for staging environment!
+      become: yes
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: "GSSAPIAuthentication yes"
+        replace: "GSSAPIAuthentication no"
+
+    - name: Create docker group
+      become: yes
+      group:
+        name: docker
+        state: present
+
+    - name: "add users to docker group"
+      become: yes
+      user:
+        name: "{{ item }}"
+        groups: "docker"
+        append: "yes"
+      with_items: "{{ docker_group_members }}"
+      when: "docker_group_members is defined"
+
+    - name: Restart docker daemon
+      become: yes
+      service:
+        name: docker
+        state: started

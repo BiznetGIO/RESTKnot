@@ -19,7 +19,7 @@ def clean_users():
 @pytest.fixture
 def client():
     current_path = pathlib.Path(__file__)
-    dotenv_path = current_path.parents[2].joinpath(".env.example")
+    dotenv_path = current_path.parents[2].joinpath(".example.env")
     load_dotenv(dotenv_path)
 
     app = create_app()

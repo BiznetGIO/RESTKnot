@@ -1,6 +1,5 @@
-docopt==0.6.2
-setuptools==40.8.0
-dill==0.2.9
-coloredlogs==10.0
-kafka-python==1.4.6
+confluent-kafka==1.6.1
 PyYAML==5.1.1
+
+# dev
+setuptools==40.8.0

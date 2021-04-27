@@ -12,11 +12,11 @@ log:
 
 remote:
  - id: slave1
-   address: <slaveip>@53
+   address: 10.0.0.3@53
 
 acl:
  - id: slave1
-   address: <slaveip>
+   address: 10.0.0.3
    action: transfer
 
 template:
