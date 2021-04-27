@@ -39,11 +39,12 @@ services:
     volumes:
       - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
   roach:
-    hostname: roach
     image: cockroachdb/cockroach:v19.2.2
+    hostname: roach
     command: start --insecure --listen-addr=roach:26257 --advertise-addr=roach:26257 --http-addr=roach:8090
     ports:
       - "26257:26257"
+      # Web UI
       - "8090:8090"
     volumes:
       - ./data/cockroach-data:/cockroach/cockroach-data:z

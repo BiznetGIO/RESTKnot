@@ -21,6 +21,8 @@ services:
       - DB_PORT=26257
       - DB_USER=root
       - DB_SSL=disable
+
+      # topic to suscribe
       - RESTKNOT_KAFKA_TOPIC=domaindata
 
       # don't add quote, otherwise it will not work
