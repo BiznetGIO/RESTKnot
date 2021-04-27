@@ -21,7 +21,7 @@ services:
     # topic to suscribe
     - RESTKNOT_KAFKA_TOPIC=domaindata
     # consumer group id
-    - RESTKNOT_KAFKA_GROUP_ID=
+    - RESTKNOT_KAFKA_GROUP_ID=master1
   volumes:
     # on CentOS family you need to add `:z`
     # .e.g `/var/run/knot/:/var/run/knot/:z`

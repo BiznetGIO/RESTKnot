@@ -62,6 +62,12 @@
         regexp: "RESTKNOT_AGENT_TYPE=master"
         replace: "RESTKNOT_AGENT_TYPE={{ server_type }}"
 
+    - name: Set broker group id
+      replace:
+        path: /opt/knot/docker-compose.yml
+        regexp: "RESTKNOT_KAFKA_GROUP_ID=master1"
+        replace: "RESTKNOT_KAFKA_GROUP_ID={{ broker_group_id }}"
+
     - name: Start containers
       command: ~/.local/bin/docker-compose up -d
       args:
