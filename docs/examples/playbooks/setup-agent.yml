@@ -1,5 +1,5 @@
 ---
-- hosts: master, slave
+- hosts: "{{ target_host | default('master, slave') }}"
 
   tasks:
     - name: Create app directory

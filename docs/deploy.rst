@@ -60,6 +60,9 @@ Play the Playbook
   $ # prepare the machine for restknot-api
   $ ansible-playbook setup-api.yml -f 10 -v
 
+  $ # test one the playbook to of the nodes
+  $ ansible-playbook setup-agent.yml -f 10 -v -e "target_host=10.0.0.3"
+
   $ # prepare the machine for restknot-agent
   $ ansible-playbook setup-agent.yml -f 10 -v
 
