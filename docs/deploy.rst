@@ -55,16 +55,16 @@ Play the Playbook
 .. code-block:: console
 
   $ # initial setup for machine
-  $ ansible-playbook initial-setups.yml -f 10 -v
+  $ ansible-playbook initial-setups.yml --forks=10 -v
 
   $ # prepare the machine for restknot-api
-  $ ansible-playbook setup-api.yml -f 10 -v
+  $ ansible-playbook setup-api.yml --forks=10 -v
 
   $ # test one the playbook to of the nodes
-  $ ansible-playbook setup-agent.yml -f 10 -v -e "target_host=10.0.0.3"
+  $ ansible-playbook setup-agent.yml --forks=10 --extra-vars="target_host=10.0.0.3" -v
 
   $ # prepare the machine for restknot-agent
-  $ ansible-playbook setup-agent.yml -f 10 -v
+  $ ansible-playbook setup-agent.yml --forks=10 -v
 
 Basic Deployment Architecture
 -----------------------------
