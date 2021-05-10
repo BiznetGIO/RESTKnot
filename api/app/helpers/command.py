@@ -1,10 +1,7 @@
 import json
-import os
-import pathlib
-
-import yaml
 
 from app.helpers import producer
+from app.helpers import helpers
 from app.models import model
 
 
@@ -139,30 +136,14 @@ def set_default_zone(record_ids):
     producer.send(message)
 
 
-def cluster_file():
-    """Return cluster file path."""
-    path = os.environ.get("RESTKNOT_CLUSTER_FILE")
-    if not path:
-        current_path = pathlib.Path(__file__)
-        path = current_path.parents[2].joinpath("servers.yml")
-
-    is_exists = os.path.exists(path)
-    if is_exists:
-        return path
-    else:
-        raise ValueError(f"Clustering File Not Found: {path}")
-
-
-def get_clusters():
-    """Return cluster file content."""
-    file_ = cluster_file()
-    clusters = yaml.safe_load(open(file_))
-    return clusters
-
-
 def delegate(zone, zone_id, command, agent_type):
     """Send delegation config command with JSON structure to broker."""
-    clusters = get_clusters()
+    config = helpers.get_config()
+    try:
+        clusters = config["knot_servers"]
+    except KeyError:
+        raise ValueError("Can't Knot server list in config")
+
     cluster = clusters[agent_type]
 
     # default for master

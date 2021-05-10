@@ -12,11 +12,11 @@ log:
 
 remote:
  - id: master1
-   address: <masterip>@53
+   address: 10.0.0.2@53
 
 acl:
  - id: master1
-   address: <masterip>
+   address: 10.0.0.2
    action: notify
 
 template:

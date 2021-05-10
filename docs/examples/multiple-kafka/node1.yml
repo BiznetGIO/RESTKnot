@@ -1,0 +1,53 @@
+version: "3"
+services:
+  zoo1:
+    image: confluentinc/cp-zookeeper:6.1.1
+    hostname: zoo1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      # used to do heartbeats and the session timeout
+      ZOOKEEPER_TICK_TIME: 2000
+      # limit time to connect to a leader
+      ZOOKEEPER_INIT_LIMIT: 5
+      # how far out-of-date a server can be from a leader
+      ZOOKEEPER_SYNC_LIMIT: 2
+    # uncomment to store data. If you get permission error, run `sudo chown -R 1000:1000 data`
+    volumes:
+      - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
+      - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
+  kafka1:
+    image: confluentinc/cp-kafka:6.1.1
+    hostname: kafka1
+    depends_on:
+      - zoo1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: "zoo1:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.0.0.1:9092
+    volumes:
+      - ./data/restknot/kafka1-data:/var/lib/kafka/data:z
+  roach:
+    image: cockroachdb/cockroach:v19.1.5
+    command: start --insecure --listen-addr=roach:26257 --advertise-addr=roach:26257 --http-addr=roach:8090
+    ports:
+      - "26257:26257"
+      - "8090:8090"
+    volumes:
+      - ./data/cockroach-data:/cockroach/cockroach-data:z
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.3.1
+    hostname: kowl
+    depends_on:
+      # wait for broker to be ready
+      - kafka1
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_BROKERS=10.0.0.1:9092,10.0.0.2:9092,10.0.0.3:9092
+

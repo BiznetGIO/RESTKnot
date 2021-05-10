@@ -10,19 +10,36 @@ Contributing Guide <https://biznetgio.github.io/guide/contrib-guide/>`_
 Running the project locally
 ---------------------------
 
+Below is the description of each step needed to run the project locally.
+To try the command directly in order, see our playbook examples in ``docs/examples``.
+
 Cockroachdb
 ^^^^^^^^^^^
 
-Install and run `cockroach DB <https://cockroachlabs.com/>`_
+It's recommended to use the CockroachDB docker image instead of installing it locally.
 
-.. code-block:: bash
+.. code-block:: yaml
 
-  $ cockroach start --insecure --listen-addr=localhost:26257 --http-addr=localhost:8090
+    roach:
+      hostname: roach
+      image: cockroachdb/cockroach:v19.2.2
+      command: start --insecure --listen-addr=roach:26257 --advertise-addr=roach:26257 --http-addr=roach:8090
+      ports:
+        - "26257:26257"
+        - "8090:8090"
+      volumes:
+        - ./data/cockroach-data:/cockroach/cockroach-data:z
 
-It will store the log and data in the current directory. Otherwise, you need to use
-``--store=foo`` to change the default. ``--http-addr`` is used for HTTP requests from the Admin UI. You can choose any
-port you want if the default is already in use.
+.. code-block:: console
 
+  $ # run the cockroach container above
+  $ docker-compose up -d
+  $ # create database. `10.0.0.1` is your host IP.
+  docker run --rm cockroachdb/cockroach:v19.2.2 sql --host=10.0.0.1:26257 --insecure --execute "CREATE DATABASE IF NOT EXISTS knotdb;"
+  $ # create table. get the `schema.sql` in `api/`
+  $ cat schema.sql | docker run -i --rm cockroachdb/cockroach:v19.2.2 sql --host=10.0.0.1:26257 --insecure --database=knotdb
+
+This step will give you a running cockroach database, with ``knotdb`` as a name and a schema defined in ``schema.sql``.
 
 RESTKnot API
 ^^^^^^^^^^^^
@@ -38,87 +55,48 @@ Go to the API directory
   # create the virtualenv, then install the dependencies
   $ pip install -r requirements.txt
 
+After making changes, you can the ``restknot-api`` using plain ``flask run``.
+Or running it via docker.
 
-RESTKnot API consumes the configuration from OS environment variables. So make
-sure you have set them. Take a look into code:`.env.example` and change the default
-values according to your situation.
+If you prefer to run without docker, you need to export the environment variables manually.
+See ``api/docker-compose.example.yml`` to learn all available variables.
 
-Then run the app:
+Using docker, it would be:
 
-.. code-block:: bash
+.. code-block:: console
 
-  $ flask run
-
+  $ # build the image
+  $ docker build -f Dockerfile -t restknot-api:0.7.8 --build-arg BUILD_VERSION=$(git log -1 --format=%h) .
+  $ # run the image
+  $ docker-compose up -d
 
 Ensure the app is running by checking the ``/api/health`` endpoint.
 
 Broker
 ^^^^^^
 
-For RESTKnot API to communicate with REStKnot Agent, they need a
+For RESTKnot API to communicate with RESTKnot Agent, they need a
 broker. We use `Kafka` for the broker.
 
-It's easier to use dockerized `Kafka` and `zookeeper`. Use the snippet below then
-run them using :code:`docker-compose -f docker-compose-kafka.yml up`
-
-.. code-block:: yaml
-
-  version: '3'
-  services:
-    zookeeper:
-      image: wurstmeister/zookeeper
-    kafka:
-      image: wurstmeister/kafka:2.12-2.4.0
-      ports:
-          - "9092:9092"
-      environment:
-          KAFKA_ADVERTISED_HOST_NAME: localhost
-          KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-
-
-Ideally, you can choose any Kafka-docker version. But we develop using
-``2.12-2.4.0``.
+See ``docs/example`` to run Zookeeper and Kafka. The examples contain
+configuration to run multiple Kafka with single Zookeeper or multiple Kafka with
+multiple Zookeeper.
 
 RESTKnot Agent
 ^^^^^^^^^^^^^^
 
-Go to the Agent directory
+To build the agent:
 
-.. code-block:: bash
+.. code-block:: console
 
   $ cd agent/
 
-  # create the virtualenv, then install the dependencies
-  $ pip install -r requirements.txt
-
-Set appropriate configurations. Take a look at :code:`.env.example` in the agent directory
-and run them manually. At this moment RESTKNOT Agent doesn't load them automatically.
-
-You can run the Agent in user mode, but some OS need a superuser for the knot
-to create DNS records. `-E` argument is used to supply a regular user OS
-environment to sudo user.
-
-.. code-block:: bash
-
-  $ sudo -E ~/.virtualenvs/rest-knot/bin/dnsagent start master
-
-Running the project using Docker Compose
-----------------------------------------
-
-We have provided the images so you can run them easily with docker-compose.
-
-Grab ``api/docker-compose.yml`` and ``agent/docker-compose.yml``. Put them in
-a separate directory, such as ``knot-api`` and ``knot-agent``. Then run the
-following command to start the container:
-
-.. code-block:: bash
-
-  # do the same thing with knot-agent
-  $ cd knot-api
+  $ # build the image
+  $ docker build -f Dockerfile -t restknot-agent:0.7.8 --build-arg BUILD_VERSION=$(git log -1 --format=%h) .
+  $ # run the image
   $ docker-compose up -d
 
-Always keep in mind that you can't use :code:`localhost` or :code:`127.0.0.1` in
-:code:`KAFKA_ADVERTISED_HOST_NAME` otherwise it won't work.
+Set appropriate configurations. Take a look at ``agent/docker-compose.example.yml``.
 
 Basic Workflow
 --------------

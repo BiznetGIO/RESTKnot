@@ -13,7 +13,7 @@ new zone and default records.
 
 The second component is the ``agent``. It receives a JSON message from the
 broker, parses it then sends a command to the Knot server via
-``libknot.py``. It's a simple app and the main entry point is ``agent/dnsagent/clis/start.py``.
+``libknot.py``. It's a simple app and the main entry point is ``agent/dnsagent/start.py``.
 
 
 The Ecosystem
@@ -193,7 +193,7 @@ created.
 The fourth message contains similar data as the third, but it's only geared
 toward ``slave``. Such ``notify`` keyword being changed to ``master``. These
 keyword differences also represented in ``knot.conf`` and
-``servers.yml``. To learn more, take a look at ``knot.conf.master`` and
+``config.yml``. To learn more, take a look at ``knot.conf.master`` and
 ``knot.conf.slave`` in ``/deploy/examples/``.
 
 

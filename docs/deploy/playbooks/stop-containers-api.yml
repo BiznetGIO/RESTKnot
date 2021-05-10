@@ -1,7 +1,0 @@
----
-- hosts: api
-
-  tasks:
-      - name: stop containers
-        become: yes
-        command: docker-compose -f /opt/knot/docker-compose-api.yml down

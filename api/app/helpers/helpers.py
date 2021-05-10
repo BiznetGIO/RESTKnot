@@ -1,6 +1,9 @@
 import datetime
 import pathlib
+import os
 from functools import wraps
+
+import yaml
 
 from app.helpers import producer
 from app.vendors.rest import response
@@ -97,3 +100,24 @@ def read_version(other_file_name, filename):
         version = "__UNKNOWN__"
 
     return version
+
+
+def config_file():
+    """Return config file path."""
+    path = os.environ.get("RESTKNOT_CONFIG_FILE")
+    if not path:
+        current_path = pathlib.Path(__file__)
+        path = current_path.parents[2].joinpath("config.yml")
+
+    is_exists = os.path.exists(path)
+    if is_exists:
+        return path
+    else:
+        raise ValueError(f"Config File Not Found: {path}")
+
+
+def get_config():
+    """Return config file content."""
+    file_ = config_file()
+    config = yaml.safe_load(open(file_))
+    return config
