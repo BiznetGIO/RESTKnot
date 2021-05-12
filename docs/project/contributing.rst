@@ -103,3 +103,14 @@ Basic Workflow
 
 To test that all component works together, or to get an insight into how knot
 works. See :ref:`howto:Basic Workflow`
+
+Releasing
+---------
+
+To create a release. Run the following steps.
+
+- Run linting ``./scripts/make is_verified``. To check if the codebase adheres to the rules.
+- Update the CHANGELOG.
+- Update version numbers using ``./scripts/bump_version <old-version> <new-version>``.
+- Create a commit with a message format: `v[0-9]+.[0-9]+.[0-9]+`, and push.
+- Wait for a check to pass, make a release tag from GitHub UI, then copy the appropriate CHANGELOG.
