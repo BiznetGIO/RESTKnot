@@ -181,7 +181,7 @@ class AddDomain(Resource):
 
         user = model.get_one(table="user", field="id", value=user_id)
         if not user:
-            return response(404, message=f"User Not Found")
+            return response(404, message="User Not Found")
 
         try:
             validator.validate("ZONE", zone)
@@ -224,7 +224,7 @@ class DeleteDomain(Resource):
         try:
             zone_id = zone_model.get_zone_id(zone)
         except Exception:
-            return response(404, message=f"Zone Not Found")
+            return response(404, message="Zone Not Found")
 
         try:
             records = record_model.get_records_by_zone(zone)

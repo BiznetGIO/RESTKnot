@@ -157,10 +157,10 @@ functions = {
 
 def validate(rtype, rdata):
     if not rdata:
-        raise ValueError(f"RDATA can't be empty")
+        raise ValueError("RDATA can't be empty")
 
     rtype = rtype.upper()
     if rtype in functions.keys():
         functions[rtype](rdata)
     else:
-        raise ValueError(f"Unsupported Record Type")
+        raise ValueError("Unsupported Record Type")

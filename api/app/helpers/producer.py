@@ -1,8 +1,8 @@
 import json
 import os
 
-from flask import current_app
 from confluent_kafka import Producer
+from flask import current_app
 
 from app.helpers import helpers
 

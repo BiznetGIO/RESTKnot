@@ -1,0 +1,65 @@
+#! /usr/bin/env bash
+
+help () {
+    cat << EOF
+
+Usage: make [options]
+
+Options:
+
+    verify          Make the codebase adhere to the rules
+    is_verified     Check if the codebase adhere to the rules
+
+EOF
+
+}
+
+verify () {
+    echo "::: Format with black"
+    black api/
+    black agent/
+
+    echo "::: Lint with flake8"
+    flake8 --config api/setup.cfg api/
+    flake8 --config agent/setup.cfg agent/
+
+    echo "::: Sort import with isort"
+    isort --settings-path api/setup.cfg api/
+    isort --settings-path agent/setup.cfg agent/
+}
+
+is_verified () {
+    echo "::: Is formatted with black"
+    black --check api/
+    black --check agent/
+
+    echo "::: Is linted with flake8"
+    flake8 --config api/setup.cfg api/
+    flake8 --config agent/setup.cfg agent/
+
+    echo "::: Is sorted with isort"
+    isort --settings-path api/setup.cfg api/
+    isort --settings-path agent/setup.cfg agent/
+}
+
+
+
+if [ ! -n "$1" ]
+then
+    help
+    exit
+fi
+
+while [ -n "$1" ]; do
+
+    case "$1" in
+
+        verify) verify ;;
+        is_verified) is_verified ;;
+        help) help ;;
+
+    esac
+    break
+
+done
+

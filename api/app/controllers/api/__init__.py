@@ -9,7 +9,7 @@ from .domain import (
     GetDomainDataId,
 )
 from .health import HealthCheck
-from .meta import MetaVersion, MetaConfig
+from .meta import MetaConfig, MetaVersion
 from .record import GetRecordData, GetRecordDataId, RecordAdd, RecordDelete, RecordEdit
 from .ttl import GetTtlData, GetTtlDataId, TtlAdd, TtlDelete, TtlEdit
 from .type_ import GetTypeData, GetTypeDataId, TypeAdd, TypeDelete, TypeEdit
