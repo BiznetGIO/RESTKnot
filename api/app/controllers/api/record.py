@@ -275,7 +275,7 @@ class RecordDelete(Resource):
         try:
             rtype = type_model.get_type_by_recordid(record_id)
             if rtype == "SOA":
-                return response(403, message=f"Can't Delete SOA Record")
+                return response(403, message="Can't Delete SOA Record")
             if rtype != "SOA":
                 update_serial(serial_resource)
 

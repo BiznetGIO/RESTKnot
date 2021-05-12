@@ -36,7 +36,7 @@ class Rules:
         query = (
             base_query
             + '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "ttl_id"=%(ttl_id)s'
-        )
+        )  # noqa:  W503
         value = {
             "zone_id": zone_id,
             "type_id": type_id,

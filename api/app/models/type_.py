@@ -26,4 +26,4 @@ def get_type_by_recordid(record_id):
 def is_exists(type_id):
     type_ = model.get_one(table="type", field="id", value=type_id)
     if not type_:
-        raise ValueError(f"Type Not Found")
+        raise ValueError("Type Not Found")

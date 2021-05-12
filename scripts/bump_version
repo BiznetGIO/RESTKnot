@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+#
+# Bumps the version number to ${2}.
+# Run the script with `./scripts/bump_version <old-version> <new-version>`
+#
+
+sed -i "s/$1/$2/g" api/docker-compose.example.yml
+sed -i "s/$1/$2/g" agent/docker-compose.example.yml
+

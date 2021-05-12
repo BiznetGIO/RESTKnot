@@ -1,6 +1,6 @@
-import os
-import logging
 import json
+import logging
+import os
 import sys
 
 from confluent_kafka import Consumer, KafkaException

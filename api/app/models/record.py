@@ -38,7 +38,7 @@ def get_other_data(record):
 def is_exists(record_id):
     record = model.get_one(table="record", field="id", value=record_id)
     if not record:
-        raise ValueError(f"Record Not Found")
+        raise ValueError("Record Not Found")
 
 
 def get_records_by_zone(zone):

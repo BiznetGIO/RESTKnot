@@ -1,6 +1,11 @@
 Unreleased
 ==========
 
+0.7.7 (2021-05-12)
+==================
+
+- Add: support for multiple Kafka broker and multiple Zookeeper
+
 0.7.6 (2020-02-15)
 ==================
 
