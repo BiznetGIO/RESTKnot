@@ -1,7 +1,7 @@
 import json
 import os
 
-from dnsagent.vendor.libknot import control as knotlib
+from libknot import control as knotlib
 
 
 def connect_knot():
