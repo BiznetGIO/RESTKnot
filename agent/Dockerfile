@@ -8,6 +8,14 @@ RUN apt-get install --no-install-recommends --yes tzdata
 # confluent-kafka-python needs these
 RUN apt-get install --no-install-recommends --yes librdkafka-dev python3-dev
 
+# activate virtualenv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# upgrading pip solves many installation problems
+RUN pip3 install --upgrade pip
+
 WORKDIR /dnsagent
 
 COPY ./requirements.txt /dnsagent/requirements.txt
