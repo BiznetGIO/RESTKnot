@@ -1,7 +1,7 @@
 version: '3'
 services:
   zoo1:
-    image: confluentinc/cp-zookeeper:6.1.1
+    image: confluentinc/cp-zookeeper:6.2.0
     hostname: zoo2
     ports:
       - "2181:2181"
@@ -21,7 +21,7 @@ services:
       # if the current zookeper id is 1, the `0.0.0.0:2888:3888` must be in the 1st order.
       ZOOKEEPER_SERVERS: 10.0.0.1:2888:3888;0.0.0.0:2888:3888;10.0.0.3:2888:3888
   kafka1:
-    image: confluentinc/cp-kafka:6.1.1
+    image: confluentinc/cp-kafka:6.2.0
     hostname: kafka2
     depends_on:
       - zoo1

@@ -56,4 +56,4 @@
       command: cat /opt/knot/schema.sql | docker run -i --rm cockroachdb/cockroach:v19.2.2 sql --host='{{ host_ip }}':26257 --insecure --database=knotdb
 
     - name: Create broker topic
-      command: docker run --rm confluentinc/cp-kafka:6.1.1 kafka-topics --create --topic domaindata --partitions 1 --replication-factor 3 --if-not-exists --bootstrap-server '{{ host_ip }}':9092
+      command: docker run --rm confluentinc/cp-kafka:6.2.0 kafka-topics --create --topic domaindata --partitions 1 --replication-factor 3 --if-not-exists --bootstrap-server '{{ host_ip }}':9092

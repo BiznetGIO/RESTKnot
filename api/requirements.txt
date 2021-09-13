@@ -1,9 +1,7 @@
 # Flask
 Flask==1.1.1
-Werkzeug==0.16.0
-Flask-Script==2.0.6
-Flask-RESTful==0.3.7
-Flask-Cors==3.0.7
+Flask-RESTful==0.3.9
+Flask-Cors==3.0.10
 
 # Environment variable parsing
 environs==6.0.0
@@ -12,5 +10,5 @@ environs==6.0.0
 requests==2.21.0
 psycopg2==2.8.3
 PyYAML==5.4
-confluent-kafka==1.6.1
+confluent-kafka==1.7.0
 python-dotenv==0.10.3

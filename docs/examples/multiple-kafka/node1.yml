@@ -1,7 +1,7 @@
 version: "3"
 services:
   zoo1:
-    image: confluentinc/cp-zookeeper:6.1.1
+    image: confluentinc/cp-zookeeper:6.2.0
     hostname: zoo1
     ports:
       - "2181:2181"
@@ -19,7 +19,7 @@ services:
       - ./data/restknot/zoo1-data:/var/lib/zookeeper/data:z
       - ./data/restknot/zoo1-logs:/var/lib/zookeeper/log:z
   kafka1:
-    image: confluentinc/cp-kafka:6.1.1
+    image: confluentinc/cp-kafka:6.2.0
     hostname: kafka1
     depends_on:
       - zoo1
