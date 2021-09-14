@@ -50,7 +50,7 @@ def send_block(
             ttl=ttl,
             rtype=rtype,
             data=data,
-            flags=flags,
+            flags="B",
             filter=filter_,
         )
         resp_ = ctl.receive_block()
