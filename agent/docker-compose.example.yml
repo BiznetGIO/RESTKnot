@@ -14,6 +14,8 @@ services:
     # Control socket timeout.
     # Set to 0 for infinity.  Default is 2000 seconds
     # - RESTKNOT_SOCKET_TIMEOUT=5000
+    # Maximum attempts to retry connection to the socket. Default is 10 times
+    - RESTKNOT_SOCKET_RETRY=10
 
     # using 127.0.0.1 or localhost won't make it work
     # set it to RESTKNOT API IP
