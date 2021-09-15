@@ -1,7 +1,7 @@
 version: '3'
 services:
   restknot-agent:
-  image: biznetgio/restknot-agent:0.7.7
+  image: biznetgio/restknot-agent:0.7.8
   environment:
     # Pay attention to your agent type!
     - RESTKNOT_AGENT_TYPE=master
