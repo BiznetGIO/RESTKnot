@@ -30,6 +30,11 @@ jobs:
         run: |
           echo "BUILD_VERSION is: ${{ env.BUILD_VERSION }}"
 
+      - name: Prepare necessary files
+        run: |
+          # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
+          cp  api/config.example.yml api/config.yml
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
