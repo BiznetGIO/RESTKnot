@@ -1,6 +1,16 @@
 Unreleased
 ==========
 
+0.7.8 (2021-09-15)
+==================
+
+- Add: request knot to block any future operation until the current one finished
+- Add: retry on socket connection failure
+- Update: use libknot from pypi instead
+- Update: use venv in docker build
+- Update: third-party dependencies
+- Update: adjust agent to new libknot structure
+
 0.7.7 (2021-05-12)
 ==================
 

@@ -1,24 +1,37 @@
 import json
 import os
+import time
+import logging
 
 import libknot
 import libknot.control
+
+logger = logging.getLogger(__name__)
 
 
 def connect_knot():
     libknot_binary_path = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
     knot_socket_path = os.environ.get("RESTKNOT_KNOT_SOCKET", "/var/run/knot/knot.sock")
     knot_socket_timeout = int(os.environ.get("RESTKNOT_SOCKET_TIMEOUT", 2000))
+    knot_socket_retry = int(os.environ.get("RESTKNOT_SOCKET_RETRY", 10))
 
     libknot.Knot(libknot_binary_path)
     knot_ctl = libknot.control.KnotCtl()
 
-    try:
-        knot_ctl.connect(knot_socket_path)
-        knot_ctl.set_timeout(knot_socket_timeout)
-        return knot_ctl
-    except libknot.control.KnotCtlError as e:
-        raise ValueError(f"Can't connect to knot socket: {e}")
+    attempts = 0
+    err_msg = "Can't connect to knot socket"
+    while attempts < knot_socket_retry:
+        time.sleep(5)
+
+        try:
+            knot_ctl.connect(knot_socket_path)
+            knot_ctl.set_timeout(knot_socket_timeout)
+            return knot_ctl
+        except libknot.control.KnotCtlError as e:
+            attempts += 1
+            logger.info(f"{err_msg}: {e}. Attempts: {attempts}")
+
+    raise ValueError(f"{err_msg}")
 
 
 def send_block(
@@ -50,7 +63,7 @@ def send_block(
             ttl=ttl,
             rtype=rtype,
             data=data,
-            flags=flags,
+            flags="B",
             filter=filter_,
         )
         resp_ = ctl.receive_block()
