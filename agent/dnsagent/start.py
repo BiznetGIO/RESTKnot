@@ -7,6 +7,8 @@ from confluent_kafka import Consumer, KafkaException
 
 from dnsagent.libs import knot as knot_lib
 
+logger = logging.getLogger(__name__)
+
 
 def consume():
     brokers = os.environ.get("RESTKNOT_KAFKA_BROKERS")
@@ -22,7 +24,7 @@ def consume():
     }
 
     def print_assignment(consumer, partitions):
-        print("Consumer assigned to:", partitions)
+        logger.info(f"Consumer assigned to: {partitions}")
 
     consumer = Consumer(conf)
     consumer.subscribe([topic], on_assign=print_assignment)
