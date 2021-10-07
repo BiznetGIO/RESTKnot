@@ -1,5 +1,5 @@
 recursive-exclude *.egg-info *
-recursive-include dnsagent tests *.py *.yml
+recursive-include dnsagent tests *.py
 
 include requirements*.txt
 include README.rst
