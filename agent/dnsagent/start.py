@@ -5,7 +5,7 @@ import sys
 
 from confluent_kafka import Consumer, KafkaException
 
-from dnsagent.libs import knot as knot_lib
+from dnsagent import agent
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ def consume():
 
                 knot_queries = message["knot"]
                 for query in knot_queries:
-                    knot_lib.execute(query)
+                    agent.execute(query)
 
     except KeyboardInterrupt:
         print(" dnsagent stopped. Aborted by user")
