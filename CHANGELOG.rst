@@ -1,6 +1,19 @@
 Unreleased
 ==========
 
+0.7.11 (2021-10-07)
+===================
+
+- Update: removed unused config for CLI app setup. Now the agent is used commonly via docker image.
+- Update: refactor to have less code. To have a minimal step to call libknot directly.
+
+
+0.7.9 - 0.7.10 (2021-09-15)
+===========================
+
+- Fix: ubuntu-16.04 runner doesn't exists anymore
+- Fix: github action regression
+
 0.7.8 (2021-09-15)
 ==================
 

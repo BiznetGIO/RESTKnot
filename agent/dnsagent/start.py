@@ -5,7 +5,9 @@ import sys
 
 from confluent_kafka import Consumer, KafkaException
 
-from dnsagent.libs import knot as knot_lib
+from dnsagent import agent
+
+logger = logging.getLogger(__name__)
 
 
 def consume():
@@ -22,7 +24,7 @@ def consume():
     }
 
     def print_assignment(consumer, partitions):
-        print("Consumer assigned to:", partitions)
+        logger.info(f"Consumer assigned to: {partitions}")
 
     consumer = Consumer(conf)
     consumer.subscribe([topic], on_assign=print_assignment)
@@ -43,7 +45,7 @@ def consume():
 
                 knot_queries = message["knot"]
                 for query in knot_queries:
-                    knot_lib.execute(query)
+                    agent.execute(query)
 
     except KeyboardInterrupt:
         print(" dnsagent stopped. Aborted by user")

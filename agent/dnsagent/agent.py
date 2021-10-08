@@ -1,7 +1,6 @@
-import json
+import logging
 import os
 import time
-import logging
 
 import libknot
 import libknot.control
@@ -34,46 +33,39 @@ def connect_knot():
     raise ValueError(f"{err_msg}")
 
 
-def send_block(
-    cmd=None,
-    section=None,
-    item=None,
-    identifier=None,
-    zone=None,
-    owner=None,
-    ttl=None,
-    rtype=None,
-    data=None,
-    flags=None,
-    filter_=None,
-):
-    """Send block command to Libknot server control."""
+def execute(message):
+    cmd = message.get("cmd")
+    zone = message.get("zone")
+    section = message.get("section")
+    item = message.get("item")
+    owner = message.get("owner")
+    rtype = message.get("rtype")
+    ttl = message.get("ttl")
+    data = message.get("data")
 
     ctl = connect_knot()
-    resp = None
 
     try:
         ctl.send_block(
             cmd=cmd,
             section=section,
             item=item,
-            identifier=identifier,
             zone=zone,
             owner=owner,
             ttl=ttl,
             rtype=rtype,
             data=data,
             flags="B",
-            filter=filter_,
+            identifier=message.get("identifier"),
+            filters=message.get("filters"),
         )
-        resp_ = ctl.receive_block()
-        if resp_:
-            resp = json.dumps(resp, indent=4)
+        # `resp = ctl.receive_block()` receive nothing when the operation is succesfull
+        # calling it just a waste of resources
+        logger.info(f"Success: {cmd} {zone or ''} {item or ''} {data or ''}")
     except libknot.control.KnotCtlError as knot_error:
         # most of the time, after removing a zone
         # socket connection will be time out
-        resp = str(knot_error.data)
+        logger.error(f"{knot_error.data}")
     finally:
         ctl.send(libknot.control.KnotCtlType.END)
         ctl.close()
-        return resp
