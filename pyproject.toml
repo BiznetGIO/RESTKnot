@@ -13,30 +13,34 @@ skip_glob = "cli/*"
 
 [tool.pylint.messages_control]
 disable = [
+  # regex needs to be as is
+  "anomalous-backslash-in-string",
   "missing-docstring",
   # trigger false error in recurusive function
   "no-else-return",
   # they are mostly a schema file and configs
-  "too-few-public-methods",
   "duplicate-code",
   # line and imports are handled by black
   "line-too-long",
-  "wrong-import-order",
   # short variable is more appropriate in some places
   # such `e` for `error`
   "invalid-name",
   # necessary in decorator
   "broad-except",
-  # flask-smorest use class boilerplate everywhere
+  # flask use class boilerplate everywhere
   "no-self-use",
-  "unused-argument",
   # misc
   "too-many-locals",
   "too-many-arguments",
   "inconsistent-return-statements",
-  "no-member",
-  "c-extension-no-member",
   "raise-missing-from",
+  "fixme",
+]
+
+[tool.pylint.master]
+ignore-paths = [
+    "^api/app/vendors/.*$",
+    "^api/tests/.*$",
 ]
 
 [tool.mypy]

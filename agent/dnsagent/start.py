@@ -23,8 +23,8 @@ def consume():
         "enable.auto.commit": True,
     }
 
-    def print_assignment(consumer, partitions):
-        logger.info(f"Consumer assigned to: {partitions}")
+    def print_assignment(partitions):
+        logger.info("Consumer assigned to: %s", partitions)
 
     consumer = Consumer(conf)
     consumer.subscribe([topic], on_assign=print_assignment)

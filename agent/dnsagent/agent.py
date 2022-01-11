@@ -28,7 +28,7 @@ def connect_knot():
             return knot_ctl
         except libknot.control.KnotCtlError as e:
             attempts += 1
-            logger.info(f"{err_msg}: {e}. Attempts: {attempts}")
+            logger.info("%s: %s. Attempts: %s", err_msg, e, attempts)
 
     raise ValueError(f"{err_msg}")
 
@@ -61,11 +61,11 @@ def execute(message):
         )
         # `resp = ctl.receive_block()` receive nothing when the operation is succesfull
         # calling it just a waste of resources
-        logger.info(f"Success: {cmd} {zone or ''} {item or ''} {data or ''}")
+        logger.info("Success: %s %s %s %s", cmd, zone or "", item or "", data or "")
     except libknot.control.KnotCtlError as knot_error:
         # most of the time, after removing a zone
         # socket connection will be time out
-        logger.error(f"{knot_error.data}")
+        logger.error("%s", knot_error.data)
     finally:
         ctl.send(libknot.control.KnotCtlType.END)
         ctl.close()

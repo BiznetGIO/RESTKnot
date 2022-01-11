@@ -1,5 +1,6 @@
-import app.helpers.producer
 import tests.fixtures.messages as message_fx
+
+import app.helpers.producer
 
 
 class TestMessages:

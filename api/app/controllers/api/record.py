@@ -1,7 +1,7 @@
 from flask import current_app
 from flask_restful import Resource, reqparse
 
-from app.helpers import command, helpers, rules, validator
+from app.helpers import command, helpers, producer, rules, validator
 from app.middlewares import auth
 from app.models import model
 from app.models import record as record_model
@@ -92,7 +92,7 @@ class GetRecordDataId(Resource):
 
 
 class RecordAdd(Resource):
-    @helpers.check_producer
+    @producer.check_producer
     @auth.auth_required
     def post(self):
         """Add new record.
@@ -171,7 +171,7 @@ class RecordAdd(Resource):
 
 
 class RecordEdit(Resource):
-    @helpers.check_producer
+    @producer.check_producer
     @auth.auth_required
     def put(self, record_id):
         parser = reqparse.RequestParser()
@@ -249,7 +249,7 @@ class RecordEdit(Resource):
 
 
 class RecordDelete(Resource):
-    @helpers.check_producer
+    @producer.check_producer
     @auth.auth_required
     def delete(self, record_id):
         """Delete specific record.

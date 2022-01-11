@@ -1,6 +1,5 @@
 import datetime
 
-import app.helpers.helpers
 from app.controllers.api import record as record_api
 from app.helpers import helpers
 
@@ -430,7 +429,7 @@ class TestRecord:
             tomorrow_date = datetime.datetime.now() + datetime.timedelta(days=1)
             return tomorrow_date.strftime("%Y%m%d")
 
-        monkeypatch.setattr(app.helpers.helpers, "soa_time_set", fake_soa_time_set)
+        monkeypatch.setattr(helpers, "soa_time_set", fake_soa_time_set)
         data = {
             "zone": "company.com",
             "owner": "txt1",

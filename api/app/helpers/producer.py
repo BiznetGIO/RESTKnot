@@ -1,10 +1,12 @@
 import json
 import os
+from functools import wraps
 
 from confluent_kafka import Producer
 from flask import current_app
 
 from app.helpers import helpers
+from app.vendors.rest import response
 
 
 def kafka_producer():
@@ -21,7 +23,22 @@ def kafka_producer():
     return producer
 
 
-def _delivery_report(err, msg):
+def check_producer(f):
+    """Check producer availability"""
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            kafka_producer()
+        except Exception as e:
+            return response(500, message=f"{e}")
+        else:
+            return f(*args, **kwargs)
+
+    return decorated_function
+
+
+def _delivery_report(err):
     if err is not None:
         raise ValueError(f"Message delivery failed: {err}")
 

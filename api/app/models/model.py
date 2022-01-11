@@ -144,7 +144,7 @@ def delete(table, field=None, value=None):
 
 def is_unique(table, field=None, value=None):
     """Check if data only appear once."""
-    cursor, connection = get_db()
+    cursor, _ = get_db()
 
     query = f'SELECT * FROM "{table}" WHERE "{field}"=%(value)s'
     cursor.prepare(query)
