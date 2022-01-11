@@ -66,7 +66,7 @@ Using docker, it would be:
 .. code-block:: console
 
   $ # build the image
-  $ docker build -f Dockerfile -t restknot-api:0.7.8 --build-arg BUILD_VERSION=$(git log -1 --format=%h) .
+  $ docker build -f Dockerfile -t restknot-api:0.7.8 --build-arg VCS_REVISION=$(git log -1 --format=%h) .
   $ # run the image
   $ docker-compose up -d
 
@@ -92,7 +92,7 @@ To build the agent:
   $ cd agent/
 
   $ # build the image
-  $ docker build -f Dockerfile -t restknot-agent:0.7.8 --build-arg BUILD_VERSION=$(git log -1 --format=%h) .
+  $ docker build -f Dockerfile -t restknot-agent:0.7.8 --build-arg VCS_REVISION=$(git log -1 --format=%h) .
   $ # run the image
   $ docker-compose up -d
 

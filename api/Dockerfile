@@ -27,12 +27,12 @@ COPY ./config.yml /restknotapi/config.yml
 
 RUN pip3 install -r /restknotapi/requirements.txt
 
-ARG BUILD_VERSION
-RUN echo "$BUILD_VERSION" > build-version.txt
+ARG VCS_REVISION
+RUN echo "$VCS_REVISION" > vcs_revision.txt
 
 COPY . /restknotapi
 # check build version
-RUN cat /restknotapi/build-version.txt
+RUN cat /restknotapi/vcs_revision.txt
 
 EXPOSE 5000
 CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]
