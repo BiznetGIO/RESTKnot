@@ -1,0 +1,43 @@
+[tool.black]
+extend-exclude = '''
+/(
+    | cli
+)/
+'''
+
+
+[tool.isort]
+profile = "black"
+known_first_party = "app, dnsagent"
+skip_glob = "cli/*"
+
+[tool.pylint.messages_control]
+disable = [
+  "missing-docstring",
+  # trigger false error in recurusive function
+  "no-else-return",
+  # they are mostly a schema file and configs
+  "too-few-public-methods",
+  "duplicate-code",
+  # line and imports are handled by black
+  "line-too-long",
+  "wrong-import-order",
+  # short variable is more appropriate in some places
+  # such `e` for `error`
+  "invalid-name",
+  # necessary in decorator
+  "broad-except",
+  # flask-smorest use class boilerplate everywhere
+  "no-self-use",
+  "unused-argument",
+  # misc
+  "too-many-locals",
+  "too-many-arguments",
+  "inconsistent-return-statements",
+  "no-member",
+  "c-extension-no-member",
+  "raise-missing-from",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
