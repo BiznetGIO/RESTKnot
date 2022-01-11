@@ -3,7 +3,7 @@ import os
 from flask import current_app, request
 from flask_restful import Resource, reqparse
 
-from app.helpers import command, helpers, validator
+from app.helpers import command, helpers, producer, validator
 from app.middlewares import auth
 from app.models import domain as domain_model
 from app.models import model
@@ -160,7 +160,7 @@ class GetDomainByUser(Resource):
 
 
 class AddDomain(Resource):
-    @helpers.check_producer
+    @producer.check_producer
     @auth.auth_required
     def post(self):
         """Add new domain (zone) with additional default record.
@@ -192,7 +192,7 @@ class AddDomain(Resource):
             zone_id = insert_zone(zone, user_id)
 
             # create zone config
-            command.set_config(zone, zone_id, "conf-set")
+            command.set_config(zone, "conf-set")
 
             # create default records
             soa_record_id = insert_soa_default(zone_id)
@@ -201,8 +201,8 @@ class AddDomain(Resource):
             record_ids = [soa_record_id, *ns_record_ids, cname_record_id]
             command.set_default_zone(record_ids)
 
-            command.delegate(zone, zone_id, "conf-set", "master")
-            command.delegate(zone, zone_id, "conf-set", "slave")
+            command.delegate(zone, "conf-set", "master")
+            command.delegate(zone, "conf-set", "slave")
 
             data_ = {"id": zone_id, "zone": zone}
             return response(201, data=data_)
@@ -212,7 +212,7 @@ class AddDomain(Resource):
 
 
 class DeleteDomain(Resource):
-    @helpers.check_producer
+    @producer.check_producer
     @auth.auth_required
     def delete(self):
         """Remove domain (zone) and all its related records."""
@@ -233,7 +233,7 @@ class DeleteDomain(Resource):
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
                 command.set_zone(record["id"], "zone-unset")
-            command.set_config(zone, zone_id, "conf-unset")
+            command.set_config(zone, "conf-unset")
 
             # other data (e.g record) deleted automatically
             # by cockroach when no PK existed

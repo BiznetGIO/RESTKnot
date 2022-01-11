@@ -1,2 +1,5 @@
-locustio==0.13.2
 pytest-mock==1.10.4
+
+# Enable this if you want to do load test
+# Disabled by default due to long installation time
+# locustio==0.13.2

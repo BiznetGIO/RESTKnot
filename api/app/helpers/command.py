@@ -43,7 +43,7 @@ def generate_command(**kwargs):
     return cmd
 
 
-def set_config(zone, zone_id, command):
+def set_config(zone, command):
     """Send config command with JSON structure to broker."""
 
     # there are two option to put conf-begin and conf-commit
@@ -135,7 +135,7 @@ def set_default_zone(record_ids):
     producer.send(message)
 
 
-def delegate(zone, zone_id, command, agent_type):
+def delegate(zone, command, agent_type):
     """Send delegation config command with JSON structure to broker."""
     config = helpers.get_config()
     try:

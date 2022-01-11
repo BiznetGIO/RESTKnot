@@ -17,7 +17,7 @@ from app.models import type_ as type_model
 from app.models import zone as zone_model
 
 
-def is_allowed(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
+def is_allowed(zone_id, type_id, owner, rdata, ttl_id):
     """A Generic function to check is given record is allowed.
 
     1. Check for duplicate record
@@ -60,11 +60,11 @@ def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
     # 4. owner can't be root
     # can't be `domainname.com.` and `@`
     zone = zone_model.get_zone(zone_id)
-    if owner == f"{zone}." or owner == "@":
+    if owner in (f"{zone}", "@"):
         raise ValueError("A CNAME owner can't be root")
 
 
-def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
+def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id):
     """Check is given A record is allowed.
 
     1. Check for duplicate record
@@ -125,7 +125,7 @@ def is_allowed_cname_edit(zone_id, type_id, owner, rdata, ttl_id, record_id=None
 
     # 3. owner can't be root
     zone = zone_model.get_zone(zone_id)
-    if owner == f"{zone}." or owner == "@":
+    if owner in (f"{zone}", "@"):
         raise ValueError("A CNAME owner can't be root")
 
 
@@ -152,7 +152,7 @@ functions_edit = {
 
 def check_add(rtype, zone_id, type_id, owner, rdata, ttl_id):
     rtype = rtype.upper()
-    if rtype in functions_add.keys():
+    if rtype in functions_add:
         functions_add[rtype](zone_id, type_id, owner, rdata, ttl_id)
     else:
         raise ValueError("Unsupported Record Type")
@@ -165,7 +165,7 @@ def check_edit(rtype, zone_id, type_id, owner, rdata, ttl_id, record_id=None):
     parameter length
     """
     rtype = rtype.upper()
-    if rtype in functions_edit.keys():
+    if rtype in functions_edit:
         functions_edit[rtype](zone_id, type_id, owner, rdata, ttl_id, record_id)
     else:
         raise ValueError("Unsupported Record Type")

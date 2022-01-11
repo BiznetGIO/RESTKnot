@@ -23,9 +23,9 @@ def client():
     load_dotenv(dotenv_path)
 
     app = create_app()
-    client = app.test_client()
+    _client = app.test_client()
 
-    yield client
+    yield _client
 
     # teardown
     clean_users()

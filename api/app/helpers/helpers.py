@@ -1,12 +1,8 @@
 import datetime
 import os
 import pathlib
-from functools import wraps
 
 import yaml
-
-from app.helpers import producer
-from app.vendors.rest import response
 
 
 def soa_time_set():
@@ -63,21 +59,6 @@ def add_str(x, y):
     return str(int(x) + int(y)).zfill(len(x))
 
 
-def check_producer(f):
-    """Check producer availability"""
-
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        try:
-            producer.kafka_producer()
-        except Exception as e:
-            return response(500, message=f"{e}")
-        else:
-            return f(*args, **kwargs)
-
-    return decorated_function
-
-
 def read_file(other_file_name, filename):
     root_dir = pathlib.Path(other_file_name).resolve().parent
     path = root_dir.joinpath(filename)
@@ -119,5 +100,6 @@ def config_file():
 def get_config():
     """Return config file content."""
     file_ = config_file()
-    config = yaml.safe_load(open(file_))
-    return config
+    with open(file_, "r", encoding="utf-8") as opened_file:
+        config = yaml.safe_load(opened_file)
+        return config
