@@ -7,9 +7,9 @@ from app.vendors.rest import response
 
 class MetaVersion(Resource):
     def get(self):
-        build = helpers.read_version("requirements.txt", "build-version.txt")
+        version = helpers.app_version()
 
-        data = {"build": build}
+        data = {"build": version["vcs_revision"]}
         return response(200, data=data, message="OK")
 
 

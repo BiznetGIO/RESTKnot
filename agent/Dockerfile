@@ -21,13 +21,13 @@ WORKDIR /dnsagent
 COPY ./requirements.txt /dnsagent/requirements.txt
 RUN pip3 install -r /dnsagent/requirements.txt
 
-ARG BUILD_VERSION
-RUN echo "$BUILD_VERSION" > build-version.txt
+ARG VCS_REVISION
+RUN echo "$VCS_REVISION" > vcs_revision.txt
 
 COPY . /dnsagent
 
 # check build version
-RUN cat /dnsagent/build-version.txt
+RUN cat /dnsagent/vcs_revision.txt
 
 ENV PYTHONPATH "${PYTHONPATH}:/dnsagent"
 CMD ["python3", "dnsagent/start.py"]
