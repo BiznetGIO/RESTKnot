@@ -246,6 +246,9 @@ class RecordEdit(Resource):
                 update_serial(serial_resource, "02")
 
             record = model.get_one(table="record", field="id", value=record_id)
+            if not record:
+                return response(status_code=404, message="Record not found")
+
             data_ = record_model.get_other_data(record)
             return response(200, data=data_)
         except Exception as e:
@@ -269,6 +272,9 @@ class RecordDelete(Resource):
             return response(404)
 
         zone = zone_model.get_zone_by_record(record_id)
+        if not zone:
+            return response(status_code=404, message="Zone not found")
+
         zone_name = zone["zone"]
 
         try:

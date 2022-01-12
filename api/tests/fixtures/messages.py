@@ -6,7 +6,7 @@ knot_conf_set = {
 }
 knot_zone_set_ns = {
     "cmd": "zone-set",
-    "zone": None,
+    "zone": "company.com",
     "owner": "@",
     "rtype": "NS",
     "ttl": "3600",

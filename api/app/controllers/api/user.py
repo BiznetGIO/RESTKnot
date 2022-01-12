@@ -1,4 +1,4 @@
-from flask import current_app, request
+from flask import current_app, request, Response
 from flask_restful import Resource, reqparse
 
 from app.helpers import helpers, validator
@@ -9,7 +9,7 @@ from app.vendors.rest import response
 
 class GetUserData(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         try:
             users = model.get_all("user")
             if not users:
@@ -23,7 +23,7 @@ class GetUserData(Resource):
 
 class GetUserDataId(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         user_id = request.args.get("id")
         email = request.args.get("email")
         try:
@@ -45,7 +45,7 @@ class GetUserDataId(Resource):
 
 class UserSignUp(Resource):
     @auth.auth_required
-    def post(self):
+    def post(self) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("email", type=str, required=True)
         args = parser.parse_args()
@@ -72,7 +72,7 @@ class UserSignUp(Resource):
 
 class UserUpdate(Resource):
     @auth.auth_required
-    def put(self, user_id):
+    def put(self, user_id: int) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("email", type=str, required=True)
         args = parser.parse_args()
@@ -101,7 +101,7 @@ class UserUpdate(Resource):
 
 class UserDelete(Resource):
     @auth.auth_required
-    def delete(self, user_id):
+    def delete(self, user_id: int) -> Response:
         try:
             row_count = model.delete(table="user", field="id", value=user_id)
             if not row_count:

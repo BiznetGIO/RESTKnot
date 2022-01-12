@@ -53,5 +53,8 @@ class Rules:
             rdata_record = model.get_one(
                 table="rdata", field="record_id", value=record["id"]
             )
+            if not rdata_record:
+                raise ValueError("Rdata Not Found")
+
             if rdata == rdata_record["rdata"]:
                 raise ValueError("The record already exists")

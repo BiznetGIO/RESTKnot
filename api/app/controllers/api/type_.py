@@ -1,3 +1,4 @@
+from flask import Response
 from flask_restful import Resource, reqparse
 
 from app.middlewares import auth
@@ -7,7 +8,7 @@ from app.vendors.rest import response
 
 class GetTypeData(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         try:
             types = model.get_all("type")
             if not types:
@@ -20,7 +21,7 @@ class GetTypeData(Resource):
 
 class GetTypeDataId(Resource):
     @auth.auth_required
-    def get(self, type_id):
+    def get(self, type_id: int) -> Response:
         try:
             type_ = model.get_one(table="type", field="id", value=type_id)
             if not type_:
@@ -33,7 +34,7 @@ class GetTypeDataId(Resource):
 
 class TypeAdd(Resource):
     @auth.auth_required
-    def post(self):
+    def post(self) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("type", type=str, required=True)
         args = parser.parse_args()
@@ -55,7 +56,7 @@ class TypeAdd(Resource):
 
 class TypeEdit(Resource):
     @auth.auth_required
-    def put(self, type_id):
+    def put(self, type_id: int) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("type", type=str, required=True)
         args = parser.parse_args()
@@ -77,7 +78,7 @@ class TypeEdit(Resource):
 
 class TypeDelete(Resource):
     @auth.auth_required
-    def delete(self, type_id):
+    def delete(self, type_id: int) -> Response:
         try:
             row_count = model.delete(table="type", field="id", value=type_id)
             if not row_count:

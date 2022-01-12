@@ -10,6 +10,9 @@ def get_other_data(zone: Dict) -> Dict:
         return
 
     user = model.get_one(table="user", field="id", value=zone["user_id"])
+    if not user:
+        raise ValueError("User Not Found")
+
     user = helpers.exclude_keys(user, {"created_at"})
     records = record_model.get_records_by_zone(zone["zone"])
 

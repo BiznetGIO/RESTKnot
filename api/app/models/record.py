@@ -11,9 +11,20 @@ from app.models import zone as zone_model
 def get_other_data(record: Dict) -> Optional[Dict]:
     try:
         rdata = model.get_one(table="rdata", field="record_id", value=record["id"])
+        if not rdata:
+            raise ValueError("Rdata Not Found")
+
         zone = model.get_one(table="zone", field="id", value=record["zone_id"])
+        if not zone:
+            raise ValueError("Zone Not Found")
+
         ttl = model.get_one(table="ttl", field="id", value=record["ttl_id"])
+        if not ttl:
+            raise ValueError("TTL Not Found")
+
         type_ = model.get_one(table="type", field="id", value=record["type_id"])
+        if not type_:
+            raise ValueError("Type Not Found")
 
         if rdata:
             rdata = helpers.exclude_keys(rdata, {"id", "record_id"})

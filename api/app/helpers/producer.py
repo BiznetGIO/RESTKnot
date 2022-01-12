@@ -1,7 +1,7 @@
 import json
 import os
 from functools import wraps
-from typing import Collection, Dict
+from typing import Any, Collection, Dict, Callable
 
 from confluent_kafka import Producer
 from flask import current_app
@@ -24,7 +24,7 @@ def kafka_producer() -> Producer:
     return producer
 
 
-def check_producer(f):
+def check_producer(f: Callable) -> Callable:
     """Check producer availability"""
 
     @wraps(f)
@@ -39,7 +39,10 @@ def check_producer(f):
     return decorated_function
 
 
-def _delivery_report(err: str):
+def _delivery_report(err: str, _: Any = None):
+    """
+    :param Any _: To make it compatible with `produce` callback.
+    """
     if err is not None:
         raise ValueError(f"Message delivery failed: {err}")
 

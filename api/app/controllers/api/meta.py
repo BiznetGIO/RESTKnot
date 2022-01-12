@@ -1,3 +1,4 @@
+from flask import Response
 from flask_restful import Resource
 
 from app.helpers import helpers
@@ -6,7 +7,7 @@ from app.vendors.rest import response
 
 
 class MetaVersion(Resource):
-    def get(self):
+    def get(self) -> Response:
         version = helpers.app_version()
 
         data = {"build": version["vcs_revision"]}
@@ -15,7 +16,7 @@ class MetaVersion(Resource):
 
 class MetaConfig(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         config = helpers.get_config()
         brokers = config["brokers"]
         clusters = config["knot_servers"]

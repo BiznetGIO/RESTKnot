@@ -9,6 +9,8 @@ def get_other_data(record_id: int) -> Tuple:
     """Return other record data from given record id."""
     try:
         record = model.get_one(table="record", field="id", value=record_id)
+        if not record:
+            raise ValueError("Record Not Found")
 
         zone_id = record["zone_id"]
         type_id = record["type_id"]
