@@ -1,8 +1,10 @@
+from typing import Dict
+
 from app.models import model
 
 
 class Rules:
-    def __init__(self, query=None, value=None):
+    def __init__(self, query: str = None, value: Dict = None):
         """Append default query to given query."""
         self.query = (
             f'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND {query or None}'
@@ -30,7 +32,9 @@ class Rules:
 
         return False
 
-    def is_duplicate(self, zone_id, type_id, owner, rdata, ttl_id):
+    def is_duplicate(
+        self, zone_id: int, type_id: int, owner: str, rdata: str, ttl_id: int
+    ):
         """Check duplicate record exists."""
         base_query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s AND'
         query = (

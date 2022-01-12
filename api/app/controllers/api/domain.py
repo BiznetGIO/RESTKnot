@@ -1,6 +1,7 @@
 import os
+from typing import List
 
-from flask import current_app, request
+from flask import Response, current_app, request
 from flask_restful import Resource, reqparse
 
 from app.helpers import command, helpers, producer, validator
@@ -12,19 +13,19 @@ from app.models import zone as zone_model
 from app.vendors.rest import response
 
 
-def insert_zone(zone, user_id):
+def insert_zone(zone: str, user_id: int) -> int:
     data = {"zone": zone, "user_id": user_id}
     zone_id = model.insert(table="zone", data=data)
     return zone_id
 
 
-def insert_soa_record(zone_id):
+def insert_soa_record(zone_id: int) -> int:
     record_data = {"owner": "@", "zone_id": zone_id, "type_id": "1", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_soa_rdata(record_id):
+def insert_soa_rdata(record_id: int):
     """Insert default SOA record.
 
     Notes:
@@ -33,7 +34,7 @@ def insert_soa_rdata(record_id):
     """
     current_time = helpers.soa_time_set()
     serial = f"{str(current_time)}01"
-    default_soa_content = os.environ.get("DEFAULT_SOA_RDATA")
+    default_soa_content = os.environ.get("DEFAULT_SOA_RDATA", "")
     rdatas = default_soa_content.split(" ")
     # rdata doesn't contains serial
     mname_and_rname = " ".join(rdatas[0:2])
@@ -45,27 +46,27 @@ def insert_soa_rdata(record_id):
     model.insert(table="rdata", data=content_data)
 
 
-def insert_soa_default(zone_id):
+def insert_soa_default(zone_id: int) -> int:
     """Create default SOA record"""
     record_id = insert_soa_record(zone_id)
     insert_soa_rdata(record_id)
     return record_id
 
 
-def insert_ns_record(zone_id):
+def insert_ns_record(zone_id: int) -> int:
     record_data = {"owner": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_ns_rdata(name, record_id):
+def insert_ns_rdata(name: str, record_id: int):
     data = {"rdata": name, "record_id": record_id}
     model.insert(table="rdata", data=data)
 
 
-def insert_ns_default(zone_id):
+def insert_ns_default(zone_id: int) -> List[int]:
     """Create default NS record"""
-    default_ns = os.environ.get("DEFAULT_NS")
+    default_ns = os.environ["DEFAULT_NS"]
     nameserver = default_ns.split(" ")
     record_ids = []
 
@@ -77,18 +78,18 @@ def insert_ns_default(zone_id):
     return record_ids
 
 
-def insert_cname_record(zone_id):
+def insert_cname_record(zone_id: int) -> int:
     record_data = {"owner": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
     record_id = model.insert(table="record", data=record_data)
     return record_id
 
 
-def insert_cname_rdata(zone, record_id):
+def insert_cname_rdata(zone: str, record_id: int):
     data = {"rdata": f"{zone}.", "record_id": record_id}
     model.insert(table="rdata", data=data)
 
 
-def insert_cname_default(zone_id, zone):
+def insert_cname_default(zone_id: int, zone: str) -> int:
     """Create default CNAME record"""
     record_id = insert_cname_record(zone_id)
     insert_cname_rdata(zone, record_id)
@@ -97,7 +98,7 @@ def insert_cname_default(zone_id, zone):
 
 class GetDomainData(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         try:
             zones = model.get_all("zone")
             if not zones:
@@ -116,7 +117,7 @@ class GetDomainData(Resource):
 
 class GetDomainDataId(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         zone_id = request.args.get("id")
         zone_name = request.args.get("name")
 
@@ -142,7 +143,7 @@ class GetDomainDataId(Resource):
 
 class GetDomainByUser(Resource):
     @auth.auth_required
-    def get(self, user_id):
+    def get(self, user_id: int) -> Response:
         try:
             zones = zone_model.get_zones_by_user(user_id)
             if not zones:
@@ -162,7 +163,7 @@ class GetDomainByUser(Resource):
 class AddDomain(Resource):
     @producer.check_producer
     @auth.auth_required
-    def post(self):
+    def post(self) -> Response:
         """Add new domain (zone) with additional default record.
 
         note:
@@ -214,7 +215,7 @@ class AddDomain(Resource):
 class DeleteDomain(Resource):
     @producer.check_producer
     @auth.auth_required
-    def delete(self):
+    def delete(self) -> Response:
         """Remove domain (zone) and all its related records."""
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)

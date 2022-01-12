@@ -1,9 +1,11 @@
+from typing import Dict
+
 from app.helpers import helpers
 from app.models import model
 from app.models import record as record_model
 
 
-def get_other_data(zone):
+def get_other_data(zone: Dict) -> Dict:
     if zone is None:
         return
 
@@ -14,8 +16,9 @@ def get_other_data(zone):
     records_detail = []
     for record in records:
         record_detail = record_model.get_other_data(record)
-        record_detail = helpers.exclude_keys(record_detail, {"zone"})
-        records_detail.append(record_detail)
+        if record_detail:
+            record_detail = helpers.exclude_keys(record_detail, {"zone"})
+            records_detail.append(record_detail)
 
     data = {
         "zone_id": zone["id"],

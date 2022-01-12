@@ -1,12 +1,13 @@
 import os
 from functools import wraps
+from typing import Callable
 
 from flask import request
 
 from app.vendors.rest import response
 
 
-def auth_required(f):
+def auth_required(f: Callable):
     """Decorate given function with authentication check."""
 
     @wraps(f)

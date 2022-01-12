@@ -1,6 +1,7 @@
 import json
 import os
 from functools import wraps
+from typing import Collection, Dict
 
 from confluent_kafka import Producer
 from flask import current_app
@@ -9,7 +10,7 @@ from app.helpers import helpers
 from app.vendors.rest import response
 
 
-def kafka_producer():
+def kafka_producer() -> Producer:
     """Create Kafka producer."""
     config = helpers.get_config()
     try:
@@ -38,12 +39,12 @@ def check_producer(f):
     return decorated_function
 
 
-def _delivery_report(err):
+def _delivery_report(err: str):
     if err is not None:
         raise ValueError(f"Message delivery failed: {err}")
 
 
-def send(message):
+def send(message: Dict[str, Collection[Collection[str]]]):
     """Send given message to Kafka broker."""
     producer = None
     try:

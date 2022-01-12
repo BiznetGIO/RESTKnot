@@ -1,10 +1,11 @@
 import json
+from typing import Dict, List, Tuple
 
 from app.helpers import helpers, producer
 from app.models import model
 
 
-def get_other_data(record_id):
+def get_other_data(record_id: int) -> Tuple:
     """Return other record data from given record id."""
     try:
         record = model.get_one(table="record", field="id", value=record_id)
@@ -22,15 +23,10 @@ def get_other_data(record_id):
         raise ValueError(f"{error}")
 
 
-def generate_command(**kwargs):
+def generate_command(
+    zone: str, owner: str, rtype: str, ttl: str, rdata: str, command: str
+) -> Dict:
     """Return dictionary of given keywords & values."""
-    zone = kwargs.get("zone_name")
-    owner = kwargs.get("owner")
-    rtype = kwargs.get("rtype")
-    ttl = kwargs.get("ttl")
-    rdata = kwargs.get("rdata")
-    command = kwargs.get("command")
-
     cmd = {
         "cmd": command,
         "zone": zone,
@@ -43,7 +39,7 @@ def generate_command(**kwargs):
     return cmd
 
 
-def set_config(zone, command):
+def set_config(zone: str, command: str):
     """Send config command with JSON structure to broker."""
 
     # there are two option to put conf-begin and conf-commit
@@ -64,7 +60,7 @@ def set_config(zone, command):
     producer.send(message)
 
 
-def set_zone(record_id, command):
+def set_zone(record_id: int, command: str):
     """Send zone command with JSON structure to broker."""
     record, zone, type_, ttl, rdata = get_other_data(record_id)
     zone_name = zone["zone"]
@@ -96,7 +92,7 @@ def set_zone(record_id, command):
     producer.send(message)
 
 
-def set_default_zone(record_ids):
+def set_default_zone(record_ids: List[int]):
     """Send zone command with JSON structure to broker."""
     # We can use `send_zone` but it will be slow since each zone will be sent
     # separately
@@ -135,7 +131,7 @@ def set_default_zone(record_ids):
     producer.send(message)
 
 
-def delegate(zone, command, agent_type):
+def delegate(zone: str, command: str, agent_type: str):
     """Send delegation config command with JSON structure to broker."""
     config = helpers.get_config()
     try:

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Union
+
 import psycopg2
 
 from app import database
@@ -13,7 +15,7 @@ def get_db():
         raise ValueError(f"{exc}")
 
 
-def zip_column_name(table, rows):
+def zip_column_name(table: str, rows: str) -> List:
     results = []
     column = get_columns(table)
     for row in rows:
@@ -21,7 +23,7 @@ def zip_column_name(table, rows):
     return results
 
 
-def get_columns(table):
+def get_columns(table: str) -> List:
     column = None
     cursor, _ = get_db()
     try:
@@ -33,7 +35,7 @@ def get_columns(table):
     return column
 
 
-def get_all(table):
+def get_all(table: str) -> List:
     results = []
     cursor, connection = get_db()
     try:
@@ -50,8 +52,8 @@ def get_all(table):
         return results
 
 
-def get_one(table, field=None, value=None):
-    results = []
+def get_one(table: str, field: Optional[str] = None, value=None):
+    result: Dict[Any, Any] = {}
     cursor, connection = get_db()
     column = get_columns(table)
     try:
@@ -60,19 +62,19 @@ def get_one(table, field=None, value=None):
         cursor.execute({"value": value})
         rows = cursor.fetchone()
         if not rows:
-            return
-        results = dict(zip(column, list(rows)))
+            return None
+        result = dict(zip(column, list(rows)))
     except (psycopg2.DatabaseError, psycopg2.OperationalError) as error:
         connection.rollback()
         raise ValueError(f"{error}")
     else:
         connection.commit()
-        return results
+        return result
 
 
-def insert(table, data=None):
+def insert(table: str, data: Dict) -> int:
     cursor, connection = get_db()
-    rows = []
+    rows: List = []
     rows_value = []
 
     # arrange row and values
@@ -83,10 +85,12 @@ def insert(table, data=None):
     str_placeholer = ["%s"] * len(rows)
 
     try:
-        rows = ",".join(rows)
-        str_placeholer = ",".join(str_placeholer)
+        _rows = ",".join(rows)
+        _str_placeholer = ",".join(str_placeholer)
 
-        query = f'INSERT INTO "{table}" ({rows}) VALUES ({str_placeholer}) RETURNING *'
+        query = (
+            f'INSERT INTO "{table}" ({_rows}) VALUES ({_str_placeholer}) RETURNING *'
+        )
         cursor.prepare(query)
         cursor.execute((tuple(rows_value)))
     except (Exception, psycopg2.DatabaseError) as error:
@@ -98,7 +102,7 @@ def insert(table, data=None):
         return inserted_data_id
 
 
-def update(table, data=None):
+def update(table: str, data: Dict) -> int:
     cursor, connection = get_db()
     data_ = data["data"]
     rows = []
@@ -126,7 +130,9 @@ def update(table, data=None):
         return rows_edited
 
 
-def delete(table, field=None, value=None):
+def delete(
+    table: str, field: str = None, value: Optional[Union[str, int]] = None
+) -> int:
     cursor, connection = get_db()
     rows_deleted = 0
     try:
@@ -142,7 +148,7 @@ def delete(table, field=None, value=None):
         return rows_deleted
 
 
-def is_unique(table, field=None, value=None):
+def is_unique(table: str, field: str = None, value: str = None) -> bool:
     """Check if data only appear once."""
     cursor, _ = get_db()
 
@@ -158,7 +164,7 @@ def is_unique(table, field=None, value=None):
     return True
 
 
-def plain_get(table, query, value=None):
+def plain_get(table: str, query: str, value: Optional[dict] = None):
     """Accept plain SQL to be sent as prepared statement."""
     results = []
     cursor, connection = get_db()
