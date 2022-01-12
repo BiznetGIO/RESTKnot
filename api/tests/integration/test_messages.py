@@ -1,6 +1,6 @@
 from typing import List
 
-import tests.fixtures.messages as message_fx
+import tests.fixtures.messages as message_fixture
 
 import app.helpers.producer
 
@@ -35,6 +35,6 @@ class TestMessages:
         assert len(self._messages) == 4
         # they should be ordered like this, otherwise knot will fail to create
         # configs or zones
-        assert self._messages[0]["knot"][1] == message_fx.knot_conf_set
-        assert self._messages[1]["knot"][2] == message_fx.knot_zone_set_ns
-        assert self._messages[2]["knot"][1] == message_fx.knot_delegate_file
+        assert self._messages[0]["knot"][1] == message_fixture.knot_conf_set
+        assert self._messages[1]["knot"][2] == message_fixture.knot_zone_set_ns
+        assert self._messages[2]["knot"][1] == message_fixture.knot_delegate_file

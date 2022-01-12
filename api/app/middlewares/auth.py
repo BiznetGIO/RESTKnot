@@ -7,7 +7,7 @@ from flask import request
 from app.vendors.rest import response
 
 
-def auth_required(f: Callable):
+def auth_required(f: Callable) -> Callable:
     """Decorate given function with authentication check."""
 
     @wraps(f)

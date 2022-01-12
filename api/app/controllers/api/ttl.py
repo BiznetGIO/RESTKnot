@@ -1,4 +1,6 @@
+from flask import Response
 from flask_restful import Resource, reqparse
+
 
 from app.middlewares import auth
 from app.models import model
@@ -7,7 +9,7 @@ from app.vendors.rest import response
 
 class GetTtlData(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         try:
             ttls = model.get_all("ttl")
             if not ttls:
@@ -20,7 +22,7 @@ class GetTtlData(Resource):
 
 class GetTtlDataId(Resource):
     @auth.auth_required
-    def get(self, ttl_id):
+    def get(self, ttl_id: int) -> Response:
         try:
             ttl = model.get_one(table="ttl", field="id", value=ttl_id)
             if not ttl:
@@ -33,7 +35,7 @@ class GetTtlDataId(Resource):
 
 class TtlAdd(Resource):
     @auth.auth_required
-    def post(self):
+    def post(self) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
@@ -54,7 +56,7 @@ class TtlAdd(Resource):
 
 class TtlEdit(Resource):
     @auth.auth_required
-    def put(self, ttl_id):
+    def put(self, ttl_id: int) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
@@ -76,7 +78,7 @@ class TtlEdit(Resource):
 
 class TtlDelete(Resource):
     @auth.auth_required
-    def delete(self, ttl_id):
+    def delete(self, ttl_id: int) -> Response:
         try:
             row_count = model.delete(table="ttl", field="id", value=ttl_id)
             if not row_count:

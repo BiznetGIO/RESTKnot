@@ -6,7 +6,7 @@ from app import database
 from app.vendors.prepare import PreparingCursor
 
 
-def get_db():
+def get_db() -> psycopg2.connect:
     try:
         connection = database.connect()
         cursor = connection.cursor(cursor_factory=PreparingCursor)
@@ -52,7 +52,7 @@ def get_all(table: str) -> List:
         return results
 
 
-def get_one(table: str, field: Optional[str] = None, value=None):
+def get_one(table: str, field: Optional[str] = None, value=None) -> Optional[Dict]:
     result: Dict[Any, Any] = {}
     cursor, connection = get_db()
     column = get_columns(table)
