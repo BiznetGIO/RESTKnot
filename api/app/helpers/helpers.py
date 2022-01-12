@@ -1,16 +1,17 @@
 import datetime
 import os
 import pathlib
+from typing import Dict, Optional, Set
 
 import yaml
 
 
-def soa_time_set():
+def soa_time_set() -> str:
     date = datetime.datetime.now().strftime("%Y%m%d")
     return date
 
 
-def replace_serial(rdata, serial):
+def replace_serial(rdata: str, serial: str) -> str:
     """Replace serial value in  given rdata."""
     rdatas = rdata.split(" ")
     # `mname_and_rname` contains such 'one.dns.id. two.dns.id.'
@@ -21,7 +22,7 @@ def replace_serial(rdata, serial):
     return f"{mname_and_rname} {serial} {ttls}"
 
 
-def increment_serial(serial, increment="01"):
+def increment_serial(serial: str, increment: str = "01") -> str:
     """Increment serial value with given str value.
 
     Keyword arguments:
@@ -40,17 +41,17 @@ def increment_serial(serial, increment="01"):
     return f"{today_date}{increment}"
 
 
-def get_datetime():
+def get_datetime() -> str:
     now = datetime.datetime.now(datetime.timezone.utc)
     return f"{now:%Y-%m-%d %H:%M:%S %z}"
 
 
-def exclude_keys(dict_, keys):
+def exclude_keys(dict_: Dict, keys: Set[str]) -> Dict:
     """Exclude specified key from dict."""
     return {item: dict_[item] for item in dict_ if item not in keys}
 
 
-def add_str(x, y):
+def add_str(x: str, y: str) -> str:
     """Handle string addition
 
     :Example:
@@ -59,21 +60,21 @@ def add_str(x, y):
     return str(int(x) + int(y)).zfill(len(x))
 
 
-def read_file(other_file_name, filename):
-    root_dir = pathlib.Path(other_file_name).resolve().parent
-    path = root_dir.joinpath(filename)
-
+def read_file(path: pathlib.Path) -> Optional[str]:
+    """Read the file content"""
     if path.is_file():
         with open(path, "rb") as f:
             content = f.read().decode("utf-8")
             return content
 
+    return None
 
-def read_version(other_file_name, filename):
-    """Read the the current version or build of the app"""
-    version = ""
 
-    version = read_file(other_file_name, filename)
+def _parse_version(path: pathlib.Path) -> str:
+    """Parse the version from a file"""
+    version = None
+
+    version = read_file(path)
     if version:
         version = version.rstrip()
 
@@ -83,21 +84,32 @@ def read_version(other_file_name, filename):
     return version
 
 
-def config_file():
+def app_version() -> Dict[str, str]:
+    """Return the VCS hash and semantic version of the app"""
+    root_dir = pathlib.Path("autoapp.py").resolve().parent
+    vcs_revision_file_path = root_dir.joinpath("vcs_revision.txt")
+
+    vcs_revision = _parse_version(vcs_revision_file_path)
+
+    version = {"vcs_revision": vcs_revision}
+    return version
+
+
+def config_file() -> pathlib.Path:
     """Return config file path."""
-    path = os.environ.get("RESTKNOT_CONFIG_FILE")
-    if not path:
-        current_path = pathlib.Path(__file__)
-        path = current_path.parents[2].joinpath("config.yml")
+    custom_path = os.environ.get("RESTKNOT_CONFIG_FILE")
+    if not custom_path:
+        _current_path = pathlib.Path(__file__)
+        default_path = _current_path.parents[2].joinpath("config.yml")
 
-    is_exists = os.path.exists(path)
+    is_exists = os.path.exists(default_path)
     if is_exists:
-        return path
+        return default_path
     else:
-        raise ValueError(f"Config File Not Found: {path}")
+        raise ValueError(f"Config File Not Found: {default_path}")
 
 
-def get_config():
+def get_config() -> Dict:
     """Return config file content."""
     file_ = config_file()
     with open(file_, "r", encoding="utf-8") as opened_file:

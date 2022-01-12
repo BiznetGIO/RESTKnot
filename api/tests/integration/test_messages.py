@@ -1,10 +1,12 @@
+from typing import List
+
 import tests.fixtures.messages as message_fx
 
 import app.helpers.producer
 
 
 class TestMessages:
-    _messages = []
+    _messages: List[str] = []
 
     def fake_send(self, messages):
         self._messages.append(messages)

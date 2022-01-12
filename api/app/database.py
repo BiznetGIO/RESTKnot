@@ -3,7 +3,7 @@ import os
 import psycopg2
 
 
-def connect():
+def connect() -> psycopg2.connect:
     """Connect to database."""
     try:
         connection = psycopg2.connect(

@@ -21,13 +21,14 @@
 import re
 import string
 from ipaddress import ip_address
+from typing import Callable, Dict
 
 RE_EMAIL = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
 RE_ZONE = "^(?!(https:\/\/|http:\/\/|www\.|mailto:|smtp:|ftp:\/\/|ftps:\/\/))(((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,86}[a-zA-Z0-9]))\.(([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,73}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25})))|((([a-zA-Z0-9])|([a-zA-Z0-9][a-zA-Z0-9\-]{0,162}[a-zA-Z0-9]))\.(([a-zA-Z0-9]{2,12}\.[a-zA-Z0-9]{2,12})|([a-zA-Z0-9]{2,25}))))$"
 RE_CNAME = "^(([a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])\.)*([A-Za-z0-9_]|[A-Za-z0-9_][A-Za-z0-9_\-]*[A-Za-z0-9_](\.?))$"
 
 
-def is_valid_ip(ip):
+def is_valid_ip(ip: str):
     """Check whether it's a valid IPv4 or IPv6."""
     try:
         ip_address(ip)
@@ -35,14 +36,14 @@ def is_valid_ip(ip):
         raise ValueError("Bad IP Adrress")
 
 
-def is_valid_email(email):
+def is_valid_email(email: str):
     """Check if  it's a valid email address."""
     match = re.match(RE_EMAIL, email)
     if match is None:
         raise ValueError("Bad Email Adrress")
 
 
-def is_valid_mx(mx_rdata):
+def is_valid_mx(mx_rdata: str):
     """Check if  MX RDATA contents is valid."""
     msg = "Bad MX RDATA"
 
@@ -65,7 +66,7 @@ def is_valid_mx(mx_rdata):
         raise ValueError(msg)
 
 
-def is_valid_cname(cname_rdata):
+def is_valid_cname(cname_rdata: str):
     """Check if  CNAME RDATA contents is valid."""
     msg = "Bad CNAME RDATA"
 
@@ -77,21 +78,21 @@ def is_valid_cname(cname_rdata):
         raise ValueError(msg)
 
 
-def is_valid_zone(domain_name):
+def is_valid_zone(domain_name: str):
     """Check if it's a valid domain name."""
     match = re.match(RE_ZONE, domain_name)
     if match is None:
         raise ValueError("Bad Domain Name")
 
 
-def is_valid_txt(txt_rdata):
+def is_valid_txt(txt_rdata: str):
     """Check if it's a valid TXT rdata."""
     for char in txt_rdata:
         if char not in string.printable:
             raise ValueError("Bad TXT RDATA")
 
 
-def is_valid_soa(soa_rdata):
+def is_valid_soa(soa_rdata: str):
     """Simple function to check SOA RDATA."""
     rdatas = soa_rdata.split(" ")
 
@@ -108,7 +109,7 @@ def is_valid_soa(soa_rdata):
             raise ValueError("Bad SOA RDATA")
 
 
-def is_valid_owner(owner):
+def is_valid_owner(owner: str):
     """Check if it's a valid owner.
 
     Rules:
@@ -141,7 +142,7 @@ def is_valid_owner(owner):
         raise ValueError("Bad OWNER")
 
 
-functions = {
+functions: Dict[str, Callable] = {
     "A": is_valid_ip,
     "AAAA": is_valid_ip,
     "MX": is_valid_mx,
@@ -155,7 +156,7 @@ functions = {
 }
 
 
-def validate(rtype, rdata):
+def validate(rtype: str, rdata: str):
     if not rdata:
         raise ValueError("RDATA can't be empty")
 

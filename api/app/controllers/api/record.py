@@ -1,4 +1,6 @@
-from flask import current_app
+from typing import Dict
+
+from flask import Response, current_app
 from flask_restful import Resource, reqparse
 
 from app.helpers import command, helpers, producer, rules, validator
@@ -16,6 +18,9 @@ def get_serial_resource(zone):
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
     )
+    if not rdata_record:
+        return None
+
     rdatas = rdata_record["rdata"].split(" ")
     serial = rdatas[2]
     # `serial_counter` is the last two digit of serial value (YYYYMMDDnn)
@@ -31,7 +36,7 @@ def get_serial_resource(zone):
     }
 
 
-def check_serial_limit(serial_resource):
+def check_serial_limit(serial_resource: Dict):
     serial_counter = serial_resource["serial_counter"]
     serial_date = serial_resource["serial_date"]
     today_date = helpers.soa_time_set()
@@ -43,7 +48,7 @@ def check_serial_limit(serial_resource):
         raise ValueError("Zone Change Limit Reached")
 
 
-def update_serial(serial_resource, increment="01"):
+def update_serial(serial_resource: Dict, increment: str = "01"):
     serial = serial_resource["serial"]
     soa_record = serial_resource["soa_record"]
     rdata_record = serial_resource["rdata_record"]
@@ -59,7 +64,7 @@ def update_serial(serial_resource, increment="01"):
 
 class GetRecordData(Resource):
     @auth.auth_required
-    def get(self):
+    def get(self) -> Response:
         try:
             records = model.get_all("record")
             if not records:
@@ -78,7 +83,7 @@ class GetRecordData(Resource):
 
 class GetRecordDataId(Resource):
     @auth.auth_required
-    def get(self, record_id):
+    def get(self, record_id: int) -> Response:
         try:
             record = model.get_one(table="record", field="id", value=record_id)
             if not record:
@@ -173,7 +178,7 @@ class RecordAdd(Resource):
 class RecordEdit(Resource):
     @producer.check_producer
     @auth.auth_required
-    def put(self, record_id):
+    def put(self, record_id: int) -> Response:
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
         parser.add_argument("owner", type=str, required=True)
@@ -251,7 +256,7 @@ class RecordEdit(Resource):
 class RecordDelete(Resource):
     @producer.check_producer
     @auth.auth_required
-    def delete(self, record_id):
+    def delete(self, record_id: int) -> Response:
         """Delete specific record.
 
         note:

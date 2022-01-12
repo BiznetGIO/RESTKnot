@@ -12,22 +12,29 @@
 # 2. owner CAN'T coexist with the same CNAME owner
 # --------------------------------------------------------------------
 
+from typing import Any, Callable, Dict
+
 from app.models import rules as rules_model
 from app.models import type_ as type_model
 from app.models import zone as zone_model
 
 
-def is_allowed(zone_id, type_id, owner, rdata, ttl_id):
+def is_allowed(
+    zone_id: int, type_id: int, owner: str, rdata: str, ttl_id: int, _: Any = None
+):
     """A Generic function to check is given record is allowed.
 
+    :param Any _: To make it compatible with other similar function. The caller always pass the same amount of args.
+
     1. Check for duplicate record
+
     """
     #  duplicate record NOT allowed
     rules = rules_model.Rules()
     rules.is_duplicate(zone_id, type_id, owner, rdata, ttl_id)
 
 
-def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
+def is_allowed_cname(zone_id: int, type_id: int, owner: str, rdata: str, ttl_id: int):
     """Check is given CNAME record is allowed.
 
     1. Check for duplicate record
@@ -64,8 +71,12 @@ def is_allowed_cname(zone_id, type_id, owner, rdata, ttl_id):
         raise ValueError("A CNAME owner can't be root")
 
 
-def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id):
+def is_allowed_a(
+    zone_id: int, type_id: int, owner: str, rdata: str, ttl_id: int, _: Any = None
+):
     """Check is given A record is allowed.
+
+    :param Any _: To make it compatible with other similar function. The caller always pass the same amount of args.
 
     1. Check for duplicate record
     2. Check for the same CNAME owner
@@ -84,7 +95,14 @@ def is_allowed_a(zone_id, type_id, owner, rdata, ttl_id):
         raise ValueError("A CNAME record already exist with that owner")
 
 
-def is_allowed_cname_edit(zone_id, type_id, owner, rdata, ttl_id, record_id=None):
+def is_allowed_cname_edit(
+    zone_id: int,
+    type_id: int,
+    owner: str,
+    rdata: str,
+    ttl_id: int,
+    record_id: int = None,
+):
     """Check is given CNAME record is allowed.
 
     This function separated from `cname_add` because it needs to exclude its id
@@ -130,7 +148,7 @@ def is_allowed_cname_edit(zone_id, type_id, owner, rdata, ttl_id, record_id=None
 
 
 # function based on rtype input when adding record
-functions_add = {
+functions_add: Dict[str, Callable] = {
     "CNAME": is_allowed_cname,
     "A": is_allowed_a,
     "AAAA": is_allowed_a,
@@ -139,7 +157,8 @@ functions_add = {
     "MX": is_allowed,
     "TXT": is_allowed,
 }
-functions_edit = {
+
+functions_edit: Dict[str, Callable] = {
     "CNAME": is_allowed_cname_edit,
     "A": is_allowed_a,
     "AAAA": is_allowed_a,
@@ -150,7 +169,9 @@ functions_edit = {
 }
 
 
-def check_add(rtype, zone_id, type_id, owner, rdata, ttl_id):
+def check_add(
+    rtype: str, zone_id: int, type_id: int, owner: str, rdata: str, ttl_id: int
+):
     rtype = rtype.upper()
     if rtype in functions_add:
         functions_add[rtype](zone_id, type_id, owner, rdata, ttl_id)
@@ -158,7 +179,15 @@ def check_add(rtype, zone_id, type_id, owner, rdata, ttl_id):
         raise ValueError("Unsupported Record Type")
 
 
-def check_edit(rtype, zone_id, type_id, owner, rdata, ttl_id, record_id=None):
+def check_edit(
+    rtype: str,
+    zone_id: int,
+    type_id: int,
+    owner: str,
+    rdata: str,
+    ttl_id: str,
+    record_id: int = None,
+):
     """Return function when user editing A record.
 
     Some function need dummy `record_id` parameters to match with other function
