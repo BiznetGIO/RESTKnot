@@ -1,19 +1,22 @@
 import json
 from datetime import date, datetime
+from typing import Callable, Dict, List, Union
 
 from flask import Response
 
 
-def json_serial(obj):
+def json_serial(obj: Callable) -> Union[datetime, date]:
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
 
-    raise TypeError("Type %s not serializable" % type(obj))
+    raise TypeError(f"Type {type(obj)} not serializable")
 
 
-def response(status_code, message=None, data=None):
+def response(
+    status_code: int, message: str = None, data: Union[Dict, List] = None
+) -> Response:
     """Response data helper
 
     Arguments:
@@ -26,7 +29,7 @@ def response(status_code, message=None, data=None):
     Returns:
         dict -- response data
     """
-    success_status = {
+    success_status: Dict[int, str] = {
         200: "OK",
         201: "Created",
         202: "Accepted",
@@ -34,7 +37,7 @@ def response(status_code, message=None, data=None):
         304: "Not modified",
     }
 
-    failure_status = {
+    failure_status: Dict[int, str] = {
         400: "Internal error occurred - unexpected error caused by request data",
         401: "Unauthorized operation",
         403: "Forbidden",
@@ -50,30 +53,31 @@ def response(status_code, message=None, data=None):
         503: "Service is unavailable",
     }
 
-    status = {}
-    status["code"] = status_code
+    _response: Dict = {}
+    _response["code"] = status_code
 
     if status_code in success_status:
         count = 0
-        if type(data) is list:
+        if isinstance(data, list):
             count = len(data)
-        if type(data) is dict:
+        if isinstance(data, dict):
             count = 1
-        status["count"] = count
-        status["data"] = data if data else None
-        status["status"] = "success"
-        status["message"] = message if message else success_status[status_code]
-    elif status_code in failure_status:
-        status["status"] = "error"
-        status["message"] = message if message else failure_status[status_code]
-    else:
-        status["status"] = "error"
-        status["message"] = message if message else failure_status[400]
 
-    response = Response(
-        response=json.dumps(status, default=json_serial),
+        _response["count"] = count
+        _response["data"] = data if data else None
+        _response["status"] = "success"
+        _response["message"] = message if message else success_status[status_code]
+    elif status_code in failure_status:
+        _response["status"] = "error"
+        _response["message"] = message if message else failure_status[status_code]
+    else:
+        _response["status"] = "error"
+        _response["message"] = message if message else failure_status[400]
+
+    response_result = Response(
+        response=json.dumps(_response, default=json_serial),
         status=status_code,
         mimetype="application/json",
     )
 
-    return response
+    return response_result

@@ -2,8 +2,8 @@ from flask import Response
 from flask_restful import Resource
 
 from app.helpers import helpers
+from app.helpers.rest import response
 from app.middlewares import auth
-from app.vendors.rest import response
 
 
 class MetaVersion(Resource):
