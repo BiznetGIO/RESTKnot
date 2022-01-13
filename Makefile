@@ -44,6 +44,7 @@ test_unit:
 	pytest --capture=no --verbose api/tests/unit/
 
 test: test_unit
+	# To run integration test locally, change `DB_USER=postgres` in .example.env
 	pytest --capture=no --verbose api/tests/integration/
 
 comply: sort fmt lint test_unit ## Tasks to make the code-base comply with the rules. Mostly used in git hooks.
