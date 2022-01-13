@@ -1,9 +1,9 @@
 from flask import Response
 from flask_restful import Resource, reqparse
 
+from app.helpers.rest import response
 from app.middlewares import auth
 from app.models import model
-from app.vendors.rest import response
 
 
 class GetTypeData(Resource):

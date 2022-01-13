@@ -1,13 +1,13 @@
 import json
 import os
 from functools import wraps
-from typing import Any, Collection, Dict, Callable
+from typing import Any, Callable, Collection, Dict
 
 from confluent_kafka import Producer
 from flask import current_app
 
 from app.helpers import helpers
-from app.vendors.rest import response
+from app.helpers.rest import response
 
 
 def kafka_producer() -> Producer:

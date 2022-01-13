@@ -29,6 +29,7 @@ disable = [
   "broad-except",
   # flask use class boilerplate everywhere
   "no-self-use",
+  "too-many-return-statements",
   # misc
   "too-many-locals",
   "too-many-arguments",

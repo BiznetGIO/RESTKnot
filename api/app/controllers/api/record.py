@@ -4,13 +4,13 @@ from flask import Response, current_app
 from flask_restful import Resource, reqparse
 
 from app.helpers import command, helpers, producer, rules, validator
+from app.helpers.rest import response
 from app.middlewares import auth
 from app.models import model
 from app.models import record as record_model
 from app.models import ttl as ttl_model
 from app.models import type_ as type_model
 from app.models import zone as zone_model
-from app.vendors.rest import response
 
 
 def get_serial_resource(zone):

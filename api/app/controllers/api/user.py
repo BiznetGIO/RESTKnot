@@ -1,10 +1,10 @@
-from flask import current_app, request, Response
+from flask import Response, current_app, request
 from flask_restful import Resource, reqparse
 
 from app.helpers import helpers, validator
+from app.helpers.rest import response
 from app.middlewares import auth
 from app.models import model
-from app.vendors.rest import response
 
 
 class GetUserData(Resource):

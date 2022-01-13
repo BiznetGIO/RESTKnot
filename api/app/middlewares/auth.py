@@ -4,7 +4,7 @@ from typing import Callable
 
 from flask import request
 
-from app.vendors.rest import response
+from app.helpers.rest import response
 
 
 def auth_required(f: Callable) -> Callable:
