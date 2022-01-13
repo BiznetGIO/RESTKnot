@@ -10,28 +10,39 @@ services:
       - TZ=Asia/Jakarta
       - FLASK_APP=autoapp.py
       - FLASK_ENV=production
+      # Fine tuning app logging
       - FLASK_DEBUG=0
 
       # server
+      # `APP_HOST` and `APP_PORT` is the host address and the port location.
       - APP_HOST=0.0.0.0 # default 0.0.0.0
       - APP_PORT=5000 # default 8000
 
+      # `DB_HOST` is the database host address, and `DB_NAME` is the name of the
+      # database. If you use CockroachDB the port will be `26257` with `root` as user
+      # For PostgreSQL the user is `postgres` and the port is `5432`.
       - DB_NAME=knotdb # don't add whitespace beetween =
       - DB_HOST=roach
       - DB_PORT=26257
       - DB_USER=root
+      # If you do not use SSL for your database connection, set `DB_SSL` to `disable`
       - DB_SSL=disable
 
-      # topic to suscribe
+      # `RESTKNOT_KAFKA_TOPIC` is the topic name that RESTKnot will be using.
       - RESTKNOT_KAFKA_TOPIC=domaindata
 
       # don't add quote, otherwise it will not work
       # <MNAME> <RNAME> <without serial!> <refresh> <retry> <expire> <minimum>
       - DEFAULT_SOA_RDATA=one.dns.id. hostmaster.dns.id. 3600 1800 604800 86400
+      # `DEFAULT_NS` is the default name server that will be set in domain creation.
       - DEFAULT_NS=one.dns.id. two.dns.id.
 
+      # `RESKNOT_API_KEY` is the key used to authorize access to the REST API.
       - RESTKNOT_API_KEY=123
-      # set config file location. `config.yml` is the default
+
+      # `RESKNOT_CONFIG_FILE` is the config that contains a list of masters and
+      # slave of your DNS. The default location is the root directory of the project.
+      # `config.yml` is the default
       # - RESTKNOT_CONFIG_FILE=
 
     # default timeout:30
