@@ -7,7 +7,33 @@ on:
     - master
 
 jobs:
-  build:
+  code_quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          fetch-depth: 1
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: '3.9'
+
+    - name: Install dependencies
+      # newer black version had breaking changes
+      run: |
+        make setup
+
+    - name: Lint
+      # currently cli is not-maintained
+      run: |
+        make sort_check fmt_check lint
+
+  test:
+    name: Test on ${{ matrix.os }} (${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -73,31 +99,59 @@ jobs:
           # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
           cp  api/config.example.yml api/config.yml
 
-      - name: Test
+      - name: Run unit and integration test
         run: |
           make test
 
-  code_quality:
-    name: Code quality
+  build:
+    name: Build Docker Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        projects:
+          - {image: "restknot-api", directory: "api" }
+          - {image: "restknot-agent", directory: "agent" }
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+        with:
           fetch-depth: 1
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-          python-version: '3.9'
+      - name: Prepare env
+        # the common usage of short SHA is 7 characters
+        run: |
+          echo "VCS_REVISION=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-    - name: Install dependencies
-      # newer black version had breaking changes
-      run: |
-        make setup
+      - name: Show env
+        run: |
+          echo "VCS_REVISION is: ${{ env.VCS_REVISION }}"
 
-    - name: Lint
-      # currently cli is not-maintained
-      run: |
-        make sort_check fmt_check lint
+      - name: Prepare necessary files
+        run: |
+          # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
+          cp  api/config.example.yml api/config.yml
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: biznetgio/${{ matrix.projects.image }}
+          tag-semver: |
+            {{version}}
+            {{major}}.{{minor}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./${{ matrix.projects.directory }}
+          file: ./${{ matrix.projects.directory }}/Dockerfile
+          build-args: |
+            VCS_REVISION=${{ env.VCS_REVISION }}
+          push: false
+
+
+
