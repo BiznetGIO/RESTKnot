@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install --no-install-recommends --yes tzdata
 # confluent-kafka-python needs these
 RUN apt-get install --no-install-recommends --yes librdkafka-dev python3-dev
-# psycopg2 needs these
+# psycopg needs these
 RUN apt-get install --no-install-recommends --yes build-essential libpq-dev
 
 # activate virtualenv
