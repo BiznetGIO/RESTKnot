@@ -16,7 +16,7 @@ def kafka_producer() -> Producer:
     try:
         brokers = config["brokers"]
     except KeyError:
-        raise ValueError("Can't find brokers list in config")
+        raise ValueError("failed to find brokers list in the configuration file")
 
     brokers = ",".join(brokers)
     conf = {"bootstrap.servers": brokers}
@@ -44,7 +44,7 @@ def _delivery_report(err: str, _: Any = None):
     :param Any _: To make it compatible with `produce` callback.
     """
     if err is not None:
-        raise ValueError(f"Message delivery failed: {err}")
+        raise ValueError(f"message delivery failed: {err}")
 
 
 def send(message: Dict[str, Collection[Collection[str]]]):

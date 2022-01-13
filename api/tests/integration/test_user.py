@@ -91,4 +91,4 @@ class TestUser:
         json_data = post_res.get_json()
 
         assert post_res.status_code == 409
-        assert json_data["message"] == "Duplicate Email"
+        assert json_data["message"] == "user already exists"

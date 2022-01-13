@@ -52,5 +52,7 @@ class TestDomain:
 
         # 4: set_config, set_zone, delegate, delegate (creation)
         # 5: unset_config, unset_zone (SOA, NS, NS, CNAME)
-        assert app.helpers.producer.send.call_count == 9
+
+        # Call count: 9 if using `set_default_zone`, 12 if using `set_zone`
+        assert app.helpers.producer.send.call_count == 12  # pylint: disable=no-member
         assert delete_domain_data.status_code == 204

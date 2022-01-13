@@ -2,12 +2,16 @@ import datetime
 
 from app.controllers.api import record as record_api
 from app.helpers import helpers
+from app.models import ttl as ttl_db
+from app.models import type_ as type_db
 
 
 class TestRecord:
-    def get_record(self, records, type_):
+    def get_record(self, records, target_type):
+        type_ = type_db.get_by_value(target_type)
+
         for record in records:
-            if record["type"] == type_:
+            if record["type_id"] == type_["id"]:
                 return record
 
     def test_list_no_Record(self, client):
@@ -50,6 +54,7 @@ class TestRecord:
         }
         res = client.post("/api/record/add", data=data, headers=headers)
         add_record_data = res.get_json()
+
         # list record
         res = client.get("/api/domain/list", headers=headers)
         list_record_data = res.get_json()
@@ -157,7 +162,7 @@ class TestRecord:
         edit_record_data = res.get_json()
 
         assert edit_record_data["code"] == 409
-        assert edit_record_data["message"] == "The record already exists"
+        assert edit_record_data["message"] == "record already exists"
 
     def test_edit_record_with_ttl_change(self, client, mocker):
         """Test editing record from its endpoint.
@@ -208,7 +213,8 @@ class TestRecord:
         assert edit_record_data["data"]["ttl"] == "300"
 
         assert list_record_data["code"] == 200
-        assert edited_record_data["ttl"] == "300"
+        _ttl = ttl_db.get(edited_record_data["ttl_id"])
+        assert _ttl["ttl"] == "300"
 
     def test_delete_record(self, client, mocker):
         """Test deleting record from its endpoint.
@@ -298,7 +304,7 @@ class TestRecord:
         edit_record_data = res.get_json()
 
         assert edit_record_data["code"] == 409
-        assert edit_record_data["message"] == "The record already exists"
+        assert edit_record_data["message"] == "record already exists"
 
     def test_edit_record_with_ttl_change_MX(self, client, mocker):
         """Test editing record from its endpoint.
@@ -356,7 +362,8 @@ class TestRecord:
         assert edit_record_data["data"]["ttl"] == "14400"
 
         assert list_record_data["code"] == 200
-        assert edited_record_data["ttl"] == "14400"
+        _ttl = ttl_db.get(edited_record_data["ttl_id"])
+        assert _ttl["ttl"] == "14400"
 
     def test_edit_record_respect_zone_limit(self, client, monkeypatch, mocker):
         """Test edit record respecting zone limit of 99
@@ -412,15 +419,18 @@ class TestRecord:
             increment_serial += 1
 
         assert edit_record_data["code"] == 429
-        assert edit_record_data["message"] == "Zone Change Limit Reached"
+        assert edit_record_data["message"] == "zone change limit reached"
 
         # ensure correct serial
-        serial_resource = record_api.get_serial_resource("company.com")
+        serial = record_api.get_soa_serial("company.com")
         today_date = helpers.soa_time_set()
 
-        assert serial_resource["serial_counter"] == "98"
-        assert serial_resource["serial_date"] == today_date
-        assert serial_resource["serial"] == f"{today_date}98"
+        record_date = serial[:-2]
+        serial_counter = serial[-2:]
+
+        assert serial_counter == "98"
+        assert record_date == today_date
+        assert serial == f"{today_date}98"
 
         #
         # if user waits until tomorrow
@@ -443,9 +453,12 @@ class TestRecord:
         assert edit_record_data["code"] == 200
 
         # ensure correct serial
-        serial_resource = record_api.get_serial_resource("company.com")
+        serial = record_api.get_soa_serial("company.com")
         today_date = helpers.soa_time_set()
 
-        assert serial_resource["serial_counter"] == "03"
-        assert serial_resource["serial_date"] == today_date
-        assert serial_resource["serial"] == f"{today_date}03"
+        record_date = serial[:-2]
+        serial_counter = serial[-2:]
+
+        assert serial_counter == "03"
+        assert record_date == today_date
+        assert serial == f"{today_date}03"

@@ -1,17 +1,17 @@
 from flask import Response, current_app, request
 from flask_restful import Resource, reqparse
 
-from app.helpers import helpers, validator
+from app.helpers import validator
 from app.helpers.rest import response
 from app.middlewares import auth
-from app.models import model
+from app.models import user as db
 
 
 class GetUserData(Resource):
     @auth.auth_required
     def get(self) -> Response:
         try:
-            users = model.get_all("user")
+            users = db.get_all()
             if not users:
                 return response(404)
 
@@ -28,12 +28,12 @@ class GetUserDataId(Resource):
         email = request.args.get("email")
         try:
             if not any((user_id, email)):
-                return response(422, "Problems parsing parameters")
+                return response(422, "problems parsing parameters")
 
             if user_id:
-                user = model.get_one(table="user", field="id", value=user_id)
+                user = db.get(int(user_id))
             if email:
-                user = model.get_one(table="user", field="email", value=email)
+                user = db.get_by_email(email)
             if not user:
                 return response(404)
 
@@ -51,20 +51,18 @@ class UserSignUp(Resource):
         args = parser.parse_args()
         email = args["email"]
 
-        if not model.is_unique(table="user", field="email", value=f"{email}"):
-            return response(409, message="Duplicate Email")
-
         try:
             validator.validate("EMAIL", email)
         except Exception as e:
             return response(422, message=f"{e}")
 
         try:
-            data = {"email": email, "created_at": helpers.get_datetime()}
+            _user = db.get_by_email(email)
+            if _user:
+                return response(409, message="user already exists")
 
-            inserted_id = model.insert(table="user", data=data)
-            data_ = {"id": inserted_id, **data}
-            return response(201, data=data_)
+            user = db.add(email)
+            return response(201, data=user)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -79,21 +77,18 @@ class UserUpdate(Resource):
         email = args["email"]
         args = parser.parse_args()
 
-        if not model.is_unique(table="user", field="email", value=f"{email}"):
-            return response(409, message="Duplicate Email")
-
         try:
             validator.validate("EMAIL", email)
         except Exception as e:
             return response(422, message=f"{e}")
 
         try:
-            data = {"where": {"id": user_id}, "data": {"email": email}}
-            row_count = model.update("user", data=data)
-            if not row_count:
-                return response(404)
+            _user = db.get_by_email(email)
+            if _user:
+                return response(409, message="user already exists")
 
-            return response(200, data=data.get("data"))
+            user = db.update(email, user_id)
+            return response(200, data=user)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -103,10 +98,11 @@ class UserDelete(Resource):
     @auth.auth_required
     def delete(self, user_id: int) -> Response:
         try:
-            row_count = model.delete(table="user", field="id", value=user_id)
-            if not row_count:
-                return response(404)
+            _user = db.get(user_id)
+            if not _user:
+                return response(404, message="user not found")
 
+            db.delete(user_id)
             return response(204)
         except Exception as e:
             current_app.logger.error(f"{e}")

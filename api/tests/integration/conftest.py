@@ -4,16 +4,16 @@ import pytest
 from dotenv import load_dotenv
 
 from app import create_app
-from app.models import model
+from app.models import user as user_db
 
 
 def clean_users():
     # removing users will remove everything
     # since all data linked into it
-    users = model.get_all("user")
+    users = user_db.get_all()
     for user in users:
         user_id = user["id"]
-        model.delete(table="user", field="id", value=user_id)
+        user_db.delete(user_id)
 
 
 @pytest.fixture

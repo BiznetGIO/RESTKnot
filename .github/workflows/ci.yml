@@ -55,7 +55,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           # set the password without messing with `pg_hba.conf`
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: secret
           # create default db
           POSTGRES_DB: knotdb
         ports:
@@ -83,16 +83,16 @@ jobs:
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
-        run: psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres --version
+        run: psql --host localhost --port ${{ job.services.postgres.ports[5432] }} --username postgres --version
         env:
           # to avoid having password prompt
-          PGPASSWORD: postgres
+          PGPASSWORD: secret
 
       - name: Create DB schema
         run: |
-          psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres knotdb < api/tests/integration/test_schema.sql
+          psql --host localhost --port ${{ job.services.postgres.ports[5432] }} --username postgres knotdb < api/tests/integration/test_schema.sql
         env:
-          PGPASSWORD: postgres
+          PGPASSWORD: secret
 
       - name: Prepare for Integration tests
         run: |

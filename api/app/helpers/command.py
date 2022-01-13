@@ -1,26 +1,33 @@
 import json
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 from app.helpers import helpers, producer
-from app.models import model
+from app.models import record as record_db
+from app.models import ttl as ttl_db
+from app.models import type_ as type_db
+from app.models import zone as zone_db
 
 
-def get_other_data(record_id: int) -> Tuple:
+def get_other_data(record_id: int) -> Tuple[Dict, Dict, Dict, Dict]:
     """Return other record data from given record id."""
     try:
-        record = model.get_one(table="record", field="id", value=record_id)
+        record = record_db.get(record_id)
         if not record:
-            raise ValueError("Record Not Found")
+            raise ValueError("record not found")
 
-        zone_id = record["zone_id"]
-        type_id = record["type_id"]
-        ttl_id = record["ttl_id"]
+        zone = zone_db.get(record["zone_id"])
+        if not zone:
+            raise ValueError("zone not found")
 
-        zone = model.get_one(table="zone", field="id", value=zone_id)
-        type_ = model.get_one(table="type", field="id", value=type_id)
-        ttl = model.get_one(table="ttl", field="id", value=ttl_id)
-        rdata = model.get_one(table="rdata", field="record_id", value=record_id)
-        return (record, zone, type_, ttl, rdata)
+        type_ = type_db.get(record["type_id"])
+        if not type_:
+            raise ValueError("type_ not found")
+
+        ttl = ttl_db.get(record["ttl_id"])
+        if not ttl:
+            raise ValueError("ttl not found")
+
+        return (record, zone, type_, ttl)
     except Exception as error:
         raise ValueError(f"{error}")
 
@@ -41,15 +48,15 @@ def generate_command(
     return cmd
 
 
-def set_config(zone: str, command: str):
+def set_config(zone_name: str, command: str):
     """Send config command with JSON structure to broker."""
 
     # there are two option to put conf-begin and conf-commit
     # either here (api) or in (agent)
     # I'd rather choose to put it here for finer tuning
-    conf_begin = {"cmd": "conf-begin", "zone": zone}
-    conf_set = {"cmd": command, "section": "zone", "item": "domain", "data": zone}
-    conf_commit = {"cmd": "conf-commit", "zone": zone}
+    conf_begin = {"cmd": "conf-begin", "zone": zone_name}
+    conf_set = {"cmd": command, "section": "zone", "item": "domain", "data": zone_name}
+    conf_commit = {"cmd": "conf-commit", "zone": zone_name}
 
     queries = []
     for query in [conf_begin, conf_set, conf_commit]:
@@ -64,13 +71,13 @@ def set_config(zone: str, command: str):
 
 def set_zone(record_id: int, command: str):
     """Send zone command with JSON structure to broker."""
-    record, zone, type_, ttl, rdata = get_other_data(record_id)
+    record, zone, type_, ttl = get_other_data(record_id)
     zone_name = zone["zone"]
 
     # escape space and double quote in txt rdata
-    rdata = rdata["rdata"]
+    rdata = record["rdata"]
     if type_["type"] == "TXT":
-        rdata = json.dumps(rdata)
+        rdata = json.dumps(record["rdata"])
 
     zone_begin = {"cmd": "zone-begin", "zone": zone_name}
     zone_set = generate_command(
@@ -94,46 +101,7 @@ def set_zone(record_id: int, command: str):
     producer.send(message)
 
 
-def set_default_zone(record_ids: List[int]):
-    """Send zone command with JSON structure to broker."""
-    # We can use `send_zone` but it will be slow since each zone will be sent
-    # separately
-
-    zone_sets = []
-    for record_id in record_ids:
-        record, zone, type_, ttl, rdata = get_other_data(record_id)
-
-        # escape space and double quote in txt rdata
-        rdata = rdata["rdata"]
-        if type_["type"] == "TXT":
-            rdata = json.dumps(rdata)
-
-        zone_name = zone["zone"]
-        zone_set = generate_command(
-            zone=zone_name,
-            owner=record["owner"],
-            rtype=type_["type"],
-            ttl=ttl["ttl"],
-            rdata=rdata,
-            command="zone-set",
-        )
-        zone_sets.append(zone_set)
-
-    zone_begin = {"cmd": "zone-begin", "zone": zone_name}
-    zone_commit = {"cmd": "zone-commit", "zone": zone_name}
-
-    queries = []
-    for query in [zone_begin, *zone_sets, zone_commit]:
-        queries.append(query)
-
-    # agent_type: master
-    # because zone only created in master, slave will get zone via axfr
-    message = {"agent": {"agent_type": ["master"]}, "knot": queries}
-
-    producer.send(message)
-
-
-def delegate(zone: str, command: str, agent_type: str):
+def delegate(zone_name: str, command: str, agent_type: str):
     """Send delegation config command with JSON structure to broker."""
     config = helpers.get_config()
     try:
@@ -151,7 +119,7 @@ def delegate(zone: str, command: str, agent_type: str):
         cluster_type_item = "master"
 
     queries = [
-        {"item": "file", "data": f"{zone}.zone", "identifier": zone},
+        {"item": "file", "data": f"{zone_name}.zone", "identifier": zone_name},
         {"item": "serial-policy", "data": "dateserial"},
         {"item": "module", "data": "mod-stats/default"},
     ]
@@ -165,7 +133,7 @@ def delegate(zone: str, command: str, agent_type: str):
     for query in queries:
         query["cmd"] = command
         query["section"] = "zone"
-        query["zone"] = zone
+        query["zone"] = zone_name
         queries_.append(query)
 
     message = {

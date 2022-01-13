@@ -1,39 +1,58 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from app.models import model
-
-
-def get_zone(zone_id: int) -> str:
-    """Get zone name by ID"""
-    zone = model.get_one(table="zone", field="id", value=f"{zone_id}")
-    if not zone:
-        raise ValueError("Zone Not Found")
-
-    zone_name = zone["zone"]
-    return zone_name
+from app.models import connect
 
 
-def get_zone_id(zone) -> int:
-    zone = model.get_one(table="zone", field="zone", value=f"{zone}")
-    if not zone:
-        raise ValueError("Zone Not Found")
+def get_all() -> List[Any]:
+    cursor, _ = connect()
 
-    zone_id = zone["id"]
-    return zone_id
+    query = """ SELECT * FROM "zone" """
+    cursor.execute(query, prepare=True)
+    rows = cursor.fetchall()
+    return rows
 
 
-def get_zone_by_record(record_id: int) -> Optional[dict]:
-    record = model.get_one(table="record", field="id", value=f"{record_id}")
-    if not record:
-        raise ValueError("Record Not Found")
+def get(zone_id: int) -> Optional[Any]:
+    cursor, _ = connect()
 
-    zone_id = record["zone_id"]
-    zone = model.get_one(table="zone", field="id", value=f"{zone_id}")
+    query = f""" SELECT * FROM "zone"  WHERE "id" = '{zone_id}' """
+    cursor.execute(query, prepare=True)
+    row = cursor.fetchone()
+    return row
+
+
+def get_by_name(zone_name: str) -> Optional[Any]:
+    cursor, _ = connect()
+
+    query = f""" SELECT * FROM "zone"  WHERE "zone" = '{zone_name}' """
+    cursor.execute(query, prepare=True)
+    rows = cursor.fetchone()
+    return rows
+
+
+def get_by_user_id(user_id: int) -> List[Dict]:
+    cursor, _ = connect()
+
+    query = f""" SELECT * FROM "zone"  WHERE "user_id" = '{user_id}' """
+    cursor.execute(query, prepare=True)
+    rows = cursor.fetchall()
+    return rows
+
+
+def add(zone_name: str, user_id: int) -> Optional[Any]:
+    cursor, connection = connect()
+
+    query = f""" INSERT INTO "zone" (zone, user_id) VALUES ('{zone_name}', '{user_id}') RETURNING *"""
+    cursor.execute(query, prepare=True)
+    connection.commit()
+
+    zone = cursor.fetchone()
     return zone
 
 
-def get_zones_by_user(user_id: int) -> List[Dict]:
-    query = 'SELECT * FROM "zone" WHERE "user_id"=%(user_id)s'
-    value = {"user_id": user_id}
-    zones = model.plain_get("zone", query, value)
-    return zones
+def delete(zone_id: int):
+    cursor, connection = connect()
+
+    query = f""" DELETE FROM "zone" WHERE "id" = {zone_id} RETURNING * """
+    cursor.execute(query, prepare=True)
+    connection.commit()

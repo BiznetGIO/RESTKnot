@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Any, Optional
 
 from flask import Response, current_app, request
 from flask_restful import Resource, reqparse
@@ -7,26 +7,15 @@ from flask_restful import Resource, reqparse
 from app.helpers import command, helpers, producer, validator
 from app.helpers.rest import response
 from app.middlewares import auth
-from app.models import domain as domain_model
-from app.models import model
-from app.models import record as record_model
-from app.models import zone as zone_model
+from app.models import record as record_db
+from app.models import ttl as ttl_db
+from app.models import type_ as type_db
+from app.models import user as user_db
+from app.models import zone as zone_db
 
 
-def insert_zone(zone: str, user_id: int) -> int:
-    data = {"zone": zone, "user_id": user_id}
-    zone_id = model.insert(table="zone", data=data)
-    return zone_id
-
-
-def insert_soa_record(zone_id: int) -> int:
-    record_data = {"owner": "@", "zone_id": zone_id, "type_id": "1", "ttl_id": "6"}
-    record_id = model.insert(table="record", data=record_data)
-    return record_id
-
-
-def insert_soa_rdata(record_id: int):
-    """Insert default SOA record.
+def get_soa_rdata() -> str:
+    """Get SOA rdata.
 
     Notes:
     <MNAME> <RNAME> <serial> <refresh> <retry> <expire> <minimum>
@@ -41,75 +30,73 @@ def insert_soa_rdata(record_id: int):
     ttls = " ".join(rdatas[2:])
 
     rdata = f"{mname_and_rname} {serial} {ttls}"
-    content_data = {"rdata": rdata, "record_id": record_id}
-
-    model.insert(table="rdata", data=content_data)
+    return rdata
 
 
-def insert_soa_default(zone_id: int) -> int:
-    """Create default SOA record"""
-    record_id = insert_soa_record(zone_id)
-    insert_soa_rdata(record_id)
-    return record_id
+def add_soa_record(zone_id: int):
+    """Add default SOA record"""
+    rdata = get_soa_rdata()
+    record = record_db.add(owner="@", rdata=rdata, zone_id=zone_id, type_id=1, ttl_id=6)
+    if not record:
+        raise ValueError("failed to store record")
+
+    command.set_zone(record["id"], "zone-set")
 
 
-def insert_ns_record(zone_id: int) -> int:
-    record_data = {"owner": "@", "zone_id": zone_id, "type_id": "4", "ttl_id": "6"}
-    record_id = model.insert(table="record", data=record_data)
-    return record_id
-
-
-def insert_ns_rdata(name: str, record_id: int):
-    data = {"rdata": name, "record_id": record_id}
-    model.insert(table="rdata", data=data)
-
-
-def insert_ns_default(zone_id: int) -> List[int]:
-    """Create default NS record"""
+def add_ns_record(zone_id: int):
+    """Add default NS record"""
+    # default NS must be present
     default_ns = os.environ["DEFAULT_NS"]
-    nameserver = default_ns.split(" ")
-    record_ids = []
+    nameservers = default_ns.split(" ")
 
-    for name in nameserver:
-        record_id = insert_ns_record(zone_id)
-        insert_ns_rdata(name, record_id)
-        record_ids.append(record_id)
+    for nameserver in nameservers:
+        record = record_db.add(
+            owner="@", rdata=nameserver, zone_id=zone_id, type_id=4, ttl_id=6
+        )
+        if not record:
+            raise ValueError("failed to store record")
 
-    return record_ids
-
-
-def insert_cname_record(zone_id: int) -> int:
-    record_data = {"owner": "www", "zone_id": zone_id, "type_id": "5", "ttl_id": "6"}
-    record_id = model.insert(table="record", data=record_data)
-    return record_id
+        command.set_zone(record["id"], "zone-set")
 
 
-def insert_cname_rdata(zone: str, record_id: int):
-    data = {"rdata": f"{zone}.", "record_id": record_id}
-    model.insert(table="rdata", data=data)
+def add_cname_record(zone_id: int, zone_name: str):
+    """Add default CNAME record"""
+    record = record_db.add(
+        owner="www", rdata=f"{zone_name}.", zone_id=zone_id, type_id=5, ttl_id=6
+    )
+    if not record:
+        raise ValueError("failed to store record")
 
-
-def insert_cname_default(zone_id: int, zone: str) -> int:
-    """Create default CNAME record"""
-    record_id = insert_cname_record(zone_id)
-    insert_cname_rdata(zone, record_id)
-    return record_id
+    command.set_zone(record["id"], "zone-set")
 
 
 class GetDomainData(Resource):
     @auth.auth_required
     def get(self) -> Response:
         try:
-            zones = model.get_all("zone")
+            zones = zone_db.get_all()
             if not zones:
                 return response(404)
 
-            domains_detail = []
+            results = []
             for zone in zones:
-                detail = domain_model.get_other_data(zone)
-                domains_detail.append(detail)
+                records = record_db.get_by_zone_id(zone["id"])
+                if not records:
+                    return response(404, message="records not found")
 
-            return response(200, data=domains_detail)
+                user = user_db.get(zone["user_id"])
+                if not user:
+                    return response(404, message="user not found")
+
+                _result = {
+                    "zone_id": zone["id"],
+                    "zone": zone["zone"],
+                    "user": user,
+                    "records": records,
+                }
+                results.append(_result)
+
+            return response(200, data=results)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -122,20 +109,29 @@ class GetDomainDataId(Resource):
         zone_name = request.args.get("name")
 
         if not any((zone_id, zone_name)):
-            return response(422, "Problems parsing parameters")
+            return response(422, "problems parsing parameters")
 
         try:
             if zone_id:
-                zone = model.get_one(table="zone", field="id", value=zone_id)
+                zone = zone_db.get(int(zone_id))
+                if not zone:
+                    return response(404, message="zone not found")
 
             if zone_name:
-                zone = model.get_one(table="zone", field="zone", value=zone_name)
+                zone = zone_db.get_by_name(zone_name)
+                if not zone:
+                    return response(404, message="zone not found")
 
             if not zone:
                 return response(404)
 
-            data = domain_model.get_other_data(zone)
-            return response(200, data=data)
+            records = record_db.get_by_zone_id(zone["id"])
+            if not records:
+                return response(404, message="records not found")
+
+            zone_name = zone["zone"]
+            result = {"zone": zone_name, "records": records}
+            return response(200, data=result)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -145,16 +141,40 @@ class GetDomainByUser(Resource):
     @auth.auth_required
     def get(self, user_id: int) -> Response:
         try:
-            zones = zone_model.get_zones_by_user(user_id)
+            zones = zone_db.get_by_user_id(user_id)
             if not zones:
-                return response(404)
+                return response(404, message="zone not found")
 
-            domains_detail = []
+            zone_details = []
             for zone in zones:
-                detail = domain_model.get_other_data(zone)
-                domains_detail.append(detail)
+                records = record_db.get_by_zone_id(zone["id"])
+                if not records:
+                    return response(404, message="records not found")
 
-            return response(200, data=domains_detail)
+                records_details = []
+                for record in records:
+                    type_ = type_db.get(record["type_id"])
+                    if not type_:
+                        return response(404, message="type not found")
+
+                    ttl = ttl_db.get(record["ttl_id"])
+                    if not ttl:
+                        return response(404, message="ttl not found")
+
+                    record_detail = {
+                        "id": record["id"],
+                        "owner": record["owner"],
+                        "rdata": record["rdata"],
+                        "zone": zone["zone"],
+                        "type": type_["type"],
+                        "ttl": ttl["ttl"],
+                    }
+                    records_details.append(record_detail)
+
+                zone_detail = {"zone": zone["zone"], "records": records_details}
+                zone_details.append(zone_detail)
+
+            return response(200, data=zone_details)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -173,39 +193,42 @@ class AddDomain(Resource):
         parser.add_argument("zone", type=str, required=True)
         parser.add_argument("user_id", type=int, required=True)
         args = parser.parse_args()
-        zone = args["zone"]
+        # zone_name and domain_name are interchangeable
+        zone_name = args["zone"]
         user_id = args["user_id"]
 
+        _zone = zone_db.get_by_name(zone_name)
+        if _zone:
+            return response(409, message="zone already exists")
+
+        _user = user_db.get(user_id)
+        if not _user:
+            return response(404, message="user not found")
+
         # Validation
-        if not model.is_unique(table="zone", field="zone", value=f"{zone}"):
-            return response(409, message="Duplicate Zone")
-
-        user = model.get_one(table="user", field="id", value=user_id)
-        if not user:
-            return response(404, message="User Not Found")
-
         try:
-            validator.validate("ZONE", zone)
+            validator.validate("ZONE", zone_name)
         except Exception as e:
             return response(422, message=f"{e}")
 
         try:
-            zone_id = insert_zone(zone, user_id)
+            new_zone: Optional[Any] = zone_db.add(zone_name, user_id)
+            if not new_zone:
+                raise ValueError("failed to store zone")
+            zone_id: int = new_zone["id"]
 
-            # create zone config
-            command.set_config(zone, "conf-set")
+            # Create zone configurations in agents
+            command.set_config(zone_name, "conf-set")
 
-            # create default records
-            soa_record_id = insert_soa_default(zone_id)
-            ns_record_ids = insert_ns_default(zone_id)
-            cname_record_id = insert_cname_default(zone_id, zone)
-            record_ids = [soa_record_id, *ns_record_ids, cname_record_id]
-            command.set_default_zone(record_ids)
+            # Create default records in db and agents
+            add_soa_record(zone_id)
+            add_ns_record(zone_id)
+            add_cname_record(zone_id, zone_name)
 
-            command.delegate(zone, "conf-set", "master")
-            command.delegate(zone, "conf-set", "slave")
+            command.delegate(zone_name, "conf-set", "master")
+            command.delegate(zone_name, "conf-set", "slave")
 
-            data_ = {"id": zone_id, "zone": zone}
+            data_ = {"id": zone_id, "zone": zone_name}
             return response(201, data=data_)
         except Exception as e:
             current_app.logger.error(f"{e}")
@@ -220,27 +243,26 @@ class DeleteDomain(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument("zone", type=str, required=True)
         args = parser.parse_args()
-        zone = args["zone"]
+        zone_name = args["zone"]
+
+        zone = zone_db.get_by_name(zone_name)
+        if not zone:
+            return response(404, message="zone not found")
 
         try:
-            zone_id = zone_model.get_zone_id(zone)
-        except Exception:
-            return response(404, message="Zone Not Found")
-
-        try:
-            records = record_model.get_records_by_zone(zone)
+            records = record_db.get_by_zone_id(zone["id"])
             for record in records:
                 # zone-purge didn't work
                 # all the records must be unset one-by-one. otherwise old record
                 # will appear again if the same zone name crated.
                 command.set_zone(record["id"], "zone-unset")
-            command.set_config(zone, "conf-unset")
+            command.set_config(zone_name, "conf-unset")
 
             # other data (e.g record) deleted automatically
             # by cockroach when no PK existed
-            model.delete(table="zone", field="id", value=zone_id)
+            zone_db.delete(zone["id"])
 
-            return response(204, data=zone)
+            return response(204)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)

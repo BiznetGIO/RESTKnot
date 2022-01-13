@@ -30,18 +30,27 @@ disable = [
   # flask use class boilerplate everywhere
   "no-self-use",
   "too-many-return-statements",
+  # mypy needs many validation for `Optional` return type
+  "too-many-branches",
+  "too-many-statements",
   # misc
   "too-many-locals",
   "too-many-arguments",
   "inconsistent-return-statements",
   "raise-missing-from",
   "fixme",
+  # test
+  # Test is important as code
+  # It makes refactoring a breeze
+  "too-few-public-methods",
+  # pytest boilerplate
+  "no-member",
 ]
 
 [tool.pylint.master]
 ignore-paths = [
     "^api/app/vendors/.*$",
-    "^api/tests/.*$",
+    "^api/tests/load/.*$",
 ]
 
 [tool.mypy]

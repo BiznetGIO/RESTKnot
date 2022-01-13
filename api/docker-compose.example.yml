@@ -18,15 +18,10 @@ services:
       - APP_HOST=0.0.0.0 # default 0.0.0.0
       - APP_PORT=5000 # default 8000
 
-      # `DB_HOST` is the database host address, and `DB_NAME` is the name of the
-      # database. If you use CockroachDB the port will be `26257` with `root` as user
+      # If you use CockroachDB the port will be `26257` with `root` as user
       # For PostgreSQL the user is `postgres` and the port is `5432`.
-      - DB_NAME=knotdb # don't add whitespace beetween =
-      - DB_HOST=roach
-      - DB_PORT=26257
-      - DB_USER=root
-      # If you do not use SSL for your database connection, set `DB_SSL` to `disable`
-      - DB_SSL=disable
+      #        postgresql://username:password@host:port/dbname
+      - DB_URI="postgres://root:secret@roach:26257/knotdb"
 
       # `RESTKNOT_KAFKA_TOPIC` is the topic name that RESTKnot will be using.
       - RESTKNOT_KAFKA_TOPIC=domaindata

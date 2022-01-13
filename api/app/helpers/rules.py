@@ -15,8 +15,8 @@
 from typing import Any, Callable, Dict
 
 from app.models import rules as rules_model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
+from app.models import type_ as type_db
+from app.models import zone as zone_db
 
 
 def is_allowed(
@@ -46,29 +46,34 @@ def is_allowed_cname(zone_id: int, type_id: int, owner: str, rdata: str, ttl_id:
     is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 1. same owner NOT allowed
-    query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
-    value = {"zone_id": zone_id, "type_id": type_id, "owner": owner}
-    rules = rules_model.Rules(query, value)
-
-    is_unique = rules.is_unique()
+    rules = rules_model.Rules()
+    query = f""" SELECT * FROM "record" WHERE "zone_id" = {zone_id}
+            AND "owner" = '{owner}' AND  "type_id" = {type_id} """
+    is_unique = rules.is_unique(query)
     if not is_unique:
-        raise ValueError("A CNAME record already exist with that owner")
+        raise ValueError("a CNAME record already exist with that owner")
 
     # 2. owner CAN'T coexist with the same A owner
-    a_type_id = type_model.get_typeid_by_rtype("A")
-    query = '"type_id" IN (%(type1)s,%(type2)s) AND "owner"=%(owner)s'
-    value = {"zone_id": zone_id, "type1": type_id, "type2": a_type_id, "owner": owner}
-    rules = rules_model.Rules(query, value)
+    a_type = type_db.get_by_value("A")
+    if not a_type:
+        raise ValueError("type not found")
 
-    is_coexist = rules.is_coexist()
+    a_type_id = a_type["id"]
+    query = f""" SELECT * FROM "record" WHERE "zone_id" = {zone_id}
+            AND "owner" = '{owner}' AND  "type_id" IN ({type_id},{a_type_id}) """
+
+    is_coexist = rules.is_coexist(query)
     if is_coexist:
-        raise ValueError("An A record already exist with that owner")
+        raise ValueError("an A record already exist with that owner")
 
     # 4. owner can't be root
     # can't be `domainname.com.` and `@`
-    zone = zone_model.get_zone(zone_id)
-    if owner in (f"{zone}", "@"):
-        raise ValueError("A CNAME owner can't be root")
+    zone = zone_db.get(zone_id)
+    if not zone:
+        raise ValueError("zone not found")
+
+    if owner in (f"{zone['zone']}", "@"):
+        raise ValueError("a CNAME owner can't be root")
 
 
 def is_allowed_a(
@@ -85,14 +90,18 @@ def is_allowed_a(
     is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 2. owner CAN'T coexist with the same CNAME owner
-    cname_type_id = type_model.get_typeid_by_rtype("CNAME")
-    query = '"type_id"=%(type_id)s AND "owner"=%(owner)s'
-    value = {"zone_id": zone_id, "type_id": cname_type_id, "owner": owner}
-    rules = rules_model.Rules(query, value)
+    cname_type = type_db.get_by_value("CNAME")
+    if not cname_type:
+        raise ValueError("cname not found")
 
-    is_coexist = rules.is_coexist()
+    cname_type_id = cname_type["id"]
+    query = f""" SELECT * FROM "record" WHERE "zone_id" = {zone_id}
+            AND "owner" = '{owner}' AND  "type_id" = {cname_type_id} """
+
+    rules = rules_model.Rules()
+    is_coexist = rules.is_coexist(query)
     if is_coexist:
-        raise ValueError("A CNAME record already exist with that owner")
+        raise ValueError("a CNAME record already exist with that owner")
 
 
 def is_allowed_cname_edit(
@@ -108,43 +117,37 @@ def is_allowed_cname_edit(
     This function separated from `cname_add` because it needs to exclude its id
     while searching for other records.
     """
+    rules = rules_model.Rules()
+
     #  duplicate record NOT allowed
     is_allowed(zone_id, type_id, owner, rdata, ttl_id)
 
     # 1. same owner NOT allowed
-    query = '"type_id"=%(type_id)s AND "owner"=%(owner)s AND "id"<>%(record_id)s'
-    value = {
-        "zone_id": zone_id,
-        "type_id": type_id,
-        "owner": owner,
-        "record_id": record_id,
-    }
-    rules = rules_model.Rules(query, value)
-
-    is_unique = rules.is_unique()
+    query = f""" SELECT * FROM "record" WHERE "zone_id" = {zone_id}
+            AND "owner" = '{owner}' AND  "type_id" = {type_id} AND "id" <> {record_id} """
+    is_unique = rules.is_unique(query)
     if not is_unique:
-        raise ValueError("A CNAME record already exist with that owner")
+        raise ValueError("a CNAME record already exist with that owner")
 
     # 2. owner CAN'T coexist with the same A owner
-    a_type_id = type_model.get_typeid_by_rtype("A")
-    query = '"type_id" IN (%(type1)s,%(type2)s) AND "owner"=%(owner)s AND "id"<>%(record_id)s'
-    value = {
-        "zone_id": zone_id,
-        "type1": type_id,
-        "type2": a_type_id,
-        "owner": owner,
-        "record_id": record_id,
-    }
-    rules = rules_model.Rules(query, value)
+    a_type = type_db.get_by_value("A")
+    if not a_type:
+        raise ValueError("type not found")
 
-    is_coexist = rules.is_coexist()
+    a_type_id = a_type["id"]
+    query = f""" SELECT * FROM "record" WHERE "zone_id" = {zone_id}
+            AND "owner" = '{owner}' AND  "type_id" IN ({type_id}, {a_type_id}) AND "id" <> {record_id} """
+    is_coexist = rules.is_coexist(query)
     if is_coexist:
-        raise ValueError("An A record already exist with that owner")
+        raise ValueError("an A record already exist with that owner")
 
-    # 3. owner can't be root
-    zone = zone_model.get_zone(zone_id)
-    if owner in (f"{zone}", "@"):
-        raise ValueError("A CNAME owner can't be root")
+    # 3. owner can't be `domainname.com.` and `@`
+    zone = zone_db.get(zone_id)
+    if not zone:
+        raise ValueError("zone not found")
+
+    if owner in (f"{zone['zone']}", "@"):
+        raise ValueError("a CNAME owner can't be root")
 
 
 # function based on rtype input when adding record
@@ -176,7 +179,7 @@ def check_add(
     if rtype in functions_add:
         functions_add[rtype](zone_id, type_id, owner, rdata, ttl_id)
     else:
-        raise ValueError("Unsupported Record Type")
+        raise ValueError("unsupported record type")
 
 
 def check_edit(
@@ -185,7 +188,7 @@ def check_edit(
     type_id: int,
     owner: str,
     rdata: str,
-    ttl_id: str,
+    ttl_id: int,
     record_id: int = None,
 ):
     """Return function when user editing A record.
@@ -197,4 +200,4 @@ def check_edit(
     if rtype in functions_edit:
         functions_edit[rtype](zone_id, type_id, owner, rdata, ttl_id, record_id)
     else:
-        raise ValueError("Unsupported Record Type")
+        raise ValueError("unsupported record type")

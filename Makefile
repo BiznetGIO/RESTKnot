@@ -50,3 +50,9 @@ test: test_unit
 comply: sort fmt lint test_unit ## Tasks to make the code-base comply with the rules. Mostly used in git hooks.
 
 check: sort_check fmt_check lint test ## Check if the repository comply with the rules and ready to be pushed.
+
+update_schema:
+	# usage: make update_schema password=secret
+	PGPASSWORD=$(password) psql --host localhost --username postgres --command "DROP DATABASE IF EXISTS knotdb"
+	PGPASSWORD=$(password) psql --host localhost --username postgres --command "CREATE DATABASE knotdb"
+	PGPASSWORD=$(password) psql --host localhost --username postgres knotdb < api/tests/integration/test_schema.sql

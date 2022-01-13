@@ -106,7 +106,7 @@ def config_file() -> pathlib.Path:
     if is_exists:
         return default_path
     else:
-        raise ValueError(f"Config File Not Found: {default_path}")
+        raise ValueError(f"config file not found: {default_path}")
 
 
 def get_config() -> Dict:

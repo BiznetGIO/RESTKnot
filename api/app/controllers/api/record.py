@@ -6,73 +6,108 @@ from flask_restful import Resource, reqparse
 from app.helpers import command, helpers, producer, rules, validator
 from app.helpers.rest import response
 from app.middlewares import auth
-from app.models import model
-from app.models import record as record_model
-from app.models import ttl as ttl_model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
+from app.models import record as record_db
+from app.models import ttl as ttl_db
+from app.models import type_ as type_db
+from app.models import zone as zone_db
 
 
-def get_serial_resource(zone):
-    soa_record = record_model.get_soa_record(zone)
-    rdata_record = model.get_one(
-        table="rdata", field="record_id", value=soa_record["id"]
-    )
-    if not rdata_record:
-        return None
+def get_soa_record(zone_name) -> Dict:
+    soa_record: Dict = {}
 
-    rdatas = rdata_record["rdata"].split(" ")
+    zone = zone_db.get_by_name(zone_name)
+    if not zone:
+        raise ValueError("zone not found")
+
+    records = record_db.get_by_zone_id(zone["id"])
+    if not records:
+        raise ValueError("records not found")
+
+    for record in records:
+        soa_type = type_db.get_by_value("SOA")
+        if not soa_type:
+            raise ValueError("type not found")
+
+        soa_type_id = soa_type["id"]
+        if record["type_id"] == soa_type_id:
+            soa_record = record
+            break
+
+    return soa_record
+
+
+def get_soa_serial(zone_name) -> str:
+    soa_record = get_soa_record(zone_name)
+
+    rdatas = soa_record["rdata"].split(" ")
     serial = rdatas[2]
+
+    return serial
+
+
+def check_serial_limit(serial: str):
     # `serial_counter` is the last two digit of serial value (YYYYMMDDnn)
     serial_counter = serial[-2:]
     serial_date = serial[:-2]
 
-    return {
-        "soa_record": soa_record,
-        "rdata_record": rdata_record,
-        "serial": serial,
-        "serial_counter": serial_counter,
-        "serial_date": serial_date,
-    }
-
-
-def check_serial_limit(serial_resource: Dict):
-    serial_counter = serial_resource["serial_counter"]
-    serial_date = serial_resource["serial_date"]
     today_date = helpers.soa_time_set()
 
     if int(serial_counter) > 97 and serial_date == today_date:
         # knot maximum of nn is 99
         # 97 was chosen because serial
         # increment can be twice at time
-        raise ValueError("Zone Change Limit Reached")
+        raise ValueError("zone change limit reached")
 
 
-def update_serial(serial_resource: Dict, increment: str = "01"):
-    serial = serial_resource["serial"]
-    soa_record = serial_resource["soa_record"]
-    rdata_record = serial_resource["rdata_record"]
+def update_soa_serial(zone_name: str, increment: str = "01"):
+    """Update serial in rdata"""
 
-    new_serial = helpers.increment_serial(serial, increment)
-    new_rdata = helpers.replace_serial(rdata_record["rdata"], new_serial)
-    content_data = {
-        "where": {"record_id": soa_record["id"]},
-        "data": {"rdata": new_rdata, "record_id": soa_record["id"]},
-    }
-    model.update("rdata", data=content_data)
+    soa_record = get_soa_record(zone_name)
+    old_serial = get_soa_serial(zone_name)
+
+    _new_serial = helpers.increment_serial(old_serial, increment)
+    new_rdata = helpers.replace_serial(soa_record["rdata"], _new_serial)
+
+    record_db.update(
+        owner=soa_record["owner"],
+        rdata=new_rdata,
+        zone_id=soa_record["zone_id"],
+        type_id=soa_record["type_id"],
+        ttl_id=soa_record["ttl_id"],
+        record_id=soa_record["id"],
+    )
 
 
 class GetRecordData(Resource):
     @auth.auth_required
     def get(self) -> Response:
         try:
-            records = model.get_all("record")
+            records = record_db.get_all()
             if not records:
                 return response(404)
 
             records_detail = []
             for record in records:
-                detail = record_model.get_other_data(record)
+                zone = zone_db.get(record["zone_id"])
+                if not zone:
+                    return response(404, message="zone not found")
+
+                type_ = type_db.get(record["type_id"])
+                if not type_:
+                    return response(404, message="type not found")
+
+                ttl = ttl_db.get(record["ttl_id"])
+                if not ttl:
+                    return response(404, message="ttl not found")
+
+                detail = {
+                    "id": record["id"],
+                    "owner": record["owner"],
+                    "rdata": record["rdata"],
+                    "zone": zone["zone"],
+                    "type": type_["type"],
+                    "ttl": ttl["ttl"],
+                }
                 records_detail.append(detail)
 
             return response(200, data=records_detail)
@@ -85,12 +120,32 @@ class GetRecordDataId(Resource):
     @auth.auth_required
     def get(self, record_id: int) -> Response:
         try:
-            record = model.get_one(table="record", field="id", value=record_id)
+            record = record_db.get(record_id)
             if not record:
                 return response(404)
 
-            data = record_model.get_other_data(record)
-            return response(200, data=data)
+            zone = zone_db.get(record["zone_id"])
+            if not zone:
+                return response(404, message="zone not found")
+
+            type_ = type_db.get(record["type_id"])
+            if not type_:
+                return response(404, message="type not found")
+
+            ttl = ttl_db.get(record["ttl_id"])
+            if not ttl:
+                return response(404, message="ttl not found")
+
+            detail = {
+                "id": record["id"],
+                "owner": record["owner"],
+                "rdata": record["rdata"],
+                "zone": zone["zone"],
+                "type": type_["type"],
+                "ttl": ttl["ttl"],
+            }
+
+            return response(200, data=detail)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -115,22 +170,35 @@ class RecordAdd(Resource):
         parser.add_argument("rdata", type=str, required=True)
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
-        owner = args["owner"].lower()
-        rtype = args["rtype"].lower()
+        owner = args["owner"]
+        rtype = args["rtype"]
         rdata = args["rdata"]
-        zone = args["zone"]
-        ttl = args["ttl"]
+        zone_name = args["zone"]
+        ttl_value = args["ttl"]
+
+        # Validate input
+        ttl = ttl_db.get_by_value(ttl_value)
+        if not ttl:
+            return response(404, message="ttl not found")
+
+        type_ = type_db.get_by_value(rtype)
+        if not type_:
+            return response(404, message="type not found")
+
+        zone = zone_db.get_by_name(zone_name)
+        if not zone:
+            return response(404, message="zone not found")
 
         try:
-            ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
+            rules.check_add(
+                rtype=rtype,
+                zone_id=zone["id"],
+                type_id=type_["id"],
+                owner=owner,
+                rdata=rdata,
+                ttl_id=ttl["id"],
+            )
 
-            type_id = type_model.get_typeid_by_rtype(rtype)
-            zone_id = zone_model.get_zone_id(zone)
-        except Exception as e:
-            return response(404, message=f"{e}")
-
-        try:
-            rules.check_add(rtype, zone_id, type_id, owner, rdata, ttl_id)
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -143,33 +211,53 @@ class RecordAdd(Resource):
             return response(422, message=f"{e}")
 
         try:
-            serial_resource = get_serial_resource(zone)
-            check_serial_limit(serial_resource)
+            serial = get_soa_serial(zone["zone"])
+            check_serial_limit(serial)
         except Exception as e:
             return response(429, message=f"{e}")
 
         try:
-            data = {
-                "owner": owner,
-                "zone_id": zone_id,
-                "type_id": type_id,
-                "ttl_id": ttl_id,
-            }
-            record_id = model.insert(table="record", data=data)
+            record = record_db.add(
+                owner=owner,
+                rdata=rdata,
+                zone_id=zone["id"],
+                type_id=type_["id"],
+                ttl_id=ttl["id"],
+            )
+            if not record:
+                raise ValueError("failed to store record")
 
-            content_data = {"rdata": rdata, "record_id": record_id}
-            model.insert(table="rdata", data=content_data)
-
-            command.set_zone(record_id, "zone-set")
+            command.set_zone(record["id"], "zone-set")
 
             # increment serial after adding new record
-            rtype = type_model.get_type_by_recordid(record_id)
-            if rtype != "SOA":
-                update_serial(serial_resource)
+            if type_["type"] != "SOA":
+                update_soa_serial(zone["zone"])
 
-            record = model.get_one(table="record", field="id", value=record_id)
-            data = record_model.get_other_data(record)
-            return response(201, data=data)
+            updated_record = record_db.get(record["id"])
+            if not updated_record:
+                return response(500, message="failed to update record")
+
+            zone = zone_db.get(updated_record["zone_id"])
+            if not zone:
+                return response(404, message="zone not found")
+
+            type_ = type_db.get(updated_record["type_id"])
+            if not type_:
+                return response(404, message="type not found")
+
+            ttl = ttl_db.get(updated_record["ttl_id"])
+            if not ttl:
+                return response(404, message="ttl not found")
+
+            result = {
+                "id": updated_record["id"],
+                "owner": updated_record["owner"],
+                "rdata": updated_record["rdata"],
+                "zone": zone["zone"],
+                "type": type_["type"],
+                "ttl": ttl["ttl"],
+            }
+            return response(201, data=result)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -186,23 +274,36 @@ class RecordEdit(Resource):
         parser.add_argument("rdata", type=str, required=True)
         parser.add_argument("ttl", type=str, required=True)
         args = parser.parse_args()
-        owner = args["owner"].lower()
-        rtype = args["rtype"].lower()
+        owner = args["owner"]
+        rtype = args["rtype"]
         rdata = args["rdata"]
-        zone = args["zone"]
-        ttl = args["ttl"]
+        zone_name = args["zone"]
+        ttl_value = args["ttl"]
 
+        # Validate input
+        ttl = ttl_db.get_by_value(ttl_value)
+        if not ttl:
+            return response(404, message="ttl not found")
+
+        type_ = type_db.get_by_value(rtype)
+        if not type_:
+            return response(404, message="type not found")
+
+        zone = zone_db.get_by_name(zone_name)
+        if not zone:
+            return response(404, message="zone not found")
+
+        # Check rules
         try:
-            ttl_id = ttl_model.get_ttlid_by_ttl(ttl)
-            record_model.is_exists(record_id)
-
-            type_id = type_model.get_typeid_by_rtype(rtype)
-            zone_id = zone_model.get_zone_id(zone)
-        except Exception as e:
-            return response(404, message=f"{e}")
-
-        try:
-            rules.check_edit(rtype, zone_id, type_id, owner, rdata, ttl_id, record_id)
+            rules.check_edit(
+                rtype=rtype,
+                zone_id=zone["id"],
+                type_id=type_["id"],
+                owner=owner,
+                rdata=rdata,
+                ttl_id=ttl["id"],
+                record_id=record_id,
+            )
         except Exception as e:
             return response(409, message=f"{e}")
 
@@ -213,44 +314,54 @@ class RecordEdit(Resource):
             return response(422, message=f"{e}")
 
         try:
-            serial_resource = get_serial_resource(zone)
-            check_serial_limit(serial_resource)
+            serial = get_soa_serial(zone["zone"])
+            check_serial_limit(serial)
         except Exception as e:
             return response(429, message=f"{e}")
 
         try:
-            data = {
-                "where": {"id": record_id},
-                "data": {
-                    "owner": owner,
-                    "zone_id": zone_id,
-                    "type_id": type_id,
-                    "ttl_id": ttl_id,
-                },
-            }
-            content_data = {
-                "where": {"record_id": record_id},
-                "data": {"rdata": rdata, "record_id": record_id},
-            }
-
             command.set_zone(record_id, "zone-unset")
-
-            model.update("rdata", data=content_data)
-            model.update("record", data=data)
-
+            record = record_db.update(
+                owner=owner,
+                rdata=rdata,
+                zone_id=zone["id"],
+                type_id=type_["id"],
+                ttl_id=ttl["id"],
+                record_id=record_id,
+            )
+            if not record:
+                raise ValueError("failed to update record")
             command.set_zone(record_id, "zone-set")
 
             # increment serial after adding new record
-            rtype = type_model.get_type_by_recordid(record_id)
-            if rtype != "SOA":
-                update_serial(serial_resource, "02")
+            if type_["type"] != "SOA":
+                update_soa_serial(zone["zone"], "02")
 
-            record = model.get_one(table="record", field="id", value=record_id)
-            if not record:
-                return response(status_code=404, message="Record not found")
+            updated_record = record_db.get(record_id)
+            if not updated_record:
+                return response(404, message="records not found")
 
-            data_ = record_model.get_other_data(record)
-            return response(200, data=data_)
+            zone = zone_db.get(updated_record["zone_id"])
+            if not zone:
+                return response(404, message="zone not found")
+
+            type_ = type_db.get(updated_record["type_id"])
+            if not type_:
+                return response(404, message="type not found")
+
+            ttl = ttl_db.get(updated_record["ttl_id"])
+            if not ttl:
+                return response(404, message="ttl not found")
+
+            result = {
+                "id": updated_record["id"],
+                "owner": updated_record["owner"],
+                "rdata": updated_record["rdata"],
+                "zone": zone["zone"],
+                "type": type_["type"],
+                "ttl": ttl["ttl"],
+            }
+            return response(200, data=result)
         except Exception as e:
             current_app.logger.error(f"{e}")
             return response(500)
@@ -266,33 +377,33 @@ class RecordDelete(Resource):
         SOA record can't be deleted. One zone must have minimum one SOA record at time.
         But it can be edited, see`record edit`.
         """
-        try:
-            record_model.is_exists(record_id)
-        except Exception:
-            return response(404)
+        record = record_db.get(record_id)
+        if not record:
+            return response(status_code=404, message="record not found")
 
-        zone = zone_model.get_zone_by_record(record_id)
+        zone = zone_db.get(record["zone_id"])
         if not zone:
-            return response(status_code=404, message="Zone not found")
-
-        zone_name = zone["zone"]
+            return response(status_code=404, message="zone not found")
 
         try:
-            serial_resource = get_serial_resource(zone_name)
-            check_serial_limit(serial_resource)
+            serial = get_soa_serial(zone["zone"])
+            check_serial_limit(serial)
         except Exception as e:
             return response(429, message=f"{e}")
 
         try:
-            rtype = type_model.get_type_by_recordid(record_id)
-            if rtype == "SOA":
-                return response(403, message="Can't Delete SOA Record")
-            if rtype != "SOA":
-                update_serial(serial_resource)
+            type_ = type_db.get(record["type_id"])
+            if not type_:
+                return response(status_code=404, message="type not found")
+
+            if type_["type"] == "SOA":
+                return response(403, message="failed to delete SOA record")
+            if type_["type"] != "SOA":
+                update_soa_serial(zone["zone"])
 
             command.set_zone(record_id, "zone-unset")
 
-            model.delete(table="record", field="id", value=record_id)
+            record_db.delete(record_id)
             return response(204)
         except Exception as e:
             current_app.logger.error(f"{e}")

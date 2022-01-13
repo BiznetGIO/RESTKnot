@@ -33,19 +33,19 @@ def is_valid_ip(ip: str):
     try:
         ip_address(ip)
     except ValueError:
-        raise ValueError("Bad IP Adrress")
+        raise ValueError("bad IP address")
 
 
 def is_valid_email(email: str):
     """Check if  it's a valid email address."""
     match = re.match(RE_EMAIL, email)
     if match is None:
-        raise ValueError("Bad Email Adrress")
+        raise ValueError("bad email address")
 
 
 def is_valid_mx(mx_rdata: str):
     """Check if  MX RDATA contents is valid."""
-    msg = "Bad MX RDATA"
+    msg = "bad MX rdata"
 
     preference = mx_rdata.split(" ")[0]
     hostname = mx_rdata.split(" ")[1]
@@ -68,7 +68,7 @@ def is_valid_mx(mx_rdata: str):
 
 def is_valid_cname(cname_rdata: str):
     """Check if  CNAME RDATA contents is valid."""
-    msg = "Bad CNAME RDATA"
+    msg = "bad CNAME rdata"
 
     if cname_rdata == "@":
         raise ValueError(msg)
@@ -82,14 +82,14 @@ def is_valid_zone(domain_name: str):
     """Check if it's a valid domain name."""
     match = re.match(RE_ZONE, domain_name)
     if match is None:
-        raise ValueError("Bad Domain Name")
+        raise ValueError("bad domain name")
 
 
 def is_valid_txt(txt_rdata: str):
     """Check if it's a valid TXT rdata."""
     for char in txt_rdata:
         if char not in string.printable:
-            raise ValueError("Bad TXT RDATA")
+            raise ValueError("bad TXT rdata")
 
 
 def is_valid_soa(soa_rdata: str):
@@ -100,13 +100,13 @@ def is_valid_soa(soa_rdata: str):
         is_valid_cname(rdatas[0])
         is_valid_cname(rdatas[1])
     except Exception:
-        raise ValueError("Bad SOA RDATA")
+        raise ValueError("bad SOA rdata")
 
     for number in rdatas[2:]:
         try:
             int(number)
         except ValueError:
-            raise ValueError("Bad SOA RDATA")
+            raise ValueError("bad SOA rdata")
 
 
 def is_valid_owner(owner: str):
@@ -122,7 +122,7 @@ def is_valid_owner(owner: str):
 
     def check_hypen(label):
         if any((label.endswith("."), label.endswith("-"), label.startswith("-"))):
-            raise ValueError("Bad OWNER")
+            raise ValueError("bad owner")
 
     check_hypen(owner)
 
@@ -131,15 +131,15 @@ def is_valid_owner(owner: str):
             check_hypen(label)
 
     if len(owner) > 255:
-        raise ValueError("Bad OWNER")
+        raise ValueError("bad owner")
 
     if "." in owner:
         for label in owner.split("."):
             if len(label) > 63:
-                raise ValueError("Bad OWNER")
+                raise ValueError("bad owner")
 
     if any(char in "()" for char in owner):
-        raise ValueError("Bad OWNER")
+        raise ValueError("bad owner")
 
 
 functions: Dict[str, Callable] = {
@@ -158,10 +158,10 @@ functions: Dict[str, Callable] = {
 
 def validate(rtype: str, rdata: str):
     if not rdata:
-        raise ValueError("RDATA can't be empty")
+        raise ValueError("rdata can't be empty")
 
     rtype = rtype.upper()
     if rtype in functions:
         functions[rtype](rdata)
     else:
-        raise ValueError("Unsupported Record Type")
+        raise ValueError("unsupported record type")

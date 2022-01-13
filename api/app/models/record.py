@@ -1,75 +1,68 @@
-from typing import Dict, Optional
+from typing import Any, List, Optional
 
-from flask import current_app
-
-from app.helpers import helpers
-from app.models import model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
+from app.models import connect
 
 
-def get_other_data(record: Dict) -> Optional[Dict]:
-    try:
-        rdata = model.get_one(table="rdata", field="record_id", value=record["id"])
-        if not rdata:
-            raise ValueError("Rdata Not Found")
+def get_all() -> List[Any]:
+    cursor, _ = connect()
 
-        zone = model.get_one(table="zone", field="id", value=record["zone_id"])
-        if not zone:
-            raise ValueError("Zone Not Found")
-
-        ttl = model.get_one(table="ttl", field="id", value=record["ttl_id"])
-        if not ttl:
-            raise ValueError("TTL Not Found")
-
-        type_ = model.get_one(table="type", field="id", value=record["type_id"])
-        if not type_:
-            raise ValueError("Type Not Found")
-
-        if rdata:
-            rdata = helpers.exclude_keys(rdata, {"id", "record_id"})
-            rdata = rdata.get("rdata")
-
-        zone = helpers.exclude_keys(
-            zone, {"id", "is_committed", "user_id", "record_id"}
-        )
-
-        data = {
-            "id": record["id"],
-            "owner": record["owner"],
-            "rdata": rdata,
-            "zone": zone["zone"],
-            "type": type_["type"],
-            "ttl": ttl["ttl"],
-        }
-
-        return data
-    except Exception as e:
-        current_app.logger.error(f"{e}")
-        return None  # for typing purpose
+    query = """ SELECT * FROM "record" """
+    cursor.execute(query, prepare=True)
+    rows = cursor.fetchall()
+    return rows
 
 
-def is_exists(record_id: int):
-    record = model.get_one(table="record", field="id", value=record_id)
-    if not record:
-        raise ValueError("Record Not Found")
+def get(record_id: int) -> Optional[Any]:
+    cursor, _ = connect()
+
+    query = f""" SELECT * FROM "record"  WHERE "id" = '{record_id}' """
+    cursor.execute(query, prepare=True)
+    row = cursor.fetchone()
+    return row
 
 
-def get_records_by_zone(zone) -> Dict:
-    zone_id = zone_model.get_zone_id(zone)
+def get_by_zone_id(zone_id: int) -> List[Any]:
+    cursor, _ = connect()
 
-    query = 'SELECT * FROM "record" WHERE "zone_id"=%(zone_id)s'
-    value = {"zone_id": zone_id}
-    records = model.plain_get("record", query, value)
-    return records
+    query = f""" SELECT * FROM "record"  WHERE "zone_id" = '{zone_id}' """
+    cursor.execute(query, prepare=True)
+    row = cursor.fetchall()
+    return row
 
 
-def get_soa_record(zone) -> Optional[Dict]:
-    records = get_records_by_zone(zone)
+def add(
+    owner: str,
+    rdata: str,
+    zone_id: int,
+    type_id: int,
+    ttl_id: int,
+) -> Optional[Any]:
+    cursor, connection = connect()
 
-    for record in records:
-        rtype = type_model.get_type_by_recordid(record["id"])
-        if rtype == "SOA":
-            return record
+    query = f""" INSERT INTO "record" (owner, rdata, zone_id, type_id, ttl_id) VALUES ('{owner}', '{rdata}', '{zone_id}', '{type_id}', '{ttl_id}') RETURNING *"""
+    cursor.execute(query, prepare=True)
+    connection.commit()
 
-    return None
+    record = cursor.fetchone()
+    return record
+
+
+def update(
+    owner: str, rdata: str, zone_id: int, type_id: int, ttl_id: int, record_id: int
+) -> Optional[Any]:
+    cursor, connection = connect()
+
+    query = f""" UPDATE "record" SET "owner" = '{owner}', "rdata" = '{rdata}', "zone_id" = {zone_id}, "type_id" = {type_id}, "ttl_id" = {ttl_id} WHERE "id" = {record_id} RETURNING *"""
+    cursor.execute(query, prepare=True)
+    connection.commit()
+
+    record = cursor.fetchone()
+    return record
+
+
+def delete(record_id: int):
+    cursor, connection = connect()
+
+    query = f""" DELETE FROM "record" WHERE "id" = {record_id} RETURNING * """
+    cursor.execute(query, prepare=True)
+    connection.commit()

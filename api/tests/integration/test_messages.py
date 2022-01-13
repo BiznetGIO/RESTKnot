@@ -2,7 +2,7 @@ from typing import List
 
 import tests.fixtures.messages as message_fixture
 
-import app.helpers.producer
+import app.helpers.producer  # pylint: disable=wrong-import-order
 
 
 class TestMessages:
@@ -32,9 +32,10 @@ class TestMessages:
         data = {"zone": "company.com", "user_id": user_id}
         client.post("/api/domain/add", data=data, headers=headers)
 
-        assert len(self._messages) == 4
+        # messages: 4 if using `set_default_zone`, 7 if using `set_zone`
+        assert len(self._messages) == 7
         # they should be ordered like this, otherwise knot will fail to create
         # configs or zones
         assert self._messages[0]["knot"][1] == message_fixture.knot_conf_set
-        assert self._messages[1]["knot"][2] == message_fixture.knot_zone_set_ns
-        assert self._messages[2]["knot"][1] == message_fixture.knot_delegate_file
+        assert self._messages[1]["knot"][1] == message_fixture.knot_zone_set_soa
+        assert self._messages[2]["knot"][1] == message_fixture.knot_zone_set_ns

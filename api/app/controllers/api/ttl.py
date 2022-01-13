@@ -3,16 +3,16 @@ from flask_restful import Resource, reqparse
 
 from app.helpers.rest import response
 from app.middlewares import auth
-from app.models import model
+from app.models import ttl as db
 
 
 class GetTtlData(Resource):
     @auth.auth_required
     def get(self) -> Response:
         try:
-            ttls = model.get_all("ttl")
+            ttls = db.get_all()
             if not ttls:
-                return response(404)
+                return response(404, message="ttl not found")
 
             return response(200, data=ttls)
         except Exception as e:
@@ -23,9 +23,9 @@ class GetTtlDataId(Resource):
     @auth.auth_required
     def get(self, ttl_id: int) -> Response:
         try:
-            ttl = model.get_one(table="ttl", field="id", value=ttl_id)
+            ttl = db.get(ttl_id)
             if not ttl:
-                return response(404)
+                return response(404, message="ttl not found")
 
             return response(200, data=ttl)
         except Exception as e:
@@ -40,15 +40,12 @@ class TtlAdd(Resource):
         args = parser.parse_args()
         ttl = args["ttl"]
 
-        data = {"ttl": ttl}
         if not ttl:
             return response(422)
 
         try:
-            inserted_id = model.insert(table="ttl", data=data)
-            data_ = {"id": inserted_id, **data}
-
-            return response(201, data=data_)
+            ttl = db.add(ttl)
+            return response(201, data=ttl)
         except Exception as e:
             return response(500, message=f"{e}")
 
@@ -65,12 +62,12 @@ class TtlEdit(Resource):
             return response(422)
 
         try:
-            data = {"where": {"id": ttl_id}, "data": {"ttl": ttl}}
-            row_count = model.update("ttl", data=data)
-            if not row_count:
-                return response(404)
+            _ttl = db.get(ttl_id)
+            if not _ttl:
+                return response(404, message="ttl not found")
 
-            return response(200, data=data.get("data"))
+            ttl = db.update(ttl, ttl_id)
+            return response(200, data=ttl)
         except Exception as e:
             return response(500, message=f"{e}")
 
@@ -79,10 +76,11 @@ class TtlDelete(Resource):
     @auth.auth_required
     def delete(self, ttl_id: int) -> Response:
         try:
-            row_count = model.delete(table="ttl", field="id", value=ttl_id)
-            if not row_count:
-                return response(404)
+            _ttl = db.get(ttl_id)
+            if not _ttl:
+                return response(404, message="ttl not found")
 
+            db.delete(ttl_id)
             return response(204)
         except Exception as e:
             return response(500, message=f"{e}")

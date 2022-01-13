@@ -3,16 +3,16 @@ from flask_restful import Resource, reqparse
 
 from app.helpers.rest import response
 from app.middlewares import auth
-from app.models import model
+from app.models import type_ as db
 
 
 class GetTypeData(Resource):
     @auth.auth_required
     def get(self) -> Response:
         try:
-            types = model.get_all("type")
+            types = db.get_all()
             if not types:
-                return response(404)
+                return response(404, message="type not found")
 
             return response(200, data=types)
         except Exception:
@@ -23,9 +23,9 @@ class GetTypeDataId(Resource):
     @auth.auth_required
     def get(self, type_id: int) -> Response:
         try:
-            type_ = model.get_one(table="type", field="id", value=type_id)
+            type_ = db.get(type_id)
             if not type_:
-                return response(404)
+                return response(404, message="type not found")
 
             return response(200, data=type_)
         except Exception:
@@ -40,16 +40,12 @@ class TypeAdd(Resource):
         args = parser.parse_args()
         type_ = args["type"]
 
-        data = {"type": type_}
-
         if not type_:
             return response(422)
 
         try:
-            inserted_id = model.insert(table="type", data=data)
-
-            data_ = {"id": inserted_id, **data}
-            return response(201, data=data_)
+            type_ = db.add(type_)
+            return response(201, data=type_)
         except Exception:
             return response(500)
 
@@ -66,12 +62,12 @@ class TypeEdit(Resource):
             return response(422)
 
         try:
-            data = {"where": {"id": type_id}, "data": {"type": type_}}
-            row_count = model.update("type", data=data)
-            if not row_count:
-                return response(404)
+            _type = db.get(type_id)
+            if not _type:
+                return response(404, message="type not found")
 
-            return response(200, data=data.get("data"))
+            type_ = db.update(type_, type_id)
+            return response(200, data=type_)
         except Exception:
             return response(500)
 
@@ -80,10 +76,11 @@ class TypeDelete(Resource):
     @auth.auth_required
     def delete(self, type_id: int) -> Response:
         try:
-            row_count = model.delete(table="type", field="id", value=type_id)
-            if not row_count:
-                return response(404)
+            _type = db.get(type_id)
+            if not _type:
+                return response(404, message="type not found")
 
+            db.delete(type_id)
             return response(204)
         except Exception:
             return response(500)

@@ -33,7 +33,7 @@ class TestCNAMERules:
         add_record_data = res.get_json()
 
         assert add_record_data["code"] == 409
-        assert add_record_data["message"] == "The record already exists"
+        assert add_record_data["message"] == "record already exists"
 
     def test_possible_duplicate_record(self, client, mocker):
         """Edit CNAME record that possible same with other.
@@ -83,7 +83,7 @@ class TestCNAMERules:
         edit_record_data = res.get_json()
 
         assert edit_record_data["code"] == 409
-        assert edit_record_data["message"] == "The record already exists"
+        assert edit_record_data["message"] == "record already exists"
 
     def test_unique_host(self, client, mocker):
         """Create multiple CNAME record with different owner/host.
@@ -156,7 +156,7 @@ class TestCNAMERules:
 
         assert add_record_data["code"] == 409
         assert (
-            add_record_data["message"] == "A CNAME record already exist with that owner"
+            add_record_data["message"] == "a CNAME record already exist with that owner"
         )
 
     def test_clash_with_A_owner(self, client, mocker):
@@ -201,7 +201,7 @@ class TestCNAMERules:
         add_record_data = res.get_json()
 
         assert add_record_data["code"] == 409
-        assert add_record_data["message"] == "An A record already exist with that owner"
+        assert add_record_data["message"] == "an A record already exist with that owner"
 
 
 class TestARules:
@@ -249,7 +249,7 @@ class TestARules:
         add_record_data = res.get_json()
 
         assert add_record_data["code"] == 409
-        assert add_record_data["message"] == "The record already exists"
+        assert add_record_data["message"] == "record already exists"
 
     def test_possible_duplicate_record(self, client, mocker):
         """Edit A record that possible same with other.
@@ -308,7 +308,7 @@ class TestARules:
         edit_record_data = res.get_json()
 
         assert edit_record_data["code"] == 409
-        assert edit_record_data["message"] == "The record already exists"
+        assert edit_record_data["message"] == "record already exists"
 
     def test_not_unique_owner(self, client, mocker):
         """Create A record with same owner.
@@ -398,5 +398,5 @@ class TestARules:
 
         assert add_record_data["code"] == 409
         assert (
-            add_record_data["message"] == "A CNAME record already exist with that owner"
+            add_record_data["message"] == "a CNAME record already exist with that owner"
         )

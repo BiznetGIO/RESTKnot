@@ -1,35 +1,62 @@
-from app.models import model
+from typing import Any, List, Optional
+
+from app.models import connect
 
 
-def get_typeid_by_rtype(rtype: str) -> int:
-    """Get type id by record record type."""
-    type_ = model.get_one(table="type", field="type", value=rtype.upper())
-    if not type_:
-        raise ValueError("Type Not Found")
+def get_all() -> List[Any]:
+    cursor, _ = connect()
 
-    type_id = type_["id"]
-    return type_id
-
-
-def get_type_by_recordid(record_id: int) -> str:
-    """Get record type by record id."""
-    try:
-        record = model.get_one(table="record", field="id", value=record_id)
-        if not record:
-            raise ValueError("Record Not Found")
-
-        type_id = record["type_id"]
-
-        type_ = model.get_one(table="type", field="id", value=type_id)
-        if not type_:
-            raise ValueError("Type Not Found")
-
-        return type_["type"]
-    except Exception:
-        raise ValueError("Unrecognized Record Type")
+    query = """ SELECT * FROM "type" """
+    cursor.execute(query, prepare=True)
+    rows = cursor.fetchall()
+    return rows
 
 
-def is_exists(type_id: int):
-    type_ = model.get_one(table="type", field="id", value=type_id)
-    if not type_:
-        raise ValueError("Type Not Found")
+def get(type_id: int) -> Optional[Any]:
+    cursor, _ = connect()
+
+    query = f""" SELECT * FROM "type"  WHERE "id" = '{type_id}' """
+    cursor.execute(query, prepare=True)
+    row = cursor.fetchone()
+    return row
+
+
+def get_by_value(type_: str) -> Optional[Any]:
+    cursor, _ = connect()
+
+    query = f""" SELECT * FROM "type"  WHERE "type" = '{type_}' """
+    cursor.execute(query, prepare=True)
+    row = cursor.fetchone()
+    return row
+
+
+def add(type_: str) -> Optional[Any]:
+    cursor, connection = connect()
+
+    query = f""" INSERT INTO "type" (type) VALUES ('{type_}') RETURNING *"""
+    cursor.execute(query, prepare=True)
+    connection.commit()
+
+    _type = cursor.fetchone()
+    return _type
+
+
+def update(type_: str, type_id: int) -> Optional[Any]:
+    cursor, connection = connect()
+
+    query = (
+        f""" UPDATE "type" SET "type" = '{type_}' WHERE "id" = {type_id} RETURNING * """
+    )
+    cursor.execute(query, prepare=True)
+    connection.commit()
+
+    _type = cursor.fetchone()
+    return _type
+
+
+def delete(type_id: int):
+    cursor, connection = connect()
+
+    query = f""" DELETE FROM "type" WHERE "id" = {type_id} RETURNING * """
+    cursor.execute(query, prepare=True)
+    connection.commit()
