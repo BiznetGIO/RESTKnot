@@ -9,7 +9,7 @@ Get all Domain
 
 .. code-block:: bash
 
-  GET /domain/list
+  GET /domains
 
 Response:
 
@@ -64,7 +64,7 @@ Get a domain by Zone
 
 .. code-block:: bash
 
-  GET domain/list/zone/:zoneid
+  GET domains/zone/:zoneid
 
 Query Params:
 
@@ -127,7 +127,7 @@ Get a domain by User
 
 .. code-block:: bash
 
-  GET domain/list/user/:userid
+  GET domains/user/:userid
 
 Response:
 
@@ -138,7 +138,7 @@ Create domain
 
 .. code-block:: bash
 
-  POST /domain/add
+  POST /domains
 
 
 Request body:

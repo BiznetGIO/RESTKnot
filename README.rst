@@ -43,7 +43,7 @@ Create New Zone
 .. code-block:: bash
 
   curl -X POST \
-    http://localhost:5000/api/domain/add \
+    http://localhost:5000/api/v2/domains \
     -H 'X-API-key: 123' \
     -F user_id=001 \
     -F zone=example.com
@@ -54,7 +54,7 @@ Edit a Single Record
 .. code-block:: bash
 
   curl -X PUT \
-    http://127.0.0.1:5000/api/record/edit/10 \
+    http://127.0.0.1:5000/api/v2/records/10 \
     -H 'x-api-key: 123' \
     -F zone=bar.com \
     -F owner=@ \
@@ -68,7 +68,7 @@ Delete a Zone
 .. code-block:: bash
 
   curl -X DELETE \
-    http://localhost:5000/api/domain/delete \
+    http://localhost:5000/api/v2/domains \
     -H 'X-API-Key: 123' \
     -F zone=example.com
 

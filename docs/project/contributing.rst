@@ -70,7 +70,7 @@ Using docker, it would be:
   $ # run the image
   $ docker-compose up -d
 
-Ensure the app is running by checking the ``/api/health`` endpoint.
+Ensure the app is running by checking the ``/api/v2/health`` endpoint.
 
 Broker
 ^^^^^^

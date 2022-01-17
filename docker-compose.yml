@@ -1,0 +1,59 @@
+version: "3.3"
+services:
+
+  backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Jakarta
+
+      # server
+      - SERVER_NAME=${DOMAIN?Variable not set}
+      - SERVER_HOST=https://${DOMAIN?Variable not set}
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+
+  # agent:
+  #   image: '${DOCKER_IMAGE_AGENT?Variable not set}:${TAG-latest}'
+  #   environment:
+  #     # Pay attention to your agent type!
+  #     - RESTKNOT_AGENT_TYPE=master
+
+  #     # the libknot.so location is distro dependant.
+  #     # e.g in CentOS it is `/usr/lib64/libknot.so.10.0.0`
+  #     - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
+  #     - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
+
+  #     # Control socket timeout.
+  #     # Set to 0 for infinity.  Default is 2000 seconds
+  #     # - RESTKNOT_SOCKET_TIMEOUT=5000
+  #     # Maximum attempts to retry connection to the socket. Default is 10 times
+  #     - RESTKNOT_SOCKET_RETRY=10
+
+  #     # using 127.0.0.1 or localhost won't make it work
+  #     # set it to RESTKNOT API IP
+  #     - RESTKNOT_KAFKA_BROKERS=10.0.0.1:9092,10.0.0.2:9092,10.0.0.3:9092
+  #     # topic to suscribe
+  #     - RESTKNOT_KAFKA_TOPIC=domaindata
+  #     # consumer group id
+  #     - RESTKNOT_KAFKA_GROUP_ID=master1
+  #   build:
+  #     context: ./agent
+  #     dockerfile: agent.dockerfile
+  #     args:
+  #       INSTALL_DEV: ${INSTALL_DEV-false}
+  #   volumes:
+  #     # on CentOS family you need to add `:z`
+  #     # .e.g `/var/run/knot/:/var/run/knot/:z`
+
+  #     # on CentOS: `/usr/lib64/:/usr/lib64`
+  #     - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
+
+  #     - /etc/knot/:/etc/knot/ #ro
+  #     - /var/lib/knot/:/var/lib/knot/
+  #     - /var/run/knot/:/var/run/knot/:z
+

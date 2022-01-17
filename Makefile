@@ -35,17 +35,17 @@ fmt_check: ## Check is the codebase properly formatted.
 lint: ## Lint the codebase.
 
 	# `pylint .` can't work without `__init__.py` file
-	pylint api
+	pylint backend
 	pylint agent
 
 	mypy .
 
 test_unit:
-	pytest --capture=no --verbose api/tests/unit/
+	pytest --capture=no --verbose api/app/tests/unit/
 
 test: test_unit
 	# To run integration test locally, change `DB_USER=postgres` in .example.env
-	pytest --capture=no --verbose api/tests/integration/
+	pytest --capture=no --verbose api/app/tests/integration/api_v2/
 
 comply: sort fmt lint test_unit ## Tasks to make the code-base comply with the rules. Mostly used in git hooks.
 
@@ -56,3 +56,6 @@ update_schema:
 	PGPASSWORD=$(password) psql --host localhost --username postgres --command "DROP DATABASE IF EXISTS knotdb"
 	PGPASSWORD=$(password) psql --host localhost --username postgres --command "CREATE DATABASE knotdb"
 	PGPASSWORD=$(password) psql --host localhost --username postgres knotdb < api/tests/integration/test_schema.sql
+
+dev:
+	cd api && uvicorn app.main:app --reload

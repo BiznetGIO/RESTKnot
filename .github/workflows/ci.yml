@@ -99,6 +99,8 @@ jobs:
           # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
           cp  api/config.example.yml api/config.yml
 
+          cp  api/.env.example api/.env
+
       - name: Run unit and integration test
         run: |
           make test

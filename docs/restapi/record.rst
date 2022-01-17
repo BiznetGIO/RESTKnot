@@ -65,7 +65,7 @@ Create record
 
 .. code-block:: bash
 
-  POST /record/add
+  POST /records
 
 
 Request body:
@@ -108,7 +108,7 @@ Edit record
 
 .. code-block:: bash
 
-  PUT /record/edit/:id
+  PUT /records:id
 
 
 Request body:
