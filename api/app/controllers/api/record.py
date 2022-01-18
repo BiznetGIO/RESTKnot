@@ -13,6 +13,9 @@ from app.vendors.rest import response
 
 def get_serial_resource(zone):
     soa_record = record_model.get_soa_record(zone)
+    if not soa_record:
+        raise ValueError("Zone has no SOA record. Any change to the zone is not doable")
+
     rdata_record = model.get_one(
         table="rdata", field="record_id", value=soa_record["id"]
     )
