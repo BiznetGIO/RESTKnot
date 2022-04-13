@@ -1,6 +1,14 @@
 Unreleased
 ==========
 
+0.7.12 (2022-04-13)
+===================
+
+- Fix: markupsafe > 2.0.1 breaks flask by removing json function
+- Fix: non-existing SOA record cause error
+- Fix: agent failed to communicate with Knot
+
+
 0.7.11 (2021-10-07)
 ===================
 
