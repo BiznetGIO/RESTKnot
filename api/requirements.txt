@@ -1,5 +1,8 @@
 # Flask
-Flask==1.1.1
+Flask==1.1.4
+# markupsafe > 2.0.1 breaks flask by removing `json` function
+markupsafe==2.0.1
+
 Flask-RESTful==0.3.9
 Flask-Cors==3.0.10
 
