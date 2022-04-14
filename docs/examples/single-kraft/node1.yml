@@ -1,0 +1,59 @@
+
+version: "3"
+services:
+
+  # https://github.com/confluentinc/cp-all-in-one/blob/7.1.0-post/cp-all-in-one-kraft/docker-compose.yml
+  broker1:
+    image: confluentinc/cp-kafka:7.1.0
+    hostname: broker1
+    ports:
+      - "9092:9092"
+    # Permission issue in Kafka
+    user: "0:0"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      # Put your public IP here
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker1:29092,PLAINTEXT_HOST://10.0.0.1:9092'
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker1:29093'
+
+      # The "external host" here must be `localhost` or `0.0.0.0`. Not the public IP.
+      KAFKA_LISTENERS: 'PLAINTEXT://broker1:29092,CONTROLLER://broker1:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - ./update_run.sh:/tmp/update_run.sh:z
+      - ./data/restknot/broker1-data:/var/lib/kafka/data:z
+    command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+
+  roach:
+    image: cockroachdb/cockroach:v19.2.2
+    hostname: roach
+    command: start --insecure --listen-addr=roach:26257 --advertise-addr=roach:26257 --http-addr=roach:8090
+    ports:
+      - "26257:26257"
+    volumes:
+      - /cockroach-data:/cockroach/cockroach-data:z
+
+  kowl:
+    # https://github.com/redpanda-data/kowl/blob/master/docs/local/docker-compose.yaml
+    image: quay.io/cloudhut/kowl:v1.5.0
+    restart: on-failure
+    hostname: kowl
+    depends_on:
+      - broker1
+    ports:
+      - "8080:8080"
+    environment:
+      # You could use `broker1:29092` too
+      - KAFKA_BROKERS=10.0.0.1:9092
