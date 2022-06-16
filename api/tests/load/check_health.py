@@ -1,4 +1,4 @@
-from locust import HttpUser, TaskSet, between, task
+from locust import HttpUser, between, task
 
 
 class ApiUser(HttpUser):
