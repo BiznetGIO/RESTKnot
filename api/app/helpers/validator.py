@@ -108,6 +108,24 @@ def is_valid_soa(soa_rdata):
             raise ValueError("Bad SOA RDATA")
 
 
+def is_valid_srv(rdata):
+    """Simple function to check SRV RDATA."""
+    rdatas = rdata.split(" ")
+    if len(rdatas) != 4:
+        raise ValueError("Bad SRV RDATA")
+
+    try:
+        is_valid_cname(rdatas[3])
+    except Exception:
+        raise ValueError("Bad SRV RDATA")
+
+    for number in rdatas[:3]:
+        try:
+            int(number)
+        except ValueError:
+            raise ValueError("Bad SRV RDATA")
+
+
 def is_valid_owner(owner):
     """Check if it's a valid owner.
 
@@ -151,6 +169,7 @@ functions = {
     "ZONE": is_valid_zone,
     "SOA": is_valid_soa,
     "TXT": is_valid_txt,
+    "SRV": is_valid_srv,
     "OWNER": is_valid_owner,
 }
 

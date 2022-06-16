@@ -85,6 +85,19 @@ def test_valid_txt():
         validator.is_valid_txt("€")
 
 
+def test_valid_srv():
+    validator.is_valid_srv("0 5 5060 one.example.com.")
+
+    with pytest.raises(Exception):
+        validator.is_valid_srv("0 5 one.example.com.")
+    with pytest.raises(Exception):
+        validator.is_valid_srv("0 one.example.com.")
+    with pytest.raises(Exception):
+        validator.is_valid_srv("0 5 notanumber one.example.com.")
+    with pytest.raises(Exception):
+        validator.is_valid_srv("0 5 one.example.com.")
+
+
 def test_valid_owner():
     validator.is_valid_owner("@")
     validator.is_valid_owner("*")
@@ -124,10 +137,6 @@ def test_valid_owner():
 def test_validate_func():
     # validator exists
     validator.validate("A", "192.0.2.1")
-
-    with pytest.raises(Exception):
-        # validator not exists
-        validator.validate("SRV", "dummy")
 
     with pytest.raises(Exception):
         # empty rdata
