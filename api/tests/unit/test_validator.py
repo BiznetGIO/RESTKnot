@@ -4,6 +4,7 @@ from app.helpers import validator
 
 
 def test_valid_ip():
+    """This test the valid IP in A and AAAA record"""
     validator.is_valid_ip("2001:db8:10::2")
     validator.is_valid_ip("192.0.2.1")
 
