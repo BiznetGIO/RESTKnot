@@ -2,9 +2,24 @@ import json
 import os
 
 from confluent_kafka import Producer
+from confluent_kafka.admin import AdminClient
 from flask import current_app
 
 from app.helpers import helpers
+
+
+def kafka_admin():
+    """Create Kafka admin."""
+    config = helpers.get_config()
+    try:
+        brokers = config["brokers"]
+    except KeyError:
+        raise ValueError("Can't find brokers list in config")
+
+    # `AdmintClient` can't recive list of brokers
+    conf = {"bootstrap.servers": brokers[0]}
+    admin_client = AdminClient(conf)
+    return admin_client
 
 
 def kafka_producer():
