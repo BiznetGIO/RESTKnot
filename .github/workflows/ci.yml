@@ -1,13 +1,38 @@
-name: ci
+name: CI
 
-on:
-  pull_request:
-  push:
-    branches:
-    - master
+on: [push, pull_request]
 
 jobs:
-  build:
+
+  code_quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: '3.7'
+
+    - name: Install latest just release
+      uses: extractions/setup-just@v1
+
+    - name: Install dependencies
+      # newer black version had breaking changes
+      run: |
+        just setup
+
+    - name: Lint
+      # currently cli is not-maintained
+      run: |
+        just fmt-check
+        just lint
+
+  test:
+    name: Test
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -42,9 +67,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@v3
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -58,7 +81,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          pytest -s api/tests/unit/
+          just _unit-test
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
@@ -80,32 +103,4 @@ jobs:
 
       - name: Integration tests
         run: |
-          pytest -s api/tests/integration/
-
-  lint:
-    name: lint
-    runs-on: ubuntu-18.04
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-          fetch-depth: 1
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-          python-version: '3.7'
-
-    - name: Install dependencies
-      # newer black version had breaking changes
-      run: |
-        make setup
-        make --directory api setup
-        make --directory agent setup
-
-    - name: Lint
-      # currently cli is not-maintained
-      run: |
-        make --directory api check
-        make --directory agent check
+          just test

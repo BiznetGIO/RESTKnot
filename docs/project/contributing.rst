@@ -118,7 +118,7 @@ Releasing
 
 To create a release. Run the following steps.
 
-- Run linting ``make check``. To check if the codebase adheres to the rules.
+- Run linting ``just check``. To check if the codebase adheres to the rules.
 - Update the CHANGELOG.
 - Update version numbers using ``./scripts/bump_version <old-version> <new-version>``.
 - Create a commit with a message format: `v[0-9]+.[0-9]+.[0-9]+`, and push it to a feature branch (as a pull request).
