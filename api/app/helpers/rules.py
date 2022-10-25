@@ -138,6 +138,7 @@ functions_add = {
     "NS": is_allowed,
     "MX": is_allowed,
     "TXT": is_allowed,
+    "SRV": is_allowed,
 }
 functions_edit = {
     "CNAME": is_allowed_cname_edit,
@@ -147,6 +148,7 @@ functions_edit = {
     "NS": is_allowed,
     "MX": is_allowed,
     "TXT": is_allowed,
+    "SRV": is_allowed,
 }
 
 
