@@ -10,21 +10,14 @@ _default:
 
 # Setup the repository.
 setup:
-    python -m venv .venv
-    . .venv/bin/activate
-    python -m pip install -r requirements.txt
-    python -m pip install -r requirements-dev.txt
-
-# Setup the repository.
-clean:
-    #!{{ shebang }}
-    rm -rf .venv
+    cd api && poetry shell && poetry install
+    cd agent && poetry shell && poetry install
 
 # Develop the app.
 dev app="api":
     #!{{ shebang }}
     if [ "{{ app }}" = "api" ]; then
-        just api/dev
+        cd api && flask run
     fi
 
 # Format the codebase.

@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "agent"
+version = "0.7.12"
+description = "RESTKnot Agent"
+authors = ["Azzam S.A <azzam@biznetgio.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+confluent-kafka = "1.7.0"
+libknot = "3.1.2.1"
+PyYAML = "5.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
