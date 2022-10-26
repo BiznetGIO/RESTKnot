@@ -107,11 +107,11 @@ class RecordAdd(Resource):
         See https://tools.ietf.org/html/rfc1912
         """
         parser = reqparse.RequestParser()
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("owner", type=str, required=True)
-        parser.add_argument("rtype", type=str, required=True)
-        parser.add_argument("rdata", type=str, required=True)
-        parser.add_argument("ttl", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True, location="form")
+        parser.add_argument("owner", type=str, required=True, location="form")
+        parser.add_argument("rtype", type=str, required=True, location="form")
+        parser.add_argument("rdata", type=str, required=True, location="form")
+        parser.add_argument("ttl", type=str, required=True, location="form")
         args = parser.parse_args()
         owner = args["owner"].lower()
         rtype = args["rtype"].lower()
@@ -178,11 +178,11 @@ class RecordEdit(Resource):
     @auth.auth_required
     def put(self, record_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("owner", type=str, required=True)
-        parser.add_argument("rtype", type=str, required=True)
-        parser.add_argument("rdata", type=str, required=True)
-        parser.add_argument("ttl", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True, location="form")
+        parser.add_argument("owner", type=str, required=True, location="form")
+        parser.add_argument("rtype", type=str, required=True, location="form")
+        parser.add_argument("rdata", type=str, required=True, location="form")
+        parser.add_argument("ttl", type=str, required=True, location="form")
         args = parser.parse_args()
         owner = args["owner"].lower()
         rtype = args["rtype"].lower()
