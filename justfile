@@ -4,6 +4,11 @@ shebang := if os() == 'windows' { 'powershell.exe' } else { '/usr/bin/sh' }
 
 set dotenv-load := true
 
+alias d := dev
+alias f := fmt
+alias l := lint
+alias t := test
+
 # List available commands.
 _default:
     just --list --unsorted
@@ -43,7 +48,11 @@ test: _test-unit
     pytest -s api/tests/integration/
 
 # Tasks to make the code-base comply with the rules. Mostly used in git hooks.
-comply: fmt lint test
+comply: fmt lint _test-unit
 
 # Check if the repository comply with the rules and ready to be pushed.
 check: fmt-check lint test
+
+# Check dependencies health.
+up:
+    cd api && poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1)
