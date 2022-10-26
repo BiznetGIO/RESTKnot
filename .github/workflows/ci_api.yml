@@ -1,12 +1,25 @@
-name: CI
+name: CI (API)
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      -  api/**
+      - .github/workflows/ci_api.yml
+  pull_request:
+    paths:
+      -  api/**
+      - .github/workflows/ci_api.yml
+
+
+defaults:
+  run:
+    working-directory: api
 
 jobs:
 
   code_quality:
     name: Code Quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout repository
@@ -15,24 +28,49 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-          python-version: '3.7'
+          python-version: '3.10'
 
-    - name: Install latest just release
-      uses: extractions/setup-just@v1
+    - name: Cache poetry install
+      uses: actions/cache@v2
+      with:
+        path: ~/.local
+        key: poetry-1.2.2
 
     - name: Install Poetry
       uses: snok/install-poetry@v1
+      with:
+          version: 1.2.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+    - name: Cache deps
+      id: cache-deps
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install confluent-kafka prerequisites
+      run: |
+        sudo apt-get install --yes librdkafka-dev python3-dev
+
+    - name: Install psycopg2 prerequisites
+      run: |
+        sudo apt-get install --yes build-essential libpq-dev
 
     - name: Install dependencies
-      # newer black version had breaking changes
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: |
-        just setup
+        poetry install --no-interaction --no-root
 
     - name: Lint
       # currently cli is not-maintained
       run: |
-        just fmt-check
-        just lint
+        # activate the venv
+        . .venv/bin/activate
+
+        black --check .
+        flake8 --config setup.cfg .
 
   test:
     name: Test
@@ -40,9 +78,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7]
+        python-version: ['3.10']
         # container operations are only supported on Linux runners
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
 
     services:
       # it is hard to setup locally installed postgres,
@@ -77,19 +115,45 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install latest just release
-        uses: extractions/setup-just@v1
+      - name: Cache poetry install
+        uses: actions/cache@v2
+        with:
+          path: ~/.local
+          key: poetry-1.2.2
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
+        with:
+          version: 1.2.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install confluent-kafka prerequisites
+        run: |
+          sudo apt-get install --yes librdkafka-dev python3-dev
+
+      - name: Install psycopg2 prerequisites
+        run: |
+          sudo apt-get install --yes build-essential libpq-dev
 
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
-          just setup
+          poetry install --no-interaction --no-root
 
       - name: Unit tests
         run: |
-          just _test-unit
+          # activate the venv
+          . .venv/bin/activate
+
+          pytest -s tests/unit/
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
@@ -111,4 +175,7 @@ jobs:
 
       - name: Integration tests
         run: |
-          just test
+          # activate the venv
+          . .venv/bin/activate
+
+          pytest -s tests/integration/
