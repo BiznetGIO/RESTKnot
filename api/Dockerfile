@@ -21,7 +21,7 @@ RUN pip3 install gunicorn==20.1.0
 WORKDIR /restknotapi
 
 # leverage Docker cache
-COPY ./requirements.txt /restknotapi/requirements.txt
+COPY ../requirements.txt /restknotapi/requirements.txt
 
 COPY ./config.yml /restknotapi/config.yml
 

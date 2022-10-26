@@ -18,7 +18,7 @@ RUN pip3 install --upgrade pip
 
 WORKDIR /dnsagent
 
-COPY ./requirements.txt /dnsagent/requirements.txt
+COPY ../requirements.txt /dnsagent/requirements.txt
 RUN pip3 install -r /dnsagent/requirements.txt
 
 ARG BUILD_VERSION

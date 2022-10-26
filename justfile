@@ -10,12 +10,10 @@ _default:
 
 # Setup the repository.
 setup:
-    python  -m venv .venv
-    source .venv/bin/activate
+    python -m venv .venv
+    . .venv/bin/activate
     python -m pip install -r requirements.txt
-    python -m pip install -r api/requirements.txt
-    python -m pip install -r api/requirements-dev.txt
-    python -m pip install -r agent/requirements.txt
+    python -m pip install -r requirements-dev.txt
 
 # Setup the repository.
 clean:
