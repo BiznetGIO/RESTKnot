@@ -35,7 +35,7 @@ class TtlAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("ttl", type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True, location="form")
         args = parser.parse_args()
         ttl = args["ttl"]
 
@@ -56,7 +56,7 @@ class TtlEdit(Resource):
     @auth.auth_required
     def put(self, ttl_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("ttl", type=str, required=True)
+        parser.add_argument("ttl", type=str, required=True, location="form")
         args = parser.parse_args()
         ttl = args["ttl"]
 

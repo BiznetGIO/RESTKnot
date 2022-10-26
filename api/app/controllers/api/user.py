@@ -47,9 +47,12 @@ class UserSignUp(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("email", type=str, required=True)
+        # import ipdb; ipdb.set_trace()
+        parser.add_argument("email", type=str, required=True, location="form")
         args = parser.parse_args()
+        # import ipdb; ipdb.set_trace()
         email = args["email"]
+        # import ipdb; ipdb.set_trace()
 
         if not model.is_unique(table="user", field="email", value=f"{email}"):
             return response(409, message="Duplicate Email")
@@ -74,7 +77,7 @@ class UserUpdate(Resource):
     @auth.auth_required
     def put(self, user_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("email", type=str, required=True)
+        parser.add_argument("email", type=str, required=True, location="form")
         args = parser.parse_args()
         email = args["email"]
         args = parser.parse_args()

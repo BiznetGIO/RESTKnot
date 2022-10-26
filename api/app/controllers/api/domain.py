@@ -169,8 +169,8 @@ class AddDomain(Resource):
         SOA, NS, and CNAME records are added automatically when adding new domain
         """
         parser = reqparse.RequestParser()
-        parser.add_argument("zone", type=str, required=True)
-        parser.add_argument("user_id", type=int, required=True)
+        parser.add_argument("zone", type=str, required=True, location="form")
+        parser.add_argument("user_id", type=int, required=True, location="form")
         args = parser.parse_args()
         zone = args["zone"]
         user_id = args["user_id"]
@@ -217,7 +217,7 @@ class DeleteDomain(Resource):
     def delete(self):
         """Remove domain (zone) and all its related records."""
         parser = reqparse.RequestParser()
-        parser.add_argument("zone", type=str, required=True)
+        parser.add_argument("zone", type=str, required=True, location="form")
         args = parser.parse_args()
         zone = args["zone"]
 

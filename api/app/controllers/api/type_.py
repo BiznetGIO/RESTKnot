@@ -35,7 +35,7 @@ class TypeAdd(Resource):
     @auth.auth_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("type", type=str, required=True, location="form")
         args = parser.parse_args()
         type_ = args["type"]
 
@@ -57,7 +57,7 @@ class TypeEdit(Resource):
     @auth.auth_required
     def put(self, type_id):
         parser = reqparse.RequestParser()
-        parser.add_argument("type", type=str, required=True)
+        parser.add_argument("type", type=str, required=True, location="form")
         args = parser.parse_args()
         type_ = args["type"]
 
