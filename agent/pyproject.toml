@@ -7,10 +7,10 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.10"
 confluent-kafka = "1.7.0"
-libknot = "3.1.2.1"
-PyYAML = "5.4.1"
+libknot = "3.2.1"
+PyYAML = "6.0"
 
 [build-system]
 requires = ["poetry-core"]
