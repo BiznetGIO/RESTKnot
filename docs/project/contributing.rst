@@ -52,7 +52,16 @@ Go to the API directory
 
   $ cd api/
 
-  # create the virtualenv, then install the dependencies
+  $ # Install psycopg2 prerequisites
+  $ sudo dnf install -y libpq-devel # Centos/Fedora/Cygwin/Babun
+  $ sudo apt install -y libpq-dev   # Debian/Ubuntu
+
+  $ # Install confluent-kafka prerequisites
+  $ sudo dnf install -y librdkafka-devel python3-devel # Centos/Fedora/Cygwin/Babun
+  $ sudo apt install -y librdkafka-dev python3-dev # Debian/Ubuntu
+
+  $ # Create the virtualenv, then install the dependencies
+  $ python -m venv venv && source venv/bin/activate
   $ pip install -r requirements.txt
 
 After making changes, you can the ``restknot-api`` using plain ``flask run``.
