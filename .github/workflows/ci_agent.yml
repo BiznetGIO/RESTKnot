@@ -1,0 +1,69 @@
+name: CI (Agent)
+
+on:
+  push:
+    paths:
+      -  agent/**
+      - .github/workflows/ci_agent.yml
+  pull_request:
+    paths:
+      -  agent/**
+      - .github/workflows/ci_agent.yml
+
+
+defaults:
+  run:
+    working-directory: agent
+
+jobs:
+
+  code_quality:
+    name: Code Quality
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+          python-version: '3.10'
+
+    - name: Cache poetry install
+      uses: actions/cache@v2
+      with:
+        path: ~/.local
+        key: poetry-1.2.2
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+          version: 1.2.2
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+    - name: Cache deps
+      id: cache-deps
+      uses: actions/cache@v2
+      with:
+        path: .venv
+        key: pydeps-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install confluent-kafka prerequisites
+      run: |
+        sudo apt-get install --yes librdkafka-dev python3-dev
+
+    - name: Install dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
+      run: |
+        poetry install --no-interaction --no-root
+
+    - name: Lint
+      # currently cli is not-maintained
+      run: |
+        # activate the venv
+        . .venv/bin/activate
+
+        black --check .
+        flake8 --config setup.cfg .
