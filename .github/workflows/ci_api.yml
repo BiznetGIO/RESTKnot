@@ -63,14 +63,17 @@ jobs:
       run: |
         poetry install --no-interaction --no-root
 
+    - name: Install latest just release
+      uses: extractions/setup-just@v1
+
     - name: Lint
       # currently cli is not-maintained
       run: |
         # activate the venv
         . .venv/bin/activate
 
-        black --check .
-        flake8 --config setup.cfg .
+        just fmt-check
+        just lint
 
   test:
     name: Test
@@ -148,12 +151,15 @@ jobs:
         run: |
           poetry install --no-interaction --no-root
 
+      - name: Install latest just release
+        uses: extractions/setup-just@v1
+
       - name: Unit tests
         run: |
           # activate the venv
           . .venv/bin/activate
 
-          pytest -s tests/unit/
+          just _test-unit
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
@@ -178,4 +184,4 @@ jobs:
           # activate the venv
           . .venv/bin/activate
 
-          pytest -s tests/integration/
+          just test

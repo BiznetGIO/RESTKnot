@@ -59,11 +59,14 @@ jobs:
       run: |
         poetry install --no-interaction --no-root
 
+    - name: Install latest just release
+      uses: extractions/setup-just@v1
+
     - name: Lint
       # currently cli is not-maintained
       run: |
         # activate the venv
         . .venv/bin/activate
 
-        black --check .
-        flake8 --config setup.cfg .
+        just fmt-check
+        just lint
