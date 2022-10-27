@@ -22,7 +22,7 @@ dev:
 # Format the codebase.
 fmt:
     black .
-    isort --settings-path setup.cfg .
+    isort .
 
 # Check is the codebase properly formatted.
 fmt-check:
@@ -30,7 +30,7 @@ fmt-check:
 
 # Lint the codebase.
 lint:
-    flake8 --config setup.cfg .
+    ruff .
 
 _test-unit:
     pytest -s tests/unit/

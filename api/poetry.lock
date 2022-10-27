@@ -128,34 +128,6 @@ python-versions = ">=3.7"
 test = ["pytest (>=6)"]
 
 [[package]]
-name = "flake8"
-version = "5.0.4"
-description = "the modular source code checker: pep8 pyflakes and co"
-category = "dev"
-optional = false
-python-versions = ">=3.6.1"
-
-[package.dependencies]
-mccabe = ">=0.7.0,<0.8.0"
-pycodestyle = ">=2.9.0,<2.10.0"
-pyflakes = ">=2.5.0,<2.6.0"
-
-[[package]]
-name = "flake8-isort"
-version = "5.0.0"
-description = "flake8 plugin that integrates isort ."
-category = "dev"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-flake8 = "*"
-isort = ">=4.3.5,<6"
-
-[package.extras]
-test = ["pytest"]
-
-[[package]]
 name = "flask"
 version = "2.2.2"
 description = "A simple framework for building complex web applications."
@@ -219,20 +191,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "isort"
-version = "5.10.1"
-description = "A Python utility / library to sort Python imports."
-category = "dev"
-optional = false
-python-versions = ">=3.6.1,<4.0"
-
-[package.extras]
-colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
-plugins = ["setuptools"]
-requirements-deprecated-finder = ["pip-api", "pipreqs"]
-
-[[package]]
 name = "itsdangerous"
 version = "2.1.2"
 description = "Safely pass data to untrusted environments and back."
@@ -286,14 +244,6 @@ dev = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "mypy (==0.971)", "pre-
 docs = ["alabaster (==0.7.12)", "autodocsumm (==0.2.9)", "sphinx (==5.1.1)", "sphinx-issues (==3.0.1)", "sphinx-version-warning (==1.1.2)"]
 lint = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "mypy (==0.971)", "pre-commit (>=2.4,<3.0)"]
 tests = ["pytest", "pytz", "simplejson"]
-
-[[package]]
-name = "mccabe"
-version = "0.7.0"
-description = "McCabe checker, plugin for flake8"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
 
 [[package]]
 name = "mypy-extensions"
@@ -351,22 +301,6 @@ name = "psycopg2"
 version = "2.9.5"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
 category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
-name = "pycodestyle"
-version = "2.9.1"
-description = "Python style guide checker"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-
-[[package]]
-name = "pyflakes"
-version = "2.5.0"
-description = "passive checker of Python programs"
-category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -461,6 +395,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "ruff"
+version = "0.0.85"
+description = "An extremely fast Python linter, written in Rust."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -506,7 +448,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "dae4706f346240373e5963cb39a331a7d255918bedc7cf04be4235ddfeed3231"
+content-hash = "da62de54d8f7b813b45ce036d0948e11b4f032262faaa540d08c5bc1404edb73"
 
 [metadata.files]
 aniso8601 = [
@@ -586,14 +528,6 @@ exceptiongroup = [
     {file = "exceptiongroup-1.0.0rc9-py3-none-any.whl", hash = "sha256:2e3c3fc1538a094aab74fad52d6c33fc94de3dfee3ee01f187c0e0c72aec5337"},
     {file = "exceptiongroup-1.0.0rc9.tar.gz", hash = "sha256:9086a4a21ef9b31c72181c77c040a074ba0889ee56a7b289ff0afb0d97655f96"},
 ]
-flake8 = [
-    {file = "flake8-5.0.4-py2.py3-none-any.whl", hash = "sha256:7a1cf6b73744f5806ab95e526f6f0d8c01c66d7bbe349562d22dfca20610b248"},
-    {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
-]
-flake8-isort = [
-    {file = "flake8-isort-5.0.0.tar.gz", hash = "sha256:e336f928c7edc509684930ab124414194b7f4e237c712af8fcbdf49d8747b10c"},
-    {file = "flake8_isort-5.0.0-py3-none-any.whl", hash = "sha256:c73f9cbd1bf209887f602a27b827164ccfeba1676801b2aa23cb49051a1be79c"},
-]
 flask = [
     {file = "Flask-2.2.2-py3-none-any.whl", hash = "sha256:b9c46cc36662a7949f34b52d8ec7bb59c0d74ba08ba6cb9ce9adc1d8676d9526"},
     {file = "Flask-2.2.2.tar.gz", hash = "sha256:642c450d19c4ad482f96729bd2a8f6d32554aa1e231f4f6b4e7e5264b16cca2b"},
@@ -613,10 +547,6 @@ idna = [
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
-]
-isort = [
-    {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
-    {file = "isort-5.10.1.tar.gz", hash = "sha256:e8443a5e7a020e9d7f97f1d7d9cd17c88bcb3bc7e218bf9cf5095fe550be2951"},
 ]
 itsdangerous = [
     {file = "itsdangerous-2.1.2-py3-none-any.whl", hash = "sha256:2c2349112351b88699d8d4b6b075022c0808887cb7ad10069318a8b0bc88db44"},
@@ -675,10 +605,6 @@ marshmallow = [
     {file = "marshmallow-3.18.0-py3-none-any.whl", hash = "sha256:35e02a3a06899c9119b785c12a22f4cda361745d66a71ab691fd7610202ae104"},
     {file = "marshmallow-3.18.0.tar.gz", hash = "sha256:6804c16114f7fce1f5b4dadc31f4674af23317fcc7f075da21e35c1a35d781f7"},
 ]
-mccabe = [
-    {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
-    {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
-]
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
@@ -711,14 +637,6 @@ psycopg2 = [
     {file = "psycopg2-2.9.5-cp39-cp39-win32.whl", hash = "sha256:322fd5fca0b1113677089d4ebd5222c964b1760e361f151cbb2706c4912112c5"},
     {file = "psycopg2-2.9.5-cp39-cp39-win_amd64.whl", hash = "sha256:190d51e8c1b25a47484e52a79638a8182451d6f6dff99f26ad9bd81e5359a0fa"},
     {file = "psycopg2-2.9.5.tar.gz", hash = "sha256:a5246d2e683a972e2187a8714b5c2cf8156c064629f9a9b1a873c1730d9e245a"},
-]
-pycodestyle = [
-    {file = "pycodestyle-2.9.1-py2.py3-none-any.whl", hash = "sha256:d1735fc58b418fd7c5f658d28d943854f8a849b01a5d0a1e6f3f3fdd0166804b"},
-    {file = "pycodestyle-2.9.1.tar.gz", hash = "sha256:2c9607871d58c76354b697b42f5d57e1ada7d261c261efac224b664affdc5785"},
-]
-pyflakes = [
-    {file = "pyflakes-2.5.0-py2.py3-none-any.whl", hash = "sha256:4579f67d887f804e67edb544428f264b7b24f435b263c4614f384135cea553d2"},
-    {file = "pyflakes-2.5.0.tar.gz", hash = "sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3"},
 ]
 pyparsing = [
     {file = "pyparsing-3.0.9-py3-none-any.whl", hash = "sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc"},
@@ -785,6 +703,24 @@ pyyaml = [
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
     {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
+]
+ruff = [
+    {file = "ruff-0.0.85-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:136130136ccc7e3cd0d6c9cf1d4f32b30e10a672868e946aef0bb8573356cdd5"},
+    {file = "ruff-0.0.85-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:aed9c50a5bc92d4053f7e78479d9c9fe9e2b143a40f145902d0f14453a98c7a4"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:76deeb7ce5986a2ccc745a26085c2366b8641e4b305580a7139bf3d82d7b8e0c"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:2ac1bfb375bed8452efa333ad32237ec6b8fea4f8ab4fa4a71716d6e7c9f7598"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:c7e39ffcfb1fa36e5a4307603b4c74898831e87f65dfb5884e61302477107990"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:706d77843603817bf26fb1a726c9d0919089fe8fa7062e6d321e2d06acf31788"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:9148058c379ca654f54f5dd24fcb79a1a19bf2c8c4e01cd92a1766ae81a7be28"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:4515727c8a2b7fc77a1c1e647ca29d51672af88ce0cdf4744322df826900a606"},
+    {file = "ruff-0.0.85-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3be4e90c7513d3f0c7b2abd2321ce37eec6353bdde1cbc5d2b56dd8f6b542fd5"},
+    {file = "ruff-0.0.85-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:47c3245b30e1cca4a3fbd6d51e44ff2b70199d4bcd852c983dfda670566c23f0"},
+    {file = "ruff-0.0.85-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:4cf537227636de45b451c998e7f6795f14dd5dfb9c5984a2c1ce0f4b96e3794f"},
+    {file = "ruff-0.0.85-py3-none-musllinux_1_2_i686.whl", hash = "sha256:d3cc360b15fd06e1e0c8ff943bd6daaee2ea21af7e42c4cbb6bcae1cb9996325"},
+    {file = "ruff-0.0.85-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:37434afe1eb5db9cdccf16230a4f368da08a0b604cb9b2132262ad79b896309c"},
+    {file = "ruff-0.0.85-py3-none-win32.whl", hash = "sha256:c86cbf37e8e81bf142a07aa1c4c9df09cfc724f4119ebe58908c1c329059ccc7"},
+    {file = "ruff-0.0.85-py3-none-win_amd64.whl", hash = "sha256:0d7025ea7329d32b2c29cc97fce00c36be7e6bbb87359dab4e84c3d176328c7d"},
+    {file = "ruff-0.0.85.tar.gz", hash = "sha256:83e28714091f463f582898bfd12ac2279c4b8481d7ca4518d5275b5dfe9ca86e"},
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},

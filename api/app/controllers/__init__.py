@@ -1,1 +1,1 @@
-from .api import api_blueprint
+from .api import api_blueprint  # noqa: F401

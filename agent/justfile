@@ -15,7 +15,7 @@ setup:
 # Format the codebase.
 fmt:
     black .
-    isort --settings-path setup.cfg .
+    isort  .
 
 # Check is the codebase properly formatted.
 fmt-check:
@@ -23,8 +23,7 @@ fmt-check:
 
 # Lint the codebase.
 lint:
-    flake8 --config setup.cfg .
-
+    ruff .
 
 # Tasks to make the code-base comply with the rules. Mostly used in git hooks.
 comply: fmt lint
