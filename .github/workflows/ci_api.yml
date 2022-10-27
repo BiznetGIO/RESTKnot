@@ -64,7 +64,6 @@ jobs:
         sudo apt-get install --yes build-essential libpq-dev
 
     - name: Install dependencies
-      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: |
         poetry install --no-interaction --no-root
 
@@ -154,7 +153,6 @@ jobs:
           sudo apt-get install --yes build-essential libpq-dev
 
       - name: Install dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           poetry install --no-interaction --no-root
 
