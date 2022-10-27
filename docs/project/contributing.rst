@@ -61,8 +61,7 @@ Go to the API directory
   $ sudo apt install -y librdkafka-dev python3-dev # Debian/Ubuntu
 
   $ # Create the virtualenv, then install the dependencies
-  $ python -m venv venv && source venv/bin/activate
-  $ pip install -r requirements.txt
+  $ poetry shell && poetry install
 
 After making changes, you can the ``restknot-api`` using plain ``flask run``.
 Or running it via docker.
