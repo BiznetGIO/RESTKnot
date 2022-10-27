@@ -11,19 +11,18 @@ _default:
 setup:
     poetry shell && poetry install
 
-
 # Format the codebase.
 fmt:
-    black .
-    isort  .
+    poetry run black .
+    poetry run isort  .
 
 # Check is the codebase properly formatted.
 fmt-check:
-    black --check .
+    poetry run black --check .
 
 # Lint the codebase.
 lint:
-    ruff .
+    poetry run ruff .
 
 # Tasks to make the code-base comply with the rules. Mostly used in git hooks.
 comply: fmt lint

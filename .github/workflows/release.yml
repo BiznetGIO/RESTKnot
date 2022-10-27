@@ -1,14 +1,14 @@
-name: release
+name: Release
 
 on:
   push:
     tags:
-    - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v*'
 
 jobs:
  api:
     name: Push restknot-api image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         projects:
@@ -17,9 +17,7 @@ jobs:
 
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@v3
 
       - name: Prepare env
         # the common usage of short SHA is 7 characters
