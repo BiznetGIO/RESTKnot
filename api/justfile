@@ -23,10 +23,12 @@ dev:
 fmt:
     black .
     isort .
+    dprint fmt --config ../configs/dprint.json
 
 # Check is the codebase properly formatted.
 fmt-check:
     black --check .
+    dprint check --config ../configs/dprint.json
 
 # Lint the codebase.
 lint:
