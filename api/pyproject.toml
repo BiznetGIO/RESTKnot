@@ -31,7 +31,7 @@ known_first_party = "app"
 
 [tool.ruff]
 ignore = [
- "E501"
+  "E501",
 ]
 
 [build-system]
