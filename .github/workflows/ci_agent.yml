@@ -1,5 +1,9 @@
 name: CI (Agent)
 
+env:
+  VENV_PATH: "~/.venv-agent"
+  POETRY_VERSION: "1.2.2"
+
 on:
   push:
     paths:
@@ -31,7 +35,7 @@ jobs:
           python-version: '3.10'
 
     - name: Cache poetry install
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.local
         key: poetry-1.2.2
@@ -39,16 +43,17 @@ jobs:
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
-          version: 1.2.2
+          version: ${{ env.POETRY_VERSION }}
           virtualenvs-create: true
-          virtualenvs-in-project: true
+          virtualenvs-in-project: false
+          virtualenvs-path: ${{ env.VENV_PATH }}
 
     - name: Cache deps
       id: cache-deps
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
-        path: .venv
-        key: pydeps-${{ hashFiles('**/poetry.lock') }}
+        path: ${{ env.VENV_PATH }}
+        key: venv-agent-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install confluent-kafka prerequisites
       run: |
@@ -70,8 +75,5 @@ jobs:
     - name: Lint
       # currently cli is not-maintained
       run: |
-        # activate the venv
-        . .venv/bin/activate
-
         just fmt-check
         just lint
