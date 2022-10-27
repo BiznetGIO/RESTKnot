@@ -2,7 +2,7 @@
 
 set dotenv-load := true
 
-alias d := dev
+alias r := run
 alias f := fmt
 alias l := lint
 alias t := test
@@ -16,7 +16,7 @@ setup:
     poetry shell && poetry install
 
 # Develop the app.
-dev:
+run:
     flask run
 
 # Format the codebase.
