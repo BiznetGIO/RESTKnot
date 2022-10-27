@@ -60,7 +60,6 @@ jobs:
         sudo apt-get install --yes librdkafka-dev python3-dev
 
     - name: Install dependencies
-      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: |
         poetry install --no-interaction --no-root
 
