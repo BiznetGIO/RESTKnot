@@ -64,12 +64,10 @@ jobs:
         poetry install --no-interaction --no-root
 
     - name: Install latest just release
-      uses: extractions/setup-just@v1
+      uses: taiki-e/install-action@just
 
     - name: Install latest dprint release
-      uses: taiki-e/install-action@v1
-      with:
-        tool: dprint
+      uses: taiki-e/install-action@dprint
 
     - name: Lint
       # currently cli is not-maintained
