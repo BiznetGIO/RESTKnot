@@ -1,0 +1,11 @@
+version: "3"
+services:
+
+  db:
+    image: cockroachdb/cockroach:v2.0.7
+    hostname: roach
+    restart: always
+    command: start --insecure
+    ports:
+      - "26257:26257" # sql port
+      - "8080:8080" # web port

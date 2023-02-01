@@ -1,0 +1,50 @@
+[package]
+name = "api"
+version = "0.8.0"
+edition = "2021"
+authors = ["azzamsa <azzam@biznegio.com>"]
+categories = ["web-programming"]
+exclude = ["/README.md"]
+keywords = ["knot", "dns"]
+license = "MIT"
+repository = "https://github.com/BiznetGIO/RESTKnot"
+description = "REST API for Knot Service"
+
+[dependencies]
+axum = { version = "0.6.12" }
+hyper = "0.14.25"
+tokio = { version = "1.27", features = ["macros", "rt-multi-thread"] }
+
+# Swagger Documentation
+utoipa = { version = "3.2", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "3.1", features = ["axum"] }
+
+# Database
+sqlx = { version = "0.6.3", features = ["runtime-tokio-native-tls", "postgres", "offline", "chrono", "migrate"] }
+
+# Configurations
+dotenv = "0.15.0"
+toml = "0.7.3"
+url = "2.3"
+
+# Error
+thiserror = "1.0"
+
+# Logging
+time = "0.3.20"
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.16", features = ["env-filter", "time", "local-time"] }
+
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4.24", features = ["serde"] }
+axum_typed_multipart = "0.3.2"
+
+[dev-dependencies]
+anyhow = "1.0"
+serde_json = "1.0"
+tower = { version = "0.4", features = ["util"] }
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-{ version}-{ target }.tar.gz"
+bin-dir = "{ bin }{ binary-ext }"
+pkg-fmt = "tgz"

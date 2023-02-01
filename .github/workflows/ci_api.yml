@@ -1,8 +1,7 @@
 name: CI (API)
 
 env:
-  VENV_PATH: "~/.venv-api"
-  POETRY_VERSION: "1.2.2"
+  MIN_SUPPORTED_RUST_VERSION: "1.68.0"
 
 on:
   push:
@@ -20,165 +19,118 @@ defaults:
     working-directory: api
 
 jobs:
-
   code_quality:
-    name: Code Quality
+    name: Code quality
     runs-on: ubuntu-22.04
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-          python-version: '3.10'
-
-    - name: Cache poetry install
-      uses: actions/cache@v3
-      with:
-        path: ~/.local
-        key: poetry-1.2.2
-
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-          version: ${{ env.POETRY_VERSION }}
-          virtualenvs-create: true
-          virtualenvs-in-project: false
-          virtualenvs-path: ${{ env.VENV_PATH }}
-
-    - name: Cache deps
-      id: cache-deps
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.VENV_PATH }}
-        key: venv-api-${{ hashFiles('**/poetry.lock') }}
-
-    - name: Install confluent-kafka prerequisites
-      run: |
-        sudo apt-get install --yes librdkafka-dev python3-dev
-
-    - name: Install psycopg2 prerequisites
-      run: |
-        sudo apt-get install --yes build-essential libpq-dev
-
-    - name: Install dependencies
-      run: |
-        poetry install --no-interaction --no-root
-
-    - name: Install latest just release
-      uses: taiki-e/install-action@just
-
-    - name: Install latest dprint release
-      uses: taiki-e/install-action@dprint
-
-    - name: Lint
-      # currently cli is not-maintained
-      run: |
-        just fmt-check
-        just lint
-
-  test:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.10']
-        # container operations are only supported on Linux runners
-        os: [ubuntu-22.04]
-
-    services:
-      # it is hard to setup locally installed postgres,
-      # such as setting the password.
-
-      # TravisCI and build.sr.ht use empty password as default
-      # but that doesn't work with Github action.
-      # you need to work with `pg_hba.conf` or using `sudo -u postgres`
-      # but the latter force you to install every dependency in in root PATH.
-      postgres:
-        image: postgres:11
-        env:
-          POSTGRES_USER: postgres
-          # set the password without messing with `pg_hba.conf`
-          POSTGRES_PASSWORD: postgres
-          # create default db
-          POSTGRES_DB: knotdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout repository
+      - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Install rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Cache poetry install
-        uses: actions/cache@v3
-        with:
-          path: ~/.local
-          key: poetry-1.2.2
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: ${{ env.POETRY_VERSION }}
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-
-      - name: Cache deps
-        id: cache-deps
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.VENV_PATH }}
-          key: venv-api-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install confluent-kafka prerequisites
-        run: |
-          sudo apt-get install --yes librdkafka-dev python3-dev
-
-      - name: Install psycopg2 prerequisites
-        run: |
-          sudo apt-get install --yes build-essential libpq-dev
-
-      - name: Install dependencies
-        run: |
-          poetry install --no-interaction --no-root
+          components: clippy, rustfmt
 
       - name: Install latest just release
         uses: taiki-e/install-action@just
 
-      - name: Unit tests
-        run: |
-          just _test-unit
+      - name: Install latest dprint release
+        uses: taiki-e/install-action@dprint
 
-      - name: Check DB version
-        # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
-        run: psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres --version
+      - name: Ensure `fmt` has been run
+        run:  just fmt-check
+
+      - name: Ensure MSRV is set in `clippy.toml`
+        run: grep "^msrv = \"${{ env.MIN_SUPPORTED_RUST_VERSION }}\"\$" clippy.toml
+
+      - name: Run clippy
         env:
-          # to avoid having password prompt
-          PGPASSWORD: postgres
+          SQLX_OFFLINE: true
+        run: just lint
 
-      - name: Create DB schema
+  msrv:
+    name: Minimum supported rust version
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Install rust toolchain (v${{ env.MIN_SUPPORTED_RUST_VERSION }})
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.MIN_SUPPORTED_RUST_VERSION }}
+
+      - name: Install latest nextest release
+        uses: taiki-e/install-action@nextest
+
+      - name: Install latest just release
+        uses: taiki-e/install-action@just
+
+      - name: Prepare the environment variables
         run: |
-          psql -h localhost  -p ${{ job.services.postgres.ports[5432] }} -U postgres knotdb < tests/integration/test_schema.sql
+          cp .example.env .env
+
+      - name: Prepare the database
         env:
-          PGPASSWORD: postgres
-
-      - name: Prepare for Integration tests
+          PGPASSWORD: secret
         run: |
-          # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
-          cp  config.example.yml config.yml
+          # Start the database
+          docker-compose --file tests/docker-compose.yml run --detach --name db db
+          # Check DB version
+          docker exec db /cockroach/cockroach version
+          # Create a db
+          docker exec db /cockroach/cockroach sql --insecure  --execute "create database knot;"
+          # Improt a schema
+          docker exec db /cockroach/cockroach sql --insecure --database knot < db/schema.sql
 
-      - name: Integration tests
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://root@localhost:26257/knot
+        run: just test
+
+  build:
+    name: Build for ${{ matrix.build }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { build: linux-gnu,  os: ubuntu-22.04, target: x86_64-unknown-linux-gnu    }
+          # - { build: win-gnu,    os: windows-2022, target: x86_64-pc-windows-gnu       }
+          # - { build: win-msvc,   os: windows-2022, target: x86_64-pc-windows-msvc      }
+          # - { build: win32-msvc, os: windows-2022, target: i686-pc-windows-msvc        }
+          # - { build: macos,      os: macos-12    , target: x86_64-apple-darwin         }
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          target: ${{ matrix.target }}
+
+      - name: Show version information
+        shell: bash
         run: |
-          just test
+          gcc --version || true
+          rustup -V
+          rustup toolchain list
+          rustup default
+          cargo -V
+          rustc -V
+
+      - name: Install musl-tools
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            --allow-unauthenticated musl-tools
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}-${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --release --locked --target ${{ matrix.target }}

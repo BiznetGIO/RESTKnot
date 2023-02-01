@@ -1,0 +1,11 @@
+brokers = [ "10.0.0.1:9092", "10.0.0.2:9092", "10.0.0.3:9092" ]
+
+[servers]
+
+[servers.master]
+notify = [ "slave1", "slave2" ]
+acl = [ "slave1", "slave2" ]
+
+[servers.slave]
+master = [ "master1" ]
+acl = [ "master1" ]
