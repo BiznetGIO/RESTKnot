@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import sys
+import time
 
 from confluent_kafka import Consumer, KafkaException
 
@@ -9,9 +10,11 @@ from dnsagent import agent
 
 logger = logging.getLogger(__name__)
 
+
 def main():
     configure_logger()
     consume()
+
 
 def configure_logger():
     stdout_handler = logging.StreamHandler(sys.stdout)
@@ -25,11 +28,13 @@ def configure_logger():
     root.addHandler(stdout_handler)
     root.setLevel(logging.DEBUG)
 
+
 def consume():
     brokers = os.environ.get("RESTKNOT_KAFKA_BROKERS")
     topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
     group_id = os.environ.get("RESTKNOT_KAFKA_GROUP_ID")
     agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
+    command_delay = int(os.environ.get("RESTKNOT_COMMAND_DELAY", 5))
 
     conf = {
         "bootstrap.servers": brokers,
@@ -59,6 +64,8 @@ def consume():
             if agent_type in agent_type_msg:
                 knot_queries = message["knot"]
                 for query in knot_queries:
+                    print(f"Delaying next command by {command_delay} seconds...")
+                    time.sleep(command_delay)
                     agent.execute(query)
 
     except KeyboardInterrupt:
@@ -66,6 +73,7 @@ def consume():
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()
+
 
 if __name__ == "__main__":
     main()
