@@ -11,6 +11,14 @@ _default:
 setup:
     poetry install && poetry shell
 
+# Build the docker image.
+build-image:
+    docker build -t restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+
+# Run the docker image.
+run-image: build-image
+    docker-compose up
+
 # Format the codebase.
 fmt:
     poetry run black .
