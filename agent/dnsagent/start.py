@@ -9,6 +9,21 @@ from dnsagent import agent
 
 logger = logging.getLogger(__name__)
 
+def main():
+    configure_logger()
+    consume()
+
+def configure_logger():
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_format = logging.Formatter(
+        "[%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
+    )
+    stdout_handler.setFormatter(stdout_format)
+    stdout_handler.setLevel(logging.INFO)
+
+    root = logging.getLogger()
+    root.addHandler(stdout_handler)
+    root.setLevel(logging.DEBUG)
 
 def consume():
     brokers = os.environ.get("RESTKNOT_KAFKA_BROKERS")
@@ -51,25 +66,6 @@ def consume():
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()
-
-
-def configure_logger():
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_format = logging.Formatter(
-        "[%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)20s() ] %(message)s"
-    )
-    stdout_handler.setFormatter(stdout_format)
-    stdout_handler.setLevel(logging.INFO)
-
-    root = logging.getLogger()
-    root.addHandler(stdout_handler)
-    root.setLevel(logging.DEBUG)
-
-
-def main():
-    configure_logger()
-    consume()
-
 
 if __name__ == "__main__":
     main()
