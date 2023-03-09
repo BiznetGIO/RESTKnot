@@ -40,4 +40,5 @@ check: fmt-check lint
 
 # Check dependencies health.
 up:
-    poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1)
+    poetry lock
+    poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1) || echo "All dependencies are up to date, yay!"
