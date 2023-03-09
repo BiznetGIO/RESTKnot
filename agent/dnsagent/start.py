@@ -42,7 +42,6 @@ def consume():
 
             agent_type_msg = message["agent"]["agent_type"]
             if agent_type in agent_type_msg:
-
                 knot_queries = message["knot"]
                 for query in knot_queries:
                     agent.execute(query)
