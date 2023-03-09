@@ -9,12 +9,12 @@ _default:
 
 # Setup the repository.
 setup:
-    poetry shell && poetry install
+    poetry install && poetry shell
 
 # Format the codebase.
 fmt:
     poetry run black .
-    poetry run isort  .
+    poetry run isort .
 
 # Check is the codebase properly formatted.
 fmt-check:
