@@ -7,6 +7,7 @@ import libknot.control
 
 logger = logging.getLogger(__name__)
 
+
 def execute(message):
     cmd = message.get("cmd")
     zone = message.get("zone")
@@ -43,6 +44,7 @@ def execute(message):
     finally:
         ctl.send(libknot.control.KnotCtlType.END)
         ctl.close()
+
 
 def connect_knot():
     libknot_binary_path = os.environ.get("RESTKNOT_KNOT_LIB", "libknot.so")
