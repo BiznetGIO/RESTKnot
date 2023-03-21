@@ -1,7 +1,7 @@
-FROM python:3.7-slim-buster
+FROM python:3.11-slim-buster
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.2.2 \
+  POETRY_VERSION=1.4 \
   GUNICORN_VERSION=20.1.0
 
 RUN apt-get update
@@ -11,6 +11,11 @@ RUN apt-get install --no-install-recommends --yes tzdata
 RUN apt-get install --no-install-recommends --yes librdkafka-dev python3-dev
 # psycopg2 needs these
 RUN apt-get install --no-install-recommends --yes build-essential libpq-dev
+
+# activate virtualenv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # upgrading pip solves many installation problems
 RUN pip3 install --upgrade pip
@@ -24,14 +29,14 @@ COPY poetry.lock pyproject.toml /restknotapi/
 
 COPY ./config.yml /restknotapi/config.yml
 
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --only main --no-interaction --no-ansi
 
-ARG BUILD_VERSION
-RUN echo "$BUILD_VERSION" > build-version.txt
+ARG VCS_REVISION
+RUN echo "$VCS_REVISION" > version
 
 COPY . /restknotapi
 # check build version
-RUN cat /restknotapi/build-version.txt
+RUN cat /restknotapi/version
 
 EXPOSE 5000
 CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]
