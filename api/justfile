@@ -13,7 +13,15 @@ _default:
 
 # Setup the repository.
 setup:
-    poetry shell && poetry install
+    poetry install && poetry shell
+
+# Build the docker image.
+build-image:
+    docker build -t restknot-api:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+
+# Run the docker image.
+run-image: build-image
+    docker-compose up
 
 # Develop the app.
 run:
@@ -49,4 +57,5 @@ check: fmt-check lint test
 
 # Check dependencies health.
 up:
-    poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1)
+    poetry lock
+    poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1) || echo "All dependencies are up to date, yay!"
