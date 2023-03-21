@@ -7,7 +7,7 @@ from app.vendors.rest import response
 
 class MetaVersion(Resource):
     def get(self):
-        build = helpers.read_version("requirements.txt", "build-version.txt")
+        build = helpers.read_version("pyproject.toml", "version")
 
         data = {"build": build}
         return response(200, data=data, message="OK")
