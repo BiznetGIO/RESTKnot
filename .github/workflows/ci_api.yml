@@ -2,7 +2,6 @@ name: CI (API)
 
 env:
   VENV_PATH: "~/.venv-api"
-  POETRY_VERSION: "1.2.2"
 
 on:
   push:
@@ -32,18 +31,17 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-          python-version: '3.10'
+          python-version: '3.11'
 
     - name: Cache poetry install
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: poetry-1.2.2
+        key: poetry
 
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
-          version: ${{ env.POETRY_VERSION }}
           virtualenvs-create: true
           virtualenvs-in-project: false
           virtualenvs-path: ${{ env.VENV_PATH }}
@@ -85,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.11']
         # container operations are only supported on Linux runners
         os: [ubuntu-22.04]
 
@@ -126,14 +124,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.local
-          key: poetry-1.2.2
+          key: poetry
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: ${{ env.POETRY_VERSION }}
           virtualenvs-create: true
           virtualenvs-in-project: true
+          virtualenvs-path: ${{ env.VENV_PATH }}
 
       - name: Cache deps
         id: cache-deps
