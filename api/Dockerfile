@@ -27,7 +27,7 @@ WORKDIR /restknotapi
 # leverage Docker cache
 COPY poetry.lock pyproject.toml /restknotapi/
 
-COPY ./config.yml /restknotapi/config.yml
+COPY ./config.example.yml /restknotapi/config.yml
 
 RUN poetry install --only main --no-interaction --no-ansi
 
