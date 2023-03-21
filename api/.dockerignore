@@ -17,3 +17,5 @@ __pycache__/
 docker-compose.yml
 .flake8
 tests/
+.ruff_cache
+.pytest_cache
