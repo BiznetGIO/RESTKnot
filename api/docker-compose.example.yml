@@ -1,7 +1,7 @@
 version: '3'
 services:
   restknot-api:
-    image: biznetgio/restknot-api:0.7.12
+    image: biznetgio/restknot-api:0.7.14
     # depends_on:
     #   - kafka1
     ports:

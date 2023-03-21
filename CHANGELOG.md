@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.7.14 (2023-03-21)
+
+### Bug fixes
+
+- fix: can't find version file
+
 ## 0.7.13 (2023-03-09)
 
 ### Features
