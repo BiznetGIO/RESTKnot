@@ -159,6 +159,33 @@ def is_valid_owner(owner):
         raise ValueError("Bad OWNER")
 
 
+def is_valid_srv_owner(owner):
+    """Check if it's a valid srv owner.
+
+    Rules:
+    - must contain service and protocol name
+    - can't contain the zone name
+    - enfore the service name to be prefixed with _
+    - enfore the protocol to be prefixed with _
+    """
+
+    if "." not in owner:
+        raise ValueError("Bad OWNER")
+
+    labels = owner.split(".")
+    if len(labels) < 2:
+        raise ValueError("Bad OWNER")
+
+    service_name = labels[0]
+    protocol_type = labels[1]
+    if not service_name.startswith("_"):
+        raise ValueError("Service name must start with underscore")
+    if not protocol_type.startswith("_"):
+        raise ValueError("Protocol type must start with underscore")
+
+    is_valid_owner(owner)
+
+
 functions = {
     "A": is_valid_ip,
     "AAAA": is_valid_ip,
@@ -171,6 +198,7 @@ functions = {
     "TXT": is_valid_txt,
     "SRV": is_valid_srv,
     "OWNER": is_valid_owner,
+    "OWNER-SRV": is_valid_srv_owner,
 }
 
 
