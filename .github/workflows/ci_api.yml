@@ -157,7 +157,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          just _test-unit
+          just test-unit
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
