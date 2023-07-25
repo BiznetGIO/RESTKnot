@@ -12,20 +12,33 @@ _default:
     just --list --unsorted
 
 # Setup the repository.
-setup:
+setup: _areyousure
+    # psycopg2 needs these
+    sudo apt-get install --no-install-recommends --yes build-essential libpq-dev
+
     poetry install && poetry shell
 
-# Build the docker image.
-build-image:
-    docker build -t restknot-api:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+# Tasks to make the code-base comply with the rules. Mostly used in git hooks.
+comply: fmt lint test-unit
 
-# Run the docker image.
-run-image: build-image
-    docker-compose up
+# Check if the repository comply with the rules and ready to be pushed.
+check: fmt-check lint test
 
 # Develop the app.
 run:
     flask run
+
+# Build the docker image.
+image-build:
+    podman build -t restknot-api:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+
+# Run the container image.
+image-start:
+    podman-compose up -d
+
+# Stop the container image.
+image-stop:
+    podman-compose down
 
 # Format the codebase.
 fmt:
@@ -42,20 +55,37 @@ fmt-check:
 lint:
     poetry run  ruff .
 
-_test-unit:
-    poetry run pytest -s tests/unit/
-
 # Test the codebase.
-test: _test-unit
+test: test-unit
     poetry run pytest -s tests/integration/
 
-# Tasks to make the code-base comply with the rules. Mostly used in git hooks.
-comply: fmt lint _test-unit
-
-# Check if the repository comply with the rules and ready to be pushed.
-check: fmt-check lint test
+test-unit:
+    poetry run pytest -s tests/unit/
 
 # Check dependencies health.
 up:
+    #!/usr/bin/env bash
     poetry lock
     poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1) || echo "All dependencies are up to date, yay!"
+
+#
+# Helper
+#
+
+[unix]
+_areyousure:
+    #!/usr/bin/env bash
+    echo -e "This command will alter your system. ⚠️
+    You are advised to run in inside containerized environment.
+    Such as [toolbx](https://containertoolbx.org/).
+
+    If you are unsure. Run the installation commands manually.
+    Take a look at the 'setup' recipe in the Justfile.\n"
+
+    read -p "Are you sure you want to proceed? (Y/n) " response;
+    if [[ $response =~ ^[Yy] ]]; then
+        echo "Continue!";
+    else
+        echo "Cancelled!";
+        exit 1;
+    fi

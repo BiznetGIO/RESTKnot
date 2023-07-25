@@ -11,13 +11,23 @@ _default:
 setup:
     poetry install && poetry shell
 
-# Build the docker image.
-build-image:
-    docker build -t restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+# Tasks to make the code-base comply with the rules. Mostly used in git hooks.
+comply: fmt lint
 
-# Run the docker image.
-run-image: build-image
-    docker-compose up
+# Check if the repository comply with the rules and ready to be pushed.
+check: fmt-check lint
+
+# Build the container image.
+image-build:
+    podman build --tag restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+
+# Run the container image.
+image-start:
+    podman-compose up -d
+
+# Stop the container image.
+image-stop:
+    podman-compose down
 
 # Format the codebase.
 fmt:
@@ -32,13 +42,8 @@ fmt-check:
 lint:
     poetry run ruff .
 
-# Tasks to make the code-base comply with the rules. Mostly used in git hooks.
-comply: fmt lint
-
-# Check if the repository comply with the rules and ready to be pushed.
-check: fmt-check lint
-
 # Check dependencies health.
 up:
+    #!/usr/bin/env bash
     poetry lock
     poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1) || echo "All dependencies are up to date, yay!"
