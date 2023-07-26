@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11.3-slim-buster
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
   POETRY_VERSION=1.4 \

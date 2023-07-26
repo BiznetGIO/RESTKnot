@@ -31,7 +31,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-          python-version: '3.11'
+          python-version: '3.11.3'
 
     - name: Cache poetry install
       uses: actions/cache@v3
@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.11']
+        python-version: ['3.11.3']
         # container operations are only supported on Linux runners
         os: [ubuntu-22.04]
 
@@ -157,7 +157,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          just _test-unit
+          just test-unit
 
       - name: Check DB version
         # pass `-h localhost` to use TCP connection. Otherwise, it will talk to locally installed postgres
