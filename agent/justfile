@@ -19,6 +19,7 @@ check: fmt-check lint
 
 # Build the container image.
 image-build:
+    rye build --wheel --clean
     docker build --tag restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
 
 # Run the container image.

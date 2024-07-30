@@ -6,7 +6,7 @@ import time
 
 from confluent_kafka import Consumer, KafkaException
 
-import knot
+from rkagent import knot
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,3 @@ def consume():
     finally:
         # Close down consumer to commit final offsets.
         consumer.close()
-
-
-if __name__ == "__main__":
-    main()

@@ -9,10 +9,13 @@
 #   generate-hashes: false
 #   universal: false
 
+-e file:.
 confluent-kafka==2.0.2
+    # via rkagent
 iniconfig==2.0.0
     # via pytest
 libknot==3.2.5
+    # via rkagent
 packaging==24.1
     # via pytest
 pluggy==1.5.0
@@ -21,3 +24,4 @@ pytest==8.3.2
     # via pytest-mock
 pytest-mock==3.14.0
 pyyaml==6.0
+    # via rkagent

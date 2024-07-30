@@ -1,1 +1,6 @@
-__version__ = "0.7.0"
+from rkagent import consumer
+
+
+def main() -> int:
+    consumer.main()
+    return 0

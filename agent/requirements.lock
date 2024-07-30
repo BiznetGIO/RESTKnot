@@ -9,6 +9,10 @@
 #   generate-hashes: false
 #   universal: false
 
+-e file:.
 confluent-kafka==2.0.2
+    # via rkagent
 libknot==3.2.5
+    # via rkagent
 pyyaml==6.0
+    # via rkagent
