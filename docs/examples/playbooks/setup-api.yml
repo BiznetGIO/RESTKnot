@@ -38,7 +38,7 @@
         - "schema.sql"
 
     - name: Check if docker exists
-      # changing PATH is dangerous. it's bettter to
+      # changing PATH is dangerous. it's better to
       # just use a full path
       command: ~/.local/bin/docker-compose -v
       args:

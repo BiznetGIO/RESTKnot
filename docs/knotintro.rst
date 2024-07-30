@@ -326,7 +326,7 @@ These are common command operation to give you insight how to do things:
     $ # use +tcp if your ISP provider annoys you
     $ kdig @localhost niu.com SOA +short +tcp
 
-    $ # start everyting from scratch
+    $ # start everything from scratch
     $ # stop knotd and knot-agent
     # rm -rf * /var/lib/knot # remove all knot db
     # rm -rf * /etc/knot # most of the time, it doesn't needed

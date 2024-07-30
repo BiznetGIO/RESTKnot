@@ -32,14 +32,14 @@ def is_valid_ip(ip):
     try:
         ip_address(ip)
     except ValueError:
-        raise ValueError("Bad IP Adrress")
+        raise ValueError("Bad IP Address")
 
 
 def is_valid_email(email):
     """Check if  it's a valid email address."""
     match = re.match(RE_EMAIL, email)
     if match is None:
-        raise ValueError("Bad Email Adrress")
+        raise ValueError("Bad Email Address")
 
 
 def is_valid_mx(mx_rdata):
@@ -137,15 +137,15 @@ def is_valid_owner(owner):
     - owner can't contains parens ("()")
     """
 
-    def check_hypen(label):
+    def check_hyphen(label):
         if any((label.endswith("."), label.endswith("-"), label.startswith("-"))):
             raise ValueError("Bad OWNER")
 
-    check_hypen(owner)
+    check_hyphen(owner)
 
     if "." in owner:
         for label in owner.split("."):
-            check_hypen(label)
+            check_hyphen(label)
 
     if len(owner) > 255:
         raise ValueError("Bad OWNER")

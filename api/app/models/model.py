@@ -80,13 +80,13 @@ def insert(table, data=None):
         rows.append(row)
         rows_value.append(str(data[row]))
 
-    str_placeholer = ["%s"] * len(rows)
+    str_placeholder = ["%s"] * len(rows)
 
     try:
         rows = ",".join(rows)
-        str_placeholer = ",".join(str_placeholer)
+        str_placeholder = ",".join(str_placeholder)
 
-        query = f'INSERT INTO "{table}" ({rows}) VALUES ({str_placeholer}) RETURNING *'
+        query = f'INSERT INTO "{table}" ({rows}) VALUES ({str_placeholder}) RETURNING *'
         cursor.prepare(query)
         cursor.execute((tuple(rows_value)))
     except (Exception, psycopg2.DatabaseError) as error:

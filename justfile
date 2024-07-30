@@ -25,3 +25,5 @@ fmt-check:
 
 # Lint the codebase.
 lint:
+    # Run `typos  --write-changes` to fix the mistakes
+    typos

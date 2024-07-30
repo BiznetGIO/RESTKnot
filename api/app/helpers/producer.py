@@ -16,7 +16,7 @@ def kafka_admin():
     except KeyError:
         raise ValueError("Can't find brokers list in config")
 
-    # `AdmintClient` can't recive list of brokers
+    # `AdmintClient` can't receive list of brokers
     conf = {"bootstrap.servers": brokers[0]}
     admin_client = AdminClient(conf)
     return admin_client

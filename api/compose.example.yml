@@ -16,13 +16,13 @@ services:
       - APP_HOST=0.0.0.0 # default 0.0.0.0
       - APP_PORT=5000 # default 8000
 
-      - DB_NAME=knotdb # don't add whitespace beetween =
+      - DB_NAME=knotdb # don't add whitespace between =
       - DB_HOST=roach
       - DB_PORT=26257
       - DB_USER=root
       - DB_SSL=disable
 
-      # topic to suscribe
+      # topic to subscribe
       - RESTKNOT_KAFKA_TOPIC=domaindata
 
       # don't add quote, otherwise it will not work
