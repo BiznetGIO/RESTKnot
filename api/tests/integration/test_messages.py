@@ -1,4 +1,4 @@
-import app.helpers.producer
+import rkapi.app.helpers.producer
 import tests.fixtures.messages as message_fx
 
 
@@ -15,8 +15,8 @@ class TestMessages:
         - Create a domain (with default SOA,NS,CNAME created)
         - Assert the sent command
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        monkeypatch.setattr(app.helpers.producer, "send", self.fake_send)
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        monkeypatch.setattr(rkapi.app.helpers.producer, "send", self.fake_send)
         headers = {"X-Api-Key": "123"}
 
         # create user

@@ -1,6 +1,6 @@
 import datetime
 
-import app.helpers.helpers
+import rkapi.app.helpers.helpers
 from rkapi.app.controllers.api import record as record_api
 from rkapi.app.helpers import helpers
 
@@ -27,8 +27,8 @@ class TestRecord:
         - Add a record
         - Query the db to assure it's created
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -75,8 +75,8 @@ class TestRecord:
         - Edit a record
         - Query the db to assure it's edited
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -125,8 +125,8 @@ class TestRecord:
         - Create a domain (with default SOA,NS,CNAME created)
         - Edit a record with the same TTL
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -168,8 +168,8 @@ class TestRecord:
         - Edit a record with the different TTL
         - Query the db to assure it's edited
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -220,8 +220,8 @@ class TestRecord:
         - Delete one of the record
         - Query the db to assure it's deleted
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -260,8 +260,8 @@ class TestRecord:
         - Add MX record
         - Edit a record with the same TTL
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -310,8 +310,8 @@ class TestRecord:
         - Edit a record with the different TTL
         - Query the db to assure it's edited
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -368,8 +368,8 @@ class TestRecord:
         - Edit a record with the different TXT value until it reaches a limit
         - Edit a record with tomorrows date
         """
-        mocker.patch("app.helpers.producer.kafka_producer")
-        mocker.patch("app.helpers.producer.send")
+        mocker.patch("rkapi.app.helpers.producer.kafka_producer")
+        mocker.patch("rkapi.app.helpers.producer.send")
         headers = {"X-Api-Key": "123"}
 
         # create user
@@ -430,7 +430,9 @@ class TestRecord:
             tomorrow_date = datetime.datetime.now() + datetime.timedelta(days=1)
             return tomorrow_date.strftime("%Y%m%d")
 
-        monkeypatch.setattr(app.helpers.helpers, "soa_time_set", fake_soa_time_set)
+        monkeypatch.setattr(
+            rkapi.app.helpers.helpers, "soa_time_set", fake_soa_time_set
+        )
         data = {
             "zone": "company.com",
             "owner": "txt1",
