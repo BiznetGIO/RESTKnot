@@ -6,7 +6,7 @@ import time
 
 from confluent_kafka import Consumer, KafkaException
 
-from dnsagent import agent
+import knot
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def consume():
     topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
     group_id = os.environ.get("RESTKNOT_KAFKA_GROUP_ID")
     agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
-    command_delay = int(os.environ.get("RESTKNOT_COMMAND_DELAY", 5))
+    command_delay = float(os.environ.get("RESTKNOT_COMMAND_DELAY", 5.0))
 
     conf = {
         "bootstrap.servers": brokers,
@@ -66,7 +66,7 @@ def consume():
                 for query in knot_queries:
                     print(f"Delaying next command by {command_delay} seconds...")
                     time.sleep(command_delay)
-                    agent.execute(query)
+                    knot.execute(query)
 
     except KeyboardInterrupt:
         print(" dnsagent stopped. Aborted by user")

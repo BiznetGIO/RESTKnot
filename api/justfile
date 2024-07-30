@@ -51,7 +51,7 @@ fmt-check:
 
 # Lint the codebase.
 lint:
-    poetry run  ruff .
+    poetry run ruff .
 
 # Test the codebase.
 test: test-unit
