@@ -27,3 +27,8 @@ fmt-check:
 lint:
     # Run `typos  --write-changes` to fix the mistakes
     typos
+
+# Generate changelog
+changelog-gen version:
+    git-cliff --config .cliff.toml --output CHANGELOG.md --tag {{ version }}  v0.7.13..
+    just fmt
