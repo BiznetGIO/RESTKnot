@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+
+  code_quality:
+    name: Code Quality
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - uses: taiki-e/install-action@just
+    - uses: taiki-e/install-action@dprint
+
+    - name: Lint
+      # currently cli is not-maintained
+      run: |
+        just check

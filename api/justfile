@@ -44,12 +44,10 @@ image-stop:
 fmt:
     poetry run black .
     poetry run isort .
-    dprint fmt --config ../configs/dprint.json
 
 # Check is the codebase properly formatted.
 fmt-check:
     poetry run black --check .
-    dprint check --config ../configs/dprint.json
 
 # Lint the codebase.
 lint:

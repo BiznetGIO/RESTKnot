@@ -1,8 +1,8 @@
 FROM python:3.11.3-slim-buster
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.4 \
-  GUNICORN_VERSION=20.1.0
+    POETRY_VERSION=1.4 \
+    GUNICORN_VERSION=20.1.0
 
 RUN apt-get update
 # working with timezones

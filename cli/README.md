@@ -1,21 +1,17 @@
 # knot-cli
 
-
 Command Line Interface for Restknot
-
 
 ## What is knot-cli
 
-
 Knot-cli is a command line interface to operate RESTKnot
-
-
 
 ## Usage
 
 List of available command on knot-cli
 
 #### Create
+
 ```
 create dns (--nm=NAME) [-i]
 create record
@@ -23,7 +19,8 @@ create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con
 create record -f FILENAME
 ```
 
-Options : 
+Options :
+
 ```
 -h --help                 Print usage
 --nm NAME                 Set DNS/record name
@@ -45,21 +42,21 @@ ls record [--nm NAME]
 ls dns
 ```
 
-Options : 
+Options :
 
 ```
 --nm                        Show list of selected zone
-
 ```
 
 #### Remove
+
 ```
 rm dns (--nm NAME)
 rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
-
 ```
 
-<a name="Filter"></a>Options : 
+<a name="Filter"></a>Options :
+
 ```
 -h --help               Print usage
 --nm=NAME               DNS' name to delete
@@ -68,23 +65,25 @@ rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
 ```
 
 ### Login and Account
+
 Knot-cli requires you to create an account on [portal-neo](https://portal.neo.id/). Note that before using knot-cli you have to login using
 
 ```
 login
 ```
+
 ```
 logout [-r]
 ```
 
 use logout -r to remove all your data for fresh login in the future
 
-
 ### Creating Zone and Record
 
-To create a new zone and records, use the following commands respectively 
+To create a new zone and records, use the following commands respectively
 
 ### Zone
+
 ```
 create dns (--nm=NAME)
 
@@ -95,37 +94,42 @@ Options :
 ### Record
 
 Use following commands for creating records
+
 ```
 create record
 ```
 
 Or if you want to manually input your record's details
+
 ```
 create record (--nm NAME) (--nm-zn ZONENAME) (--type=TYPE) (--ttl TTL) (--nm-con) [--nm-con-ser CONSER]
 ```
+
 ```
-    -type=TYPE                Set DNS type
-    --ttl TTL                 Set DNS TTL 
-    --nm-zn ZONENAME          Set zone of new record
-    --nm-con CON              Set content name
-    --nm-con-ser CONSER       Set content serial name
+-type=TYPE                Set DNS type
+--ttl TTL                 Set DNS TTL 
+--nm-zn ZONENAME          Set zone of new record
+--nm-con CON              Set content name
+--nm-con-ser CONSER       Set content serial name
 ```
-You can also create records from yaml. 
+
+You can also create records from yaml.
 
 ```
 create record -f FILENAME
 ```
 
-#### Creating Record  from YAML File
+#### Creating Record from YAML File
 
 Place your yaml file in
+
 ```
 ~/restknot
 ```
 
 and follow this format
-```yaml
 
+```yaml
 "zone_name":
     "record_name_1":
         - "record_type1":
@@ -145,21 +149,16 @@ and follow this format
         - "record_type2":
             .
             ...
-
 ```
 
 See [create.yaml](https://raw.githubusercontent.com/BiznetGIO/RESTKnot/master/CLI/example/create.yaml) for further information
 
-
-Remember to check available type and ttl before creating records, also MX and SRV record need serial content on creation. For further information on record  type, see [documentation](https://github.com/BiznetGIO/RESTKnot/blob/master/API/docs/markdown/documentation/RULES.md) 
-
+Remember to check available type and ttl before creating records, also MX and SRV record need serial content on creation. For further information on record type, see [documentation](https://github.com/BiznetGIO/RESTKnot/blob/master/API/docs/markdown/documentation/RULES.md)
 
 ```
 ls ttl
 ls type
 ```
-
-
 
 ### Removing Zone and Record
 
@@ -170,12 +169,10 @@ rm record [(--nm-zone=ZNNAME [--nm-record=NAME] [--type=TYPE] )]
 
 When you're removing dns, knot-cli will give you a list of records that will also be removed and ask your confirmation.
 
-On record removal, knot-cli will give you a list of your record based on filter (or all of your record if no filter is given). 
+On record removal, knot-cli will give you a list of your record based on filter (or all of your record if no filter is given).
 
 ![knot-cli rm1](docs/img/rm1.jpg "Record removal")
 
 Enter index of the record that you want to remove, then knot-cli will ask for your confirmation.
 
 ![knot-cli rm2](docs/img/rm2.jpg "Record removal 2")
-
-
