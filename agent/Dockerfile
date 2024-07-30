@@ -23,4 +23,4 @@ RUN echo "$VCS_REVISION" > ./version
 
 COPY src .
 
-CMD ["python3", "agent/main.py"]
+CMD ["python3", "rkagent/main.py"]
