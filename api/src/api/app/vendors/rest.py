@@ -55,9 +55,9 @@ def response(status_code, message=None, data=None):
 
     if status_code in success_status:
         count = 0
-        if type(data) is list:
+        if isinstance(data, list):
             count = len(data)
-        if type(data) is dict:
+        if isinstance(data, dict):
             count = 1
         status["count"] = count
         status["data"] = data if data else None
