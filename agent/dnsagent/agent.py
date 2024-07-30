@@ -34,7 +34,7 @@ def execute(message):
             identifier=message.get("identifier"),
             filters=message.get("filters"),
         )
-        # `resp = ctl.receive_block()` receive nothing when the operation is succesfull
+        # `resp = ctl.receive_block()` receive nothing when the operation is successful
         # calling it just a waste of resources
         logger.info(f"Success: {cmd} {zone or ''} {item or ''} {data or ''}")
     except libknot.control.KnotCtlError as knot_error:

@@ -14,6 +14,9 @@ jobs:
 
     - uses: taiki-e/install-action@just
     - uses: taiki-e/install-action@dprint
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: typos-cli
 
     - name: Lint
       # currently cli is not-maintained

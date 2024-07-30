@@ -19,7 +19,7 @@ To make sure that the records were created on the Knot side. Use ``dig`` or ``kd
   $ kdig @localhost example.com SOA +short
 
 
-Add/Edit/Remove spesific Record
+Add/Edit/Remove specific Record
 -------------------------------
 
 To add/edit/remove specific record you can use :code:`/record/add`,

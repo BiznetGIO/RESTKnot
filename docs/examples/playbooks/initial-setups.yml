@@ -1,4 +1,4 @@
-# tested againts CentOS 7.5
+# tested against CentOS 7.5
 
 ---
 - hosts: all

@@ -1,0 +1,3 @@
+[files]
+# cli is not maitained
+extend-exclude = ["CHANGELOG.md", "cli/", "*.excalidraw"]
