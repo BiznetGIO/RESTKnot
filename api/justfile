@@ -26,6 +26,7 @@ check: fmt-check lint test
 
 # Build the docker image.
 image-build:
+    rye build --wheel --clean
     docker build -t restknot-api:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
 
 # Run the container image.

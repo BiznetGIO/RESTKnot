@@ -30,6 +30,8 @@ flask-cors==3.0.10
     # via rkapi
 flask-restful==0.3.9
     # via rkapi
+gunicorn==20.1.0
+    # via rkapi
 idna==3.7
     # via requests
 itsdangerous==2.2.0
@@ -56,6 +58,8 @@ pyyaml==6.0
     # via rkapi
 requests==2.28.2
     # via rkapi
+setuptools==72.1.0
+    # via gunicorn
 six==1.16.0
     # via flask-cors
     # via flask-restful
