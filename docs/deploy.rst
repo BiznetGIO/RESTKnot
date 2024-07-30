@@ -23,7 +23,7 @@ Prepare the required files
 --------------------------
 
 Before running the playbooks you have to create a folder named ``configs`` with
-the required files. Namely the ``docker-compose.yml`` for both restknot-agent
+the required files. Namely the ``compose.yml`` for both restknot-agent
 and restknot-api, ``schema.sql``, and the ``knot.conf`` for both master and
 slave files. All of them available in the example directory.
 Modify the value of those files to match your production environment.
@@ -80,6 +80,6 @@ two-node. The first node is going to host ``restknot-api``,
 (knotd)`` and ``restknot-agent``.
 
 The three components in the first node can be run using a docker container. You
-can use the ``api/docker-compose.example.yml`` as a starting point. For the
+can use the ``api/compose.example.yml`` as a starting point. For the
 second node, it's advised that you install the ``knot server`` locally, then you
-can use ``agent/docker-compose.example.yml`` for the ``agent``.
+can use ``agent/compose.example.yml`` for the ``agent``.

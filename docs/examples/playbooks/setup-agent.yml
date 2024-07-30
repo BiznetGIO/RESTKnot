@@ -54,17 +54,17 @@
         src: "./configs/agent/{{ item }}"
         dest: "/opt/knot/{{ item }}"
       with_items:
-        - "docker-compose.yml"
+        - "compose.yml"
 
     - name: Set server type
       replace:
-        path: /opt/knot/docker-compose.yml
+        path: /opt/knot/compose.yml
         regexp: "RESTKNOT_AGENT_TYPE=master"
         replace: "RESTKNOT_AGENT_TYPE={{ server_type }}"
 
     - name: Set broker group id
       replace:
-        path: /opt/knot/docker-compose.yml
+        path: /opt/knot/compose.yml
         regexp: "RESTKNOT_KAFKA_GROUP_ID=master1"
         replace: "RESTKNOT_KAFKA_GROUP_ID={{ broker_group_id }}"
 

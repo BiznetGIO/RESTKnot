@@ -67,7 +67,7 @@ After making changes, you can the ``restknot-api`` using plain ``flask run``.
 Or running it via docker.
 
 If you prefer to run without docker, you need to export the environment variables manually.
-See ``api/docker-compose.example.yml`` to learn all available variables.
+See ``api/compose.example.yml`` to learn all available variables.
 
 Using docker, it would be:
 
@@ -104,7 +104,7 @@ To build the agent:
   $ # run the image
   $ docker-compose up -d
 
-Set appropriate configurations. Take a look at ``agent/docker-compose.example.yml``.
+Set appropriate configurations. Take a look at ``agent/compose.example.yml``.
 
 Basic Workflow
 --------------

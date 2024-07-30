@@ -6,7 +6,7 @@ sudo apt-get install -y postgresql
 
 # Start db
 psql -c 'create database knotdb;' -U postgres
-psql knotdb < api/tests/test_schema.sql
+psql knotdb <api/tests/test_schema.sql
 
 # Start knot
 sudo cp api/tests/functional/knot.conf /etc/knot/knot.conf
@@ -17,7 +17,7 @@ pip install -r api/requirements.txt
 pip install -r api/requirements-dev.txt
 
 # Run kafka & zoookeper
-docker-compose -f api/tests/functional/docker-compose-kafka.yml up -d
+docker-compose -f api/tests/functional/compose-kafka.yml up -d
 
 # Run knot agent
 pip install -e agent/
