@@ -119,7 +119,6 @@ To create a release. Run the following steps.
 
 - Run linting ``just check``. To check if the codebase adheres to the rules.
 - Update the CHANGELOG.
-- Update version numbers using ``./scripts/bump_version <old-version> <new-version>``.
 - Create a commit with a message format: `v[0-9]+.[0-9]+.[0-9]+`, and push it to a feature branch (as a pull request).
 - Wait for a check to pass, merge the specified pull request to the master branch.
 - Wait for a check to pass, create a release tag from GitHub UI, then copy the appropriate CHANGELOG to the release page.
