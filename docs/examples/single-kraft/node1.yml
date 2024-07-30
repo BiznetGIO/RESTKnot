@@ -2,7 +2,7 @@
 version: "3"
 services:
 
-  # https://github.com/confluentinc/cp-all-in-one/blob/7.1.0-post/cp-all-in-one-kraft/docker-compose.yml
+  # https://github.com/confluentinc/cp-all-in-one/blob/7.1.0-post/cp-all-in-one-kraft/compose.yml
   broker1:
     image: confluentinc/cp-kafka:7.1.0
     hostname: broker1
@@ -34,7 +34,7 @@ services:
     volumes:
       - ./update_run.sh:/tmp/update_run.sh:z
       - ./data/restknot/broker1-data:/var/lib/kafka/data:z
-    command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+    command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
 
   roach:
     image: cockroachdb/cockroach:v19.2.2

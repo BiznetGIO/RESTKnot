@@ -33,7 +33,7 @@
         src: "./configs/api/{{ item }}"
         dest: "/opt/knot/{{ item }}"
       with_items:
-        - "docker-compose.yml"
+        - "compose.yml"
         - "kowl.yml"
         - "schema.sql"
 

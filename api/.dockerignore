@@ -14,7 +14,7 @@ __pycache__/
 
 # other
 .env
-docker-compose.yml
+compose.yml
 .flake8
 tests/
 .ruff_cache
