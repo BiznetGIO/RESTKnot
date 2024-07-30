@@ -3,8 +3,8 @@ import pathlib
 import pytest
 from dotenv import load_dotenv
 
-from app import create_app
-from app.models import model
+from rkapi.app import create_app
+from rkapi.app.models import model
 
 
 def clean_users():

@@ -1,8 +1,8 @@
 import datetime
 
 import app.helpers.helpers
-from app.controllers.api import record as record_api
-from app.helpers import helpers
+from rkapi.app.controllers.api import record as record_api
+from rkapi.app.helpers import helpers
 
 
 class TestRecord:

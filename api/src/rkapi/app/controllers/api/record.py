@@ -1,14 +1,14 @@
 from flask import current_app
 from flask_restful import Resource, reqparse
 
-from app.helpers import command, helpers, rules, validator
-from app.middlewares import auth
-from app.models import model
-from app.models import record as record_model
-from app.models import ttl as ttl_model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
-from app.vendors.rest import response
+from rkapi.app.helpers import command, helpers, rules, validator
+from rkapi.app.middlewares import auth
+from rkapi.app.models import model
+from rkapi.app.models import record as record_model
+from rkapi.app.models import ttl as ttl_model
+from rkapi.app.models import type_ as type_model
+from rkapi.app.models import zone as zone_model
+from rkapi.app.vendors.rest import response
 
 
 def get_serial_resource(zone):

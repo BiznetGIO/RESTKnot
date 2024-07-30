@@ -1,5 +1,5 @@
-import app
-from app.helpers import helpers
+import rkapi
+from rkapi.app.helpers import helpers
 
 
 def test_replace_serial():
@@ -12,7 +12,7 @@ def test_replace_serial():
 
 
 def test_increment_serial(monkeypatch):
-    monkeypatch.setattr(app.helpers.helpers, "soa_time_set", lambda: "20180704")
+    monkeypatch.setattr(rkapi.app.helpers.helpers, "soa_time_set", lambda: "20180704")
 
     incremented_serial1 = helpers.increment_serial("2018070401")
     incremented_serial2 = helpers.increment_serial("2018070401", "02")

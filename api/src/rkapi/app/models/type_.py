@@ -1,4 +1,4 @@
-from app.models import model
+from rkapi.app.models import model
 
 
 def get_typeid_by_rtype(rtype):

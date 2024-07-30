@@ -1,6 +1,6 @@
 import pytest
 
-from app.helpers import validator
+from rkapi.app.helpers import validator
 
 
 def test_valid_ip():

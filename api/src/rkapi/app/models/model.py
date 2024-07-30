@@ -1,7 +1,7 @@
 import psycopg2
 
-from app import database
-from app.vendors.prepare import PreparingCursor
+from rkapi.app import database
+from rkapi.app.vendors.prepare import PreparingCursor
 
 
 def get_db():

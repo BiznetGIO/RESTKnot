@@ -1,6 +1,6 @@
-from app.helpers import helpers
-from app.models import model
-from app.models import record as record_model
+from rkapi.app.helpers import helpers
+from rkapi.app.models import model
+from rkapi.app.models import record as record_model
 
 
 def get_other_data(zone):

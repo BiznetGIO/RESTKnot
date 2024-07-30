@@ -4,7 +4,7 @@ import sys
 from flask import Flask
 from flask_cors import CORS
 
-from app.controllers import api_blueprint
+from rkapi.app.controllers import api_blueprint
 
 
 def create_app():

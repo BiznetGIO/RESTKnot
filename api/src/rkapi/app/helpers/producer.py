@@ -5,7 +5,7 @@ from confluent_kafka import Producer
 from confluent_kafka.admin import AdminClient
 from flask import current_app
 
-from app.helpers import helpers
+from rkapi.app.helpers import helpers
 
 
 def kafka_admin():

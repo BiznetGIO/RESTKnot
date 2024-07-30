@@ -1,8 +1,8 @@
 from flask_restful import Resource
 
-from app.helpers import helpers
-from app.middlewares import auth
-from app.vendors.rest import response
+from rkapi.app.helpers import helpers
+from rkapi.app.middlewares import auth
+from rkapi.app.vendors.rest import response
 
 
 class MetaVersion(Resource):

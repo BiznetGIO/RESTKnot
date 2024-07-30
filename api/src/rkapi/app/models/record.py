@@ -1,9 +1,9 @@
 from flask import current_app
 
-from app.helpers import helpers
-from app.models import model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
+from rkapi.app.helpers import helpers
+from rkapi.app.models import model
+from rkapi.app.models import type_ as type_model
+from rkapi.app.models import zone as zone_model
 
 
 def get_other_data(record):

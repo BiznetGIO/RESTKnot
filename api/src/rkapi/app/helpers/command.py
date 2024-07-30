@@ -1,7 +1,7 @@
 import json
 
-from app.helpers import helpers, producer
-from app.models import model
+from rkapi.app.helpers import helpers, producer
+from rkapi.app.models import model
 
 
 def get_other_data(record_id):

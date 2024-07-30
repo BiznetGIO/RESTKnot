@@ -3,13 +3,13 @@ import os
 from flask import current_app, request
 from flask_restful import Resource, reqparse
 
-from app.helpers import command, helpers, validator
-from app.middlewares import auth
-from app.models import domain as domain_model
-from app.models import model
-from app.models import record as record_model
-from app.models import zone as zone_model
-from app.vendors.rest import response
+from rkapi.app.helpers import command, helpers, validator
+from rkapi.app.middlewares import auth
+from rkapi.app.models import domain as domain_model
+from rkapi.app.models import model
+from rkapi.app.models import record as record_model
+from rkapi.app.models import zone as zone_model
+from rkapi.app.vendors.rest import response
 
 
 def insert_zone(zone, user_id):

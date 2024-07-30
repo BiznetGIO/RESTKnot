@@ -1,10 +1,10 @@
 from flask import current_app, request
 from flask_restful import Resource, reqparse
 
-from app.helpers import helpers, validator
-from app.middlewares import auth
-from app.models import model
-from app.vendors.rest import response
+from rkapi.app.helpers import helpers, validator
+from rkapi.app.middlewares import auth
+from rkapi.app.models import model
+from rkapi.app.vendors.rest import response
 
 
 class GetUserData(Resource):

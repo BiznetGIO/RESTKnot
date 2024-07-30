@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask import request
 
-from app.vendors.rest import response
+from rkapi.app.vendors.rest import response
 
 
 def auth_required(f):

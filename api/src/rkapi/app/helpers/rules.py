@@ -12,9 +12,9 @@
 # 2. owner CAN'T coexist with the same CNAME owner
 # --------------------------------------------------------------------
 
-from app.models import rules as rules_model
-from app.models import type_ as type_model
-from app.models import zone as zone_model
+from rkapi.app.models import rules as rules_model
+from rkapi.app.models import type_ as type_model
+from rkapi.app.models import zone as zone_model
 
 
 def is_allowed(zone_id, type_id, owner, rdata, ttl_id, record_id=None):

@@ -1,8 +1,8 @@
 from confluent_kafka import KafkaError, KafkaException
 from flask_restful import Resource
 
-from app.helpers.producer import kafka_admin
-from app.vendors.rest import response
+from rkapi.app.helpers.producer import kafka_admin
+from rkapi.app.vendors.rest import response
 
 
 class HealthCheck(Resource):

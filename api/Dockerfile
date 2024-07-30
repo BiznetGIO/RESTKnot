@@ -26,7 +26,7 @@ COPY config.example.yml ./config.yml
 ARG VCS_REVISION
 RUN echo "$VCS_REVISION" > ./version
 
-COPY src/api .
+COPY src/rkapi .
 
 EXPOSE 5000
 CMD ["gunicorn", "autoapp:app", "-b", "0.0.0.0:5000"]

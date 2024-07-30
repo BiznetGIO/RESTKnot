@@ -5,8 +5,8 @@ from functools import wraps
 
 import yaml
 
-from app.helpers import producer
-from app.vendors.rest import response
+from rkapi.app.helpers import producer
+from rkapi.app.vendors.rest import response
 
 
 def soa_time_set():

@@ -50,10 +50,10 @@ lint:
 
 # Test the codebase.
 test: test-unit
-    rye test -s tests/integration/
+    rye test -- tests/integration/
 
 test-unit:
-    rye test -s tests/unit/
+    rye test -- tests/unit/
 
 # Check dependencies health.
 up:
