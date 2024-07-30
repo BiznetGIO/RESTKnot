@@ -1,39 +1,40 @@
-version: '3'
 services:
   restknot-agent:
-  image: biznetgio/restknot-agent:0.7.12
-  environment:
-    # Pay attention to your agent type!
-    - RESTKNOT_AGENT_TYPE=master
+    image: biznetgio/restknot-agent:latest
+    environment:
+      # Pay attention to your agent type!
+      - RESTKNOT_AGENT_TYPE=master
 
-    # the libknot.so location is distro dependant.
-    # e.g in CentOS it is `/usr/lib64/libknot.so.10.0.0`
-    - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
-    - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
+      # The libknot.so location is distro dependant.
+      # e.g., in CentOS it is `/usr/lib64/libknot.so.10.0.0`
+      - RESTKNOT_KNOT_LIB=/usr/lib/x86_64-linux-gnu/libknot.so
+      - RESTKNOT_KNOT_SOCKET=/var/run/knot/knot.sock
 
-    # Control socket timeout.
-    # Set to 0 for infinity.  Default is 2000 seconds
-    # - RESTKNOT_SOCKET_TIMEOUT=5000
-    # Maximum attempts to retry connection to the socket. Default is 10 times
-    - RESTKNOT_SOCKET_RETRY=10
+      # Control socket timeout.
+      # Set to 0 for infinity. Default is 2000 seconds
+      # - RESTKNOT_SOCKET_TIMEOUT=5000
 
-    # Wait for n seconds before firing new command to knotd
-    - RESTKNOT_COMMAND_DELAY=5
+      # Maximum attempts to retry connection to the socket. Default is 10 times
+      - RESTKNOT_SOCKET_RETRY=10
 
-    # using 127.0.0.1 or localhost won't make it work
-    # set it to RESTKNOT API IP
-    - RESTKNOT_KAFKA_BROKERS=10.0.0.1:9092,10.0.0.2:9092,10.0.0.3:9092
-    # topic to subscribe
-    - RESTKNOT_KAFKA_TOPIC=domaindata
-    # consumer group id
-    - RESTKNOT_KAFKA_GROUP_ID=master1
-  volumes:
-    # on CentOS family you need to add `:z`
-    # .e.g `/var/run/knot/:/var/run/knot/:z`
+      # Wait for n seconds before firing new command to knotd
+      - RESTKNOT_COMMAND_DELAY=5
 
-    # on CentOS: `/usr/lib64/:/usr/lib64`
-    - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
+      # Using 127.0.0.1 or localhost won't make it work
+      # Set it to RESTKNOT API IP
+      - RESTKNOT_KAFKA_BROKERS=10.0.0.1:9092,10.0.0.2:9092,10.0.0.3:9092
 
-    - /etc/knot/:/etc/knot/ #ro
-    - /var/lib/knot/:/var/lib/knot/
-    - /var/run/knot/:/var/run/knot/:z
+      # Topic to subscribe
+      - RESTKNOT_KAFKA_TOPIC=domaindata
+
+      # Consumer group id
+      - RESTKNOT_KAFKA_GROUP_ID=master1
+    volumes:
+      # On CentOS family you need to add `:z`
+      # e.g., `/var/run/knot/:/var/run/knot/:z`
+
+      # On CentOS: `/usr/lib64/:/usr/lib64`
+      - /usr/lib/x86_64-linux-gnu/:/usr/lib/x86_64-linux-gnu/ #ro
+      - /etc/knot/:/etc/knot/ #ro
+      - /var/lib/knot/:/var/lib/knot/
+      - /var/run/knot/:/var/run/knot/:z

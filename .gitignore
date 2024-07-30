@@ -110,4 +110,4 @@ ENV/
 # RESTKnot
 **/integration/schema.sql
 config.yml
-docker-compose.yml
+compose.yml
