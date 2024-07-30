@@ -2,7 +2,7 @@
 FROM python:3.11.3-slim-buster
 
 ENV PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.4
+    POETRY_VERSION=1.4
 
 RUN apt-get update
 # working with timezones
@@ -34,5 +34,5 @@ COPY . /dnsagent
 # check build version
 RUN cat /dnsagent/version
 
-ENV PYTHONPATH "${PYTHONPATH}:/dnsagent"
+ENV PYTHONPATH="${PYTHONPATH}:/dnsagent"
 CMD ["python3", "dnsagent/start.py"]

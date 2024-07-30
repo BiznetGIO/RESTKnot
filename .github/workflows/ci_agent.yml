@@ -61,11 +61,8 @@ jobs:
       run: |
         poetry install --no-interaction --no-root
 
-    - name: Install latest just release
-      uses: taiki-e/install-action@just
-
-    - name: Install latest dprint release
-      uses: taiki-e/install-action@dprint
+    - uses: taiki-e/install-action@just
+    - uses: taiki-e/install-action@dprint
 
     - name: Lint
       # currently cli is not-maintained
