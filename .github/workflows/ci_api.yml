@@ -129,7 +129,7 @@ jobs:
       - name: Prepare for Integration tests
         run: |
           # use default location, instead setting the `RESTKNOT_CONFIG_FILE`
-          cp  config.example.yml config.yml
+          cp  config.example.yml src/rkapi/config.yml
 
       - name: Integration tests
         run: |
