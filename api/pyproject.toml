@@ -1,39 +1,39 @@
-[tool.poetry]
+[project]
 name = "api"
 version = "0.7.12"
 description = "RESTKnot API"
-authors = ["Azzam S.A <azzam@biznetgio.com>"]
-license = "MIT"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "3.11.3"
-confluent-kafka = "2.0.2"
-environs = "9.5.0"
-Flask = "2.2.3"
-Flask-Cors = "3.0.10"
-Flask-RESTful = "0.3.9"
-libknot = "3.2.5"
-psycopg2 = "2.9.5"
-python-dotenv = "1.0.0"
-PyYAML = "6.0"
-requests = "2.28.2"
-
-[tool.poetry.group.dev.dependencies]
-pytest-mock = "3.10.0"
-black = "23.7.0"
-ruff = "0.0.280"
-isort = "5.12.0"
-
-[tool.isort]
-profile = "black"
-known_first_party = "app"
-
-[tool.ruff]
-ignore = [
-  "E501",
+authors = [
+    { name = "Azzam S.A", email = "azzam@biznetgio.com" },
 ]
+dependencies = [
+    "confluent-kafka==2.0.2",
+    "environs==9.5.0",
+    "Flask==2.2.3",
+    "Flask-Cors==3.0.10",
+    "Flask-RESTful==0.3.9",
+    "libknot==3.2.5",
+    "psycopg2==2.9.5",
+    "python-dotenv==1.0.0",
+    "PyYAML==6.0",
+    "requests==2.28.2",
+]
+readme = "README.md"
+requires-python = ">= 3.11"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+virtual = true
+managed = true
+dev-dependencies = [
+    "pytest>=8.3.2",
+    "pytest-mock>=3.14.0",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/api"]
