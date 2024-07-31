@@ -7,7 +7,7 @@ from rkapi.app.vendors.rest import response
 
 class MetaVersion(Resource):
     def get(self):
-        build = helpers.read_version("pyproject.toml", "version")
+        build = helpers.read_version()
 
         data = {"build": build}
         return response(200, data=data, message="OK")

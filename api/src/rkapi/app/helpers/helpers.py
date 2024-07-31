@@ -2,6 +2,7 @@ import datetime
 import os
 import pathlib
 from functools import wraps
+from flask import current_app
 
 import yaml
 
@@ -78,21 +79,25 @@ def check_producer(f):
     return decorated_function
 
 
-def read_file(other_file_name, filename):
-    root_dir = pathlib.Path(other_file_name).resolve().parent
-    path = root_dir.joinpath(filename)
+def root_path() -> pathlib.Path:
+    """Get root path of the app"""
+    return pathlib.Path(os.path.dirname(current_app.instance_path))
 
+
+def read_file(path) -> str | None:
+    path = pathlib.Path(path)
     if path.is_file():
         with open(path, "rb") as f:
             content = f.read().decode("utf-8")
             return content
 
 
-def read_version(other_file_name, filename):
+def read_version() -> str:
     """Read the the current version or build of the app"""
     version = ""
 
-    version = read_file(other_file_name, filename)
+    path = root_path().joinpath("version")
+    version = read_file(path)
     if version:
         version = version.rstrip()
 
@@ -102,21 +107,20 @@ def read_version(other_file_name, filename):
     return version
 
 
-def config_file():
+def config_file() -> pathlib.Path:
     """Return config file path."""
-    path = os.environ.get("RESTKNOT_CONFIG_FILE")
+    path = os.environ.get("RESTKNOT_CONFIG_FILE")  # custom path
     if not path:
-        current_path = pathlib.Path(__file__)
-        path = current_path.parents[2].joinpath("config.yml")
+        path = root_path().joinpath("config.yml")
 
-    is_exists = os.path.exists(path)
-    if is_exists:
+    path = pathlib.Path(path)
+    if path.exists():
         return path
     else:
         raise ValueError(f"Config File Not Found: {path}")
 
 
-def get_config():
+def get_config() -> str:
     """Return config file content."""
     file_ = config_file()
     config = yaml.safe_load(open(file_))

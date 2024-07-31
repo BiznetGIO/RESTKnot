@@ -13,4 +13,4 @@ config.yml
 compose.yml
 .env
 
-.dockerignore
+cdata
