@@ -2,6 +2,7 @@
 
 set dotenv-load := true
 
+alias r := run
 alias f := fmt
 alias l := lint
 alias t := test
@@ -23,6 +24,10 @@ comply: fmt lint test-unit
 
 # Check if the repository comply with the rules and ready to be pushed.
 check: fmt-check lint test
+
+[doc('Run the app')]
+run:
+    FLASK_APP=rkapi.autoapp rye run flask run --port 8001
 
 # Build the docker image.
 image-build:
