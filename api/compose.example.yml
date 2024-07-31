@@ -7,14 +7,15 @@ services:
       - '5000:5000'
     environment:
       - TZ=Asia/Jakarta
-      - FLASK_APP=autoapp.py
-      - FLASK_ENV=production
-      - FLASK_DEBUG=0
 
-      # server
+      #
+      # Server
       - APP_HOST=0.0.0.0 # default 0.0.0.0
+      # If you change this, make sure to update the `ports` as well.
       - APP_PORT=5000 # default 8000
 
+      #
+      # Database
       - DB_NAME=knotdb # don't add whitespace between =
       - DB_HOST=roach
       - DB_PORT=26257
@@ -34,4 +35,4 @@ services:
       # - RESTKNOT_CONFIG_FILE=
 
     # default timeout:30
-    command: gunicorn 'autoapp:app' -c 'gunicorn.conf.py' --timeout 60
+    command: gunicorn "rkapi.autoapp:app" --config "gunicorn.conf.py" --timeout 60
