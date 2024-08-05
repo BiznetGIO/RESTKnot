@@ -14,7 +14,7 @@ confluent-kafka==2.0.2
     # via rkagent
 iniconfig==2.0.0
     # via pytest
-libknot==3.2.5
+libknot==3.3.8
     # via rkagent
 packaging==24.1
     # via pytest

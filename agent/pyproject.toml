@@ -7,7 +7,7 @@ authors = [
 ]
 dependencies = [
     "confluent-kafka==2.0.2",
-    "libknot==3.2.5",
+    "libknot==3.3.8",
     "PyYAML==6.0",
 ]
 readme = "README.md"
