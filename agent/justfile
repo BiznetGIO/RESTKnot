@@ -9,7 +9,7 @@ _default:
 
 # Setup the repository.
 setup:
-    poetry install && poetry shell
+    rye sync
 
 # Tasks to make the code-base comply with the rules. Mostly used in git hooks.
 comply: fmt lint
@@ -19,31 +19,29 @@ check: fmt-check lint
 
 # Build the container image.
 image-build:
-    podman build --tag restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
+    rye build --wheel --clean
+    docker build --tag restknot-agent:latest --build-arg VCS_REVISION=$(git rev-parse --short HEAD) .
 
 # Run the container image.
 image-start:
-    podman-compose up -d
+    docker compose up -d
 
 # Stop the container image.
 image-stop:
-    podman-compose down
+    docker compose down
 
 # Format the codebase.
 fmt:
-    poetry run black .
-    poetry run isort .
+    rye fmt
 
 # Check is the codebase properly formatted.
 fmt-check:
-    poetry run black --check .
+    rye fmt --check
 
 # Lint the codebase.
 lint:
-    poetry run ruff .
+    rye lint
 
 # Check dependencies health.
 up:
-    #!/usr/bin/env bash
-    poetry lock
-    poetry show --outdated | grep --file=<(poetry show --tree | grep '^\w' | cut -d' ' -f1) || echo "All dependencies are up to date, yay!"
+    rye sync --update-all

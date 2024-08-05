@@ -15,4 +15,4 @@ __pycache__/
 # other
 .flake8
 .env
-docker-compose.yml
+compose.yml

@@ -2,6 +2,7 @@
   "markdown": {
   },
   "toml": {
+    "indentWidth": 4,
   },
   "dockerfile": {
   },

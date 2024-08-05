@@ -48,14 +48,14 @@ footer = """"""
 conventional_commits = true
 # regex for parsing and grouping commits
 commit_parsers = [
-  { message = "^feat", group = "<!-- 0 -->⛰️  Features" },
-  { message = "^fix", group = "<!-- 1 -->🐛 Bug Fixes" },
-  { message = "^refactor", group = "<!-- 2 -->🚜 Refactor" },
-  { message = "^doc", group = "<!-- 3 -->📚 Documentation" },
-  { message = "^perf", group = "<!-- 4 -->⚡ Performance" },
-  { message = "^test", group = "<!-- 5 -->🧪 Testing" },
-  { message = "^build", group = "<!-- 6 -->🏗️ Build" },
-  { message = "^ci", group = "<!-- 7 -->🤖 CI" },
+    { message = "^feat", group = "<!-- 0 -->⛰️  Features" },
+    { message = "^fix", group = "<!-- 1 -->🐛 Bug Fixes" },
+    { message = "^refactor", group = "<!-- 2 -->🚜 Refactor" },
+    { message = "^doc", group = "<!-- 3 -->📚 Documentation" },
+    { message = "^perf", group = "<!-- 4 -->⚡ Performance" },
+    { message = "^test", group = "<!-- 5 -->🧪 Testing" },
+    { message = "^build", group = "<!-- 6 -->🏗️ Build" },
+    { message = "^ci", group = "<!-- 7 -->🤖 CI" },
 ]
 # glob pattern for matching git tags
 tag_pattern = "v[0-9]*"
