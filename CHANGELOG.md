@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## agent-0.7.15 (2024-08-14)
+
+### Features
+
+- support milliseconds delay
+
 ## 0.7.14 (2023-03-21)
 
 ### Bug fixes
