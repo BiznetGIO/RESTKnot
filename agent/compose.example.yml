@@ -18,7 +18,7 @@ services:
     - RESTKNOT_SOCKET_RETRY=10
 
     # Wait for n seconds before firing new command to knotd
-    - RESTKNOT_COMMAND_DELAY=5
+    - RESTKNOT_COMMAND_DELAY=5.0
 
     # using 127.0.0.1 or localhost won't make it work
     # set it to RESTKNOT API IP

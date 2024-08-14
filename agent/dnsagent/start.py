@@ -34,7 +34,7 @@ def consume():
     topic = os.environ.get("RESTKNOT_KAFKA_TOPIC")
     group_id = os.environ.get("RESTKNOT_KAFKA_GROUP_ID")
     agent_type = os.environ.get("RESTKNOT_AGENT_TYPE")
-    command_delay = int(os.environ.get("RESTKNOT_COMMAND_DELAY", 5))
+    command_delay = float(os.environ.get("RESTKNOT_COMMAND_DELAY", 5.0))
 
     conf = {
         "bootstrap.servers": brokers,
