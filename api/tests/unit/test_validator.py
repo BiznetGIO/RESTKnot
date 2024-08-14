@@ -135,6 +135,20 @@ def test_valid_owner():
         validator.is_valid_owner("a" * 256)
 
 
+def test_valid_srv_owner():
+    validator.is_valid_srv_owner("_xmpp._tcp")
+
+    with pytest.raises(Exception):
+        # owner ends with dot
+        validator.is_valid_srv_owner("_xmpp._tcp.example.com.")
+    with pytest.raises(Exception):
+        # service name doesn't prefixed with _
+        validator.is_valid_srv_owner("xmpp._tcp")
+    with pytest.raises(Exception):
+        # protocol type doesn't prefixed with _
+        validator.is_valid_srv_owner("_xmpp.tcp")
+
+
 def test_validate_func():
     # validator exists
     validator.validate("A", "192.0.2.1")
